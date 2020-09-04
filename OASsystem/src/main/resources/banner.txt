@@ -1,0 +1,22 @@
+Application Version: ${OASystem.version}
+Spring Boot Version: ${spring-boot.version}
+
+XXXXXXX       XXXXXXXHHHHHHHHH     HHHHHHHHHKKKKKKKKK    KKKKKKK          JJJJJJJJJJJ
+X:::::X       X:::::XH:::::::H     H:::::::HK:::::::K    K:::::K          J:::::::::J
+X:::::X       X:::::XH:::::::H     H:::::::HK:::::::K    K:::::K          J:::::::::J
+X::::::X     X::::::XHH::::::H     H::::::HHK:::::::K   K::::::K          JJ:::::::JJ
+XXX:::::X   X:::::XXX  H:::::H     H:::::H  KK::::::K  K:::::KKK            J:::::J
+   X:::::X X:::::X     H:::::H     H:::::H    K:::::K K:::::K               J:::::J
+    X:::::X:::::X      H::::::HHHHH::::::H    K::::::K:::::K                J:::::J
+     X:::::::::X       H:::::::::::::::::H    K:::::::::::K                 J:::::j
+     X:::::::::X       H:::::::::::::::::H    K:::::::::::K                 J:::::J
+    X:::::X:::::X      H::::::HHHHH::::::H    K::::::K:::::K    JJJJJJJ     J:::::J
+   X:::::X X:::::X     H:::::H     H:::::H    K:::::K K:::::K   J:::::J     J:::::J
+XXX:::::X   X:::::XXX  H:::::H     H:::::H  KK::::::K  K:::::KKKJ::::::J   J::::::J
+X::::::X     X::::::XHH::::::H     H::::::HHK:::::::K   K::::::KJ:::::::JJJ:::::::J
+X:::::X       X:::::XH:::::::H     H:::::::HK:::::::K    K:::::K JJ:::::::::::::JJ
+X:::::X       X:::::XH:::::::H     H:::::::HK:::::::K    K:::::K   JJ:::::::::JJ
+XXXXXXX       XXXXXXXHHHHHHHHH     HHHHHHHHHKKKKKKKKK    KKKKKKK     JJJJJJJJJ
+※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+         玄衡出品     ★     必属精品     ★     永不宕机     ★     永无BUG
+※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※

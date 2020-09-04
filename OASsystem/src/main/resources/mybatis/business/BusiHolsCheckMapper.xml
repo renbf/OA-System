@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiHolsCheckMapper">
+    
+
+    <sql id="selectBusiHolsCheckVo">
+        select user_id, leave_rest, hols_rest_days, create_by, create_date, update_by, update_date,leave_rest_unit from busi_hols_check
+    </sql>
+
+    <select id="selectBusiHolsCheckList" parameterType="BusiHolsCheck" resultType="BusiHolsCheck">
+        <include refid="selectBusiHolsCheckVo"/>
+        <where>
+            <if test="leaveRest != null "> and leave_rest = #{leaveRest}</if>
+            <if test="holsRestDays != null "> and hols_rest_days = #{holsRestDays}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiHolsCheckById" parameterType="long" resultType="BusiHolsCheck">
+        <include refid="selectBusiHolsCheckVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertBusiHolsCheck" parameterType="BusiHolsCheck">
+        insert into busi_hols_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="leaveRest != null ">leave_rest,</if>
+            <if test="holsRestDays != null ">hols_rest_days,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createDate != null ">create_date,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="leaveRestUnit != null ">leave_rest_unit,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="leaveRest != null ">#{leaveRest},</if>
+            <if test="holsRestDays != null ">#{holsRestDays},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createDate != null ">#{createDate},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="leaveRestUnit != null ">#{leaveRestUnit},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiHolsCheck" parameterType="BusiHolsCheck">
+        update busi_hols_check
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="leaveRest != null ">leave_rest = #{leaveRest},</if>
+            <if test="holsRestDays != null ">hols_rest_days = #{holsRestDays},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+            <if test="leaveRestUnit != null ">leave_rest_unit = #{leaveRestUnit},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteBusiHolsCheckById" parameterType="String">
+        delete from busi_hols_check where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteBusiHolsCheckByIds" parameterType="String">
+        delete from busi_hols_check where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    
+</mapper>

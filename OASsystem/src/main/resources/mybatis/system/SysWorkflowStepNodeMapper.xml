@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.SysWorkflowStepNodeMapper">
+
+    <resultMap type="com.xhkj.project.system.domain.SysWorkflowStepNode" id="SysWorkflowStepNodeResult">
+        <result property="workflowStepNodeId"    column="workflow_step_node_id"    />
+        <result property="workflowStepId"    column="workflow_step_id"    />
+        <result property="stepType"    column="step_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSysWorkflowStepNodebasicColums">
+        select wsn.workflow_step_node_id, wsn.workflow_step_id, wsn.step_type, wsn.dept_id, wsn.role_id, wsn.sort_order, wsn.create_by, wsn.create_time, wsn.update_by, wsn.update_time, wsn.remarks
+    </sql>
+
+    <select id="selectSysWorkflowStepNodeList" parameterType="com.xhkj.project.system.domain.SysWorkflowStepNode" resultMap="SysWorkflowStepNodeResult">
+        <include refid="selectSysWorkflowStepNodebasicColums"/>
+        from sys_workflow_step_node wsn
+        <where>
+            <if test="workflowStepNodeId != null "> and wsn.workflow_step_node_id = #{workflowStepNodeId}</if>
+            <if test="workflowStepId != null "> and wsn.workflow_step_id = #{workflowStepId}</if>
+            <if test="stepType != null  and stepType != '' "> and wsn.step_type = #{stepType}</if>
+            <if test="deptId != null "> and wsn.dept_id = #{deptId}</if>
+            <if test="roleId != null "> and wsn.role_id = #{roleId}</if>
+            <if test="sortOrder != null "> and wsn.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and wsn.create_by = #{createBy}</if>
+            <if test="createTime != null "> and wsn.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and wsn.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and wsn.update_time = #{updateTime}</if>
+            <if test="remarks != null  and remarks != '' "> and wsn.remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectSysWorkflowStepNodeById" parameterType="Long" resultMap="SysWorkflowStepNodeResult">
+        <include refid="selectSysWorkflowStepNodebasicColums"/>
+        from sys_workflow_step_node wsn
+        where wsn.workflow_step_node_id = #{workflowStepNodeId}
+    </select>
+
+    <insert id="insertSysWorkflowStepNode" parameterType="com.xhkj.project.system.domain.SysWorkflowStepNode" useGeneratedKeys="true" keyProperty="workflowStepNodeId">
+        insert into sys_workflow_step_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workflowStepId != null  ">workflow_step_id,</if>
+            <if test="stepType != null  and stepType != ''  ">step_type,</if>
+            <if test="deptId != null  ">dept_id,</if>
+            <if test="roleId != null  ">role_id,</if>
+            <if test="sortOrder != null  ">sort_order,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workflowStepId != null  ">#{workflowStepId},</if>
+            <if test="stepType != null  and stepType != ''  ">#{stepType},</if>
+            <if test="deptId != null  ">#{deptId},</if>
+            <if test="roleId != null  ">#{roleId},</if>
+            <if test="sortOrder != null  ">#{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysWorkflowStepNode" parameterType="com.xhkj.project.system.domain.SysWorkflowStepNode">
+        update sys_workflow_step_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowStepId != null  ">workflow_step_id = #{workflowStepId},</if>
+            <if test="stepType != null  and stepType != ''  ">step_type = #{stepType},</if>
+            <if test="deptId != null  ">dept_id = #{deptId},</if>
+            <if test="roleId != null  ">role_id = #{roleId},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+        </trim>
+        where workflow_step_node_id = #{workflowStepNodeId}
+    </update>
+
+    <delete id="deleteSysWorkflowStepNodeById" parameterType="Long">
+        delete from sys_workflow_step_node where workflow_step_node_id = #{workflowStepNodeId}
+    </delete>
+
+    <delete id="deleteSysWorkflowStepNodeByIds" parameterType="String">
+        delete from sys_workflow_step_node where workflow_step_node_id in
+        <foreach item="workflowStepNodeId" collection="array" open="(" separator="," close=")">
+            #{workflowStepNodeId}
+        </foreach>
+    </delete>
+
+    <insert id="insertSysWorkflowStepNodeBatch" parameterType="java.util.List">
+        insert into sys_workflow_step_node ( workflow_step_node_id, workflow_step_id, step_type, dept_id, role_id, sort_order, create_by, create_time, update_by, update_time, remarks) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.workflowStepNodeId}, #{item.workflowStepId}, #{item.stepType}, #{item.deptId}, #{item.roleId}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remarks})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+
+    <delete id="deleteSysWorkflowStepNodeByStepId" parameterType="java.lang.Long">
+        delete from sys_workflow_step_node where workflow_step_id = #{workflowStepId}
+    </delete>
+
+    <select id="selectSysWorkflowStepNodesByStepId" parameterType="java.lang.Long" resultMap="SysWorkflowStepNodeResult">
+        <include refid="selectSysWorkflowStepNodebasicColums"/>
+        from sys_workflow_step_node wsn
+        where wsn.workflow_step_id = #{workflowStepId}
+    </select>
+
+    <select id="selectSysWorkflowStepNodeByStepId" parameterType="java.util.Map" resultMap="SysWorkflowStepNodeResult">
+        <include refid="selectSysWorkflowStepNodebasicColums"/>
+        from sys_workflow_step_node wsn
+        where wsn.workflow_step_id = #{workflowStepId}
+    </select>
+</mapper>

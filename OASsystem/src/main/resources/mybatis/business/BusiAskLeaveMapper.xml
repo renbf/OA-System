@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiAskLeaveMapper">
+
+
+    <sql id="selectBusiAskLeaveVo">
+        select leave_id, user_id, leave_type, leave_hours,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time from busi_ask_leave
+    </sql>
+
+    <sql id="selectBusiAskLeave">
+        select leave_id, user_id, leave_type, leave_hours,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time
+    </sql>
+
+
+    <select id="selectBusiAskLeaveById" parameterType="BusiAskLeave" resultType="long">
+        <include refid="selectBusiAskLeaveVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiAskLeaveList" parameterType="BusiAskLeave" resultType="com.xhkj.project.business.domain.BusiAskLeave">
+        <include refid="selectBusiAskLeave"/>
+        ,'2' as approval_Status
+        from busi_ask_leave
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="leaveReason != null and leaveReason != ''"> and leave_reason like  CONCAT('%',#{leaveReason},'%')</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="beginTime != null and beginTime != ''"> and leave_begin_time >= #{beginTime}</if>
+            <if test="endTime != null and endTime != ''"> and leave_end_time <![CDATA[ <= ]]> #{endTime} </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertBusiAskLeave" parameterType="BusiAskLeave" useGeneratedKeys="true" keyProperty="leaveId">
+        insert into busi_ask_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="leaveType != null  and leaveType != ''">leave_type,</if>
+            <if test="leaveHours != null  and leaveHours != ''">leave_hours,</if>
+            <if test="leaveDates != null  and leaveDates != ''">leave_dates,</if>
+            <if test="leaveReason != null  and leaveReason != ''">leave_reason,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="inPrjFlag != null  and inPrjFlag != ''">in_prj_flag,</if>
+            <if test="leavePrjName != null  and leavePrjName != ''">leave_prj_name,</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_Time,</if>
+            <if test="annLeaSurTime != null  and annLeaSurTime != ''">annLea_sur_Time,</if>
+            <if test="leaveBeginTime != null  and leaveBeginTime != ''">leave_begin_time,</if>
+            <if test="leaveEndTime != null  and leaveEndTime != ''">leave_end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="leaveType != null  and leaveType != ''">#{leaveType},</if>
+            <if test="leaveHours != null  and leaveHours != ''">#{leaveHours},</if>
+            <if test="leaveDates != null  and leaveDates != ''">#{leaveDates},</if>
+            <if test="leaveReason != null  and leaveReason != ''">#{leaveReason},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="inPrjFlag != null  and inPrjFlag != ''">#{inPrjFlag},</if>
+            <if test="leavePrjName != null  and leavePrjName != ''">#{leavePrjName},</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">#{overtimeSurTime},</if>
+            <if test="annLeaSurTime != null  and annLeaSurTime != ''">#{annLeaSurTime},</if>
+            <if test="leaveBeginTime != null  and leaveBeginTime != ''">#{leaveBeginTime},</if>
+            <if test="leaveEndTime != null  and leaveEndTime != ''">#{leaveEndTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiAskLeave" parameterType="BusiAskLeave">
+        update busi_ask_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="leaveType != null  and leaveType != ''">leave_type = #{leaveType},</if>
+            <if test="leaveHours != null  and leaveHours != ''">leave_hours = #{leaveHours},</if>
+            <if test="leaveDates != null  and leaveDates != ''">leave_dates = #{leaveDates},</if>
+            <if test="leaveReason != null  and leaveReason != ''">leave_reason = #{leaveReason},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_Time = #{overtimeSurTime},</if>
+            <if test="annLeaSurTime != null  and annLeaSurTime != ''">annLea_sur_Time = #{annLeaSurTime},</if>
+            <if test="leaveBeginTime != null  and leaveBeginTime != ''">leave_begin_time = #{leaveBeginTime},</if>
+            <if test="leaveEndTime != null  and leaveEndTime != ''">leave_end_time = #{leaveEndTime},</if>
+            leave_prj_name = #{leavePrjName},
+            in_prj_flag = #{inPrjFlag},
+        </trim>
+        where leave_id = #{leaveId}
+    </update>
+
+    <delete id="deleteBusiAskLeaveById" parameterType="Long">
+        delete from busi_ask_leave where leave_id = #{leaveId}
+    </delete>
+
+    <delete id="deleteBusiAskLeaveByIds" parameterType="String">
+        delete from busi_ask_leave where leave_id in 
+        <foreach item="leaveId" collection="array" open="(" separator="," close=")">
+            #{leaveId}
+        </foreach>
+    </delete>
+    
+</mapper>

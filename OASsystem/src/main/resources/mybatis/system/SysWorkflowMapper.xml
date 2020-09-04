@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.SysWorkflowMapper">
+
+    <resultMap type="com.xhkj.project.system.domain.SysWorkflow" id="SysWorkflowResult">
+        <result property="workflowId"    column="workflow_id"    />
+        <result property="workflowName"    column="workflow_name"    />
+        <result property="workflowGroupId"    column="workflow_group_id"    />
+        <result property="status"    column="status"    />
+        <result property="workflowNodeNum"    column="workflow_node_num"    />
+        <result property="workflowDesc"    column="workflow_desc"    />
+        <result property="shnepiLinkUrl"    column="shnepi_link_url"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="workflowStepNum"    column="workflow_step_num"    />
+    </resultMap>
+
+    <sql id="selectSysWorkflowbasicColums">
+        select w.workflow_id, w.workflow_name, w.workflow_group_id, w.status, w.workflow_node_num, w.workflow_desc, w.shnepi_link_url, w.sort_order, w.create_by, w.create_time, w.update_by, w.update_time, w.remarks
+    </sql>
+
+    <select id="selectSysWorkflowList" parameterType="com.xhkj.project.system.domain.SysWorkflow" resultMap="SysWorkflowResult">
+        <include refid="selectSysWorkflowbasicColums"/>
+        from sys_workflow w
+        <where>
+            <if test="workflowId != null "> and w.workflow_id = #{workflowId}</if>
+            <if test="workflowName != null  and workflowName != '' "> and w.workflow_name = #{workflowName}</if>
+            <if test="workflowGroupId != null "> and w.workflow_group_id = #{workflowGroupId}</if>
+            <if test="status != null  and status != '' "> and w.status = #{status}</if>
+            <if test="workflowNodeNum != null "> and w.workflow_node_num = #{workflowNodeNum}</if>
+            <if test="workflowDesc != null  and workflowDesc != '' "> and w.workflow_desc = #{workflowDesc}</if>
+            <if test="shnepiLinkUrl != null  and shnepiLinkUrl != '' "> and w.shnepi_link_url = #{shnepiLinkUrl}</if>
+            <if test="sortOrder != null "> and w.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and w.create_by = #{createBy}</if>
+            <if test="createTime != null "> and w.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and w.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and w.update_time = #{updateTime}</if>
+            <if test="remarks != null  and remarks != '' "> and w.remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectSysWorkflowById" parameterType="Long" resultMap="SysWorkflowResult">
+        <include refid="selectSysWorkflowbasicColums"/>
+        from sys_workflow w
+        where w.workflow_id = #{workflowId}
+    </select>
+
+    <insert id="insertSysWorkflow" parameterType="com.xhkj.project.system.domain.SysWorkflow" useGeneratedKeys="true" keyProperty="workflowId">
+        insert into sys_workflow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workflowName != null  and workflowName != ''  ">workflow_name,</if>
+            <if test="workflowGroupId != null  ">workflow_group_id,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="workflowNodeNum != null  ">workflow_node_num,</if>
+            <if test="workflowDesc != null  and workflowDesc != ''  ">workflow_desc,</if>
+            <if test="shnepiLinkUrl != null  and shnepiLinkUrl != ''  ">shnepi_link_url,</if>
+            <if test="sortOrder != null  ">sort_order,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workflowName != null  and workflowName != ''  ">#{workflowName},</if>
+            <if test="workflowGroupId != null  ">#{workflowGroupId},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="workflowNodeNum != null  ">#{workflowNodeNum},</if>
+            <if test="workflowDesc != null  and workflowDesc != ''  ">#{workflowDesc},</if>
+            <if test="shnepiLinkUrl != null  and shnepiLinkUrl != ''  ">#{shnepiLinkUrl},</if>
+            <if test="sortOrder != null  ">#{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysWorkflow" parameterType="com.xhkj.project.system.domain.SysWorkflow">
+        update sys_workflow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowName != null  and workflowName != ''  ">workflow_name = #{workflowName},</if>
+            <if test="workflowGroupId != null  ">workflow_group_id = #{workflowGroupId},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="workflowNodeNum != null  ">workflow_node_num = #{workflowNodeNum},</if>
+            <if test="workflowDesc != null  and workflowDesc != ''  ">workflow_desc = #{workflowDesc},</if>
+            <if test="shnepiLinkUrl != null  and shnepiLinkUrl != ''  ">shnepi_link_url = #{shnepiLinkUrl},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+        </trim>
+        where workflow_id = #{workflowId}
+    </update>
+
+    <delete id="deleteSysWorkflowById" parameterType="Long">
+        delete from sys_workflow where workflow_id = #{workflowId}
+    </delete>
+
+    <delete id="deleteSysWorkflowByIds" parameterType="String">
+        delete from sys_workflow where workflow_id in
+        <foreach item="workflowId" collection="array" open="(" separator="," close=")">
+            #{workflowId}
+        </foreach>
+    </delete>
+
+    <insert id="insertSysWorkflowBatch" parameterType="java.util.List">
+        insert into sys_workflow ( workflow_id, workflow_name, workflow_group_id, status, workflow_node_num, workflow_desc, shnepi_link_url, sort_order, create_by, create_time, update_by, update_time, remarks) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.workflowId}, #{item.workflowName}, #{item.workflowGroupId}, #{item.status}, #{item.workflowNodeNum}, #{item.workflowDesc}, #{item.shnepiLinkUrl}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remarks})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+
+    <select id="checkWorkBillIsUsed" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from workflow_bill b
+        where b.bill_status in ('0','1')
+        and exists (
+        select 1
+        from sys_workflow w
+        join sys_workflow_step ws on w.workflow_id = ws.workflow_id
+        join sys_workflow_step_node wsn on ws.workflow_step_id = wsn.workflow_step_id
+        join sys_workflow_node wn on wsn.workflow_step_node_id = wn.workflow_step_node_id
+        where 1=1
+        and w.workflow_id = #{workflowId}
+        and w.status = '1'
+        and wn.workflow_node_id = b.workflow_node_id)
+    </select>
+
+    <select id="checkWorkNodeIsUsed" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from workflow_bill b
+        where b.bill_status in ('0','1')
+        and b.workflow_node_id = #{workflowNodeId}
+    </select>
+
+    <select id="selectSysWorkflows" parameterType="com.xhkj.project.system.domain.SysWorkflow" resultMap="SysWorkflowResult">
+        <include refid="selectSysWorkflowbasicColums"/>
+        ,(select count(1) from sys_workflow_step ws where ws.workflow_id = w.workflow_id) workflow_step_num
+        from sys_workflow w
+        <where>
+            <if test="workflowId != null "> and w.workflow_id = #{workflowId}</if>
+            <if test="workflowName != null  and workflowName != '' "> and w.workflow_name like concat('%',#{workflowName},'%')</if>
+            <if test="workflowGroupId != null "> and w.workflow_group_id = #{workflowGroupId}</if>
+            <if test="status != null  and status != '' "> and w.status = #{status}</if>
+            <if test="workflowNodeNum != null "> and w.workflow_node_num = #{workflowNodeNum}</if>
+            <if test="workflowDesc != null  and workflowDesc != '' "> and w.workflow_desc = #{workflowDesc}</if>
+            <if test="shnepiLinkUrl != null  and shnepiLinkUrl != '' "> and w.shnepi_link_url = #{shnepiLinkUrl}</if>
+            <if test="sortOrder != null "> and w.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and w.create_by = #{createBy}</if>
+            <if test="createTime != null "> and w.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and w.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and w.update_time = #{updateTime}</if>
+            <if test="remarks != null  and remarks != '' "> and w.remarks = #{remarks}</if>
+        </where>
+        order by w.create_time
+    </select>
+</mapper>

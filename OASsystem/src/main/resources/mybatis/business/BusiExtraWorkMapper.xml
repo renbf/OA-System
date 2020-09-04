@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiExtraWorkMapper">
+    
+
+    <sql id="selectBusiExtraWorkVo">
+        select
+        extra_work_id,
+        user_id,
+        extra_work_hours,
+        extra_work_dates,
+        extra_work_Reason,
+        dept_Id,
+        extra_work_Prj_Name,
+        in_prj_flag,
+        overtime_sur_time,
+        create_by, create_Time, update_by, update_Time, remark from busi_extra_work
+    </sql>
+
+    <select id="selectBusiExtraWorkList" parameterType="com.xhkj.project.business.domain.BusiExtraWork" resultType="com.xhkj.project.business.domain.BusiExtraWork">
+        select
+        extra_work_id,
+        user_id,
+        extra_work_hours,
+        extra_work_dates,
+        extra_work_Reason,
+        dept_Id,
+        extra_work_Prj_Name,
+        in_prj_flag,
+        overtime_sur_time,
+        '2' as approval_Status,
+        create_by, create_Time, update_by, update_Time, remark
+        from busi_extra_work
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiExtraWorkById" parameterType="Long" resultType="com.xhkj.project.business.domain.BusiExtraWork">
+        <include refid="selectBusiExtraWorkVo"/>
+        where extra_work_id = #{extraWorkId}
+    </select>
+        
+    <insert id="insertBusiExtraWork" parameterType="com.xhkj.project.business.domain.BusiExtraWork" useGeneratedKeys="true" keyProperty="extraWorkId">
+        insert into busi_extra_work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="extraWorkHours != null ">extra_work_hours,</if>
+            <if test="extraWorkDates != null ">extra_work_dates,</if>
+            <if test="extraWorkReason != null ">extra_work_Reason,</if>
+            <if test="deptId != null ">dept_Id,</if>
+            <if test="extraWorkPrjName != null ">extra_work_Prj_Name,</if>
+            <if test="inPrjFlag != null ">in_prj_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="extraWorkHours != null ">#{extraWorkHours},</if>
+            <if test="extraWorkDates != null ">#{extraWorkDates},</if>
+            <if test="extraWorkReason != null ">#{extraWorkReason},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="extraWorkPrjName != null ">#{extraWorkPrjName},</if>
+            <if test="inPrjFlag != null ">#{inPrjFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">#{overtimeSurTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiExtraWork" parameterType="com.xhkj.project.business.domain.BusiExtraWork">
+        update busi_extra_work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="extraWorkHours != null ">extra_work_hours = #{extraWorkHours},</if>
+            <if test="extraWorkReason != null ">extra_work_Reason = #{extraWorkReason},</if>
+            <if test="deptId != null ">dept_Id = #{deptId},</if>
+            <if test="extraWorkPrjName != null ">extra_work_Prj_Name = #{extraWorkPrjName},</if>
+            <if test="inPrjFlag != null ">in_prj_flag = #{inPrjFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_time = #{overtimeSurTime},</if>
+        </trim>
+        where extra_work_id = #{extraWorkId}
+    </update>
+
+    <delete id="deleteBusiExtraWorkById" parameterType="Long">
+        delete from busi_extra_work where extra_work_id = #{extraWorkId}
+    </delete>
+
+    <delete id="deleteBusiExtraWorkByIds" parameterType="String">
+        delete from busi_extra_work where extra_work_id in 
+        <foreach item="extraWorkId" collection="array" open="(" separator="," close=")">
+            #{extraWorkId}
+        </foreach>
+    </delete>
+    
+</mapper>

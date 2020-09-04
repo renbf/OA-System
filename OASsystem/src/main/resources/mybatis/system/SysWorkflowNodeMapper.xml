@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.SysWorkflowNodeMapper">
+
+    <resultMap type="com.xhkj.project.system.domain.SysWorkflowNode" id="SysWorkflowNodeResult">
+        <result property="workflowNodeId"    column="workflow_node_id"    />
+        <result property="workflowStepNodeId"    column="workflow_step_node_id"    />
+        <result property="workflowNodeName"    column="workflow_node_name"    />
+        <result property="workflowNodeCheckerType"    column="workflow_node_checker_type"    />
+        <result property="workflowNodeCheckType"    column="workflow_node_check_type"    />
+        <result property="isMessage"    column="is_message"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remarks"    column="remarks"    />
+        <collection property="sysWorkflowNodeCheckers" ofType="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.SysWorkflowNodeCheckerResult" column="workflow_step_node_id" select="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.getSysWorkflowNodeCheckersByWorkflowNodeId"></collection>
+    </resultMap>
+
+    <sql id="selectSysWorkflowNodebasicColums">
+        select wn.workflow_node_id, wn.workflow_step_node_id, wn.workflow_node_name, wn.workflow_node_checker_type, wn.workflow_node_check_type, wn.is_message, wn.sort_order, wn.create_by, wn.create_time, wn.update_by, wn.update_time, wn.remarks
+    </sql>
+
+    <select id="selectSysWorkflowNodeList" parameterType="com.xhkj.project.system.domain.SysWorkflowNode" resultMap="SysWorkflowNodeResult">
+        <include refid="selectSysWorkflowNodebasicColums"/>
+        from sys_workflow_node wn
+        <where>
+            <if test="workflowNodeId != null "> and wn.workflow_node_id = #{workflowNodeId}</if>
+            <if test="workflowStepNodeId != null "> and wn.workflow_step_node_id = #{workflowStepNodeId}</if>
+            <if test="workflowNodeName != null  and workflowNodeName != '' "> and wn.workflow_node_name = #{workflowNodeName}</if>
+            <if test="workflowNodeCheckerType != null  and workflowNodeCheckerType != '' "> and wn.workflow_node_checker_type = #{workflowNodeCheckerType}</if>
+            <if test="workflowNodeCheckType != null  and workflowNodeCheckType != '' "> and wn.workflow_node_check_type = #{workflowNodeCheckType}</if>
+            <if test="isMessage != null  and isMessage != '' "> and wn.is_message = #{isMessage}</if>
+            <if test="sortOrder != null "> and wn.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and wn.create_by = #{createBy}</if>
+            <if test="createTime != null "> and wn.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and wn.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and wn.update_time = #{updateTime}</if>
+            <if test="remarks != null  and remarks != '' "> and wn.remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectSysWorkflowNodeById" parameterType="Long" resultMap="SysWorkflowNodeResult">
+        <include refid="selectSysWorkflowNodebasicColums"/>
+        from sys_workflow_node wn
+        where wn.workflow_node_id = #{workflowNodeId}
+    </select>
+
+    <insert id="insertSysWorkflowNode" parameterType="com.xhkj.project.system.domain.SysWorkflowNode" useGeneratedKeys="true" keyProperty="workflowNodeId">
+        insert into sys_workflow_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workflowStepNodeId != null  ">workflow_step_node_id,</if>
+            <if test="workflowNodeName != null  and workflowNodeName != ''  ">workflow_node_name,</if>
+            <if test="workflowNodeCheckerType != null  and workflowNodeCheckerType != ''  ">workflow_node_checker_type,</if>
+            <if test="workflowNodeCheckType != null  and workflowNodeCheckType != ''  ">workflow_node_check_type,</if>
+            <if test="isMessage != null  and isMessage != ''  ">is_message,</if>
+            <if test="sortOrder != null  ">sort_order,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workflowStepNodeId != null  ">#{workflowStepNodeId},</if>
+            <if test="workflowNodeName != null  and workflowNodeName != ''  ">#{workflowNodeName},</if>
+            <if test="workflowNodeCheckerType != null  and workflowNodeCheckerType != ''  ">#{workflowNodeCheckerType},</if>
+            <if test="workflowNodeCheckType != null  and workflowNodeCheckType != ''  ">#{workflowNodeCheckType},</if>
+            <if test="isMessage != null  and isMessage != ''  ">#{isMessage},</if>
+            <if test="sortOrder != null  ">#{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysWorkflowNode" parameterType="com.xhkj.project.system.domain.SysWorkflowNode">
+        update sys_workflow_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowStepNodeId != null  ">workflow_step_node_id = #{workflowStepNodeId},</if>
+            <if test="workflowNodeName != null  and workflowNodeName != ''  ">workflow_node_name = #{workflowNodeName},</if>
+            <if test="workflowNodeCheckerType != null  and workflowNodeCheckerType != ''  ">workflow_node_checker_type = #{workflowNodeCheckerType},</if>
+            <if test="workflowNodeCheckType != null  and workflowNodeCheckType != ''  ">workflow_node_check_type = #{workflowNodeCheckType},</if>
+            <if test="isMessage != null  and isMessage != ''  ">is_message = #{isMessage},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+        </trim>
+        where workflow_node_id = #{workflowNodeId}
+    </update>
+
+    <delete id="deleteSysWorkflowNodeById" parameterType="Long">
+        delete from sys_workflow_node where workflow_node_id = #{workflowNodeId}
+    </delete>
+
+    <delete id="deleteSysWorkflowNodeByIds" parameterType="String">
+        delete from sys_workflow_node where workflow_node_id in
+        <foreach item="workflowNodeId" collection="array" open="(" separator="," close=")">
+            #{workflowNodeId}
+        </foreach>
+    </delete>
+
+    <insert id="insertSysWorkflowNodeBatch" parameterType="java.util.List">
+        insert into sys_workflow_node ( workflow_node_id, workflow_step_node_id, workflow_node_name, workflow_node_checker_type, workflow_node_check_type, is_message, sort_order, create_by, create_time, update_by, update_time, remarks) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.workflowNodeId}, #{item.workflowStepNodeId}, #{item.workflowNodeName}, #{item.workflowNodeCheckerType}, #{item.workflowNodeCheckType}, #{item.isMessage}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remarks})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+
+    <select id="selectSysWorkflowNodesByStepNodeId" parameterType="java.lang.Long" resultMap="SysWorkflowNodeResult">
+        <include refid="selectSysWorkflowNodebasicColums"/>
+        from sys_workflow_node wn
+        where wn.workflow_step_node_id = #{workflowStepNodeId}
+    </select>
+
+    <select id="selectNextSysWorkflowNodeBySortOrder" parameterType="java.util.Map" resultMap="SysWorkflowNodeResult">
+        <include refid="selectSysWorkflowNodebasicColums"/>
+        from sys_workflow_node wn
+        where wn.workflow_step_node_id = #{workflowStepNodeId}
+        and wn.sort_order > #{sortOrder}
+        order by wn.sort_order asc
+        limit 0,1
+    </select>
+
+    <select id="selectUpSysWorkflowNodeBySortOrder" parameterType="java.util.Map" resultMap="SysWorkflowNodeResult">
+        <include refid="selectSysWorkflowNodebasicColums"/>
+        from sys_workflow_node wn
+        where wn.workflow_step_node_id = #{workflowStepNodeId}
+        and wn.sort_order <![CDATA[ < ]]> #{sortOrder}
+        order by wn.sort_order desc
+        limit 0,1
+    </select>
+</mapper>

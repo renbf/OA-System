@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.SysChildRoleDeptMapper">
+    
+    <resultMap type="com.xhkj.project.system.domain.SysChildRoleDept" id="SysChildRoleDeptResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectSysChildRoleDeptVo">
+        select role_id, dept_id
+    </sql>
+
+    <select id="selectSysChildRoleDeptList" parameterType="com.xhkj.project.system.domain.SysChildRoleDept" resultMap="SysChildRoleDeptResult">
+        <include refid="selectSysChildRoleDeptVo"/>
+        from sys_child_role_dept
+        <where>
+        </where>
+    </select>
+
+    <select id="selectSysChildRoleDeptById" parameterType="Long" resultMap="SysChildRoleDeptResult">
+        <include refid="selectSysChildRoleDeptVo"/>
+        from sys_child_role_dept
+        where role_id = #{roleId}
+    </select>
+        
+    <insert id="insertSysChildRoleDept" parameterType="com.xhkj.project.system.domain.SysChildRoleDept">
+        insert into sys_child_role_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null ">role_id,</if>
+            <if test="deptId != null ">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null ">#{roleId},</if>
+            <if test="deptId != null ">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysChildRoleDept" parameterType="com.xhkj.project.system.domain.SysChildRoleDept">
+        update sys_child_role_dept
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteSysChildRoleDeptById" parameterType="Long">
+        delete from sys_child_role_dept where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteSysChildRoleDeptByIds" parameterType="String">
+        delete from sys_child_role_dept where role_id in 
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <insert id="insertSysChildRoleDeptBatch" parameterType="java.util.List" >
+        insert into sys_child_role_dept ( role_id, dept_id) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

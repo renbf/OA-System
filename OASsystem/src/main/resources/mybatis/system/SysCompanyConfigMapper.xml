@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.SysCompanyConfigMapper">
+    
+
+    <sql id="selectSysCompanyConfigVo">
+        select company_config_id, com_config_name, com_config_key, com_config_value, create_by, create_time, update_by, update_time, remark from sys_company_config
+    </sql>
+
+    <select id="selectSysCompanyConfigList" parameterType="SysCompanyConfig" resultType="SysCompanyConfig">
+        <include refid="selectSysCompanyConfigVo"/>
+        <where>
+            <if test="comConfigName != null and comConfigName != ''"> and com_config_name = #{enableStatus}</if>
+            <if test="comConfigKey != null and comConfigKey != ''"> and com_config_key = #{amStartDate}</if>
+            <if test="comConfigValue != null and comConfigValue != ''"> and com_config_value = #{amEndDate}</if>
+        </where>
+    </select>
+
+    <select id="selectSysCompanyConfigById" parameterType="Long" resultType="SysCompanyConfig">
+        <include refid="selectSysCompanyConfigVo"/>
+        where company_config_id = #{companyConfigId}
+    </select>
+
+    <insert id="insertSysCompanyConfig" parameterType="SysCompanyConfig" useGeneratedKeys="true" keyProperty="companyConfigId">
+        insert into sys_company_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="comConfigName != null and comConfigName != ''">com_config_name,</if>
+            <if test="comConfigKey != null and comConfigKey != ''">com_config_key,</if>
+            <if test="comConfigValue != null and comConfigValue != ''">com_config_value,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="comConfigName != null and comConfigName != ''">#{enableStatus},</if>
+            <if test="comConfigKey != null and comConfigKey != ''">#{amStartDate},</if>
+            <if test="comConfigValue != null and comConfigValue != ''">#{amEndDate},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCompanyConfig" parameterType="SysCompanyConfig">
+        update sys_company_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="comConfigName != null and comConfigName != ''">com_config_name = #{comConfigName},</if>
+            <if test="comConfigKey != null and comConfigKey != ''">com_config_key = #{comConfigKey},</if>
+            <if test="comConfigValue != null and comConfigValue != ''">com_config_value = #{comConfigValue},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where company_config_id = #{companyConfigId}
+    </update>
+
+    <delete id="deleteSysCompanyConfigById" parameterType="Long">
+        delete from sys_company_config where company_config_id = #{companyConfigId}
+    </delete>
+
+    <delete id="deleteSysCompanyConfigByIds" parameterType="String">
+        delete from sys_company_config where company_config_id in
+        <foreach item="companyConfigId" collection="array" open="(" separator="," close=")">
+            #{companyConfigId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSysCompanyConfig" parameterType="Long">
+        delete from sys_company_config
+    </delete>
+
+    <insert id="addComConfigList" parameterType="java.util.List">
+        insert into sys_company_config (com_config_name,com_config_key,com_config_value,create_by,create_time,update_by,update_time,remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.comConfigName}, #{item.comConfigKey},#{item.comConfigValue},#{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+
+
+    <select id="selectSysCompanyConfig" parameterType="com.xhkj.project.system.domain.SysCompanyConfig" resultType="com.xhkj.project.system.domain.SysCompanyConfig">
+        <include refid="selectSysCompanyConfigVo"/>
+        <where>
+            <if test="comConfigKey != null and comConfigKey != ''">com_config_key = #{comConfigKey}</if>
+        </where>
+    </select>
+    
+</mapper>

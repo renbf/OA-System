@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.WorkflowBillMapper">
+
+    <resultMap type="com.xhkj.project.system.domain.WorkflowBill" id="WorkflowBillResult">
+        <result property="billId"    column="bill_id"    />
+        <result property="workflowId"    column="workflow_id"    />
+        <result property="workflowName"    column="workflow_name"    />
+        <result property="workflowGroupId"    column="workflow_group_id"    />
+        <result property="workflowStepId"    column="workflow_step_id"    />
+        <result property="workflowStepNodeId"    column="workflow_step_node_id"    />
+        <result property="workflowNodeId"    column="workflow_node_id"    />
+        <result property="billStatus"    column="bill_status"    />
+        <result property="orginHandler"    column="orgin_handler"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectWorkflowBillbasicColums">
+        select b.bill_id, b.workflow_id, b.workflow_name, b.workflow_group_id, b.workflow_step_id, b.workflow_step_node_id, b.workflow_node_id, b.bill_status, b.orgin_handler, b.sort_order, b.create_by, b.create_time, b.update_by, b.update_time, b.remarks
+    </sql>
+
+    <select id="selectWorkflowBillList" parameterType="com.xhkj.project.system.domain.WorkflowBill" resultMap="WorkflowBillResult">
+        <include refid="selectWorkflowBillbasicColums"/>
+        from workflow_bill b
+        <where>
+            <if test="billId != null "> and b.bill_id = #{billId}</if>
+            <if test="workflowId != null "> and b.workflow_id = #{workflowId}</if>
+            <if test="workflowName != null  and workflowName != '' "> and b.workflow_name = #{workflowName}</if>
+            <if test="workflowGroupId != null "> and b.workflow_group_id = #{workflowGroupId}</if>
+            <if test="workflowStepId != null "> and b.workflow_step_id = #{workflowStepId}</if>
+            <if test="workflowStepNodeId != null "> and b.workflow_step_node_id = #{workflowStepNodeId}</if>
+            <if test="workflowNodeId != null "> and b.workflow_node_id = #{workflowNodeId}</if>
+            <if test="billStatus != null  and billStatus != '' "> and b.bill_status = #{billStatus}</if>
+            <if test="orginHandler != null  and orginHandler != '' "> and b.orgin_handler = #{orginHandler}</if>
+            <if test="sortOrder != null "> and b.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and b.create_by = #{createBy}</if>
+            <if test="createTime != null "> and b.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and b.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and b.update_time = #{updateTime}</if>
+            <if test="remarks != null  and remarks != '' "> and b.remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectWorkflowBillById" parameterType="Long" resultMap="WorkflowBillResult">
+        <include refid="selectWorkflowBillbasicColums"/>
+        from workflow_bill b
+        where b.bill_id = #{billId}
+    </select>
+
+    <insert id="insertWorkflowBill" parameterType="com.xhkj.project.system.domain.WorkflowBill">
+        insert into workflow_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billId != null  ">bill_id,</if>
+            <if test="workflowId != null  ">workflow_id,</if>
+            <if test="workflowName != null  and workflowName != ''  ">workflow_name,</if>
+            <if test="workflowGroupId != null  ">workflow_group_id,</if>
+            <if test="workflowStepId != null  ">workflow_step_id,</if>
+            <if test="workflowStepNodeId != null  ">workflow_step_node_id,</if>
+            <if test="workflowNodeId != null  ">workflow_node_id,</if>
+            <if test="billStatus != null  and billStatus != ''  ">bill_status,</if>
+            <if test="orginHandler != null  and orginHandler != ''  ">orgin_handler,</if>
+            <if test="sortOrder != null  ">sort_order,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billId != null  ">#{billId},</if>
+            <if test="workflowId != null  ">#{workflowId},</if>
+            <if test="workflowName != null  and workflowName != ''  ">#{workflowName},</if>
+            <if test="workflowGroupId != null  ">#{workflowGroupId},</if>
+            <if test="workflowStepId != null  ">#{workflowStepId},</if>
+            <if test="workflowStepNodeId != null  ">#{workflowStepNodeId},</if>
+            <if test="workflowNodeId != null  ">#{workflowNodeId},</if>
+            <if test="billStatus != null  and billStatus != ''  ">#{billStatus},</if>
+            <if test="orginHandler != null  and orginHandler != ''  ">#{orginHandler},</if>
+            <if test="sortOrder != null  ">#{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateWorkflowBill" parameterType="com.xhkj.project.system.domain.WorkflowBill">
+        update workflow_bill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowId != null  ">workflow_id = #{workflowId},</if>
+            <if test="workflowName != null  and workflowName != ''  ">workflow_name = #{workflowName},</if>
+            <if test="workflowGroupId != null  ">workflow_group_id = #{workflowGroupId},</if>
+            <if test="workflowStepId != null  ">workflow_step_id = #{workflowStepId},</if>
+            <if test="workflowStepNodeId != null  ">workflow_step_node_id = #{workflowStepNodeId},</if>
+            <if test="workflowNodeId != null  ">workflow_node_id = #{workflowNodeId},</if>
+            <if test="billStatus != null  and billStatus != ''  ">bill_status = #{billStatus},</if>
+            <if test="orginHandler != null  and orginHandler != ''  ">orgin_handler = #{orginHandler},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+        </trim>
+        where bill_id = #{billId}
+    </update>
+
+    <delete id="deleteWorkflowBillById" parameterType="Long">
+        delete from workflow_bill where bill_id = #{billId}
+    </delete>
+
+    <delete id="deleteWorkflowBillByIds" parameterType="String">
+        delete from workflow_bill where bill_id in
+        <foreach item="billId" collection="array" open="(" separator="," close=")">
+            #{billId}
+        </foreach>
+    </delete>
+
+    <insert id="insertWorkflowBillBatch" parameterType="java.util.List" >
+        insert into workflow_bill ( bill_id, workflow_id, workflow_name, workflow_group_id, workflow_step_id, workflow_step_node_id, workflow_node_id, bill_status, orgin_handler, sort_order, create_by, create_time, update_by, update_time, remarks) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.billId}, #{item.workflowId}, #{item.workflowName}, #{item.workflowGroupId}, #{item.workflowStepId}, #{item.workflowStepNodeId}, #{item.workflowNodeId}, #{item.billStatus}, #{item.orginHandler}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remarks})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    <select id="selectWorkflowBillByKey" parameterType="java.util.Map" resultMap="WorkflowBillResult">
+        <include refid="selectWorkflowBillbasicColums"/>
+        from workflow_bill b
+        where b.bill_id = #{billId} and b.workflow_id = #{workflowId}
+    </select>
+
+    <select id="selectNextNode" parameterType="java.util.Map" resultMap="WorkflowBillResult">
+        select w.workflow_id,w.workflow_name,w.workflow_group_id,ws.workflow_step_id,wsn.workflow_step_node_id,wn.workflow_node_id
+        from sys_workflow w
+        join sys_workflow_step ws on w.workflow_id = ws.workflow_id
+        join sys_workflow_step_node wsn on ws.workflow_step_id = wsn.workflow_step_id
+        join sys_workflow_node wn on wn.workflow_step_node_id = wsn.workflow_step_node_id
+        <if test="workflowNodeId != null  and workflowNodeId != '' ">
+            join (select ws.sort_order setp_sort_order,wn.sort_order node_sort_order
+            from sys_workflow_step ws
+            join sys_workflow_step_node wsn on ws.workflow_step_id = wsn.workflow_step_id
+            join sys_workflow_node wn on wn.workflow_step_node_id = wsn.workflow_step_node_id
+            where wn.workflow_node_id = #{workflowNodeId}) a on 1=1
+        </if>
+        where w.workflow_id = #{workflowId}
+        <if test="workflowNodeId != null  and workflowNodeId != '' ">
+            and ((ws.sort_order = a.setp_sort_order and wn.sort_order > a.node_sort_order) or (ws.sort_order > a.setp_sort_order))
+        </if>
+        order by ws.sort_order,wn.sort_order limit 1
+    </select>
+
+    <update id="updateWorkflowBillByKey" parameterType="com.xhkj.project.system.domain.WorkflowBill">
+        update workflow_bill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowName != null  and workflowName != ''  ">workflow_name = #{workflowName},</if>
+            <if test="workflowGroupId != null  ">workflow_group_id = #{workflowGroupId},</if>
+            <if test="workflowStepId != null  ">workflow_step_id = #{workflowStepId},</if>
+            <if test="workflowStepNodeId != null  ">workflow_step_node_id = #{workflowStepNodeId},</if>
+            <if test="workflowNodeId != null  ">workflow_node_id = #{workflowNodeId},</if>
+            <if test="billStatus != null  and billStatus != ''  ">bill_status = #{billStatus},</if>
+            <if test="orginHandler != null  and orginHandler != ''  ">orgin_handler = #{orginHandler},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+        </trim>
+        where bill_id = #{billId} and workflow_id = #{workflowId}
+    </update>
+
+</mapper>
