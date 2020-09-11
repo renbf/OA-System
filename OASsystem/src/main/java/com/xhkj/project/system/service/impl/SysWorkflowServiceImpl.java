@@ -435,13 +435,18 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
             String username = loginUser.getUsername();
             Long workflowStepNodeId = sysWorkflowNodeVo.getWorkflowStepNodeId();
             String workflowNodeName = sysWorkflowNodeVo.getWorkflowNodeName();
+            String workflowNodeCheckerType = sysWorkflowNodeVo.getWorkflowNodeCheckerType();
+            Integer sortOrder = sysWorkflowNodeVo.getSortOrder();
             SysWorkflowNode sysWorkflowNode = new SysWorkflowNode();
             sysWorkflowNode.setWorkflowStepNodeId(workflowStepNodeId);
-            sysWorkflowNode.setWorkflowNodeCheckerType("2");
+            sysWorkflowNode.setWorkflowNodeCheckerType(workflowNodeCheckerType);
             sysWorkflowNode.setWorkflowNodeCheckType("3");
             sysWorkflowNode.setWorkflowNodeName(workflowNodeName);
+            sysWorkflowNode.setIsMessage("0");
+            sysWorkflowNode.setSortOrder(sortOrder + 1);
             sysWorkflowNode.setCreateBy(username);
             sysWorkflowNode.setCreateTime(now);
+            sysWorkflowNode.setUpdateTime(now);
             sysWorkflowNodeMapper.insertSysWorkflowNode(sysWorkflowNode);
             Long workflowNodeId = sysWorkflowNode.getWorkflowNodeId();
             //指定人员
@@ -451,7 +456,7 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                 SysWorkflowNodeChecker sysWorkflowNodeChecker = new SysWorkflowNodeChecker();
                 sysWorkflowNodeChecker.setWorkflowNodeId(workflowNodeId);
                 sysWorkflowNodeChecker.setWorkflowNodeName(workflowNodeName);
-                sysWorkflowNodeChecker.setWorkflowNodeCheckerType("2");
+                sysWorkflowNodeChecker.setWorkflowNodeCheckerType(workflowNodeCheckerType);
                 sysWorkflowNodeChecker.setWorkflowNodeUserId(workflowNodeUserId);
                 sysWorkflowNodeChecker.setWorkflowNodeUserName(sysUser.getNickName());
                 sysWorkflowNodeChecker.setCreateBy(username);
@@ -548,7 +553,8 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
             if(Objects.isNull(sysWorkflowNode)){
                 return AjaxResult.error("流程节点为空");
             }
-            if (sysWorkflowNode.getSortOrder() == 1) {
+            Integer sortOrder = sysWorkflowNode.getSortOrder();
+            if (sortOrder == 1) {
                 return AjaxResult.error("第一个流程节点不能删除");
             }
             int count = sysWorkflowMapper.checkWorkNodeIsUsed(workflowNodeId);
@@ -557,6 +563,9 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
             }
             sysWorkflowNodeMapper.deleteSysWorkflowNodeById(workflowNodeId);
             sysWorkflowNodeCheckerMapper.deleteSysWorkflowNodeCheckerByNodeId(workflowNodeId);
+            sysWorkflowNode.setUpdateTime(now);
+            sysWorkflowNode.setUpdateBy(username);
+            sysWorkflowNodeMapper.updateSysWorkflowNodeNextSort(sysWorkflowNode);
             return AjaxResult.success();
         } catch (Exception e) {
             log.error("删除流程节点异常",e);
@@ -646,6 +655,12 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
     public AjaxResult workflowStepList(Long workflowId) {
         List<SysWorkflowStepVo> sysWorkflowStepVos = sysWorkflowStepMapper.selectSysWorkflowStepVosByWorkflowId(workflowId);
         return AjaxResult.success(sysWorkflowStepVos);
+    }
+
+    @Override
+    public AjaxResult getSysWorkflowNodes(Long workflowStepNodeId) {
+        List<SysWorkflowNode> sysWorkflowNodes = sysWorkflowNodeMapper.selectSysWorkflowNodesByStepNodeId(workflowStepNodeId);
+        return AjaxResult.success(sysWorkflowNodes);
     }
 
     @Override
