@@ -3,14 +3,14 @@
     <el-row :gutter="300">
       <el-form ref="form" :model="form" :rules="rules" size="medium" label-width="100px">
         <el-col :span="24">
-          <el-form-item label-width="120px" label="上午上班时间" prop="amWorkDate">
+          <el-form-item label-width="120px" label="上午起止时间" prop="amWorkDate">
             <el-time-picker v-model="form.amWorkDate" is-range format="HH:mm" value-format="HH:mm"
                             :style="{width: '30%'}" start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
                             clearable @change="dateChange"></el-time-picker>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label-width="120px" label="下午上班时间" prop="pmWorkDate">
+          <el-form-item label-width="120px" label="下午起止时间" prop="pmWorkDate">
             <el-time-picker v-model="form.pmWorkDate" is-range format="HH:mm" value-format="HH:mm"
                             :style="{width: '30%'}" start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
                             clearable @change="dateChange"></el-time-picker>
@@ -79,13 +79,13 @@
           amWorkDate: [{
             required: true,
             type: 'array',
-            message: '请选择上午上班时间',
+            message: '请选择上午起止时间',
             trigger: 'change'
           }],
           pmWorkDate: [{
             required: true,
             type: 'array',
-            message: '请选择下午上班时间',
+            message: '请选择下午起止时间',
             trigger: 'change'
           }],
           workHourTotal: [{
@@ -158,8 +158,8 @@
 
           const paramArray = [];
           //组装数据
-          paramArray.push({comConfigName: '上午上班时间',comConfigKey: 'amWorkDate',comConfigValue: amWorkDateStr})
-          paramArray.push({comConfigName: '下午上班时间',comConfigKey: 'pmWorkDate',comConfigValue: pmWorkDateStr})
+          paramArray.push({comConfigName: '上午起止时间',comConfigKey: 'amWorkDate',comConfigValue: amWorkDateStr})
+          paramArray.push({comConfigName: '下午起止时间',comConfigKey: 'pmWorkDate',comConfigValue: pmWorkDateStr})
           paramArray.push({comConfigName: '总工时',comConfigKey: 'workHourTotal',comConfigValue: this.form.workHourTotal})
           paramArray.push({comConfigName: '加班工时单位',comConfigKey: 'workHourUnit',comConfigValue: this.form.workHourUnit})
           paramArray.push({comConfigName: '晚上加班时间段',comConfigKey: 'overPeriod',comConfigValue: overPeriodStr})
