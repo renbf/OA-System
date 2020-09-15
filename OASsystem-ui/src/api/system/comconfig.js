@@ -61,6 +61,15 @@ export function addComConfigList(data) {
   })
 }
 
+// 批量更新
+export function updateComConfigList(data) {
+  return request({
+    url: '/system/comConfig/updateComConfigList',
+    method: 'post',
+    data: data
+  })
+}
+
 //根据key获取值
 export function getComConfigInfo(data) {
   return request({

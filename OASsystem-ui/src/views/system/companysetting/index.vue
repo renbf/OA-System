@@ -47,7 +47,7 @@
               工作时长
             </p>
             <p>
-              <b style="font-size:28px;">08</b>小时
+              <b style="font-size:28px;">{{this.workduringForm.workduring}}</b>小时
             </p>
           </div>
         </el-card>
@@ -159,10 +159,10 @@
     </el-dialog>
 <!--    设置每日工作时长-->
     <el-dialog title="设置每日工作时长" :visible.sync="workduringopen"  width="600px">
-      <el-form ref="form" :model="workduringForm" :rules="workduringrule" label-width="80px">
+      <el-form ref="form" :model="workduringForm" label-width="80px">
         <el-row>
           <el-form-item label="工作时长" prop="workduring">
-            <el-input v-model="workduringForm.workduring" aria-placeholder="请输入每日工作时长"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /小时 </i></el-input>
+            <el-input readonly v-model="workduringForm.workduring" aria-placeholder="请输入每日工作时长"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /小时 </i></el-input>
           </el-form-item>
         </el-row>
       </el-form>
@@ -176,10 +176,10 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>
-      </div>
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--        <el-button @click="cancel">取 消</el-button>-->
+<!--        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>-->
+<!--      </div>-->
     </el-dialog>
 
 <!--    设置年休假天数-->
@@ -243,7 +243,7 @@
 
   // 新增
   import { addtime ,addDuringtime,addyeartime,addleave} from "@/api/system/companysetting";
-  import { listComConfig, addComConfigList,addComConfig } from "@/api/system/comconfig";
+  import { listComConfig, addComConfigList,addComConfig,updateComConfigList  } from "@/api/system/comconfig";
   import { toHourDifference } from '@/utils/common'
 
   export default {
@@ -296,6 +296,8 @@
         },
         beginSr: '08:30',
         endSr: '17:30',
+        beginId: '',
+        endId: '',
         // 工作时间设置注意事项
         matters_needing_attention:'',
         // 每日工作时间验证
@@ -312,11 +314,6 @@
         workduring_attention:'',
         workduringForm:{
           workduring:""
-        },
-        workduringrule:{
-          workduring: [
-            { required: true, message: "工作时长", trigger: "blur" }
-          ]
         },
 
         // 设置年休假天数
@@ -367,15 +364,21 @@
               let begintimeArrary = eval(item.comConfigValue)
               this.worktimeForm.begintime = begintimeArrary
               this.beginSr = begintimeArrary[0]
+              this.beginId = item.comConfigId;
             }
             if(Object.is(item.comConfigKey,'endtime')){
               let endtimeArrary = eval(item.comConfigValue)
               this.worktimeForm.endtime = endtimeArrary
               this.endSr = endtimeArrary[1]
+              this.endId = item.comConfigId;
             }
 
           })
         })
+
+        let amhours = toHourDifference(this.worktimeForm.begintime[0],this.worktimeForm.begintime[1]);
+        let pmhours = toHourDifference(this.worktimeForm.endtime[0],this.worktimeForm.endtime[1]);
+        this.workduringForm.workduring = amhours+pmhours
       },
 
       reset() {
@@ -392,7 +395,8 @@
 
       // 点击新增每日工作
       worktimeadd(){
-        this.reset();
+        //this.reset();
+        this.getList();
         this.worktimeopen=true
       },
       // 提交每日工作时间表单
@@ -401,9 +405,11 @@
 
           if (valid) {
             const paramArray = [];
-            paramArray.push({comConfigName: '上午上班时间',comConfigKey: 'begintime',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
-            paramArray.push({comConfigName: '下午上班时间',comConfigKey: 'endtime',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
-            addComConfigList(paramArray).then(response => {
+            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'begintime',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
+            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'endtime',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
+
+            if(!this.beginId){
+              addComConfigList(paramArray).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("新增成功");
                   this.worktimeopen = false;
@@ -411,7 +417,19 @@
                 } else {
                   this.msgError(response.msg);
                 }
-            })
+              })
+            }else{
+              updateComConfigList(paramArray).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("更新成功");
+                  this.worktimeopen = false;
+                  this.getList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              })
+            }
+
           }
         })
 
