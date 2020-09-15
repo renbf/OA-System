@@ -65,7 +65,12 @@ public interface SysCompanyConfigService
      * @return
      */
     public int addComConfigList(List<SysCompanyConfig> list);
-
+    /**
+     * 批量更新
+     * @param list
+     * @return
+     */
+    public int updateComConfigList(List<SysCompanyConfig> list);
 
 
     public SysCompanyConfig selectSysCompanyConfig(SysCompanyConfig sysCompanyConfig);
