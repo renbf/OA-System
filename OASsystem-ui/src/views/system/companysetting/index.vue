@@ -58,7 +58,7 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <div style="float: left">
-              <h3>晚上加班时间</h3>
+              <h3>每日加班时间段</h3>
               <p>设置公司晚上加班时间段范围</p>
             </div>
           </div>
@@ -197,8 +197,8 @@
     </el-dialog>
 
 
-    <!--    设置晚上加班时间段-->
-    <el-dialog title="设置每日工作时长" :visible.sync="overPeriodopen"  width="600px">
+    <!--    设置每日晚上加班时间段-->
+    <el-dialog title="设置每日加班时间段" :visible.sync="overPeriodopen"  width="600px">
       <el-form ref="form" :model="overPeriodForm" label-width="80px">
         <el-row :span="24">
           <el-form-item label-width="120px" label="加班工时单位" prop="workHourUnit">
@@ -214,7 +214,7 @@
         <el-row>
           <div style="margin-top:10px" v-for="(item, index) in overPeriodForm.overPeriod" :key="index">
             <el-col :span="24">
-              <el-form-item label-width="120px" label="晚上加班时间段" prop="overPeriod">
+              <el-form-item label-width="120px" label="加班时间段" prop="overPeriod">
                 <el-time-picker v-model="item[0]" is-range format="HH:mm" value-format="HH:mm"
                                 start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
                                 clearable :style="{width: '60%'}"></el-time-picker>
