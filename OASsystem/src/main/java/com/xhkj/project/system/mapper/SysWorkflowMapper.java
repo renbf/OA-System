@@ -69,7 +69,14 @@ public interface SysWorkflowMapper
 
     public int checkWorkBillIsUsed(Long workflowId);
 
+	/***
+	 * 流程节点正在使用中
+	 * @param workflowNodeId
+	 * @return
+	 */
 	public int checkWorkNodeIsUsed(Long workflowNodeId);
+
+	public int checkWorkStepIsUsed(Long workflowStepId);
 
 	public List<SysWorkflow> selectSysWorkflows(SysWorkflow sysWorkflow);
 }

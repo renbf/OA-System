@@ -144,6 +144,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and b.workflow_node_id = #{workflowNodeId}
     </select>
 
+    <select id="checkWorkStepIsUsed" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from workflow_bill b
+        where b.bill_status in ('0','1')
+        and b.workflow_step_id = #{workflowStepId}
+    </select>
+
     <select id="selectSysWorkflows" parameterType="com.xhkj.project.system.domain.SysWorkflow" resultMap="SysWorkflowResult">
         <include refid="selectSysWorkflowbasicColums"/>
         ,(select count(1) from sys_workflow_step ws where ws.workflow_id = w.workflow_id) workflow_step_num

@@ -72,7 +72,6 @@ public class ScheduleUtils
 
         // 放入参数，运行时的方法可以获取
         jobDetail.getJobDataMap().put(ScheduleConstants.TASK_PROPERTIES, job);
-
         // 判断是否存在
         if (scheduler.checkExists(getJobKey(jobId, jobGroup)))
         {

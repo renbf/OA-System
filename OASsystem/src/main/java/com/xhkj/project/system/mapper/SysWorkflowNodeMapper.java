@@ -74,4 +74,6 @@ public interface SysWorkflowNodeMapper
 
 	public SysWorkflowNode selectUpSysWorkflowNodeBySortOrder(@Param("workflowStepNodeId") Long workflowStepNodeId,@Param("sortOrder") Integer sortOrder);
 
+	public int updateSysWorkflowNodeNextSort(SysWorkflowNode sysWorkflowNode);
+
 }

@@ -8,9 +8,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+
 /**
  * 步骤节点流程审核对象 sys_workflow_node
- * 
+ *
  * @author xhkj
  * @date 2020-04-17
  */

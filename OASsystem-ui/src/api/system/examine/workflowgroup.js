@@ -59,3 +59,40 @@ export function removeStep(id) {
     method: 'delete'
   })
 }
+
+// 新增流程节点
+export function addWorkflowNode(data) {
+  return request({
+    url: '/system/workflow/addWorkflowNode',
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除流程节点
+export function deleteWorkflowNode(data) {
+  return request({
+    url: '/system/workflow/deleteWorkflowNode',
+    method: 'delete',
+    params:data
+  })
+}
+// 修改流程节点
+export function editWorkflowNode(data) {
+  return request({
+    url: '/system/workflow/editWorkflowNode',
+    method: 'put',
+    data: data
+  })
+}
+
+// 查询流程类型列表
+export function getSysWorkflowNodes(query) {
+  return request({
+    url: '/system/workflow/getSysWorkflowNodes',
+    method: 'get',
+    params: query
+  })
+}
+
+

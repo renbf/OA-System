@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remarks"    column="remarks"    />
-        <collection property="sysWorkflowNodeCheckers" ofType="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.SysWorkflowNodeCheckerResult" column="workflow_step_node_id" select="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.getSysWorkflowNodeCheckersByWorkflowNodeId"></collection>
+        <collection property="sysWorkflowNodeCheckers" ofType="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.SysWorkflowNodeCheckerResult" column="workflow_node_id" select="com.xhkj.project.system.mapper.SysWorkflowNodeCheckerMapper.getSysWorkflowNodeCheckersByWorkflowNodeId"></collection>
     </resultMap>
 
     <sql id="selectSysWorkflowNodebasicColums">
@@ -120,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysWorkflowNodebasicColums"/>
         from sys_workflow_node wn
         where wn.workflow_step_node_id = #{workflowStepNodeId}
+        order by wn.sort_order
     </select>
 
     <select id="selectNextSysWorkflowNodeBySortOrder" parameterType="java.util.Map" resultMap="SysWorkflowNodeResult">
@@ -139,4 +140,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by wn.sort_order desc
         limit 0,1
     </select>
+
+    <update id="updateSysWorkflowNodeNextSort" parameterType="com.xhkj.project.system.domain.SysWorkflowNode">
+        update sys_workflow_node
+        set sort_order = sort_order -1,
+        update_time = #{updateTime},
+        update_by = #{updateBy}
+        where workflow_step_node_id = #{workflowStepNodeId}
+        and sort_order > #{sortOrder}
+    </update>
+
 </mapper>

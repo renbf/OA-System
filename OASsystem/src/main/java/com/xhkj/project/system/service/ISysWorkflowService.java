@@ -81,5 +81,12 @@ public interface ISysWorkflowService
 
     public AjaxResult workflowStepList(Long workflowId);
 
+    public AjaxResult getSysWorkflowNodes(Long workflowStepNodeId);
+
+    /**
+     * 提交审核接口
+     * @param workflowBillTrace
+     * @return
+     */
     public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace);
 }

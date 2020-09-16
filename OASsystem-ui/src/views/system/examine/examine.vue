@@ -47,7 +47,7 @@
 <!--              <el-button icon="el-icon-delete" circle></el-button>-->
             </div>
           </div>
-          <div class="text item" @click.stop="Todetail">
+          <div class="text item" @click.stop="Todetail(item.workflowId)">
             <p>
               <span>审批部门：</span>
               <span>{{item.workflowStepNum}}个</span>
@@ -98,26 +98,17 @@
     <!--    查阅审批流程-->
 
     <el-dialog :title="detailtitle" :visible.sync="detailopen"  width="600px">
-      <el-collapse v-model="activeNames">
-        <el-collapse-item title="总经理部门" name="1">
-          <p>人事专员审批</p>
+      <el-collapse v-model="activeNames" v-for="(item,index) in SysWorkflowStepList">
+        <el-collapse-item :title="item.workflowStepName" :name="index">
+          <template v-for="item1 in item.sysWorkflowNodes">
+          <p>{{item1.workflowNodeName}}</p>
           <div>
             <span>参与人员</span>
             <span>
-              <el-tag type="info">迈克尔</el-tag>
-              <el-tag type="info">丹尼尔</el-tag>
-              <el-tag type="info">斯坦</el-tag>
+              <el-tag type="info" v-for="item2 in item1.sysWorkflowNodeCheckers">{{item2.workflowNodeUserName}}</el-tag>
             </span>
           </div>
-          <p>人事主管审批</p>
-          <div>
-            <span>参与人员</span>
-            <span>
-              <el-tag type="info">迈克尔</el-tag>
-              <el-tag type="info">丹尼尔</el-tag>
-              <el-tag type="info">斯坦</el-tag>
-            </span>
-          </div>
+          </template>
         </el-collapse-item>
       </el-collapse>
       <div slot="footer" class="dialog-footer">
@@ -175,7 +166,7 @@
             </span>
             <span style="float:right;margin: 0 -350px 0 auto;">
               <el-button type="primary" icon="el-icon-delete" circle @click.stop="deleteStep(item.workflowStepId)"></el-button>
-              <el-button icon="el-icon-setting" circle></el-button>
+              <el-button icon="el-icon-setting" circle @click.stop="openWorkflowNode(item)"></el-button>
             </span>
           </template>
           <template v-for="item1 in item.sysWorkflowNodes">
@@ -197,8 +188,8 @@
         <p>新增</p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="savestep">保存</el-button>
-        <el-button type="primary" @click="cancel">取消</el-button>
+        <!--<el-button type="primary" @click="savestep">保存</el-button>-->
+        <el-button type="primary" @click="closeEditopen">关闭</el-button>
       </div>
     </el-dialog>
 
@@ -230,13 +221,74 @@
         <el-button type="primary" @click="cancel">取消</el-button>
       </div>
     </el-dialog>
+
+    <!--编辑流程节点-->
+    <el-dialog :title="workflowStep.workflowStepName" :visible.sync="nodeOpen"  width="600px">
+      <template v-for="item1 in workflowNodes">
+        <div>
+          <p>{{item1.workflowNodeName}}</p>
+          <el-button type="primary" icon="el-icon-delete" circle @click.stop="deleteNode(item1)"></el-button>
+          <el-button icon="el-icon-setting" circle @click.stop="editNodeOpen(item1)"></el-button>
+        </div>
+        <div>
+          <span>参与人员</span>
+          <span>
+              <el-tag type="info" v-for="item2 in item1.sysWorkflowNodeCheckers">{{item2.workflowNodeUserName}}</el-tag>
+            </span>
+        </div>
+      </template>
+      <div class="add" @click="addOneNode">
+        <p>
+          <span class="el-icon-plus" style="font-size:38px;"></span>
+        </p>
+        <p>新增</p>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm">保 存</el-button>
+      </div>
+    </el-dialog>
+    <!--新增节点-->
+    <el-dialog :title="addNodeTitle" :visible.sync="addNodeOpen"  width="600px">
+      <el-form ref="addNodeForm" :model="addNodeForm" :rules="nodeFormRules" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="审核步骤名称" prop="workflowNodeName">
+              <el-input v-model="addNodeForm.workflowNodeName" placeholder="请输入审核步骤名称" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="审核人" prop="workflowNodeUserIds">
+              <el-select v-model="addNodeForm.workflowNodeUserIds" placeholder="请选择" multiple @change="changeShenheren">
+                <el-option
+                  v-for="item in userList"
+                  :key="item.userId"
+                  :label="item.nickName"
+                  :value="item.userId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitNodeForm">保 存</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
   import { listDept } from "@/api/system/dept";
   import testData from '@/assets/static/system/examine/testData.js';
-  import { getWorkflowList,addWorkflow,addWorkflowStep,getWorkflowStepList,removeStep } from "@/api/system/examine/workflowgroup";
+  import { getWorkflowList,addWorkflow,addWorkflowStep,getWorkflowStepList,removeStep,addWorkflowNode,getSysWorkflowNodes,deleteWorkflowNode,editWorkflowNode } from "@/api/system/examine/workflowgroup";
+  import { listUser } from "@/api/system/user";
 
   export default {
     name: "index",
@@ -246,17 +298,22 @@
         workflowId:null,
         // 查询条件
         queryParams:{
-          workflowName:''
+          workflowName:'',
+          workflowGroupId:this.$route.query.workflowGroupId,
         },
         // 打开弹框
         open:false,
         // 查阅弹框
         detailopen:false,
+        nodeOpen:false,
         // 编辑审批流程
         edittitle:'',
-        // 新增流程节点
+        // 新增步骤
         addstepopen:false,
+        //新增节点
+        addNodeOpen:false,
         addsteptitle:'',
+        addNodeTitle:'',
         editopen:false,
         // 停用部门失败弹框
         erroropen:false,
@@ -268,7 +325,7 @@
         // 弹框标题
         title:'新建审批流程',
         // 查阅标题
-        detailtitle:"查阅角色",
+        detailtitle:"查阅流程",
         // 折叠面板
         useperson:undefined,
         // 部门
@@ -282,6 +339,15 @@
           workflowName:'',
           workflowDesc:'',
           status:'1'
+        },
+        addNodeForm:{
+          workflowNodeId:undefined,
+          workflowStepNodeId:undefined,
+          workflowNodeName:'',
+          workflowNodeCheckerType:'',
+          sortOrder:undefined,
+          workflowNodeUserIds:[],
+          workflowNodeRoleIds:[],
         },
         // 弹框折叠面板
         activeNames:[],
@@ -380,13 +446,25 @@
             {required: true, message: "状态不能为空", trigger: "blur"}
           ]
         },
+        nodeFormRules:{
+          workflowNodeName: [
+            {required: true, message: "审核步骤名称不能为空", trigger: "blur"}
+          ],
+          workflowNodeUserIds: [
+            {required: true, message: "审批人不能为空", trigger: "blur"}
+          ]
+        },
         workflowStepRules: {
           deptId: [
             {required:true,message:'部门不能为空',trigger:'blur'}
           ]
         },
         // 权限list
-        postOptions:[]
+        postOptions:[],
+        workflowStep:{},
+        //每个部门的流程节点
+        workflowNodes: [],
+        userList:[]
       }
     },
     created() {
@@ -410,6 +488,11 @@
           this.SysWorkflowStepList = response.data;
         });
       },
+      getSysWorkflowNodes(workflowStepNodeId){
+        getSysWorkflowNodes({workflowStepNodeId:workflowStepNodeId}).then(response => {
+          this.workflowNodes = response.data;
+        });
+      },
       // 表单重置
       reset() {
         this.addForm = {
@@ -419,6 +502,18 @@
         };
         this.resetForm("addForm");
       },
+      resetAddNodeForm() {
+        this.addNodeForm = {
+            workflowNodeId:undefined,
+            workflowStepNodeId:undefined,
+            workflowNodeName:'',
+            workflowNodeCheckerType:'',
+            sortOrder:undefined,
+            workflowNodeUserIds:[],
+            workflowNodeRoleIds:[]
+        };
+        this.resetForm("addNodeForm");
+      },
       // 新增审批
       handleAdd(){
         this.reset();
@@ -427,6 +522,9 @@
       // 查询条件搜索
       handleQuery(){
         this.getList();
+      },
+      cancel() {
+
       },
       // 重置
       resetQuery(){},
@@ -463,8 +561,44 @@
           }
         });
       },
+      submitNodeForm(){
+        this.$refs.addNodeForm.validate(valid => {
+          if (valid) {
+            let workflowNodes = this.workflowNodes;
+            let addForm = this.addNodeForm;
+            addForm.workflowNodeCheckerType = '2';
+            let workflowStepNodeId = addForm.workflowStepNodeId;
+            if (addForm.workflowNodeId != undefined) {
+              editWorkflowNode(addForm).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.addNodeOpen = false;
+                  this.getSysWorkflowNodes(workflowStepNodeId);
+                  this.resetAddNodeForm();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            } else {
+              addForm.sortOrder = workflowNodes[workflowNodes.length - 1].sortOrder;
+              addWorkflowNode(addForm).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("新增成功");
+                  this.addNodeOpen = false;
+                  this.getSysWorkflowNodes(workflowStepNodeId);
+                  this.resetAddNodeForm();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }
+          }
+        });
+      },
       // 新建保存取消
-      cancel(){},
+      closeEditopen(){
+        this.editopen = false;
+      },
       handleNodeClick(){},
       // 查看修改
       detailedit(){
@@ -497,10 +631,18 @@
           }
         });
       },
-      // 新增节点
+      // 新增步骤
       addonestep(){
         this.addstepopen=true;
         this.addsteptitle="新增流程节点"
+      },
+      // 新增节点
+      addOneNode(){
+        this.resetAddNodeForm();
+        this.addNodeOpen=true;
+        this.addNodeTitle="新增节点";
+        this.addNodeForm.workflowStepNodeId = this.workflowStep.workflowStepNodeId;
+        this.changeShenheren();
       },
       // 编辑
       Toedit(workflowId){
@@ -509,8 +651,59 @@
         this.getStepList(workflowId);
       },
       // 查看
-      Todetail(){
-        this.detailopen=true
+      Todetail(workflowId){
+        this.detailopen=true;
+        this.workflowId = workflowId;
+        this.getStepList(workflowId);
+      },
+      //打开流程节点编辑
+      openWorkflowNode(item) {
+        this.nodeOpen = true;
+        this.workflowStep= item;
+        this.getSysWorkflowNodes(item.workflowStepNodeId);
+      },
+      deleteNode(item) {
+        deleteWorkflowNode({workflowNodeId:item.workflowNodeId}).then(response => {
+          if (response.code === 200) {
+            this.getSysWorkflowNodes(item.workflowStepNodeId);
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      },
+      editNodeOpen(item) {
+        this.resetAddNodeForm();
+        this.addNodeOpen=true;
+        this.addNodeTitle="修改节点";
+        this.addNodeForm = {
+          workflowNodeId:item.workflowNodeId,
+          workflowStepNodeId:item.workflowStepNodeId,
+          workflowNodeName:item.workflowNodeName,
+          sortOrder:item.sortOrder,
+          workflowNodeCheckerType:item.workflowNodeCheckerType,
+        };
+
+        let sysWorkflowNodeCheckers = item.sysWorkflowNodeCheckers;
+        if (item.workflowNodeCheckerType == 2) {
+          let workflowNodeUserIds = [];
+          sysWorkflowNodeCheckers.forEach((item,index,arr) =>{
+            workflowNodeUserIds.push(item.workflowNodeUserId);
+          });
+          this.addNodeForm.workflowNodeUserIds = workflowNodeUserIds;
+        }else if(item.workflowNodeCheckerType == 1) {
+          let workflowNodeRoleIds = [];
+          sysWorkflowNodeCheckers.forEach((item,index,arr) =>{
+            workflowNodeRoleIds.push(item.workflowNodeRoleId);
+          });
+          this.addNodeForm.workflowNodeRoleIds = workflowNodeRoleIds;
+        }
+        this.changeShenheren();
+      },
+      changeShenheren() {
+        listUser({deptId:this.workflowStep.deptId}).then(response => {
+            this.userList = response.rows;
+          }
+        );
       }
     }
   }

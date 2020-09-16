@@ -294,4 +294,13 @@ public class SysWorkflowController extends BaseController
         AjaxResult ajaxResult = sysWorkflowService.workflowStepList(workflowId);
         return ajaxResult;
     }
+    /**
+     * 查询流程节点列表
+     */
+    @GetMapping("/getSysWorkflowNodes")
+    public AjaxResult getSysWorkflowNodes(Long workflowStepNodeId)
+    {
+        AjaxResult ajaxResult = sysWorkflowService.getSysWorkflowNodes(workflowStepNodeId);
+        return ajaxResult;
+    }
 }
