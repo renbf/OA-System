@@ -73,6 +73,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <delete id="deleteSysCompanyConfigByKeys" parameterType="String">
+        delete from sys_company_config where com_config_key in
+        <foreach item="companyConfigKeys" collection="array" open="(" separator="," close=")">
+            #{companyConfigKeys}
+        </foreach>
+    </delete>
+
+
     <delete id="deleteSysCompanyConfig" parameterType="Long">
         delete from sys_company_config
     </delete>

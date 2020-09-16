@@ -96,10 +96,10 @@ public class SysCompanyConfigController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:comconfig:remove')")
     @Log(title = "公司配置", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{companyConfigIds}")
-    public AjaxResult remove(@PathVariable Long[] companyConfigIds)
+	@DeleteMapping("/{comConfigIds}")
+    public AjaxResult remove(@PathVariable Long[] comConfigIds)
     {
-        return toAjax(sysCompanyConfigService.deleteSysCompanyConfigByIds(companyConfigIds));
+        return toAjax(sysCompanyConfigService.deleteSysCompanyConfigByIds(comConfigIds));
     }
 
 
@@ -112,6 +112,13 @@ public class SysCompanyConfigController extends BaseController
     public AjaxResult addComConfigList(@RequestBody List<SysCompanyConfig> sysCompanyConfig)
     {
         return toAjax(sysCompanyConfigService.addComConfigList(sysCompanyConfig));
+    }
+
+    @Log(title = "公司配置-加班時間段", businessType = BusinessType.INSERT)
+    @PostMapping("/addOverPeriodList")
+    public AjaxResult addOverPeriodList(@RequestBody List<SysCompanyConfig> sysCompanyConfig)
+    {
+        return toAjax(sysCompanyConfigService.addOverPeriodList(sysCompanyConfig));
     }
 
 

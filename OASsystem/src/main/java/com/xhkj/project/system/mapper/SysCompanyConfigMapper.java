@@ -1,7 +1,9 @@
 package com.xhkj.project.system.mapper;
 
+import java.lang.reflect.Parameter;
 import java.util.List;
 import com.xhkj.project.system.domain.SysCompanyConfig;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 工时配置Mapper接口
@@ -58,6 +60,9 @@ public interface SysCompanyConfigMapper
      * @return 结果
      */
     public int deleteSysCompanyConfigByIds(Long[] companyConfigIds);
+
+    public int deleteSysCompanyConfigByKeys(String[] companyConfigKeys);
+
 
     public int deleteSysCompanyConfig();
 
