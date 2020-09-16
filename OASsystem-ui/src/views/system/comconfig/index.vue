@@ -297,6 +297,7 @@
         // 设置每日工作时长
         workduringopen:false,
         workduring_attention:'',
+        workHourId:"",
         workduringForm:{
           workduring:""
         },
@@ -395,51 +396,43 @@
             this.overtimeForm.overtime = overtimePre.comConfigValue
             this.overtimeId = overtimePre.comConfigId;
 
+            let annualLeavePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'annualLeave')))[0]
+            this.workyearForm.annualLeave = annualLeavePre.comConfigValue;
+            this.annualLeaveId = annualLeavePre.comConfigId;
 
-            if(Object.is(item.comConfigKey,'annualLeave')){
-              this.workyearForm.annualLeave = item.comConfigValue;
-              this.annualLeaveId = item.comConfigId;
-            }
+            let begintimePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'begintime')))[0]
+            let begintimeArrary = eval(begintimePre.comConfigValue)
+            this.worktimeForm.begintime = begintimeArrary
+            this.beginSr = begintimeArrary[0]
+            this.beginId = begintimePre.comConfigId;
 
-            if(Object.is(item.comConfigKey,'annualLeave')){
-              this.workyearForm.annualLeave = item.comConfigValue;
-              this.annualLeaveId = item.comConfigId;
-            }
+            let endtimePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'endtime')))[0]
+            let endtimeArrary = eval(endtimePre.comConfigValue)
+            this.worktimeForm.endtime = endtimeArrary
+            this.endSr = endtimeArrary[1]
+            this.endId = endtimePre.comConfigId;
 
-            if(Object.is(item.comConfigKey,'begintime')){
-              let begintimeArrary = eval(item.comConfigValue)
-              this.worktimeForm.begintime = begintimeArrary
-              this.beginSr = begintimeArrary[0]
-              this.beginId = item.comConfigId;
-            }
-            if(Object.is(item.comConfigKey,'endtime')){
-              let endtimeArrary = eval(item.comConfigValue)
-              this.worktimeForm.endtime = endtimeArrary
-              this.endSr = endtimeArrary[1]
-              this.endId = item.comConfigId;
-            }
+            let workHourUnitPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'workHourUnit')))[0]
+            this.overPeriodForm.workHourUnit = workHourUnitPre.comConfigValue
+            this.workHourUnitId = workHourUnitPre.comConfigId;
 
-            if(Object.is(item.comConfigKey,'workHourUnit')){
-              this.overPeriodForm.workHourUnit = item.comConfigValue
-              this.workHourUnitId = item.comConfigId;
-            }
-            if(Object.is(item.comConfigKey,'overPeriod')){
-              let eval1 = eval(item.comConfigValue);
-              this.overPeriodForm.overPeriod = eval(item.comConfigValue)
-              this.overPeriodId = item.comConfigId;
-            }
-            if(Object.is(item.comConfigKey,'overDay')){
-              let eval2 = eval(item.comConfigValue);
-              this.overPeriodForm.overDay = eval(item.comConfigValue)
-              this.overDayId = item.comConfigId;
-            }
+            let overPeriodPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'overPeriod')))[0]
+            this.overPeriodForm.overPeriod = eval(overPeriodPre.comConfigValue)
+            this.overPeriodId = overPeriodPre.comConfigId;
+
+            let overDayPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'overDay')))[0]
+            this.overPeriodForm.overDay = eval(overDayPre.comConfigValue)
+            this.overDayId = overDayPre.comConfigId;
+
+            let workHourPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue
+            this.workduringForm.workduring = workHourPre.comConfigValue
+            this.workHourId = workHourPre.comConfigValue
 
           })
         })
 
-        let amhours = toHourDifference(this.worktimeForm.begintime[0],this.worktimeForm.begintime[1]);
-        let pmhours = toHourDifference(this.worktimeForm.endtime[0],this.worktimeForm.endtime[1]);
-        this.workduringForm.workduring = amhours+pmhours
+
+
       },
 
       reset() {
@@ -460,8 +453,13 @@
         this.$refs["form"].validate(valid => {
           if (valid) {
             const paramArray = [];
-            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'begintime',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
-            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'endtime',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
+            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'amWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
+            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'pmWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
+
+            let amhours = toHourDifference(this.worktimeForm.begintime[0],this.worktimeForm.begintime[1]);
+            let pmhours = toHourDifference(this.worktimeForm.endtime[0],this.worktimeForm.endtime[1]);
+            paramArray.push({comConfigId: this.workHourId,comConfigName: '工时',comConfigKey: 'workHour',comConfigValue: amhours+pmhours})
+
 
             if(!this.beginId){
               this.addComConfigInfo(paramArray);

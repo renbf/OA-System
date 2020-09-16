@@ -536,7 +536,7 @@ export default {
     //获取工时
     listComConfig({}).then(response => {
 
-      this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHourTotal')))[0].comConfigValue;
+      this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue;
 
       let eval1 = eval(response.rows.filter(e => Object.is (e.comConfigKey,'workHourUnit')));
       this.workHourUnit = eval1[0].comConfigValue;
