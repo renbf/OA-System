@@ -68,6 +68,9 @@ public interface SysCompanyConfigMapper
     public int addComConfigList(List<SysCompanyConfig> list);
 
 
+    public int updateComConfigList(List<SysCompanyConfig> list);
+
+
     public SysCompanyConfig selectSysCompanyConfig(SysCompanyConfig sysCompanyConfig);
 
 }

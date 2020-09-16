@@ -18,14 +18,14 @@
           <div class="text item"  @click="worktimeadd">
             <div class="lf">
               <p>起始时间</p>
-              <p><b style="font-size:28px;">08:30</b></p>
+              <p><b style="font-size:28px;">{{beginSr}}</b></p>
             </div>
             <div class="lf" style="margin-left: 50px;">
               <p>至</p>
             </div>
             <div class="lf" style="margin-left: 50px;">
               <p>结束时间</p>
-              <p><b style="font-size:28px;">17:30</b></p>
+              <p><b style="font-size:28px;">{{endSr}}</b></p>
             </div>
           </div>
         </el-card>
@@ -47,7 +47,7 @@
               工作时长
             </p>
             <p>
-              <b style="font-size:28px;">08</b>小时
+              <b style="font-size:28px;">{{this.workduringForm.workduring}}</b>小时
             </p>
           </div>
         </el-card>
@@ -121,29 +121,17 @@
     <el-dialog title="设置每日工作时间" :visible.sync="worktimeopen"  width="600px">
       <el-form ref="form" :model="worktimeForm" :rules="worktimerule" label-width="80px">
         <el-row>
-          <el-form-item label="起始时间" prop="begintime">
-            <el-time-select
-              v-model="worktimeForm.begintime"
-              :picker-options="{
-                                  start: '08:30',
-                                  step: '00:15',
-                                  end: '18:30'
-                                }"
-              placeholder="起始时间">
-            </el-time-select>
+          <el-form-item label-width="120px" label="上午起止时间" prop="begintime">
+            <el-time-picker v-model="worktimeForm.begintime" is-range format="HH:mm" value-format="HH:mm"
+                            start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
+                            clearable @change="dateChange"></el-time-picker>
           </el-form-item>
         </el-row>
         <el-row>
-          <el-form-item label="结束时间" prop="endtime">
-            <el-time-select
-              v-model="worktimeForm.endtime"
-              :picker-options="{
-                                  start: '08:30',
-                                  step: '00:15',
-                                  end: '18:30'
-                                }"
-              placeholder="结束时间">
-            </el-time-select>
+          <el-form-item label-width="120px" label="下午起止时间" prop="endtime">
+            <el-time-picker v-model="worktimeForm.endtime" is-range format="HH:mm" value-format="HH:mm"
+                            start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
+                            clearable @change="dateChange"></el-time-picker>
           </el-form-item>
         </el-row>
 
@@ -171,10 +159,10 @@
     </el-dialog>
 <!--    设置每日工作时长-->
     <el-dialog title="设置每日工作时长" :visible.sync="workduringopen"  width="600px">
-      <el-form ref="form" :model="workduringForm" :rules="workduringrule" label-width="80px">
+      <el-form ref="form" :model="workduringForm" label-width="80px">
         <el-row>
           <el-form-item label="工作时长" prop="workduring">
-            <el-input v-model="workduringForm.workduring" aria-placeholder="请输入每日工作时长"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /小时 </i></el-input>
+            <el-input readonly v-model="workduringForm.workduring" aria-placeholder="请输入每日工作时长"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /小时 </i></el-input>
           </el-form-item>
         </el-row>
       </el-form>
@@ -188,10 +176,10 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>
-      </div>
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--        <el-button @click="cancel">取 消</el-button>-->
+<!--        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>-->
+<!--      </div>-->
     </el-dialog>
 
 <!--    设置年休假天数-->
@@ -255,18 +243,61 @@
 
   // 新增
   import { addtime ,addDuringtime,addyeartime,addleave} from "@/api/system/companysetting";
+  import { listComConfig, addComConfigList,addComConfig,updateComConfigList  } from "@/api/system/comconfig";
+  import { toHourDifference } from '@/utils/common'
 
   export default {
     name: "index",
     data(){
       return{
+        form: {
+          workHourTotal: undefined,
+          workHourUnit: '时',
+          overPeriod: [[]],
+          overDay: [],
+        },
+        overDayShow :false,
+        datePickerShow: false,
+        rules: {
+          begintime: [{
+            required: true,
+            type: 'array',
+            message: '请选择上午起止时间',
+            trigger: 'change'
+          }],
+          endtime: [{
+            required: true,
+            type: 'array',
+            message: '请选择下午起止时间',
+            trigger: 'change'
+          }],
+          workHourTotal: [{
+            required: true,
+            message: '请输入总工时',
+            trigger: 'blur'
+          }],
+        },
+        workHourUnitOptions: [{
+          "label": "时",
+          "value": "时"
+        }, {
+          "label": "天",
+          "value": "天"
+        }],
+
+
+
         // 设置每日工作时间弹框打开
         worktimeopen:false,
         // 设置每日工作时间表单
         worktimeForm:{
-          begintime:'',
-          endtime:''
+          begintime: ["08:30", "12:00"],
+          endtime: ["13:30", "17:30"],
         },
+        beginSr: '08:30',
+        endSr: '17:30',
+        beginId: '',
+        endId: '',
         // 工作时间设置注意事项
         matters_needing_attention:'',
         // 每日工作时间验证
@@ -283,11 +314,6 @@
         workduring_attention:'',
         workduringForm:{
           workduring:""
-        },
-        workduringrule:{
-          workduring: [
-            { required: true, message: "工作时长", trigger: "blur" }
-          ]
         },
 
         // 设置年休假天数
@@ -326,29 +352,91 @@
       }
     },
     created() {
+      this.getList();
+
     },
     methods:{
+
+      getList(){
+        listComConfig({}).then(res => {
+          res.rows.forEach(item => {
+            if(Object.is(item.comConfigKey,'begintime')){
+              let begintimeArrary = eval(item.comConfigValue)
+              this.worktimeForm.begintime = begintimeArrary
+              this.beginSr = begintimeArrary[0]
+              this.beginId = item.comConfigId;
+            }
+            if(Object.is(item.comConfigKey,'endtime')){
+              let endtimeArrary = eval(item.comConfigValue)
+              this.worktimeForm.endtime = endtimeArrary
+              this.endSr = endtimeArrary[1]
+              this.endId = item.comConfigId;
+            }
+
+          })
+        })
+
+        let amhours = toHourDifference(this.worktimeForm.begintime[0],this.worktimeForm.begintime[1]);
+        let pmhours = toHourDifference(this.worktimeForm.endtime[0],this.worktimeForm.endtime[1]);
+        this.workduringForm.workduring = amhours+pmhours
+      },
+
+      reset() {
+        if (this.$refs.menu != undefined) {
+          this.$refs.menu.setCheckedKeys([]);
+        }
+        this.resetForm("form");
+      },
+      dateChange(){
+        // let amhours = toHourDifference(this.form.amWorkDate[0],this.form.amWorkDate[1]);
+        // let pmhours = toHourDifference(this.form.pmWorkDate[0],this.form.pmWorkDate[1]);
+        // this.form.workHourTotal = amhours+pmhours
+      },
+
       // 点击新增每日工作
       worktimeadd(){
+        //this.reset();
+        this.getList();
         this.worktimeopen=true
       },
       // 提交每日工作时间表单
       submitForm(){
         this.$refs["form"].validate(valid => {
+
           if (valid) {
-            addtime(this.worktimeForm).then(response => {
+            const paramArray = [];
+            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'begintime',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
+            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'endtime',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
+
+            if(!this.beginId){
+              addComConfigList(paramArray).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("新增成功");
                   this.worktimeopen = false;
+                  this.getList();
                 } else {
                   this.msgError(response.msg);
                 }
               })
+            }else{
+              updateComConfigList(paramArray).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("更新成功");
+                  this.worktimeopen = false;
+                  this.getList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              })
+            }
+
           }
         })
+
       },
       // 点击打开工作时长弹框
       addDuring(){
+        this.reset();
         this.workduringopen=true;
       },
       // 提交设置每日工作时长
@@ -385,10 +473,12 @@
       },
       // 打开年休假弹框
       workyear(){
+        this.reset();
         this.workyearopen=true
       },
       // 打开请假规定
       workleave(){
+        this.reset();
         this.askleaveopen=true;
       },
       submitleaveForm(){
@@ -407,6 +497,7 @@
       },
       // 设置加班规定
       addovertime(){
+        this.reset();
         this.overtimeopen = true;
       },
       submitovertimeForm(){

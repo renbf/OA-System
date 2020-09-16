@@ -104,7 +104,7 @@ public class SysCompanyConfigController extends BaseController
 
 
     /**
-     * 新增公司配置
+     * 批量新增公司配置
      */
     //@PreAuthorize("@ss.hasPermi('system:comconfig:add')")
     @Log(title = "公司配置", businessType = BusinessType.INSERT)
@@ -114,6 +114,16 @@ public class SysCompanyConfigController extends BaseController
         return toAjax(sysCompanyConfigService.addComConfigList(sysCompanyConfig));
     }
 
+
+    /**
+     * 批量更新公司配置
+     */
+    @Log(title = "公司配置", businessType = BusinessType.INSERT)
+    @PostMapping("/updateComConfigList")
+    public AjaxResult updateComConfigList(@RequestBody List<SysCompanyConfig> sysCompanyConfig)
+    {
+        return toAjax(sysCompanyConfigService.updateComConfigList(sysCompanyConfig));
+    }
 
     /**
      * 获取公司配置详细信息

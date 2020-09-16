@@ -104,8 +104,6 @@ public class SysCompanyConfigServiceImpl implements SysCompanyConfigService
     public int addComConfigList(List<SysCompanyConfig> list)
     {
 
-        sysCompanyConfigMapper.deleteSysCompanyConfig();
-
         Date nowDate = DateUtils.getNowDate();
         String username = SecurityUtils.getUsername();
         for (SysCompanyConfig sysCompanyConfig : list) {
@@ -115,6 +113,22 @@ public class SysCompanyConfigServiceImpl implements SysCompanyConfigService
 
         return sysCompanyConfigMapper.addComConfigList(list);
     }
+
+
+    @Override
+    public int updateComConfigList(List<SysCompanyConfig> list)
+    {
+
+        Date nowDate = DateUtils.getNowDate();
+        String username = SecurityUtils.getUsername();
+        for (SysCompanyConfig sysCompanyConfig : list) {
+            sysCompanyConfig.setCreateTime(nowDate);
+            sysCompanyConfig.setCreateBy(username);
+        }
+
+        return sysCompanyConfigMapper.updateComConfigList(list);
+    }
+
 
 
 

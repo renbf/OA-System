@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
 
     <sql id="selectSysCompanyConfigVo">
-        select company_config_id, com_config_name, com_config_key, com_config_value, create_by, create_time, update_by, update_time, remark from sys_company_config
+        select com_config_id, com_config_name, com_config_key, com_config_value, create_by, create_time, update_by, update_time, remark from sys_company_config
     </sql>
 
     <select id="selectSysCompanyConfigList" parameterType="SysCompanyConfig" resultType="SysCompanyConfig">
@@ -20,10 +20,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSysCompanyConfigById" parameterType="Long" resultType="SysCompanyConfig">
         <include refid="selectSysCompanyConfigVo"/>
-        where company_config_id = #{companyConfigId}
+        where com_config_id = #{comConfigId}
     </select>
 
-    <insert id="insertSysCompanyConfig" parameterType="SysCompanyConfig" useGeneratedKeys="true" keyProperty="companyConfigId">
+    <insert id="insertSysCompanyConfig" parameterType="SysCompanyConfig" useGeneratedKeys="true" keyProperty="comConfigId">
         insert into sys_company_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="comConfigName != null and comConfigName != ''">com_config_name,</if>
@@ -59,17 +59,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
         </trim>
-        where company_config_id = #{companyConfigId}
+        where com_config_id = #{comConfigId}
     </update>
 
     <delete id="deleteSysCompanyConfigById" parameterType="Long">
-        delete from sys_company_config where company_config_id = #{companyConfigId}
+        delete from sys_company_config where com_config_id = #{comConfigId}
     </delete>
 
     <delete id="deleteSysCompanyConfigByIds" parameterType="String">
-        delete from sys_company_config where company_config_id in
-        <foreach item="companyConfigId" collection="array" open="(" separator="," close=")">
-            #{companyConfigId}
+        delete from sys_company_config where com_config_id in
+        <foreach item="comConfigId" collection="array" open="(" separator="," close=")">
+            #{comConfigId}
         </foreach>
     </delete>
 
@@ -83,6 +83,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ( #{item.comConfigName}, #{item.comConfigKey},#{item.comConfigValue},#{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
         </foreach>
     </insert>
+
+
+
+    <update id="updateComConfigList"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update sys_company_config
+            <set>
+                <if test="item.comConfigName != null and item.comConfigName != ''">com_config_name = #{item.comConfigName},</if>
+                <if test="item.comConfigKey != null and item.comConfigKey != ''">com_config_key = #{item.comConfigKey},</if>
+                <if test="item.comConfigValue != null and item.comConfigValue != ''">com_config_value = #{item.comConfigValue},</if>
+                <if test="item.createBy != null  and item.createBy != ''">create_by = #{item.createBy},</if>
+                <if test="item.createTime != null ">create_time = #{item.createTime},</if>
+                <if test="item.updateBy != null  and item.updateBy != ''">update_by = #{item.updateBy},</if>
+                <if test="item.updateTime != null ">update_time = #{item.updateTime},</if>
+                <if test="item.remark != null  and item.remark != ''">remark = #{item.remark},</if>
+            </set>
+            where com_config_id = #{item.comConfigId}
+        </foreach>
+    </update>
 
 
     <select id="selectSysCompanyConfig" parameterType="com.xhkj.project.system.domain.SysCompanyConfig" resultType="com.xhkj.project.system.domain.SysCompanyConfig">
