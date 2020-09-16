@@ -52,6 +52,20 @@
           </div>
         </el-card>
       </template>
+
+      <!--       晚上加班时间段-->
+      <template>
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <div style="float: left">
+              <h3>晚上加班时间</h3>
+              <p>设置公司晚上加班时间段范围</p>
+            </div>
+          </div>
+          <div class="text item"  @click="workoverPeriod">
+          </div>
+        </el-card>
+      </template>
 <!--       年休假天数-->
       <template>
         <el-card class="box-card">
@@ -124,14 +138,14 @@
           <el-form-item label-width="120px" label="上午起止时间" prop="begintime">
             <el-time-picker v-model="worktimeForm.begintime" is-range format="HH:mm" value-format="HH:mm"
                             start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
-                            clearable @change="dateChange"></el-time-picker>
+                            clearable></el-time-picker>
           </el-form-item>
         </el-row>
         <el-row>
           <el-form-item label-width="120px" label="下午起止时间" prop="endtime">
             <el-time-picker v-model="worktimeForm.endtime" is-range format="HH:mm" value-format="HH:mm"
                             start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
-                            clearable @change="dateChange"></el-time-picker>
+                            clearable ></el-time-picker>
           </el-form-item>
         </el-row>
 
@@ -154,7 +168,7 @@
       </el-collapse>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">保 存</el-button>
+        <el-button type="primary" @click="submitForm('worktime')">保 存</el-button>
       </div>
     </el-dialog>
 <!--    设置每日工作时长-->
@@ -180,6 +194,42 @@
 <!--        <el-button @click="cancel">取 消</el-button>-->
 <!--        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>-->
 <!--      </div>-->
+    </el-dialog>
+
+
+    <!--    设置晚上加班时间段-->
+    <el-dialog title="设置每日工作时长" :visible.sync="overPeriodopen"  width="600px">
+      <el-form ref="form" :model="overPeriodForm" label-width="80px">
+        <el-row :span="24">
+          <el-form-item label-width="120px" label="加班工时单位" prop="workHourUnit">
+            <el-radio-group v-model="overPeriodForm.workHourUnit" size="medium">
+              <el-radio v-for="(item, index) in workHourUnitOptions"
+                        :key="index"
+                        :label="item.value"
+                        :disabled="item.disabled"
+              >{{item.label}}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <div style="margin-top:10px" v-for="(item, index) in overPeriodForm.overPeriod" :key="index">
+            <el-col :span="24">
+              <el-form-item label-width="120px" label="晚上加班时间段" prop="overPeriod">
+                <el-time-picker v-model="item[0]" is-range format="HH:mm" value-format="HH:mm"
+                                start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
+                                clearable :style="{width: '60%'}"></el-time-picker>
+                <el-input v-model="overPeriodForm.overDay[index]" placeholder="对应天数" clearable :style="{width: '20%'}" v-show="overDayShow"/>
+                <el-button type="primary" icon="el-icon-plus" circle @click="addDomain" v-show="index == 0 ? true : datePickerShow"></el-button>
+                <el-button type="danger" icon="el-icon-delete" circle @click.prevent="removeDomain(index, item)" v-show="index == 0 ? false : datePickerShow"></el-button>
+              </el-form-item>
+            </el-col>
+          </div>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="overPeriodSubmitForm()">保 存</el-button>
+      </div>
     </el-dialog>
 
 <!--    设置年休假天数-->
@@ -243,7 +293,7 @@
 
   // 新增
   import { addtime ,addDuringtime,addyeartime,addleave} from "@/api/system/companysetting";
-  import { listComConfig, addComConfigList,addComConfig,updateComConfigList  } from "@/api/system/comconfig";
+  import { listComConfig, addOverPeriodList,delComConfigs,addComConfigList,addComConfig,updateComConfigList  } from "@/api/system/comconfig";
   import { toHourDifference } from '@/utils/common'
 
   export default {
@@ -253,29 +303,6 @@
         form: {
           workHourTotal: undefined,
           workHourUnit: '时',
-          overPeriod: [[]],
-          overDay: [],
-        },
-        overDayShow :false,
-        datePickerShow: false,
-        rules: {
-          begintime: [{
-            required: true,
-            type: 'array',
-            message: '请选择上午起止时间',
-            trigger: 'change'
-          }],
-          endtime: [{
-            required: true,
-            type: 'array',
-            message: '请选择下午起止时间',
-            trigger: 'change'
-          }],
-          workHourTotal: [{
-            required: true,
-            message: '请输入总工时',
-            trigger: 'blur'
-          }],
         },
         workHourUnitOptions: [{
           "label": "时",
@@ -288,6 +315,7 @@
 
 
         // 设置每日工作时间弹框打开
+        comConfigIds:[],
         worktimeopen:false,
         // 设置每日工作时间表单
         worktimeForm:{
@@ -314,6 +342,32 @@
         workduring_attention:'',
         workduringForm:{
           workduring:""
+        },
+
+
+        // 设置晚上加班时长
+        overPeriodopen:false,
+        datePickerShow: false,
+        overDayShow :false,
+        overPeriodId: '',
+        workHourUnitId: '',
+        overDayId: '',
+        overPeriodForm:{
+          overPeriod:[[]],
+          overDay: [],
+          workHourUnit: '时',
+        },
+        workHourUnitOptions: [{
+          "label": "时",
+          "value": "时"
+        }, {
+          "label": "天",
+          "value": "天"
+        }],
+        overPeriodrule:{
+          workduring: [
+            { required: true, message: "请填写加班时长", trigger: "blur" }
+          ]
         },
 
         // 设置年休假天数
@@ -355,11 +409,26 @@
       this.getList();
 
     },
+    watch: {
+      'overPeriodForm.workHourUnit':{
+        deep:true,
+        handler(val){
+          if(val=='天'){
+            this.overDayShow=true
+          }else{
+            this.overDayShow=false
+          }
+        }
+      }
+    },
     methods:{
 
       getList(){
         listComConfig({}).then(res => {
+          this.comConfigIds = res.rows.map(x => {return x.comConfigId})
+
           res.rows.forEach(item => {
+
             if(Object.is(item.comConfigKey,'begintime')){
               let begintimeArrary = eval(item.comConfigValue)
               this.worktimeForm.begintime = begintimeArrary
@@ -371,6 +440,21 @@
               this.worktimeForm.endtime = endtimeArrary
               this.endSr = endtimeArrary[1]
               this.endId = item.comConfigId;
+            }
+
+            if(Object.is(item.comConfigKey,'workHourUnit')){
+              this.overPeriodForm.workHourUnit = item.comConfigValue
+              this.workHourUnitId = item.comConfigId;
+            }
+            if(Object.is(item.comConfigKey,'overPeriod')){
+              let eval1 = eval(item.comConfigValue);
+              this.overPeriodForm.overPeriod = eval(item.comConfigValue)
+              this.overPeriodId = item.comConfigId;
+            }
+            if(Object.is(item.comConfigKey,'overDay')){
+              let eval2 = eval(item.comConfigValue);
+              this.overPeriodForm.overDay = eval(item.comConfigValue)
+              this.overDayId = item.comConfigId;
             }
 
           })
@@ -387,11 +471,6 @@
         }
         this.resetForm("form");
       },
-      dateChange(){
-        // let amhours = toHourDifference(this.form.amWorkDate[0],this.form.amWorkDate[1]);
-        // let pmhours = toHourDifference(this.form.pmWorkDate[0],this.form.pmWorkDate[1]);
-        // this.form.workHourTotal = amhours+pmhours
-      },
 
       // 点击新增每日工作
       worktimeadd(){
@@ -400,24 +479,15 @@
         this.worktimeopen=true
       },
       // 提交每日工作时间表单
-      submitForm(){
+      submitForm(type){
         this.$refs["form"].validate(valid => {
-
           if (valid) {
             const paramArray = [];
             paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'begintime',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
             paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'endtime',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
 
             if(!this.beginId){
-              addComConfigList(paramArray).then(response => {
-                if (response.code === 200) {
-                  this.msgSuccess("新增成功");
-                  this.worktimeopen = false;
-                  this.getList();
-                } else {
-                  this.msgError(response.msg);
-                }
-              })
+              this.addComConfigInfo(paramArray);
             }else{
               updateComConfigList(paramArray).then(response => {
                 if (response.code === 200) {
@@ -434,6 +504,44 @@
         })
 
       },
+
+      overPeriodSubmitForm(){
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            const paramArray = [];
+            paramArray.push({comConfigId: this.workHourUnitId,comConfigName: '加班工时单位',comConfigKey: 'workHourUnit',comConfigValue: this.overPeriodForm.workHourUnit})
+            paramArray.push({comConfigId: this.overPeriodId,comConfigName: '晚上加班时间段',comConfigKey: 'overPeriod',comConfigValue: JSON.stringify(this.overPeriodForm.overPeriod)})
+
+            if(Object.is(this.overPeriodForm.workHourUnit,'天')){
+              paramArray.push({comConfigId: this.overDayId,comConfigName: '晚上加班时间段工时',comConfigKey: 'overDay',comConfigValue: JSON.stringify(this.overPeriodForm.overDay)})
+            }
+
+            addOverPeriodList(paramArray).then(response => {
+              if (response.code === 200) {
+                this.msgSuccess("新增成功");
+                this.worktimeopen = false;
+                this.getList();
+              } else {
+                this.msgError(response.msg);
+              }
+            })
+          }
+        })
+
+      },
+
+      addComConfigInfo(paramArray){
+        addComConfigList(paramArray).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("新增成功");
+            this.worktimeopen = false;
+            this.getList();
+          } else {
+            this.msgError(response.msg);
+          }
+        })
+      },
+
       // 点击打开工作时长弹框
       addDuring(){
         this.reset();
@@ -470,6 +578,12 @@
             })
           }
         })
+      },
+
+      // 打开晚上加班时间段
+      workoverPeriod(){
+        this.reset();
+        this.overPeriodopen=true
       },
       // 打开年休假弹框
       workyear(){
@@ -513,7 +627,44 @@
             })
           }
         })
-      }
+      },
+
+
+      addDomain(index) {
+        let arr = [];
+        this.overPeriodForm.overPeriod.push(arr);
+        this.datePickerShow = true;
+      },
+      removeDomain(index, item) {
+        if(this.overPeriodForm.overDay){
+          this.overPeriodForm.overDay.splice(index, 1);
+        }
+
+        let add = this.overPeriodForm.overPeriod;
+        if (add.length > 1) {
+          let newArr = [];
+          let time = 0;
+          add.forEach((value, index) => {
+            if (time == 0) {
+              newArr.push(value);
+            } else {
+              value = value.filter(item => item !== undefined);
+              newArr.push(value);
+            }
+            time += 1;
+          });
+          this.overPeriodForm.overPeriod = newArr;
+          if (index !== -1) {
+            this.overPeriodForm.overPeriod.splice(index, 1);
+          }
+        } else {
+          if (index !== -1) {
+            this.overPeriodForm.overPeriod.splice(index, 1);
+          }
+        }
+      },
+
+
     }
   }
 </script>
