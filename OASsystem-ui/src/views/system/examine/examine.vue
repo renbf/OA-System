@@ -298,7 +298,8 @@
         workflowId:null,
         // 查询条件
         queryParams:{
-          workflowName:''
+          workflowName:'',
+          workflowGroupId:this.$route.query.workflowGroupId,
         },
         // 打开弹框
         open:false,

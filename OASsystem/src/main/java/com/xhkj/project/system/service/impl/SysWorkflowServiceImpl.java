@@ -403,6 +403,10 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
             String username = loginUser.getUsername();
             SysWorkflowStepNode sysWorkflowStepNode = sysWorkflowStepNodeMapper.selectSysWorkflowStepNodeByStepId(workflowStepId);
             if (Objects.nonNull(sysWorkflowStepNode)) {
+                int count = sysWorkflowMapper.checkWorkStepIsUsed(workflowStepId);
+                if (count > 0) {
+                    return AjaxResult.error("流程节点正在使用中不能修改");
+                }
                 Long workflowStepNodeId = sysWorkflowStepNode.getWorkflowStepNodeId();
                 List<SysWorkflowNode> sysWorkflowNodes = sysWorkflowNodeMapper.selectSysWorkflowNodesByStepNodeId(workflowStepNodeId);
                 if (CollectionUtils.isNotEmpty(sysWorkflowNodes)) {
