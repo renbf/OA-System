@@ -11,9 +11,10 @@
               <h3>每日工作时间</h3>
               <p>设置公司每日起始与结束时间</p>
             </div>
-            <!--            <div style="float: right">-->
-            <!--              <el-button icon="el-icon-right" circle @click="detail(item.workflowGroupId)"></el-button>-->
-            <!--            </div>-->
+            <div style="float: right">
+<!--              <h3>时长</h3>-->
+              <b style="font-size:28px;" >{{this.workduringForm.workduring}}</b>小时
+            </div>
           </div>
           <div class="text item"  @click="worktimeadd">
             <div class="lf">
@@ -30,28 +31,6 @@
           </div>
         </el-card>
       </template>
-    <!--每日工作时长-->
-      <template>
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <div style="float: left">
-              <h3>每日工作时长</h3>
-              <p>设置公司每日工作时间长度</p>
-            </div>
-<!--            <div style="float: right">-->
-<!--              <el-button icon="el-icon-right" circle @click="detail(item.workflowGroupId)"></el-button>-->
-<!--            </div>-->
-          </div>
-          <div class="text item" @click="addDuring">
-            <p>
-              工作时长
-            </p>
-            <p>
-              <b style="font-size:28px;">{{this.workduringForm.workduring}}</b>小时
-            </p>
-          </div>
-        </el-card>
-      </template>
 
       <!--       晚上加班时间段-->
       <template>
@@ -63,6 +42,7 @@
             </div>
           </div>
           <div class="text item"  @click="workoverPeriod">
+            加班时长规定：1、加班时长根据每个时段进行区分并自动计算加班时长。
           </div>
         </el-card>
       </template>
@@ -83,7 +63,7 @@
               年休假
             </p>
             <p>
-              <b style="font-size:28px;">08</b>天
+              <b style="font-size:28px;">{{workyearForm.annualLeave}}</b>天
             </p>
           </div>
         </el-card>
@@ -102,10 +82,7 @@
             <!--            </div>-->
           </div>
           <div class="text item" @click="workleave">
-            请假规定：1、加班申请当月必须及时提交，否则系统无法核算加班倒休定额；
-            2、加班申请审批通过，系统确认有考勤记录，SAP自动核算加班倒休定额（核算规则为：加班申请时间段与考勤记录交集）；
-            3、次月1日18:30起，员工不可以提交上月加班申请；
-            4、次月1日24点前，必须完成加班申请审批，否则会导致您的加班异常。
+            {{askleaveForm.leavePre}}
           </div>
         </el-card>
       </template>
@@ -122,10 +99,7 @@
             <!--            </div>-->
           </div>
           <div class="text item" @click="addovertime">
-            请假规定：1、加班申请当月必须及时提交，否则系统无法核算加班倒休定额；
-            2、加班申请审批通过，系统确认有考勤记录，SAP自动核算加班倒休定额（核算规则为：加班申请时间段与考勤记录交集）；
-            3、次月1日18:30起，员工不可以提交上月加班申请；
-            4、次月1日24点前，必须完成加班申请审批，否则会导致您的加班异常。
+            {{overtimeForm.overtime}}
           </div>
         </el-card>
       </template>
@@ -167,35 +141,10 @@
         </el-collapse-item>
       </el-collapse>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel('worktimeopen')">取 消</el-button>
         <el-button type="primary" @click="submitForm('worktime')">保 存</el-button>
       </div>
     </el-dialog>
-<!--    设置每日工作时长-->
-    <el-dialog title="设置每日工作时长" :visible.sync="workduringopen"  width="600px">
-      <el-form ref="form" :model="workduringForm" label-width="80px">
-        <el-row>
-          <el-form-item label="工作时长" prop="workduring">
-            <el-input readonly v-model="workduringForm.workduring" aria-placeholder="请输入每日工作时长"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /小时 </i></el-input>
-          </el-form-item>
-        </el-row>
-      </el-form>
-      <el-collapse v-model="workduring_attention">
-        <el-collapse-item title="工作时长设置注意事项" name="1">
-          <div>
-            1、“工作时长”会影响请假与加班的时间天数
-          </div>
-          <div>
-            例：如“工作时长”为8小时，员工A申请8:30至12:00请假，及该员工请假半天。
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-<!--      <div slot="footer" class="dialog-footer">-->
-<!--        <el-button @click="cancel">取 消</el-button>-->
-<!--        <el-button type="primary" @click="submitworkduringForm">保 存</el-button>-->
-<!--      </div>-->
-    </el-dialog>
-
 
     <!--    设置每日晚上加班时间段-->
     <el-dialog title="设置每日加班时间段" :visible.sync="overPeriodopen"  width="600px">
@@ -226,8 +175,15 @@
           </div>
         </el-row>
       </el-form>
+      <el-collapse v-model="matters_needing_attention">
+        <el-collapse-item title="加班时长设置注意事项" name="1">
+          <div>
+            1、加班时长根据每个时段进行区分并自动计算加班时长
+          </div>
+        </el-collapse-item>
+      </el-collapse>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel('overPeriodopen')">取 消</el-button>
         <el-button type="primary" @click="overPeriodSubmitForm()">保 存</el-button>
       </div>
     </el-dialog>
@@ -236,8 +192,8 @@
     <el-dialog title="设置年休假天数" :visible.sync="workyearopen"  width="600px">
       <el-form ref="form" :model="workyearForm" :rules="workyearrule" label-width="80px">
         <el-row>
-          <el-form-item label="年休假" prop="workduring">
-            <el-input v-model="workyearForm.workduring" aria-placeholder="请输入年休假天数"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /天 </i></el-input>
+          <el-form-item label="年休假" prop="annualLeave">
+            <el-input v-model="workyearForm.annualLeave" aria-placeholder="请输入年休假天数"><i slot="suffix" style="font-style:normal;margin-right: 10px;"> /天 </i></el-input>
           </el-form-item>
         </el-row>
       </el-form>
@@ -249,7 +205,7 @@
         </el-collapse-item>
       </el-collapse>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel('workyearopen')">取 消</el-button>
         <el-button type="primary" @click="submitworkyearForm">保 存</el-button>
       </div>
     </el-dialog>
@@ -259,13 +215,13 @@
       <el-form ref="form" :model="askleaveForm" :rules="askleaverule" label-width="80px">
         <el-row>
           <el-form-item label="请假规定" prop="leaverule">
-            <el-input type="textarea" v-model="askleaveForm.leaverule" placeholder="请输入" :rows="8"></el-input>
+            <el-input type="textarea" v-model="askleaveForm.leavePre" placeholder="请输入" :rows="8"></el-input>
             <p>注：设置完成后，公司请假的相关规定会显示在请假申请页面共人员查阅</p>
           </el-form-item>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel('askleaveopen')">取 消</el-button>
         <el-button type="primary" @click="submitleaveForm">保 存</el-button>
       </div>
     </el-dialog>
@@ -281,7 +237,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel('overtimeopen')">取 消</el-button>
         <el-button type="primary" @click="submitovertimeForm">保 存</el-button>
       </div>
     </el-dialog>
@@ -295,6 +251,7 @@
   import { addtime ,addDuringtime,addyeartime,addleave} from "@/api/system/companysetting";
   import { listComConfig, addOverPeriodList,delComConfigs,addComConfigList,addComConfig,updateComConfigList  } from "@/api/system/comconfig";
   import { toHourDifference } from '@/utils/common'
+  import { camelCase } from '../../../utils'
 
   export default {
     name: "index",
@@ -372,8 +329,9 @@
 
         // 设置年休假天数
         workyearopen:false,
+        annualLeaveId:"",
         workyearForm:{
-          workduring:""
+          annualLeave:""
         },
         workyearrule:{
           workduring: [
@@ -385,10 +343,10 @@
         // 请假规定
         askleaveopen:false,
         askleaveForm:{
-          leaverule:''
+          leavePre:''
         },
         askleaverule:{
-          leaverule: [
+          workduring: [
             { required: true, message: "请填写请假规定", trigger: "blur" }
           ]
         },
@@ -399,7 +357,7 @@
           overtime:''
         },
         overtimerule:{
-          overtime: [
+          workduring: [
             { required: true, message: "请填写加班规定", trigger: "blur" }
           ]
         },
@@ -428,6 +386,25 @@
           this.comConfigIds = res.rows.map(x => {return x.comConfigId})
 
           res.rows.forEach(item => {
+
+            let leavePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'leavePrecautions')))[0]
+            this.askleaveForm.leavePre = leavePre.comConfigValue
+            this.leavePreId = leavePre.comConfigId;
+
+            let overtimePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'overtimePrecautions')))[0]
+            this.overtimeForm.overtime = overtimePre.comConfigValue
+            this.overtimeId = overtimePre.comConfigId;
+
+
+            if(Object.is(item.comConfigKey,'annualLeave')){
+              this.workyearForm.annualLeave = item.comConfigValue;
+              this.annualLeaveId = item.comConfigId;
+            }
+
+            if(Object.is(item.comConfigKey,'annualLeave')){
+              this.workyearForm.annualLeave = item.comConfigValue;
+              this.annualLeaveId = item.comConfigId;
+            }
 
             if(Object.is(item.comConfigKey,'begintime')){
               let begintimeArrary = eval(item.comConfigValue)
@@ -519,7 +496,7 @@
             addOverPeriodList(paramArray).then(response => {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
-                this.worktimeopen = false;
+                this.overPeriodopen = false;
                 this.getList();
               } else {
                 this.msgError(response.msg);
@@ -542,89 +519,126 @@
         })
       },
 
-      // 点击打开工作时长弹框
-      addDuring(){
-        this.reset();
-        this.workduringopen=true;
-      },
-      // 提交设置每日工作时长
-      submitworkduringForm(){
-        this.$refs["form"].validate(valid => {
-          if (valid) {
-            addDuringtime(this.workduringForm).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.workduringopen = false;
-              } else {
-                this.msgError(response.msg);
-              }
-            })
-          }
-        })
-      },
       // 取消
-      cancel(){},
+      cancel(type){
+        if(type){
+          switch (type) {
+            case 'overtimeopen':
+              this.overtimeopen = false;
+              break;
+            case 'askleaveopen':
+              this.askleaveopen = false;
+              break;
+            case 'workyearopen':
+              this.workyearopen = false;
+              break;
+            case 'overPeriodopen':
+              this.overPeriodopen = false;
+              break;
+            case 'worktimeopen':
+              this.worktimeopen = false;
+              break;
+          }
+        }
+
+      },
       // 设置年休假天数
       submitworkyearForm(){
         this.$refs["form"].validate(valid => {
           if (valid) {
-            addyeartime(this.workyearForm).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.workyearopen = false;
-              } else {
-                this.msgError(response.msg);
-              }
-            })
+
+            const paramArray = [];
+            paramArray.push({comConfigId: this.annualLeaveId,comConfigName: '年休假天数',comConfigKey: 'annualLeave',
+                              comConfigValue: this.workyearForm.annualLeave})
+
+            if(!this.annualLeaveId){
+              this.addComConfigInfo(paramArray);
+            }else{
+              updateComConfigList(paramArray).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("更新成功");
+                  this.workyearopen = false;
+                  this.getList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              })
+            }
+
           }
         })
       },
 
       // 打开晚上加班时间段
       workoverPeriod(){
-        this.reset();
+        //this.reset();
+        this.getList();
         this.overPeriodopen=true
       },
       // 打开年休假弹框
       workyear(){
-        this.reset();
+        //this.reset();
+        this.getList();
         this.workyearopen=true
       },
       // 打开请假规定
       workleave(){
-        this.reset();
+        //this.reset();
+        this.getList();
         this.askleaveopen=true;
       },
       submitleaveForm(){
         this.$refs["form"].validate(valid => {
           if (valid) {
-            addleave(this.askleaveForm).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.askleaveopen = false;
-              } else {
-                this.msgError(response.msg);
-              }
-            })
+
+            const paramArray = [];
+            paramArray.push({comConfigId: this.leavePreId,comConfigName: '请假注意事项',comConfigKey: 'leavePrecautions',
+              comConfigValue: this.askleaveForm.leavePre})
+
+            if(!this.leavePreId){
+              this.addComConfigInfo(paramArray);
+            }else{
+              updateComConfigList(paramArray).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("更新成功");
+                  this.askleaveopen = false;
+                  this.getList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              })
+            }
+
           }
         })
       },
       // 设置加班规定
       addovertime(){
-        this.reset();
+        //this.reset();
+        this.getList();
         this.overtimeopen = true;
       },
       submitovertimeForm(){
         this.$refs["form"].validate(valid => {
           if (valid) {
-            addovertime(this.overtimeForm).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.overtimeopen = false;
-              } else {
-                this.msgError(response.msg);
-              }
-            })
+
+            const paramArray = [];
+            paramArray.push({comConfigId: this.overtimeId,comConfigName: '加班注意事项',comConfigKey: 'overtimePrecautions',
+              comConfigValue: this.overtimeForm.overtime})
+
+            if(!this.overtimeId){
+              this.addComConfigInfo(paramArray);
+            }else{
+              updateComConfigList(paramArray).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("更新成功");
+                  this.overtimeopen = false;
+                  this.getList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              })
+            }
           }
         })
       },
