@@ -109,15 +109,15 @@
     <el-dialog title="设置每日工作时间" :visible.sync="worktimeopen"  width="600px">
       <el-form ref="form" :model="worktimeForm" :rules="worktimerule" label-width="80px">
         <el-row>
-          <el-form-item label-width="120px" label="上午起止时间" prop="begintime">
-            <el-time-picker v-model="worktimeForm.begintime" is-range format="HH:mm" value-format="HH:mm"
+          <el-form-item label-width="120px" label="上午起止时间" prop="amWorkDate">
+            <el-time-picker v-model="worktimeForm.amWorkDate" is-range format="HH:mm" value-format="HH:mm"
                             start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
                             clearable></el-time-picker>
           </el-form-item>
         </el-row>
         <el-row>
-          <el-form-item label-width="120px" label="下午起止时间" prop="endtime">
-            <el-time-picker v-model="worktimeForm.endtime" is-range format="HH:mm" value-format="HH:mm"
+          <el-form-item label-width="120px" label="下午起止时间" prop="pmWorkDate">
+            <el-time-picker v-model="worktimeForm.pmWorkDate" is-range format="HH:mm" value-format="HH:mm"
                             start-placeholder="开始时间" end-placeholder="结束时间" range-separator="至"
                             clearable ></el-time-picker>
           </el-form-item>
@@ -257,10 +257,6 @@
     name: "index",
     data(){
       return{
-        form: {
-          workHourTotal: undefined,
-          workHourUnit: '时',
-        },
         workHourUnitOptions: [{
           "label": "时",
           "value": "时"
@@ -276,8 +272,8 @@
         worktimeopen:false,
         // 设置每日工作时间表单
         worktimeForm:{
-          begintime: ["08:30", "12:00"],
-          endtime: ["13:30", "17:30"],
+          amWorkDate: ["08:30", "12:00"],
+          pmWorkDate: ["13:30", "17:30"],
         },
         beginSr: '08:30',
         endSr: '17:30',
@@ -287,10 +283,10 @@
         matters_needing_attention:'',
         // 每日工作时间验证
         worktimerule:{
-          begintime: [
+          amWorkDate: [
             { required: true, message: "起始时间", trigger: "blur" }
           ],
-          endtime: [
+          pmWorkDate: [
             { required: true, message: "起始时间", trigger: "blur" }
           ],
         },
@@ -400,17 +396,17 @@
             this.workyearForm.annualLeave = annualLeavePre.comConfigValue;
             this.annualLeaveId = annualLeavePre.comConfigId;
 
-            let begintimePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'begintime')))[0]
-            let begintimeArrary = eval(begintimePre.comConfigValue)
-            this.worktimeForm.begintime = begintimeArrary
-            this.beginSr = begintimeArrary[0]
-            this.beginId = begintimePre.comConfigId;
+            let amWorkDatePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'amWorkDate')))[0]
+            let amWorkDateArrary = eval(amWorkDatePre.comConfigValue)
+            this.worktimeForm.amWorkDate = amWorkDateArrary
+            this.beginSr = amWorkDateArrary[0]
+            this.beginId = amWorkDatePre.comConfigId;
 
-            let endtimePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'endtime')))[0]
-            let endtimeArrary = eval(endtimePre.comConfigValue)
-            this.worktimeForm.endtime = endtimeArrary
-            this.endSr = endtimeArrary[1]
-            this.endId = endtimePre.comConfigId;
+            let pmWorkDatePre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'pmWorkDate')))[0]
+            let pmWorkDateArrary = eval(pmWorkDatePre.comConfigValue)
+            this.worktimeForm.pmWorkDate = pmWorkDateArrary
+            this.endSr = pmWorkDateArrary[1]
+            this.endId = pmWorkDatePre.comConfigId;
 
             let workHourUnitPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'workHourUnit')))[0]
             this.overPeriodForm.workHourUnit = workHourUnitPre.comConfigValue
@@ -424,7 +420,7 @@
             this.overPeriodForm.overDay = eval(overDayPre.comConfigValue)
             this.overDayId = overDayPre.comConfigId;
 
-            let workHourPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue
+            let workHourPre = eval(res.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0]
             this.workduringForm.workduring = workHourPre.comConfigValue
             this.workHourId = workHourPre.comConfigValue
 
@@ -453,13 +449,12 @@
         this.$refs["form"].validate(valid => {
           if (valid) {
             const paramArray = [];
-            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'amWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.begintime)})
-            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'pmWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.endtime)})
+            paramArray.push({comConfigId: this.beginId,comConfigName: '上午起止时间',comConfigKey: 'amWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.amWorkDate)})
+            paramArray.push({comConfigId: this.endId,comConfigName: '下午起止时间',comConfigKey: 'pmWorkDate',comConfigValue: JSON.stringify(this.worktimeForm.pmWorkDate)})
 
-            let amhours = toHourDifference(this.worktimeForm.begintime[0],this.worktimeForm.begintime[1]);
-            let pmhours = toHourDifference(this.worktimeForm.endtime[0],this.worktimeForm.endtime[1]);
+            let amhours = toHourDifference(this.worktimeForm.amWorkDate[0],this.worktimeForm.amWorkDate[1]);
+            let pmhours = toHourDifference(this.worktimeForm.pmWorkDate[0],this.worktimeForm.pmWorkDate[1]);
             paramArray.push({comConfigId: this.workHourId,comConfigName: '工时',comConfigKey: 'workHour',comConfigValue: amhours+pmhours})
-
 
             if(!this.beginId){
               this.addComConfigInfo(paramArray);
