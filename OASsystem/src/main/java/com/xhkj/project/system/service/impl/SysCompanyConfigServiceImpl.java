@@ -1,12 +1,15 @@
 package com.xhkj.project.system.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.xhkj.common.utils.DateUtils;
 import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.common.utils.StringUtils;
 import com.xhkj.project.system.service.SysCompanyConfigService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.system.mapper.SysCompanyConfigMapper;
@@ -116,20 +119,38 @@ public class SysCompanyConfigServiceImpl implements SysCompanyConfigService
 
 
     @Override
-    public int updateComConfigList(List<SysCompanyConfig> list)
+    public int addOverPeriodList(List<SysCompanyConfig> list)
     {
+        Object[] keys = list.stream().map(SysCompanyConfig::getComConfigKey).toArray();
+        String keyStrs[] = Arrays.stream(keys).toArray(String[]::new);
+
+        sysCompanyConfigMapper.deleteSysCompanyConfigByKeys(keyStrs);
 
         Date nowDate = DateUtils.getNowDate();
         String username = SecurityUtils.getUsername();
         for (SysCompanyConfig sysCompanyConfig : list) {
             sysCompanyConfig.setCreateTime(nowDate);
             sysCompanyConfig.setCreateBy(username);
+            sysCompanyConfig.setUpdateTime(nowDate);
+            sysCompanyConfig.setUpdateBy(username);
+        }
+
+        return sysCompanyConfigMapper.addComConfigList(list);
+    }
+
+    @Override
+    public int updateComConfigList(List<SysCompanyConfig> list)
+    {
+
+        Date nowDate = DateUtils.getNowDate();
+        String username = SecurityUtils.getUsername();
+        for (SysCompanyConfig sysCompanyConfig : list) {
+            sysCompanyConfig.setUpdateTime(nowDate);
+            sysCompanyConfig.setUpdateBy(username);
         }
 
         return sysCompanyConfigMapper.updateComConfigList(list);
     }
-
-
 
 
     @Override

@@ -36,9 +36,9 @@ export function updateComConfig(data) {
 }
 
 // 删除公司配置
-export function delComConfig(comConfigId) {
+export function delComConfigs(comConfigIds) {
   return request({
-    url: '/system/comConfig/' + comConfigId,
+    url: '/system/comConfig/' + comConfigIds,
     method: 'delete'
   })
 }
@@ -56,6 +56,16 @@ export function exportComConfig(query) {
 export function addComConfigList(data) {
   return request({
     url: '/system/comConfig/addComConfigList',
+    method: 'post',
+    data: data
+  })
+}
+
+
+// 批量新增 加班时间段
+export function addOverPeriodList(data) {
+  return request({
+    url: '/system/comConfig/addOverPeriodList',
     method: 'post',
     data: data
   })

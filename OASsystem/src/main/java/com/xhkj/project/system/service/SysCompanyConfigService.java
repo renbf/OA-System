@@ -65,6 +65,11 @@ public interface SysCompanyConfigService
      * @return
      */
     public int addComConfigList(List<SysCompanyConfig> list);
+
+
+    public int addOverPeriodList(List<SysCompanyConfig> list);
+
+
     /**
      * 批量更新
      * @param list
