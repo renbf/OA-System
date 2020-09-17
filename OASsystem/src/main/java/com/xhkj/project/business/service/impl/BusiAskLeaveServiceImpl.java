@@ -15,7 +15,9 @@ import com.xhkj.project.business.domain.BusiHolsCheck;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 import com.xhkj.project.business.service.BusiHolsCheckService;
 import com.xhkj.project.system.domain.SysCompanyConfig;
+import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.service.ISysConfigService;
+import com.xhkj.project.system.service.ISysWorkflowService;
 import com.xhkj.project.system.service.SysCompanyConfigService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,9 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     private SysCompanyConfigService sysCompanyConfigService;
     @Autowired
     private BusiHolsCheckService busiHolsCheckService;
+    @Autowired
+    private ISysWorkflowService sysWorkflowService;
+
 
 
     @Override
@@ -198,6 +203,24 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     public int deleteBusiAskLeaveById(Long leaveId)
     {
         return busiAskLeaveMapper.deleteBusiAskLeaveById(leaveId);
+    }
+
+    @Override
+    public int leaveSumbit(Long[] leaveIds) {
+
+        for (int i = 0; i < leaveIds.length; i++) {
+            Long leaveId = leaveIds[i];
+
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(leaveId);
+            wfbt.setWorkflowId(1l);
+
+            //发起流程申请
+            sysWorkflowService.submitToNextWorkflow(wfbt);
+
+        }
+
+        return 0;
     }
 
 
