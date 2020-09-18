@@ -146,16 +146,16 @@
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
           <div v-if="scope.row.approvalStatus == 2">
-            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)" v-hasPermi="['business:leave:edit']">编辑</el-button>
             <!-- v-hasPermi="['system:role:edit']" -->
-            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['system:role:remove']">删除</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['business:leave:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:submit']">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
           <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
           <div v-else-if="scope.row.approvalStatus == 5">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:remove']">报送</el-button>
           </div>
         </template>
       </el-table-column>
@@ -486,7 +486,7 @@
 
 <script>
 
-import { delLeaves,updateLeave, addLeave,listLeave } from "@/api/business/mywork/leave";
+import { delLeaves,updateLeave, addLeave,listLeave,leaveSumbit } from "@/api/business/mywork/leave";
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { listDept } from "@/api/system/dept";
@@ -926,7 +926,7 @@ export default {
           }
         }
 
-        overleaveHoursShow(leaveType);
+        this.overleaveHoursShow(leaveType);
 
         this.editRules();
 
@@ -1102,7 +1102,7 @@ export default {
 
     //报送请假
     handleReport(row) {
-      const workIds = row.workId || this.ids;
+      const workIds = row.leaveId || this.ids;
       this.$confirm(
         "请确认是否报送",
         {
@@ -1114,22 +1114,22 @@ export default {
         }
       )
         .then(() => {
-          // reportleaveList(workIds).then(response => {
-          //   if (response.code === 200) {
-          //     this
-          //       .$confirm("报送成功", "报送成功", {
-          //         dangerouslyUseHTMLString: true,
-          //         showConfirmButton: false,
-          //         distinguishCancelAndClose: true,
-          //         cancelButtonText: "返回列表",
-          //         type: "success"
-          //       })
-          //       .catch(() => {
-          //         this.reset();
-          //         this.getList();
-          //       });
-          //   }
-          // });
+          leaveSumbit(workIds).then(response => {
+            if (response.code === 200) {
+              this
+                .$confirm("报送成功", "报送成功", {
+                  dangerouslyUseHTMLString: true,
+                  showConfirmButton: false,
+                  distinguishCancelAndClose: true,
+                  cancelButtonText: "返回列表",
+                  type: "success"
+                })
+                .catch(() => {
+                  this.reset();
+                  this.getList();
+                });
+            }
+          });
         })
         .catch(() => {
           this.reset();
