@@ -35,6 +35,9 @@ public class BusiAskLeave extends BaseEntity
     @Excel(name = "请假时长")
     private Double leaveHours;
 
+    @Excel(name = "请假时长单位")
+    private String leaveHoursUnit;
+
     /** 请假时间 */
     @Excel(name = "请假时间")
     private String leaveDates;
@@ -72,6 +75,15 @@ public class BusiAskLeave extends BaseEntity
     private String leaveBeginTime;
     /*请假结束时间*/
     private String leaveEndTime;
+
+
+    public String getLeaveHoursUnit() {
+        return leaveHoursUnit;
+    }
+
+    public void setLeaveHoursUnit(String leaveHoursUnit) {
+        this.leaveHoursUnit = leaveHoursUnit;
+    }
 
     public String getLeaveBeginTime() {
         return leaveBeginTime;

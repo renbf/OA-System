@@ -6,11 +6,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectBusiAskLeaveVo">
-        select leave_id, user_id, leave_type, leave_hours,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time from busi_ask_leave
+        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time from busi_ask_leave
     </sql>
 
     <sql id="selectBusiAskLeave">
-        select leave_id, user_id, leave_type, leave_hours,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time
+        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time
     </sql>
 
 
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBusiAskLeaveList" parameterType="BusiAskLeave" resultType="com.xhkj.project.business.domain.BusiAskLeave">
         select
-         bal.leave_id, bal.user_id, bal.leave_type, bal.leave_hours,bal.leave_dates,bal.leave_reason, bal.create_by, bal.create_time, bal.update_by,
+         bal.leave_id, bal.user_id, bal.leave_type, bal.leave_hours,bal.leave_hours_unit,bal.leave_dates,bal.leave_reason, bal.create_by, bal.create_time, bal.update_by,
          bal.update_time,bal.remark,bal.dept_id,bal.in_prj_flag,bal.leave_prj_name,bal.overtime_sur_Time,bal.annLea_sur_Time,bal.leave_begin_time,
          bal.leave_end_time,
          ifnull(wb.bill_status,2) as approval_Status
@@ -47,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null ">user_id,</if>
             <if test="leaveType != null  and leaveType != ''">leave_type,</if>
             <if test="leaveHours != null  and leaveHours != ''">leave_hours,</if>
+            <if test="leaveHoursUnit != null  and leaveHoursUnit != ''">leave_hours_unit,</if>
             <if test="leaveDates != null  and leaveDates != ''">leave_dates,</if>
             <if test="leaveReason != null  and leaveReason != ''">leave_reason,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
@@ -66,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null ">#{userId},</if>
             <if test="leaveType != null  and leaveType != ''">#{leaveType},</if>
             <if test="leaveHours != null  and leaveHours != ''">#{leaveHours},</if>
+            <if test="leaveHoursUnit != null  and leaveHoursUnit != ''">#{leaveHoursUnit},</if>
             <if test="leaveDates != null  and leaveDates != ''">#{leaveDates},</if>
             <if test="leaveReason != null  and leaveReason != ''">#{leaveReason},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
@@ -89,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null ">user_id = #{userId},</if>
             <if test="leaveType != null  and leaveType != ''">leave_type = #{leaveType},</if>
             <if test="leaveHours != null  and leaveHours != ''">leave_hours = #{leaveHours},</if>
+            <if test="leaveHoursUnit != null  and leaveHoursUnit != ''">leave_hours_unit = #{leaveHoursUnit},</if>
             <if test="leaveDates != null  and leaveDates != ''">leave_dates = #{leaveDates},</if>
             <if test="leaveReason != null  and leaveReason != ''">leave_reason = #{leaveReason},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>

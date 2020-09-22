@@ -109,7 +109,11 @@
           <span>{{ JSON.parse(scope.row.leaveDates)[0][0][0] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="请假时长" prop="leaveHours" :show-overflow-tooltip="true" width="80" align="center"/>
+      <el-table-column label="请假时长" prop="leaveHours" :show-overflow-tooltip="true" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.leaveHours}}{{scope.row.leaveHoursUnit}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="部门" align="center" width="150">
         <template slot-scope="scope">
           <span>{{ selectDictLabel(department, scope.row.deptId) }}</span>
@@ -308,8 +312,7 @@
           <el-col :span="10">
             <el-form-item label="请假时长" prop="leaveHours">
                 <el-input disabled v-model="form.leaveHours" width="60%"></el-input>
-                <!--<span class="font_margin_top">{{workHourUnit}}</span>-->
-                <span class="font_margin_top">小时</span>
+                <span class="font_margin_top">{{form.leaveHoursUnit}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -463,8 +466,7 @@
             <el-col :span="15">
               <el-form-item label="请假时长" prop="leaveHours">
                 <el-input disabled v-model="form.leaveHours"></el-input>
-                <!--<span class="margin-right font_margin_top">{{workHourUnit}}</span>-->
-                <span class="font_margin_top">小时</span>
+                <span class="margin-right font_margin_top">{{form.leaveHoursUnit}}</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -605,6 +607,7 @@ export default {
         dateRange: [[]],
         saveFlag: true,
         overtimeSurTime: 0,
+        leaveHoursUnit: '',
         annLeaSurTime: 0,
       },
       overtime_options: [
@@ -652,7 +655,7 @@ export default {
       this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue;
 
       let eval1 = eval(response.rows.filter(e => Object.is (e.comConfigKey,'workHourUnit')));
-      this.workHourUnit = eval1[0].comConfigValue;
+      this.form.leaveHoursUnit = this.workHourUnit = eval1[0].comConfigValue;
       let amWorkDate = eval(response.rows.filter(e => Object.is(e.comConfigKey,'amWorkDate'))[0].comConfigValue)[0];
       let pmWorkDate = eval(response.rows.filter(e => Object.is(e.comConfigKey,'pmWorkDate'))[0].comConfigValue)[1];
       this.leavePrecautions = eval(response.rows.filter(e => Object.is(e.comConfigKey,'leavePrecautions')))[0].comConfigValue;
@@ -686,10 +689,10 @@ export default {
     setExportData(){
       let dataArray = [];
       this.leaveList.forEach((leave, i) => {
-        const { leaveDates,leaveHours,deptId,leaveType,leaveReason,createTime,approvalStatus,curApprover  } = leave;
+        const { leaveDates,leaveHours,leaveHoursUnit,deptId,leaveType,leaveReason,createTime,approvalStatus,curApprover  } = leave;
         var leaveFormat = {
           "请假时间":JSON.parse(leaveDates)[0][0][0],
-          "请假时长":leaveHours,
+          "请假时长":leaveHours+leaveHoursUnit,
           "部门":this.selectDictLabel(this.department, deptId),
           "请假类型": this.selectDictLabel(this.options, leaveType),
           "理由陈述":leaveReason,
@@ -720,6 +723,7 @@ export default {
         this.leaveList = response.rows;
         this.total = response.total;
         this.loading = false;
+        debugger
       });
 
     },
@@ -746,13 +750,20 @@ export default {
           this.form.overtimeSurTime += this.floatDiv(this.timeBackUp[index],this.workHour);
         }
       }
+
       if(Object.is(this.form.leaveType,'4')){
         // 年休假时长重新计算
         this.form.annLeaSurTime += this.floatDiv(this.form.leaveHours,this.workHour);
       }
 
       if(this.timeBackUp[index]){
-        this.form.leaveHours -= this.timeBackUp[index];
+
+        if(Object.is(this.workHourUnit,'时')){
+          this.form.leaveHours -= this.timeBackUp[index];
+        }else if(Object.is(this.workHourUnit,'天')){
+          this.form.leaveHours -= this.floatDiv(this.timeBackUp[index],this.workHour);
+        }
+
         this.timeBackUp[index] = null;
       }
 
@@ -795,10 +806,9 @@ export default {
         let timehour = this.calculateHours(this.form.dateRange,this.workHour,index);
 
         // 计算请假时长
-        if(this.timeBackUp[index]){
-          this.form.leaveHours -= this.timeBackUp[index];
-        }
-        this.form.leaveHours += timehour;
+        // if(this.timeBackUp[index]){
+        //   this.form.leaveHours -= this.timeBackUp[index];
+        // }
 
         //备份计算时长
         this.timeBackUp.splice(index,0,timehour)
@@ -816,6 +826,12 @@ export default {
           }else if(Object.is(this.workHourUnit,'天')){
             this.form.overtimeSurTime -= this.floatDiv(this.timeBackUp[index],this.workHour);
           }
+        }
+
+        if(Object.is(this.workHourUnit,'时')){
+          this.form.leaveHours += timehour;
+        }else if(Object.is(this.workHourUnit,'天')){
+          this.form.leaveHours += this.floatDiv(this.timeBackUp[index],this.workHour);
         }
 
         if(Object.is(this.form.leaveType,'4')){
@@ -863,6 +879,7 @@ export default {
           leaveHours: 0,
           dateRange: [[]],
           saveFlag: true,
+          leaveHoursUnit:''
       }
       this.resetForm("form");
 
@@ -873,6 +890,7 @@ export default {
 
       this.form.overtimeSurTime=this.realOvertimeSurTime
       this.form.annLeaSurTime=this.realAnnLeaSurTime
+      this.form.leaveHoursUnit=this.workHourUnit
 
     },
 

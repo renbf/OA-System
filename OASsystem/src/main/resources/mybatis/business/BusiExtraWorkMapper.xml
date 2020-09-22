@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         extra_work_id,
         user_id,
         extra_work_hours,
+        extra_hours_unit,
         extra_work_dates,
         extra_work_Reason,
         dept_Id,
@@ -24,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         extra_work_id,
         user_id,
         extra_work_hours,
+        extra_hours_unit,
         extra_work_dates,
         extra_work_Reason,
         dept_Id,
@@ -49,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null ">user_id,</if>
             <if test="extraWorkHours != null ">extra_work_hours,</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">extra_hours_unit,</if>
             <if test="extraWorkDates != null ">extra_work_dates,</if>
             <if test="extraWorkReason != null ">extra_work_Reason,</if>
             <if test="deptId != null ">dept_Id,</if>
@@ -64,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
             <if test="extraWorkHours != null ">#{extraWorkHours},</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">#{extraHoursUnit},</if>
             <if test="extraWorkDates != null ">#{extraWorkDates},</if>
             <if test="extraWorkReason != null ">#{extraWorkReason},</if>
             <if test="deptId != null ">#{deptId},</if>
@@ -83,6 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null ">user_id = #{userId},</if>
             <if test="extraWorkHours != null ">extra_work_hours = #{extraWorkHours},</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">extra_hours_unit = #{extraHoursUnit},</if>
             <if test="extraWorkReason != null ">extra_work_Reason = #{extraWorkReason},</if>
             <if test="deptId != null ">dept_Id = #{deptId},</if>
             <if test="extraWorkPrjName != null ">extra_work_Prj_Name = #{extraWorkPrjName},</if>
