@@ -103,4 +103,9 @@ public class Constants
      * 公司一天工作时长
      */
     public static final String WORK_HOUR="work.hour";
+
+    /**
+     * 全部字典的key
+     */
+    public static final String ALLDICTDATA="all_dict_data";
 }

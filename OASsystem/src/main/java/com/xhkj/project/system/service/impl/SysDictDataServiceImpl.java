@@ -1,6 +1,10 @@
 package com.xhkj.project.system.service.impl;
 
-import java.util.List;
+import java.util.*;
+
+import com.xhkj.common.constant.Constants;
+import com.xhkj.common.utils.JedisUtil;
+import com.xhkj.framework.web.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.system.domain.SysDictData;
@@ -17,6 +21,10 @@ public class SysDictDataServiceImpl implements ISysDictDataService
 {
     @Autowired
     private SysDictDataMapper dictDataMapper;
+    @Autowired
+    private JedisUtil jedisUtil;
+
+
 
     /**
      * 根据条件分页查询字典数据
@@ -114,4 +122,35 @@ public class SysDictDataServiceImpl implements ISysDictDataService
     {
         return dictDataMapper.updateDictData(dictData);
     }
+
+
+    @Override
+    public Map<String, List<SysDictData>> getAllDict() {
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        Map<String, List<SysDictData>> dictGroupMap = new HashMap<>();
+        try {
+            Map<String, List<SysDictData>> data = (Map<String, List<SysDictData>>)jedisUtil.get(Constants.ALLDICTDATA, Map.class);
+            if(Objects.nonNull(data)){
+                return data;
+            }
+            List<SysDictData> dictAllList= dictDataMapper.selectDictDataList(new SysDictData());
+            for (SysDictData dict : dictAllList) {
+                String dictGroup = dict.getDictType();
+                if (!dictGroupMap.containsKey(dictGroup)) {
+                    List<SysDictData> dictList = new ArrayList<>();
+                    dictList.add(dict);
+                    dictGroupMap.put(dictGroup, dictList);
+                }else {
+                    List<SysDictData> dictList = dictGroupMap.get(dictGroup);
+                    dictList.add(dict);
+                }
+            }
+            jedisUtil.setObject(Constants.ALLDICTDATA,dictGroupMap,1800);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+        return dictGroupMap;
+    }
+
+
 }

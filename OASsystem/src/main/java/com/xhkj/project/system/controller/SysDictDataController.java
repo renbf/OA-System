@@ -106,4 +106,16 @@ public class SysDictDataController extends BaseController
     {
         return toAjax(dictDataService.deleteDictDataByIds(dictCodes));
     }
+
+
+    /**
+     * 查询全部字典
+     * @return
+     */
+    @GetMapping(value = "/getAllDict")
+    public AjaxResult dictType()
+    {
+        return AjaxResult.success(dictDataService.getAllDict());
+    }
+
 }

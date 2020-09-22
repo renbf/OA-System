@@ -1,6 +1,9 @@
 package com.xhkj.project.system.service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.system.domain.SysDictData;
 
 /**
@@ -74,4 +77,6 @@ public interface ISysDictDataService
      * @return 结果
      */
     public int updateDictData(SysDictData dictData);
+
+    public Map<String, List<SysDictData>> getAllDict();
 }

@@ -9,7 +9,7 @@
           @click="handleAdd"
           >新建申请</el-button
         >
-        <!-- v-hasPermi="['system:role:add']" -->
+        <!-- v-hasPermi="['business:extraWork:remove:add']" -->
       </el-col>
 
       <el-col :span="1.5">
@@ -18,8 +18,8 @@
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
-          @click="delextraWorks"
-          v-hasPermi="['system:role:remove']"
+          @click="handleDelete"
+          v-hasPermi="['business:extraWork:remove']"
           >删除</el-button
         >
       </el-col>
@@ -125,7 +125,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(statusOptions, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -139,15 +139,15 @@
           <!--  2是未报送按钮全部显示 -->
           <div v-if="scope.row.approvalStatus == 2">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <!-- v-hasPermi="['system:role:edit']" -->
-            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="handleDelete(scope.row)" v-hasPermi="['system:role:remove']">删除</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <!-- v-hasPermi="['business:extraWork:edit']" -->
+            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="handleDelete(scope.row)" v-hasPermi="['business:extraWork:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:extraWork:remove']">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
           <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
           <div v-else-if="scope.row.approvalStatus == 5">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:extraWork:remove']">报送</el-button>
           </div>
         </template>
       </el-table-column>
@@ -465,8 +465,6 @@ export default {
       open: false,
       // 查看是否显示弹出层
       detail: false,
-      // 状态数据字典
-      statusOptions: [],
       defaultDate: [],
       workHourUnit: '',
       department: [],
@@ -475,11 +473,13 @@ export default {
       overtimePrecautions:[],
       DateRanges: [],
 
+      statusOptions: [],
       realOvertimeSurTime: 0,
       overPeriodStart: "",
       overPeriodEnd: "",
       overPeriodVal: [],
       overDayVal: [],
+      SYS_CHECK_STATUS: "sys_check_status",
 
       // 查询参数
       queryParams: {
@@ -554,9 +554,8 @@ export default {
 
     });
     //审批状态
-    this.getDicts("sys_check_status").then(response => {
-      this.statusOptions = response.data;
-    });
+    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+
     //系统是否
     this.getDicts("sys_yes_no").then(response => {
       response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))

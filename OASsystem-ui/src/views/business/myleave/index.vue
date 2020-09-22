@@ -7,9 +7,9 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['business:leave:add']"
           >新建申请</el-button
         >
-        <!-- v-hasPermi="['system:role:add']" -->
       </el-col>
 
       <el-col :span="1.5">
@@ -19,7 +19,7 @@
           size="mini"
           :disabled="multiple"
           @click="delLeaves"
-          v-hasPermi="['system:role:remove']"
+          v-hasPermi="['business:leave:remove']"
           >删除</el-button
         >
       </el-col>
@@ -122,7 +122,7 @@
       </el-table-column>
       <el-table-column label="请假类型" align="center" width="150">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(options, scope.row.leaveType) }}</span>
+          <span>{{ selectDictLabelByType(BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="理由陈述" prop="leaveReason" :show-overflow-tooltip="true" align="center"/>
@@ -133,7 +133,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(statusOptions, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -147,7 +147,7 @@
           <!--  2是未报送按钮全部显示 -->
           <div v-if="scope.row.approvalStatus == 2">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)" v-hasPermi="['business:leave:edit']">编辑</el-button>
-            <!-- v-hasPermi="['system:role:edit']" -->
+            <!-- v-hasPermi="['business:leave:edit']" -->
             <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['business:leave:remove']">删除</el-button>
             <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:submit']">报送</el-button>
           </div>
@@ -491,7 +491,6 @@ import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { listDept } from "@/api/system/dept";
 
-
 export default {
   name: "leave",
   data() {
@@ -581,6 +580,9 @@ export default {
       leavePrecautions:[],
       leaveDateRange: [],
 
+      BUS_LEAVE_TYPE: "bus_leave_type",
+      SYS_CHECK_STATUS: "sys_check_status",
+
       realOvertimeSurTime: 0,
       realAnnLeaSurTime: 0,
 
@@ -636,14 +638,14 @@ export default {
     };
   },
   created() {
-
     this.getList()
     this.form.dateRange.push([]);
 
     //获取请假类型
-    this.getDicts("bus_leave_type").then(response => {
-      this.options = response.data;
-    });
+    this.options =  this.selectDictByType(this.BUS_LEAVE_TYPE)
+    //审批状态
+    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+
     //获取工时
     listComConfig({}).then(response => {
 
@@ -660,10 +662,7 @@ export default {
       this.defaultDate.push(pmWorkDate +":00")
 
     });
-    //审批状态
-    this.getDicts("sys_check_status").then(response => {
-      this.statusOptions = response.data;
-    });
+
     //系统是否
     this.getDicts("sys_yes_no").then(response => {
       response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
