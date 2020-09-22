@@ -116,7 +116,11 @@
           <span>{{ selectDictLabel(overtimeOptions, scope.row.extraWorkPrjName) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="加班时长" prop="extraWorkHours" :show-overflow-tooltip="true" width="80" align="center"/>
+      <el-table-column label="加班时长" prop="extraWorkHours" :show-overflow-tooltip="true" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.extraWorkHours}}{{scope.row.extraHoursUnit}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="理由陈述" prop="extraWorkReason" :show-overflow-tooltip="true" align="center"/>
       <el-table-column label="申请时间" align="center" prop="createTime" width="150">
         <template slot-scope="scope">
@@ -244,7 +248,7 @@
         <el-form-item label="加班时长" prop="extraWorkHours">
           <el-col :span="10">
             <el-input disabled="" v-model="form.extraWorkHours" ></el-input>
-            <span class="font_margin_top" >时</span>
+            <span class="font_margin_top" >{{form.extraHoursUnit}}</span>
           </el-col>
         </el-form-item>
         <el-form-item label="理由陈述" prop="extraWorkReason">
@@ -364,7 +368,7 @@
           <el-form-item label="加班时长" prop="extraWorkHours">
             <el-col :span="10">
               <el-input disabled="" v-model="form.extraWorkHours"></el-input>
-              <span class="font_margin_top" >时</span>
+              <span class="font_margin_top" >{{form.extraHoursUnit}}</span>
             </el-col>
           </el-form-item>
           <el-form-item label="理由陈述" prop="extraWorkReason">
@@ -496,6 +500,7 @@ export default {
         extraWorkPrjName: '',
         extraWorkReason: '',
         extraWorkHours: 0,
+        extraHoursUnit: '',
         dateRange: [[]],
         saveFlag: true,
         overtimeSurTime: 0,
@@ -539,7 +544,7 @@ export default {
       this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue;
 
       let eval1 = eval(response.rows.filter(e => Object.is (e.comConfigKey,'workHourUnit')));
-      this.workHourUnit = eval1[0].comConfigValue;
+      this.form.extraHoursUnit = this.workHourUnit = eval1[0].comConfigValue;
 
       this.overPeriodVal  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'overPeriod'))[0].comConfigValue);
       this.overDayVal  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'overDay'))[0].comConfigValue);
@@ -578,10 +583,10 @@ export default {
     setExportData(){
       let dataArray = [];
       this.extraWorkList.forEach((extraWork, i) => {
-        const { extraWorkDates,extraWorkHours,deptId,extraWorkReason,createTime,approvalStatus,curApprover  } = extraWork;
+        const { extraWorkDates,extraWorkHours,extraHoursUnit,deptId,extraWorkReason,createTime,approvalStatus,curApprover  } = extraWork;
         var dataFormat = {
           "加班时间":JSON.parse(extraWorkDates)[0],
-          "加班时长":extraWorkHours,
+          "加班时长":extraWorkHours+extraHoursUnit,
           "部门":this.selectDictLabel(this.department, deptId),
           "理由陈述":extraWorkReason,
           "申请时间":createTime,
@@ -658,7 +663,7 @@ export default {
 
             //公司规定晚上加班开始、结束时间
             let comStartTimeY = new Date(startDay +" "+ overPeriod[0]);
-            let comendTimeY = new Date(endDay +" "+ overPeriod[1]);
+            let comendTimeY = new Date(startDay +" "+ overPeriod[1]);
             //公司规定相差毫秒数  10800000
             let comSubMils = comendTimeY - comStartTimeY;
 
@@ -668,8 +673,7 @@ export default {
             }
           }
 
-          this.form.overtimeSurTime += eval(timehour);
-
+          this.form.overtimeSurTime += this.form.extraWorkHours = eval(timehour);
         }
 
       }
@@ -705,13 +709,14 @@ export default {
           extraWorkHours: 0,
           dateRange: [[]],
           saveFlag: true,
+          extraHoursUnit: ''
       }
       this.resetForm("form");
 
       this.err_blo_hide = false
 
       this.form.overtimeSurTime=this.realOvertimeSurTime
-
+      this.form.extraHoursUnit=this.workHourUnit
     },
 
 

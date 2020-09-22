@@ -28,6 +28,9 @@ public class BusiExtraWork extends BaseEntity
     @Excel(name = "加班时长")
     private Double extraWorkHours;
 
+    @Excel(name = "加班时长单位")
+    private String extraHoursUnit;
+
     /** 加班时间 */
     @Excel(name = "加班时间")
     private String extraWorkDates;
@@ -58,6 +61,15 @@ public class BusiExtraWork extends BaseEntity
     /*剩余加班时长*/
     @Excel(name = "剩余加班时长")
     private String overtimeSurTime;
+
+
+    public String getExtraHoursUnit() {
+        return extraHoursUnit;
+    }
+
+    public void setExtraHoursUnit(String extraHoursUnit) {
+        this.extraHoursUnit = extraHoursUnit;
+    }
 
     public String getOvertimeSurTime() {
         return overtimeSurTime;

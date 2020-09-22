@@ -723,7 +723,6 @@ export default {
         this.leaveList = response.rows;
         this.total = response.total;
         this.loading = false;
-        debugger
       });
 
     },
