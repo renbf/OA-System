@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          bal.update_time,bal.remark,bal.dept_id,bal.in_prj_flag,bal.leave_prj_name,bal.overtime_sur_Time,bal.annLea_sur_Time,bal.leave_begin_time,
          bal.leave_end_time,
          ifnull(wb.bill_status,2) as approval_Status
-        from busi_ask_leave bal left join workflow_bill wb on bal.leave_id = wb.bill_id
+        from busi_ask_leave bal left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
         <where>
             <if test="userId != null "> and bal.user_id = #{userId}</if>
             <if test="leaveType != null  and leaveType != ''"> and bal.leave_type = #{leaveType}</if>

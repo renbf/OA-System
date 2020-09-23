@@ -159,7 +159,9 @@
           <div v-else-if="scope.row.approvalStatus == 0 || scope.row.approvalStatus == 1 || scope.row.approvalStatus == 99 "></div>
           <div v-else-if="scope.row.approvalStatus == -1">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
+
+<!--            v-hasPermi="['business:leave:submit']"-->
           </div>
         </template>
       </el-table-column>
@@ -1021,16 +1023,9 @@ export default {
                 if (this.form.leaveId) {
                   updateLeave(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("更新成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -1038,16 +1033,9 @@ export default {
                 }else{
                   addLeave(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("保存成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -1064,16 +1052,9 @@ export default {
 
     returnResult(response){
       if (response.code === 200) {
-        this.$confirm("保存成功", "保存成功", {
-            dangerouslyUseHTMLString: true,
-            showConfirmButton: false,
-            distinguishCancelAndClose: true,
-            cancelButtonText: "返回列表",
-            type: "success"
-          }).catch(() => {
-          this.reset();
-          this.getList();
-        });
+        this.msgSuccess("保存成功");
+        this.reset();
+        this.getList();
       } else {
         this.msgError(response.msg);
       }
@@ -1096,17 +1077,9 @@ export default {
         .then(() => {
           delLeaves(leaveIds).then(response => {
             if (response.code === 200) {
-              this.$confirm("删除成功", "删除成功", {
-                  dangerouslyUseHTMLString: true,
-                  showConfirmButton: false,
-                  distinguishCancelAndClose: true,
-                  cancelButtonText: "返回列表",
-                  type: "success"
-                })
-                .catch(() => {
-                  this.reset();
-                  this.getList();
-                });
+              this.msgSuccess("删除成功");
+              this.reset();
+              this.getList();
             }
           });
         })
@@ -1118,7 +1091,7 @@ export default {
 
     //报送请假
     handleReport(row) {
-      const workIds = row.leaveId || this.ids;
+      const leaveIds = row.leaveId || this.ids;
       this.$confirm(
         "请确认是否报送",
         {
@@ -1130,21 +1103,14 @@ export default {
         }
       )
         .then(() => {
-          leaveSumbit(workIds).then(response => {
+          leaveSumbit(leaveIds).then(response => {
             if (response.code === 200) {
-              this
-                .$confirm("报送成功", "报送成功", {
-                  dangerouslyUseHTMLString: true,
-                  showConfirmButton: false,
-                  distinguishCancelAndClose: true,
-                  cancelButtonText: "返回列表",
-                  type: "success"
-                })
-                .catch(() => {
-                  this.reset();
-                  this.getList();
-                });
+              this.msgSuccess("报送成功");
+              this.reset();
+              this.getList();
             }
+          }).catch(err => {
+debugger
           });
         })
         .catch(() => {

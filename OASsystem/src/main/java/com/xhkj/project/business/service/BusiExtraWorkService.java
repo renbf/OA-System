@@ -58,4 +58,7 @@ public interface BusiExtraWorkService
      * @return 结果
      */
     public int deleteBusiExtraWorkById(Long extraWorkId);
+
+
+    public int extraWorkSumbit(Long[] extraWorkIds);
 }

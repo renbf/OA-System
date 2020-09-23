@@ -100,4 +100,15 @@ public class BusiExtraWorkController extends BaseController
     {
         return toAjax(busiExtraWorkService.deleteBusiExtraWorkByIds(extraWorkIds));
     }
+
+    /**
+     * 报送-发起流程
+     */
+    @PreAuthorize("@ss.hasPermi('business:extraWork:submit')")
+    @Log(title = "加班上报", businessType = BusinessType.INSERT)
+    @PostMapping("/extraWorkSumbit/{extraWorkIds}")
+    public AjaxResult extraWorkSumbit(@PathVariable("extraWorkIds") Long[] extraWorkIds)
+    {
+        return toAjax(busiExtraWorkService.extraWorkSumbit(extraWorkIds));
+    }
 }

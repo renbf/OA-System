@@ -108,7 +108,7 @@ public class BusiAskLeaveController extends BaseController
 
 
     /**
-     * 报送
+     * 报送-发起流程
      */
     @PreAuthorize("@ss.hasPermi('business:leave:submit')")
     @Log(title = "请假上报", businessType = BusinessType.INSERT)

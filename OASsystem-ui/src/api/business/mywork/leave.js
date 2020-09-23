@@ -66,7 +66,6 @@ export function leaveSumbit(leaveIds) {
   return request({
     url: "/business/leave/leaveSumbit/" + leaveIds,
     method: "post",
-    //data: JSON.stringify(data)
   });
 }
 

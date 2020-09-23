@@ -79,6 +79,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     @Transactional
     public int insertBusiAskLeave(BusiAskLeaveVo busiAskLeaveVo)
     {
+
         BusiAskLeave busiAskLeave =  new BusiAskLeave();
         Long userId = Long.valueOf(SecurityUtils.getUserId());
 
@@ -89,7 +90,6 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         BeanUtils.copyProperties(busiAskLeaveVo,busiAskLeave);
         busiAskLeave.setCreateTime(new Date());
         busiAskLeave.setCreateBy(String.valueOf(userId));
-
         String leaveDatesStr = busiAskLeave.getLeaveDates();
         if(StringUtils.isNotBlank(leaveDatesStr)){
             splitLeaveTime(busiAskLeave, leaveDatesStr);
@@ -213,7 +213,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
             WorkflowBillTrace wfbt = new WorkflowBillTrace();
             wfbt.setBillId(leaveId);
-            wfbt.setWorkflowId(1l);
+            wfbt.setWorkflowId(2l);
 
             //发起流程申请
             sysWorkflowService.submitToNextWorkflow(wfbt);

@@ -52,5 +52,11 @@ export function exportExtraWork(query) {
   });
 }
 
-
+//加班上报
+export function extraWorkSumbit(extraWorkIds) {
+  return request({
+    url: "/business/extraWork/extraWorkSumbit/" + extraWorkIds,
+    method: "post",
+  });
+}
 

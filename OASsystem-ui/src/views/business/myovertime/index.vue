@@ -145,17 +145,18 @@
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
             <!-- v-hasPermi="['business:extraWork:edit']" -->
             <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="handleDelete(scope.row)" v-hasPermi="['business:extraWork:remove']">删除</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:extraWork:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
           <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
           <div v-else-if="scope.row.approvalStatus == 5">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:extraWork:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" >报送</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
+
 
     <pagination
       v-show="total > 0"
@@ -388,7 +389,7 @@
 
 <script>
 
-import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork } from "@/api/business/mywork/extrawork";
+import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork,extraWorkSumbit } from "@/api/business/mywork/extrawork";
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { listDept } from "@/api/system/dept";
@@ -801,16 +802,9 @@ export default {
                 if (this.form.extraWorkId) {
                   updateExtraWork(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("更新成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -818,16 +812,9 @@ export default {
                 }else{
                   addExtraWork(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("保存成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -876,17 +863,9 @@ export default {
         .then(() => {
           delExtraWorks(extraWorkIds).then(response => {
             if (response.code === 200) {
-              this.$confirm("删除成功", "删除成功", {
-                  dangerouslyUseHTMLString: true,
-                  showConfirmButton: false,
-                  distinguishCancelAndClose: true,
-                  cancelButtonText: "返回列表",
-                  type: "success"
-                })
-                .catch(() => {
-                  this.reset();
-                  this.getList();
-                });
+              this.msgSuccess("删除成功");
+              this.reset();
+              this.getList();
             }
           });
         })
@@ -898,7 +877,7 @@ export default {
 
     //报送加班
     handleReport(row) {
-      const workIds = row.workId || this.ids;
+      const workIds = row.extraWorkId || this.ids;
       this.$confirm(
         "请确认是否报送",
         {
@@ -910,22 +889,13 @@ export default {
         }
       )
         .then(() => {
-          // reportextraWorkList(workIds).then(response => {
-          //   if (response.code === 200) {
-          //     this
-          //       .$confirm("报送成功", "报送成功", {
-          //         dangerouslyUseHTMLString: true,
-          //         showConfirmButton: false,
-          //         distinguishCancelAndClose: true,
-          //         cancelButtonText: "返回列表",
-          //         type: "success"
-          //       })
-          //       .catch(() => {
-          //         this.reset();
-          //         this.getList();
-          //       });
-          //   }
-          // });
+          extraWorkSumbit(workIds).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("报送成功");
+              this.reset();
+              this.getList();
+            }
+          });
         })
         .catch(() => {
           this.reset();
