@@ -86,7 +86,6 @@ export function selectDictByType(dataType) {
 
 // 根据类型 回显数据字典
 export function selectDictLabelByType(dataType, value) {
-  console.log(dataType,222)
   var actions = [];
   var datas = dictAllData[dataType];
 
