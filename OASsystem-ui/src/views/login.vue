@@ -140,6 +140,7 @@
 								this.$router.push({
 									path: "/index"
 								});
+								window.location.reload();
 							})
 							.catch(() => {
 								this.loginForm.password = '';

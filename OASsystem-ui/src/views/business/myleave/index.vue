@@ -126,7 +126,7 @@
       </el-table-column>
       <el-table-column label="请假类型" align="center" width="150">
         <template slot-scope="scope">
-<!--          <span>{{ selectDictLabelByType(BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>-->
+          <span>{{ selectDictLabelByType(BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="理由陈述" prop="leaveReason" :show-overflow-tooltip="true" align="center"/>
@@ -137,7 +137,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-<!--          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>-->
+          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
