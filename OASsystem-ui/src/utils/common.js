@@ -70,15 +70,15 @@ export function addDateRange(params, dateRange) {
 
 //所有字典
 var dictAllData;
-request({
-  url: '/system/dict/data/getAllDict',
-  method: 'get',
-}).then(response=>{
-  if(response.code == 200){
-    dictAllData = response.data;
-    console.log(dictAllData,111)
-  }
-})
+// request({
+//   url: '/system/dict/data/getAllDict',
+//   method: 'get',
+// }).then(response=>{
+//   if(response.code == 200){
+//     dictAllData = response.data;
+//     console.log(dictAllData,111)
+//   }
+// })
 
 export function selectDictByType(dataType) {
    return dictAllData[dataType];

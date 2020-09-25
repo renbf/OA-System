@@ -3,8 +3,6 @@ package com.xhkj.project.system.service.impl;
 import java.util.*;
 
 import com.xhkj.common.constant.Constants;
-import com.xhkj.common.utils.JedisUtil;
-import com.xhkj.framework.web.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.system.domain.SysDictData;
@@ -21,8 +19,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService
 {
     @Autowired
     private SysDictDataMapper dictDataMapper;
-    @Autowired
-    private JedisUtil jedisUtil;
 
 
 
@@ -129,10 +125,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService
         Map<String,Object> resultMap = new HashMap<String,Object>();
         Map<String, List<SysDictData>> dictGroupMap = new HashMap<>();
         try {
-            Map<String, List<SysDictData>> data = (Map<String, List<SysDictData>>)jedisUtil.get(Constants.ALLDICTDATA, Map.class);
-            if(Objects.nonNull(data)){
-                return data;
-            }
             List<SysDictData> dictAllList= dictDataMapper.selectDictDataList(new SysDictData());
             for (SysDictData dict : dictAllList) {
                 String dictGroup = dict.getDictType();
@@ -145,7 +137,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService
                     dictList.add(dict);
                 }
             }
-            jedisUtil.setObject(Constants.ALLDICTDATA,dictGroupMap,1800);
         } catch (Exception e) {
             throw new RuntimeException();
         }
