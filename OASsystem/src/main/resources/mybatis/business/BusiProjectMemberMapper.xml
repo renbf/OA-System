@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiProjectMemberMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiProjectMember" id="BusiProjectMemberResult">
+        <result property="projectMemberId"    column="project_member_id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="memberName"    column="member_name"    />
+    </resultMap>
+	
+	<sql id="selectBusiProjectMemberbasicColums">
+        select pm.project_member_id, pm.project_id, pm.dept_id, pm.dept_name, pm.member_id, pm.member_name
+    </sql>
+	
+    <select id="selectBusiProjectMemberList" parameterType="com.xhkj.project.business.domain.BusiProjectMember" resultMap="BusiProjectMemberResult">
+        <include refid="selectBusiProjectMemberbasicColums"/>
+        from busi_project_member pm
+        <where>  
+            <if test="projectMemberId != null "> and pm.project_member_id = #{projectMemberId}</if>
+             <if test="projectId != null "> and pm.project_id = #{projectId}</if>
+             <if test="deptId != null "> and pm.dept_id = #{deptId}</if>
+             <if test="deptName != null  and deptName != '' "> and pm.dept_name = #{deptName}</if>
+             <if test="memberId != null "> and pm.member_id = #{memberId}</if>
+             <if test="memberName != null  and memberName != '' "> and pm.member_name = #{memberName}</if>
+         </where>
+    </select>
+    
+    <select id="selectBusiProjectMemberById" parameterType="Long" resultMap="BusiProjectMemberResult">
+        <include refid="selectBusiProjectMemberbasicColums"/>
+        from busi_project_member pm
+        where pm.project_member_id = #{projectMemberId}
+    </select>
+        
+    <insert id="insertBusiProjectMember" parameterType="com.xhkj.project.business.domain.BusiProjectMember" useGeneratedKeys="true" keyProperty="projectMemberId">
+        insert into busi_project_member
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="projectId != null  ">project_id,</if>
+			<if test="deptId != null  ">dept_id,</if>
+			<if test="deptName != null  and deptName != ''  ">dept_name,</if>
+			<if test="memberId != null  ">member_id,</if>
+			<if test="memberName != null  and memberName != ''  ">member_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="projectId != null  ">#{projectId},</if>
+			<if test="deptId != null  ">#{deptId},</if>
+			<if test="deptName != null  and deptName != ''  ">#{deptName},</if>
+			<if test="memberId != null  ">#{memberId},</if>
+			<if test="memberName != null  and memberName != ''  ">#{memberName},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateBusiProjectMember" parameterType="com.xhkj.project.business.domain.BusiProjectMember">
+        update busi_project_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null  ">project_id = #{projectId},</if>
+            <if test="deptId != null  ">dept_id = #{deptId},</if>
+            <if test="deptName != null  and deptName != ''  ">dept_name = #{deptName},</if>
+            <if test="memberId != null  ">member_id = #{memberId},</if>
+            <if test="memberName != null  and memberName != ''  ">member_name = #{memberName},</if>
+        </trim>
+        where project_member_id = #{projectMemberId}
+    </update>
+
+	<delete id="deleteBusiProjectMemberById" parameterType="Long">
+        delete from busi_project_member where project_member_id = #{projectMemberId}
+    </delete>
+	
+    <delete id="deleteBusiProjectMemberByIds" parameterType="String">
+        delete from busi_project_member where project_member_id in 
+        <foreach item="projectMemberId" collection="array" open="(" separator="," close=")">
+            #{projectMemberId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiProjectMemberBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="projectMemberId">
+        insert into busi_project_member ( project_id, dept_id, dept_name, member_id, member_name) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.projectId}, #{item.deptId}, #{item.deptName}, #{item.memberId}, #{item.memberName})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    
+</mapper>

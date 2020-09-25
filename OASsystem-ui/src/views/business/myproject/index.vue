@@ -133,6 +133,7 @@
 </template>
 <script>
   import { listDept } from "@/api/system/dept";
+  import { listBusiProject } from "@/api/business/mywork/myproject";
     export default {
       name: "index",
       data() {
@@ -186,6 +187,8 @@
           filterMethod(query, item) {
             return item.pinyin.indexOf(query) > -1;
           },
+          busiProjectUseList:[],
+          busiProjectDoneList:[],
         }
 
       },
@@ -195,9 +198,24 @@
           response.data.forEach((val) => this.bumenOptions.push({'dictValue': val.deptId, 'dictLabel': val.deptName})
           )
         });
+        this.listBusiProject();
       },
 
       methods: {
+        listBusiProject() {
+          listBusiProject({projectProgress:'0'}).then(response => {
+            if(response.code == 0){
+              busiProjectUseList = response.data;
+            }
+          });
+
+          listBusiProject({projectProgress:'1'}).then(response => {
+            if(response.code == 0){
+              busiProjectDoneList = response.data;
+            }
+          });
+
+        },
         handleAdd() {
           this.addproject = "新建项目";
           this.addopen = true

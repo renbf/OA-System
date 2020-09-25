@@ -1,4 +1,14 @@
 import request from "@/utils/request";
+
+// 查询项目列表
+export function listBusiProject(query) {
+  return request({
+    url: '/api/busiProject/list',
+    method: 'get',
+    params: query
+  })
+}
+
 export function project_progress() {
   return {
     code: 200,

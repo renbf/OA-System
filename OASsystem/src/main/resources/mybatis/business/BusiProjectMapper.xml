@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiProjectMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiProject" id="BusiProjectResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="leaderId"    column="leader_id"    />
+        <result property="leaderName"    column="leader_name"    />
+        <result property="projectStartDate"    column="project_start_date"    />
+        <result property="projectEndDate"    column="project_end_date"    />
+        <result property="projectDesc"    column="project_desc"    />
+        <result property="status"    column="status"    />
+        <result property="projectProgress"    column="project_progress"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectBusiProjectbasicColums">
+        select p.project_id, p.project_name, p.leader_id, p.leader_name, p.project_start_date, p.project_end_date, p.project_desc, p.status, p.project_progress, p.delete_flag, p.sort_order, p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+    </sql>
+	
+    <select id="selectBusiProjectList" parameterType="com.xhkj.project.business.domain.BusiProject" resultMap="BusiProjectResult">
+        <include refid="selectBusiProjectbasicColums"/>
+        from busi_project p
+        <where>  
+            <if test="projectId != null "> and p.project_id = #{projectId}</if>
+             <if test="projectName != null  and projectName != '' "> and p.project_name = #{projectName}</if>
+             <if test="leaderId != null "> and p.leader_id = #{leaderId}</if>
+             <if test="leaderName != null  and leaderName != '' "> and p.leader_name = #{leaderName}</if>
+             <if test="projectStartDate != null "> and p.project_start_date = #{projectStartDate}</if>
+             <if test="projectEndDate != null "> and p.project_end_date = #{projectEndDate}</if>
+             <if test="projectDesc != null  and projectDesc != '' "> and p.project_desc = #{projectDesc}</if>
+             <if test="status != null  and status != '' "> and p.status = #{status}</if>
+             <if test="projectProgress != null  and projectProgress != '' "> and p.project_progress = #{projectProgress}</if>
+             <if test="deleteFlag != null  and deleteFlag != '' "> and p.delete_flag = #{deleteFlag}</if>
+             <if test="sortOrder != null "> and p.sort_order = #{sortOrder}</if>
+             <if test="createBy != null  and createBy != '' "> and p.create_by = #{createBy}</if>
+             <if test="createTime != null "> and p.create_time = #{createTime}</if>
+             <if test="updateBy != null  and updateBy != '' "> and p.update_by = #{updateBy}</if>
+             <if test="updateTime != null "> and p.update_time = #{updateTime}</if>
+             <if test="remark != null  and remark != '' "> and p.remark = #{remark}</if>
+         </where>
+    </select>
+    
+    <select id="selectBusiProjectById" parameterType="Long" resultMap="BusiProjectResult">
+        <include refid="selectBusiProjectbasicColums"/>
+        from busi_project p
+        where p.project_id = #{projectId}
+    </select>
+        
+    <insert id="insertBusiProject" parameterType="com.xhkj.project.business.domain.BusiProject" useGeneratedKeys="true" keyProperty="projectId">
+        insert into busi_project
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="projectName != null  and projectName != ''  ">project_name,</if>
+			<if test="leaderId != null  ">leader_id,</if>
+			<if test="leaderName != null  and leaderName != ''  ">leader_name,</if>
+			<if test="projectStartDate != null  ">project_start_date,</if>
+			<if test="projectEndDate != null  ">project_end_date,</if>
+			<if test="projectDesc != null  and projectDesc != ''  ">project_desc,</if>
+			<if test="status != null  and status != ''  ">status,</if>
+			<if test="projectProgress != null  and projectProgress != ''  ">project_progress,</if>
+			<if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag,</if>
+			<if test="sortOrder != null  ">sort_order,</if>
+			<if test="createBy != null  and createBy != ''  ">create_by,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="projectName != null  and projectName != ''  ">#{projectName},</if>
+			<if test="leaderId != null  ">#{leaderId},</if>
+			<if test="leaderName != null  and leaderName != ''  ">#{leaderName},</if>
+			<if test="projectStartDate != null  ">#{projectStartDate},</if>
+			<if test="projectEndDate != null  ">#{projectEndDate},</if>
+			<if test="projectDesc != null  and projectDesc != ''  ">#{projectDesc},</if>
+			<if test="status != null  and status != ''  ">#{status},</if>
+			<if test="projectProgress != null  and projectProgress != ''  ">#{projectProgress},</if>
+			<if test="deleteFlag != null  and deleteFlag != ''  ">#{deleteFlag},</if>
+			<if test="sortOrder != null  ">#{sortOrder},</if>
+			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateBusiProject" parameterType="com.xhkj.project.business.domain.BusiProject">
+        update busi_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null  and projectName != ''  ">project_name = #{projectName},</if>
+            <if test="leaderId != null  ">leader_id = #{leaderId},</if>
+            <if test="leaderName != null  and leaderName != ''  ">leader_name = #{leaderName},</if>
+            <if test="projectStartDate != null  ">project_start_date = #{projectStartDate},</if>
+            <if test="projectEndDate != null  ">project_end_date = #{projectEndDate},</if>
+            <if test="projectDesc != null  and projectDesc != ''  ">project_desc = #{projectDesc},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="projectProgress != null  and projectProgress != ''  ">project_progress = #{projectProgress},</if>
+            <if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag = #{deleteFlag},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where project_id = #{projectId}
+    </update>
+
+	<delete id="deleteBusiProjectById" parameterType="Long">
+        delete from busi_project where project_id = #{projectId}
+    </delete>
+	
+    <delete id="deleteBusiProjectByIds" parameterType="String">
+        delete from busi_project where project_id in 
+        <foreach item="projectId" collection="array" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiProjectBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="projectId">
+        insert into busi_project ( project_name, leader_id, leader_name, project_start_date, project_end_date, project_desc, status, project_progress, delete_flag, sort_order, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.projectName}, #{item.leaderId}, #{item.leaderName}, #{item.projectStartDate}, #{item.projectEndDate}, #{item.projectDesc}, #{item.status}, #{item.projectProgress}, #{item.deleteFlag}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    <resultMap type="com.xhkj.project.business.domain.vo.BusiProjectVo" id="BusiProjectResultVo">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="leaderId"    column="leader_id"    />
+        <result property="leaderName"    column="leader_name"    />
+        <result property="projectStartDate"    column="project_start_date"    />
+        <result property="projectEndDate"    column="project_end_date"    />
+        <result property="projectDesc"    column="project_desc"    />
+        <result property="status"    column="status"    />
+        <result property="projectProgress"    column="project_progress"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="deptNames"    column="deptNames"    />
+    </resultMap>
+
+    <select id="selectBusiProjects" parameterType="com.xhkj.project.business.domain.vo.BusiProjectVo" resultMap="BusiProjectResultVo">
+        <include refid="selectBusiProjectbasicColums"/>
+        ,(select GROUP_CONCAT(pm.dept_name SEPARATOR ',') from busi_project_member pm where pm.project_id = p.project_id) deptNames
+        from busi_project p
+        join busi_project_member pm on pm.project_id = p.project_id
+        where (p.leader_id = #{memberId} or pm.member_id = #{memberId})
+        <if test="projectProgress != null  and projectProgress != '' ">
+         and p.project_progress = #{projectProgress}
+        </if>
+    </select>
+
+</mapper>
