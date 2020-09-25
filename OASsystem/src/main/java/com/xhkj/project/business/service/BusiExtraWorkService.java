@@ -1,6 +1,8 @@
 package com.xhkj.project.business.service;
 
 import java.util.List;
+
+import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiExtraWork;
 
 /**
@@ -58,4 +60,7 @@ public interface BusiExtraWorkService
      * @return 结果
      */
     public int deleteBusiExtraWorkById(Long extraWorkId);
+
+
+    public int extraWorkSumbit(Long[] extraWorkIds);
 }

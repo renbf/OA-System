@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport
 {
+
     @Bean
     @SuppressWarnings(value = { "unchecked", "rawtypes" })
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory)

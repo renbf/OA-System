@@ -107,5 +107,15 @@ public class BusiAskLeaveController extends BaseController
     }
 
 
+    /**
+     * 报送-发起流程
+     */
+    @PreAuthorize("@ss.hasPermi('business:leave:submit')")
+    @Log(title = "请假上报", businessType = BusinessType.INSERT)
+    @PostMapping("/leaveSumbit/{leaveIds}")
+    public AjaxResult leaveSumbit(@PathVariable("leaveIds") Long[] leaveIds)
+    {
+        return toAjax(busiAskLeaveService.leaveSumbit(leaveIds));
+    }
 
 }

@@ -4,11 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.framework.web.domain.AjaxResult;
+import com.xhkj.project.system.domain.WorkflowBillTrace;
+import com.xhkj.project.system.service.ISysWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiExtraWorkMapper;
 import com.xhkj.project.business.domain.BusiExtraWork;
 import com.xhkj.project.business.service.BusiExtraWorkService;
+
+import static com.xhkj.framework.web.domain.AjaxResult.CODE_TAG;
 
 /**
  * 加班Service业务层处理
@@ -21,6 +26,8 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
 {
     @Autowired
     private BusiExtraWorkMapper busiExtraWorkMapper;
+    @Autowired
+    private ISysWorkflowService sysWorkflowService;
 
     /**
      * 查询加班
@@ -54,7 +61,8 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
      */
     @Override
     public int insertBusiExtraWork(BusiExtraWork busiExtraWork)
-    {Long userId = Long.valueOf(SecurityUtils.getUserId());
+    {
+        Long userId = Long.valueOf(SecurityUtils.getUserId());
         busiExtraWork.setCreateBy(String.valueOf(userId));
         busiExtraWork.setCreateTime(new Date());
         return busiExtraWorkMapper.insertBusiExtraWork(busiExtraWork);
@@ -94,5 +102,26 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
     public int deleteBusiExtraWorkById(Long extraWorkId)
     {
         return busiExtraWorkMapper.deleteBusiExtraWorkById(extraWorkId);
+    }
+
+
+    @Override
+    public int extraWorkSumbit(Long[] extraWorkIds) {
+
+        AjaxResult ajaxResult = null;
+        for (int i = 0; i < extraWorkIds.length; i++) {
+            Long extraWorkId = extraWorkIds[i];
+
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(extraWorkId);
+            wfbt.setWorkflowId(1l);
+
+            //发起流程申请
+            ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt);
+
+        }
+        int code = (int)ajaxResult.get(CODE_TAG);
+        int num = code == 200 ? 1 : 0;
+        return num;
     }
 }

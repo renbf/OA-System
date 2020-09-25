@@ -1,4 +1,5 @@
 import moment from 'moment'
+import request from "@/utils/request";
 
 /**
  * 通用js方法封装处理
@@ -65,6 +66,36 @@ export function addDateRange(params, dateRange) {
 		search.endTime = dateRange[1];
 	}
 	return search;
+}
+
+//所有字典
+var dictAllData;
+// request({
+//   url: '/system/dict/data/getAllDict',
+//   method: 'get',
+// }).then(response=>{
+//   if(response.code == 200){
+//     dictAllData = response.data;
+//     console.log(dictAllData,111)
+//   }
+// })
+
+export function selectDictByType(dataType) {
+   return dictAllData[dataType];
+}
+
+// 根据类型 回显数据字典
+export function selectDictLabelByType(dataType, value) {
+  var actions = [];
+  var datas = dictAllData[dataType];
+
+  Object.keys(datas).map((key) => {
+    if (datas[key].dictValue == ('' + value)) {
+      actions.push(datas[key].dictLabel);
+      return false;
+    }
+  })
+  return actions.join('');
 }
 
 // 回显数据字典

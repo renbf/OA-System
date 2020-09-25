@@ -697,6 +697,7 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                 workflowBill.setWorkflowStepNodeId(firstWorkflowBillNode.getWorkflowStepNodeId());
                 workflowBill.setWorkflowNodeId(firstWorkflowBillNode.getWorkflowNodeId());
                 workflowBill.setBillStatus(billStatus);
+                workflowBill.setOrginHandler(username);
                 workflowBill.setCreateBy(username);
                 workflowBill.setCreateTime(now);
                 workflowBill.setUpdateTime(now);

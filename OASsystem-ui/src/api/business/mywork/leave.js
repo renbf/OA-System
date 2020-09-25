@@ -60,6 +60,15 @@ export function matters_attention(query) {
     params: query
   });
 }
+
+//请假上报
+export function leaveSumbit(leaveIds) {
+  return request({
+    url: "/business/leave/leaveSumbit/" + leaveIds,
+    method: "post",
+  });
+}
+
 // 假json
 export function leaveList() {
   return {

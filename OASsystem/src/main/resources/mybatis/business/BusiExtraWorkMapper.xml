@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         extra_work_id,
         user_id,
         extra_work_hours,
+        extra_hours_unit,
         extra_work_dates,
         extra_work_Reason,
         dept_Id,
@@ -21,22 +22,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBusiExtraWorkList" parameterType="com.xhkj.project.business.domain.BusiExtraWork" resultType="com.xhkj.project.business.domain.BusiExtraWork">
         select
-        extra_work_id,
-        user_id,
-        extra_work_hours,
-        extra_work_dates,
-        extra_work_Reason,
-        dept_Id,
-        extra_work_Prj_Name,
-        in_prj_flag,
-        overtime_sur_time,
-        '2' as approval_Status,
-        create_by, create_Time, update_by, update_Time, remark
-        from busi_extra_work
+        be.extra_work_id,
+        be.user_id,
+        be.extra_work_hours,
+        be.extra_hours_unit,
+        be.extra_work_dates,
+        be.extra_work_Reason,
+        be.dept_Id,
+        be.extra_work_Prj_Name,
+        be.in_prj_flag,
+        be.overtime_sur_time,
+        ifnull(wb.bill_status,2) as approval_Status,
+        be.create_by, be.create_Time, be.update_by, be.update_Time, be.remark
+        from busi_extra_work be
+        left join workflow_bill wb on be.extra_work_id = wb.bill_id and wb.workflow_id = 1
         <where>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="userId != null "> and be.user_id = #{userId}</if>
+            <if test="createTime != null "> and be.create_time = #{createTime}</if>
         </where>
+        order by be.create_time desc
     </select>
 
     <select id="selectBusiExtraWorkById" parameterType="Long" resultType="com.xhkj.project.business.domain.BusiExtraWork">
@@ -49,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null ">user_id,</if>
             <if test="extraWorkHours != null ">extra_work_hours,</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">extra_hours_unit,</if>
             <if test="extraWorkDates != null ">extra_work_dates,</if>
             <if test="extraWorkReason != null ">extra_work_Reason,</if>
             <if test="deptId != null ">dept_Id,</if>
@@ -64,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
             <if test="extraWorkHours != null ">#{extraWorkHours},</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">#{extraHoursUnit},</if>
             <if test="extraWorkDates != null ">#{extraWorkDates},</if>
             <if test="extraWorkReason != null ">#{extraWorkReason},</if>
             <if test="deptId != null ">#{deptId},</if>
@@ -83,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null ">user_id = #{userId},</if>
             <if test="extraWorkHours != null ">extra_work_hours = #{extraWorkHours},</if>
+            <if test="extraHoursUnit != null  and extraHoursUnit != ''">extra_hours_unit = #{extraHoursUnit},</if>
             <if test="extraWorkReason != null ">extra_work_Reason = #{extraWorkReason},</if>
             <if test="deptId != null ">dept_Id = #{deptId},</if>
             <if test="extraWorkPrjName != null ">extra_work_Prj_Name = #{extraWorkPrjName},</if>

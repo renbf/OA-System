@@ -9,7 +9,7 @@
           @click="handleAdd"
           >新建申请</el-button
         >
-        <!-- v-hasPermi="['system:role:add']" -->
+        <!-- v-hasPermi="['business:extraWork:remove:add']" -->
       </el-col>
 
       <el-col :span="1.5">
@@ -18,8 +18,8 @@
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
-          @click="delextraWorks"
-          v-hasPermi="['system:role:remove']"
+          @click="handleDelete"
+          v-hasPermi="['business:extraWork:remove']"
           >删除</el-button
         >
       </el-col>
@@ -116,7 +116,11 @@
           <span>{{ selectDictLabel(overtimeOptions, scope.row.extraWorkPrjName) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="加班时长" prop="extraWorkHours" :show-overflow-tooltip="true" width="80" align="center"/>
+      <el-table-column label="加班时长" prop="extraWorkHours" :show-overflow-tooltip="true" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.extraWorkHours}}{{scope.row.extraHoursUnit}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="理由陈述" prop="extraWorkReason" :show-overflow-tooltip="true" align="center"/>
       <el-table-column label="申请时间" align="center" prop="createTime" width="150">
         <template slot-scope="scope">
@@ -125,7 +129,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(statusOptions, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -139,19 +143,20 @@
           <!--  2是未报送按钮全部显示 -->
           <div v-if="scope.row.approvalStatus == 2">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <!-- v-hasPermi="['system:role:edit']" -->
-            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="handleDelete(scope.row)" v-hasPermi="['system:role:remove']">删除</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <!-- v-hasPermi="['business:extraWork:edit']" -->
+            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="handleDelete(scope.row)" v-hasPermi="['business:extraWork:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
           <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
           <div v-else-if="scope.row.approvalStatus == 5">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" >报送</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
+
 
     <pagination
       v-show="total > 0"
@@ -244,7 +249,7 @@
         <el-form-item label="加班时长" prop="extraWorkHours">
           <el-col :span="10">
             <el-input disabled="" v-model="form.extraWorkHours" ></el-input>
-            <span class="font_margin_top" >时</span>
+            <span class="font_margin_top" >{{form.extraHoursUnit}}</span>
           </el-col>
         </el-form-item>
         <el-form-item label="理由陈述" prop="extraWorkReason">
@@ -364,7 +369,7 @@
           <el-form-item label="加班时长" prop="extraWorkHours">
             <el-col :span="10">
               <el-input disabled="" v-model="form.extraWorkHours"></el-input>
-              <span class="font_margin_top" >时</span>
+              <span class="font_margin_top" >{{form.extraHoursUnit}}</span>
             </el-col>
           </el-form-item>
           <el-form-item label="理由陈述" prop="extraWorkReason">
@@ -384,7 +389,7 @@
 
 <script>
 
-import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork } from "@/api/business/mywork/extrawork";
+import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork,extraWorkSumbit } from "@/api/business/mywork/extrawork";
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { listDept } from "@/api/system/dept";
@@ -465,8 +470,6 @@ export default {
       open: false,
       // 查看是否显示弹出层
       detail: false,
-      // 状态数据字典
-      statusOptions: [],
       defaultDate: [],
       workHourUnit: '',
       department: [],
@@ -475,11 +478,13 @@ export default {
       overtimePrecautions:[],
       DateRanges: [],
 
+      statusOptions: [],
       realOvertimeSurTime: 0,
       overPeriodStart: "",
       overPeriodEnd: "",
       overPeriodVal: [],
       overDayVal: [],
+      SYS_CHECK_STATUS: "sys_check_status",
 
       // 查询参数
       queryParams: {
@@ -496,6 +501,7 @@ export default {
         extraWorkPrjName: '',
         extraWorkReason: '',
         extraWorkHours: 0,
+        extraHoursUnit: '',
         dateRange: [[]],
         saveFlag: true,
         overtimeSurTime: 0,
@@ -539,7 +545,7 @@ export default {
       this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue;
 
       let eval1 = eval(response.rows.filter(e => Object.is (e.comConfigKey,'workHourUnit')));
-      this.workHourUnit = eval1[0].comConfigValue;
+      this.form.extraHoursUnit = this.workHourUnit = eval1[0].comConfigValue;
 
       this.overPeriodVal  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'overPeriod'))[0].comConfigValue);
       this.overDayVal  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'overDay'))[0].comConfigValue);
@@ -554,9 +560,8 @@ export default {
 
     });
     //审批状态
-    this.getDicts("sys_check_status").then(response => {
-      this.statusOptions = response.data;
-    });
+    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+
     //系统是否
     this.getDicts("sys_yes_no").then(response => {
       response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
@@ -579,10 +584,10 @@ export default {
     setExportData(){
       let dataArray = [];
       this.extraWorkList.forEach((extraWork, i) => {
-        const { extraWorkDates,extraWorkHours,deptId,extraWorkReason,createTime,approvalStatus,curApprover  } = extraWork;
+        const { extraWorkDates,extraWorkHours,extraHoursUnit,deptId,extraWorkReason,createTime,approvalStatus,curApprover  } = extraWork;
         var dataFormat = {
           "加班时间":JSON.parse(extraWorkDates)[0],
-          "加班时长":extraWorkHours,
+          "加班时长":extraWorkHours+extraHoursUnit,
           "部门":this.selectDictLabel(this.department, deptId),
           "理由陈述":extraWorkReason,
           "申请时间":createTime,
@@ -659,7 +664,7 @@ export default {
 
             //公司规定晚上加班开始、结束时间
             let comStartTimeY = new Date(startDay +" "+ overPeriod[0]);
-            let comendTimeY = new Date(endDay +" "+ overPeriod[1]);
+            let comendTimeY = new Date(startDay +" "+ overPeriod[1]);
             //公司规定相差毫秒数  10800000
             let comSubMils = comendTimeY - comStartTimeY;
 
@@ -669,8 +674,7 @@ export default {
             }
           }
 
-          this.form.overtimeSurTime += eval(timehour);
-
+          this.form.overtimeSurTime += this.form.extraWorkHours = eval(timehour);
         }
 
       }
@@ -706,13 +710,14 @@ export default {
           extraWorkHours: 0,
           dateRange: [[]],
           saveFlag: true,
+          extraHoursUnit: ''
       }
       this.resetForm("form");
 
       this.err_blo_hide = false
 
       this.form.overtimeSurTime=this.realOvertimeSurTime
-
+      this.form.extraHoursUnit=this.workHourUnit
     },
 
 
@@ -797,16 +802,9 @@ export default {
                 if (this.form.extraWorkId) {
                   updateExtraWork(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("更新成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -814,16 +812,9 @@ export default {
                 }else{
                   addExtraWork(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("保存成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -872,17 +863,9 @@ export default {
         .then(() => {
           delExtraWorks(extraWorkIds).then(response => {
             if (response.code === 200) {
-              this.$confirm("删除成功", "删除成功", {
-                  dangerouslyUseHTMLString: true,
-                  showConfirmButton: false,
-                  distinguishCancelAndClose: true,
-                  cancelButtonText: "返回列表",
-                  type: "success"
-                })
-                .catch(() => {
-                  this.reset();
-                  this.getList();
-                });
+              this.msgSuccess("删除成功");
+              this.reset();
+              this.getList();
             }
           });
         })
@@ -894,7 +877,7 @@ export default {
 
     //报送加班
     handleReport(row) {
-      const workIds = row.workId || this.ids;
+      const workIds = row.extraWorkId || this.ids;
       this.$confirm(
         "请确认是否报送",
         {
@@ -906,22 +889,13 @@ export default {
         }
       )
         .then(() => {
-          // reportextraWorkList(workIds).then(response => {
-          //   if (response.code === 200) {
-          //     this
-          //       .$confirm("报送成功", "报送成功", {
-          //         dangerouslyUseHTMLString: true,
-          //         showConfirmButton: false,
-          //         distinguishCancelAndClose: true,
-          //         cancelButtonText: "返回列表",
-          //         type: "success"
-          //       })
-          //       .catch(() => {
-          //         this.reset();
-          //         this.getList();
-          //       });
-          //   }
-          // });
+          extraWorkSumbit(workIds).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("报送成功");
+              this.reset();
+              this.getList();
+            }
+          });
         })
         .catch(() => {
           this.reset();

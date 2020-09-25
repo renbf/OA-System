@@ -21,20 +21,11 @@ import exportImport from '@/components/customize/exportImport'
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 
+import {parseTime, resetForm, addDateRange, selectDictByType,selectDictLabelByType, selectDictLabel, download,
+        handleTree, calculateHours, isNotEmpty, floatAdd, floatSub, floatMul, floatDiv } from "@/utils/common";
 
-import {
-  parseTime,
-  resetForm,
-  addDateRange,
-  selectDictLabel,
-  download,
-  handleTree,
-  calculateHours,
-  isNotEmpty,
-  floatAdd,
-  floatSub,
-  floatMul,
-  floatDiv } from "@/utils/common";
+import {GLOBAL} from "@/utils/global";
+Vue.prototype.GLOBAL = GLOBAL;
 
 
 // 全局方法挂载
@@ -44,6 +35,8 @@ Vue.prototype.getConfigKey = getConfigKey;
 Vue.prototype.parseTime = parseTime;
 Vue.prototype.resetForm = resetForm;
 Vue.prototype.addDateRange = addDateRange;
+Vue.prototype.selectDictByType = selectDictByType;
+Vue.prototype.selectDictLabelByType = selectDictLabelByType;
 Vue.prototype.selectDictLabel = selectDictLabel;
 Vue.prototype.download = download;
 Vue.prototype.handleTree = handleTree;

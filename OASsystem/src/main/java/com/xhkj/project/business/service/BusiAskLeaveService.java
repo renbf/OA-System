@@ -61,4 +61,6 @@ public interface BusiAskLeaveService
      * @return 结果
      */
     public int deleteBusiAskLeaveById(Long leaveId);
+
+    public int leaveSumbit(Long[] leaveIds);
 }

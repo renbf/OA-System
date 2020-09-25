@@ -7,9 +7,9 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['business:leave:add']"
           >新建申请</el-button
         >
-        <!-- v-hasPermi="['system:role:add']" -->
       </el-col>
 
       <el-col :span="1.5">
@@ -19,7 +19,7 @@
           size="mini"
           :disabled="multiple"
           @click="delLeaves"
-          v-hasPermi="['system:role:remove']"
+          v-hasPermi="['business:leave:remove']"
           >删除</el-button
         >
       </el-col>
@@ -109,7 +109,11 @@
           <span>{{ JSON.parse(scope.row.leaveDates)[0][0][0] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="请假时长" prop="leaveHours" :show-overflow-tooltip="true" width="80" align="center"/>
+      <el-table-column label="请假时长" prop="leaveHours" :show-overflow-tooltip="true" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.leaveHours}}{{scope.row.leaveHoursUnit}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="部门" align="center" width="150">
         <template slot-scope="scope">
           <span>{{ selectDictLabel(department, scope.row.deptId) }}</span>
@@ -122,7 +126,7 @@
       </el-table-column>
       <el-table-column label="请假类型" align="center" width="150">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(options, scope.row.leaveType) }}</span>
+          <span>{{ selectDictLabelByType(BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="理由陈述" prop="leaveReason" :show-overflow-tooltip="true" align="center"/>
@@ -133,7 +137,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(statusOptions, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -146,16 +150,18 @@
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
           <div v-if="scope.row.approvalStatus == 2">
-            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <!-- v-hasPermi="['system:role:edit']" -->
-            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['system:role:remove']">删除</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)" v-hasPermi="['business:leave:edit']">编辑</el-button>
+            <!-- v-hasPermi="['business:leave:edit']" -->
+            <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['business:leave:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:submit']">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
-          <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
-          <div v-else-if="scope.row.approvalStatus == 5">
+          <div v-else-if="scope.row.approvalStatus == 0 || scope.row.approvalStatus == 1 || scope.row.approvalStatus == 99 "></div>
+          <div v-else-if="scope.row.approvalStatus == -1">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['system:role:remove']">报送</el-button>
+            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
+
+<!--            v-hasPermi="['business:leave:submit']"-->
           </div>
         </template>
       </el-table-column>
@@ -308,8 +314,7 @@
           <el-col :span="10">
             <el-form-item label="请假时长" prop="leaveHours">
                 <el-input disabled v-model="form.leaveHours" width="60%"></el-input>
-                <!--<span class="font_margin_top">{{workHourUnit}}</span>-->
-                <span class="font_margin_top">小时</span>
+                <span class="font_margin_top">{{form.leaveHoursUnit}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -463,8 +468,7 @@
             <el-col :span="15">
               <el-form-item label="请假时长" prop="leaveHours">
                 <el-input disabled v-model="form.leaveHours"></el-input>
-                <!--<span class="margin-right font_margin_top">{{workHourUnit}}</span>-->
-                <span class="font_margin_top">小时</span>
+                <span class="margin-right font_margin_top">{{form.leaveHoursUnit}}</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -486,11 +490,10 @@
 
 <script>
 
-import { delLeaves,updateLeave, addLeave,listLeave } from "@/api/business/mywork/leave";
+import { delLeaves,updateLeave, addLeave,listLeave,leaveSumbit } from "@/api/business/mywork/leave";
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { listDept } from "@/api/system/dept";
-
 
 export default {
   name: "leave",
@@ -581,6 +584,9 @@ export default {
       leavePrecautions:[],
       leaveDateRange: [],
 
+      BUS_LEAVE_TYPE: "bus_leave_type",
+      SYS_CHECK_STATUS: "sys_check_status",
+
       realOvertimeSurTime: 0,
       realAnnLeaSurTime: 0,
 
@@ -603,6 +609,7 @@ export default {
         dateRange: [[]],
         saveFlag: true,
         overtimeSurTime: 0,
+        leaveHoursUnit: '',
         annLeaSurTime: 0,
       },
       overtime_options: [
@@ -636,21 +643,21 @@ export default {
     };
   },
   created() {
-
     this.getList()
     this.form.dateRange.push([]);
 
     //获取请假类型
-    this.getDicts("bus_leave_type").then(response => {
-      this.options = response.data;
-    });
+    this.options =  this.selectDictByType(this.BUS_LEAVE_TYPE)
+    //审批状态
+    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+
     //获取工时
     listComConfig({}).then(response => {
 
       this.workHour = eval(response.rows.filter(e => Object.is(e.comConfigKey,'workHour')))[0].comConfigValue;
 
       let eval1 = eval(response.rows.filter(e => Object.is (e.comConfigKey,'workHourUnit')));
-      this.workHourUnit = eval1[0].comConfigValue;
+      this.form.leaveHoursUnit = this.workHourUnit = eval1[0].comConfigValue;
       let amWorkDate = eval(response.rows.filter(e => Object.is(e.comConfigKey,'amWorkDate'))[0].comConfigValue)[0];
       let pmWorkDate = eval(response.rows.filter(e => Object.is(e.comConfigKey,'pmWorkDate'))[0].comConfigValue)[1];
       this.leavePrecautions = eval(response.rows.filter(e => Object.is(e.comConfigKey,'leavePrecautions')))[0].comConfigValue;
@@ -660,10 +667,7 @@ export default {
       this.defaultDate.push(pmWorkDate +":00")
 
     });
-    //审批状态
-    this.getDicts("sys_check_status").then(response => {
-      this.statusOptions = response.data;
-    });
+
     //系统是否
     this.getDicts("sys_yes_no").then(response => {
       response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
@@ -687,10 +691,10 @@ export default {
     setExportData(){
       let dataArray = [];
       this.leaveList.forEach((leave, i) => {
-        const { leaveDates,leaveHours,deptId,leaveType,leaveReason,createTime,approvalStatus,curApprover  } = leave;
+        const { leaveDates,leaveHours,leaveHoursUnit,deptId,leaveType,leaveReason,createTime,approvalStatus,curApprover  } = leave;
         var leaveFormat = {
           "请假时间":JSON.parse(leaveDates)[0][0][0],
-          "请假时长":leaveHours,
+          "请假时长":leaveHours+leaveHoursUnit,
           "部门":this.selectDictLabel(this.department, deptId),
           "请假类型": this.selectDictLabel(this.options, leaveType),
           "理由陈述":leaveReason,
@@ -747,13 +751,20 @@ export default {
           this.form.overtimeSurTime += this.floatDiv(this.timeBackUp[index],this.workHour);
         }
       }
+
       if(Object.is(this.form.leaveType,'4')){
         // 年休假时长重新计算
         this.form.annLeaSurTime += this.floatDiv(this.form.leaveHours,this.workHour);
       }
 
       if(this.timeBackUp[index]){
-        this.form.leaveHours -= this.timeBackUp[index];
+
+        if(Object.is(this.workHourUnit,'时')){
+          this.form.leaveHours -= this.timeBackUp[index];
+        }else if(Object.is(this.workHourUnit,'天')){
+          this.form.leaveHours -= this.floatDiv(this.timeBackUp[index],this.workHour);
+        }
+
         this.timeBackUp[index] = null;
       }
 
@@ -796,10 +807,9 @@ export default {
         let timehour = this.calculateHours(this.form.dateRange,this.workHour,index);
 
         // 计算请假时长
-        if(this.timeBackUp[index]){
-          this.form.leaveHours -= this.timeBackUp[index];
-        }
-        this.form.leaveHours += timehour;
+        // if(this.timeBackUp[index]){
+        //   this.form.leaveHours -= this.timeBackUp[index];
+        // }
 
         //备份计算时长
         this.timeBackUp.splice(index,0,timehour)
@@ -817,6 +827,12 @@ export default {
           }else if(Object.is(this.workHourUnit,'天')){
             this.form.overtimeSurTime -= this.floatDiv(this.timeBackUp[index],this.workHour);
           }
+        }
+
+        if(Object.is(this.workHourUnit,'时')){
+          this.form.leaveHours += timehour;
+        }else if(Object.is(this.workHourUnit,'天')){
+          this.form.leaveHours += this.floatDiv(this.timeBackUp[index],this.workHour);
         }
 
         if(Object.is(this.form.leaveType,'4')){
@@ -864,6 +880,7 @@ export default {
           leaveHours: 0,
           dateRange: [[]],
           saveFlag: true,
+          leaveHoursUnit:''
       }
       this.resetForm("form");
 
@@ -874,6 +891,7 @@ export default {
 
       this.form.overtimeSurTime=this.realOvertimeSurTime
       this.form.annLeaSurTime=this.realAnnLeaSurTime
+      this.form.leaveHoursUnit=this.workHourUnit
 
     },
 
@@ -926,7 +944,7 @@ export default {
           }
         }
 
-        overleaveHoursShow(leaveType);
+        this.overleaveHoursShow(leaveType);
 
         this.editRules();
 
@@ -1005,16 +1023,9 @@ export default {
                 if (this.form.leaveId) {
                   updateLeave(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("更新成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -1022,16 +1033,9 @@ export default {
                 }else{
                   addLeave(this.form).then(response => {
                     if (response.code === 200) {
-                      this.$confirm("保存成功", "保存成功", {
-                        dangerouslyUseHTMLString: true,
-                        showConfirmButton: false,
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: "返回列表",
-                        type: "success"
-                      }).catch(() => {
-                        this.reset();
-                        this.getList();
-                      });
+                      this.msgSuccess("保存成功");
+                      this.reset();
+                      this.getList();
                     } else {
                       this.msgError(response.msg);
                     }
@@ -1048,16 +1052,9 @@ export default {
 
     returnResult(response){
       if (response.code === 200) {
-        this.$confirm("保存成功", "保存成功", {
-            dangerouslyUseHTMLString: true,
-            showConfirmButton: false,
-            distinguishCancelAndClose: true,
-            cancelButtonText: "返回列表",
-            type: "success"
-          }).catch(() => {
-          this.reset();
-          this.getList();
-        });
+        this.msgSuccess("保存成功");
+        this.reset();
+        this.getList();
       } else {
         this.msgError(response.msg);
       }
@@ -1080,17 +1077,9 @@ export default {
         .then(() => {
           delLeaves(leaveIds).then(response => {
             if (response.code === 200) {
-              this.$confirm("删除成功", "删除成功", {
-                  dangerouslyUseHTMLString: true,
-                  showConfirmButton: false,
-                  distinguishCancelAndClose: true,
-                  cancelButtonText: "返回列表",
-                  type: "success"
-                })
-                .catch(() => {
-                  this.reset();
-                  this.getList();
-                });
+              this.msgSuccess("删除成功");
+              this.reset();
+              this.getList();
             }
           });
         })
@@ -1102,7 +1091,7 @@ export default {
 
     //报送请假
     handleReport(row) {
-      const workIds = row.workId || this.ids;
+      const leaveIds = row.leaveId || this.ids;
       this.$confirm(
         "请确认是否报送",
         {
@@ -1114,22 +1103,13 @@ export default {
         }
       )
         .then(() => {
-          // reportleaveList(workIds).then(response => {
-          //   if (response.code === 200) {
-          //     this
-          //       .$confirm("报送成功", "报送成功", {
-          //         dangerouslyUseHTMLString: true,
-          //         showConfirmButton: false,
-          //         distinguishCancelAndClose: true,
-          //         cancelButtonText: "返回列表",
-          //         type: "success"
-          //       })
-          //       .catch(() => {
-          //         this.reset();
-          //         this.getList();
-          //       });
-          //   }
-          // });
+          leaveSumbit(leaveIds).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("报送成功");
+              this.reset();
+              this.getList();
+            }
+          })
         })
         .catch(() => {
           this.reset();

@@ -11,11 +11,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.xhkj.common.constant.DictConst;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.StringUtils;
+import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiHolsCheck;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 import com.xhkj.project.business.service.BusiHolsCheckService;
 import com.xhkj.project.system.domain.SysCompanyConfig;
+import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.service.ISysConfigService;
+import com.xhkj.project.system.service.ISysWorkflowService;
 import com.xhkj.project.system.service.SysCompanyConfigService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import static com.xhkj.framework.web.domain.AjaxResult.CODE_TAG;
 
 
 /**
@@ -45,6 +50,9 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     private SysCompanyConfigService sysCompanyConfigService;
     @Autowired
     private BusiHolsCheckService busiHolsCheckService;
+    @Autowired
+    private ISysWorkflowService sysWorkflowService;
+
 
 
     @Override
@@ -74,6 +82,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     @Transactional
     public int insertBusiAskLeave(BusiAskLeaveVo busiAskLeaveVo)
     {
+
         BusiAskLeave busiAskLeave =  new BusiAskLeave();
         Long userId = Long.valueOf(SecurityUtils.getUserId());
 
@@ -84,7 +93,6 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         BeanUtils.copyProperties(busiAskLeaveVo,busiAskLeave);
         busiAskLeave.setCreateTime(new Date());
         busiAskLeave.setCreateBy(String.valueOf(userId));
-
         String leaveDatesStr = busiAskLeave.getLeaveDates();
         if(StringUtils.isNotBlank(leaveDatesStr)){
             splitLeaveTime(busiAskLeave, leaveDatesStr);
@@ -198,6 +206,28 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     public int deleteBusiAskLeaveById(Long leaveId)
     {
         return busiAskLeaveMapper.deleteBusiAskLeaveById(leaveId);
+    }
+
+    @Override
+    public int leaveSumbit(Long[] leaveIds) {
+        AjaxResult ajaxResult = null;
+        for (int i = 0; i < leaveIds.length; i++) {
+            Long leaveId = leaveIds[i];
+
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(leaveId);
+            wfbt.setWorkflowId(2l);
+
+            //发起流程申请
+            ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt);
+
+        }
+
+        int code = (int)ajaxResult.get(CODE_TAG);
+        int num = code == 200 ? 1 : 0;
+
+        return num;
+
     }
 
 

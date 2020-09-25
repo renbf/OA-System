@@ -1,6 +1,8 @@
 package com.xhkj.project.system.service.impl;
 
-import java.util.List;
+import java.util.*;
+
+import com.xhkj.common.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.system.domain.SysDictData;
@@ -17,6 +19,8 @@ public class SysDictDataServiceImpl implements ISysDictDataService
 {
     @Autowired
     private SysDictDataMapper dictDataMapper;
+
+
 
     /**
      * 根据条件分页查询字典数据
@@ -114,4 +118,30 @@ public class SysDictDataServiceImpl implements ISysDictDataService
     {
         return dictDataMapper.updateDictData(dictData);
     }
+
+
+    @Override
+    public Map<String, List<SysDictData>> getAllDict() {
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        Map<String, List<SysDictData>> dictGroupMap = new HashMap<>();
+        try {
+            List<SysDictData> dictAllList= dictDataMapper.selectDictDataList(new SysDictData());
+            for (SysDictData dict : dictAllList) {
+                String dictGroup = dict.getDictType();
+                if (!dictGroupMap.containsKey(dictGroup)) {
+                    List<SysDictData> dictList = new ArrayList<>();
+                    dictList.add(dict);
+                    dictGroupMap.put(dictGroup, dictList);
+                }else {
+                    List<SysDictData> dictList = dictGroupMap.get(dictGroup);
+                    dictList.add(dict);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+        return dictGroupMap;
+    }
+
+
 }
