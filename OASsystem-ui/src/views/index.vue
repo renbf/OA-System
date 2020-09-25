@@ -25,7 +25,7 @@
       </el-col>
     </el-row>
 
-    
+
   </div>
 </template>
 
@@ -73,7 +73,11 @@ export default {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
     }
+  },
+  created() {
+    this.common.getAllDict();
   }
+
 }
 </script>
 
