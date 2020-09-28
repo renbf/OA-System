@@ -9,6 +9,7 @@ import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
 import com.xhkj.project.system.domain.SysUser;
 import com.xhkj.project.system.mapper.SysUserMapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,11 +103,19 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			Long projectId = busiProject.getProjectId();
 			List<BusiProjectMember> list = new ArrayList<>();
 			List<Long> userList = busiProject.getUserList();
-			List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
-			for (SysUser sysUser : sysUsers) {
-
+			if (CollectionUtils.isNotEmpty(userList)) {
+				List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
+				for (SysUser sysUser : sysUsers) {
+					BusiProjectMember busiProjectMember = new BusiProjectMember();
+					busiProjectMember.setProjectId(projectId);
+					busiProjectMember.setDeptId(sysUser.getDeptId());
+					busiProjectMember.setDeptName(sysUser.getDeptName());
+					busiProjectMember.setMemberId(sysUser.getUserId());
+					busiProjectMember.setMemberName(sysUser.getNickName());
+					list.add(busiProjectMember);
+				}
+				busiProjectMemberMapper.insertBusiProjectMemberBatch(list);
 			}
-			busiProjectMemberMapper.insertBusiProjectMemberBatch(list);
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);

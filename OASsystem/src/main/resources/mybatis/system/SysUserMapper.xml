@@ -26,6 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="disableTime"       column="disable_time"       />
 		<result property="systemRemark"       column="system_remark"       />
 		<result property="roleNames"       column="role_names"       />
+		<result property="deptName"       column="dept_name"      />
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
