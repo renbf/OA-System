@@ -58,7 +58,7 @@
           <el-input v-model="addform.projectName"></el-input>
         </el-form-item>
         <el-form-item label="负责人" prop="leaderId">
-          <el-select v-model="addform.leaderId" placeholder="请选择">
+          <el-select v-model="addform.leaderId" placeholder="请选择" ref="leaderName">
             <el-option
               v-for="item in userDeptUserList"
               :key="item.userId"
@@ -86,7 +86,7 @@
             </el-transfer>
           </template>
         </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
+        <el-form-item label="项目日期" prop="tasktime">
           <!--<el-time-picker
             is-range
             v-model="addform.projecttime"
@@ -97,7 +97,7 @@
           </el-time-picker>-->
 
           <el-date-picker
-            v-model="addform.projecttime"
+            v-model="addform.projectDate"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -148,7 +148,7 @@
 <script>
   import { listDept,userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject } from "@/api/business/mywork/myproject";
+  import { listBusiProject,addBusiProject } from "@/api/business/mywork/myproject";
     export default {
       name: "index",
       data() {
@@ -161,7 +161,7 @@
             projectName: '',
             bumenStatus: [],
             projectDesc: '',
-            projecttime: '',
+            projectDate: '',
             userList: [],
             status:''
           },
@@ -169,7 +169,7 @@
             projectName: [{required: true, message: "项目名称不能为空", trigger: "change"}],
             bumenStatus: [{required: true, message: "部门不能为空", trigger: "change"}],
             userList: [{required: true, message: "参与人员不能为空", trigger: "change"}],
-            projecttime: [{required: true, message: "项目时间不能为空", trigger: "change"}],
+            projectDate: [{required: true, message: "项目时间不能为空", trigger: "change"}],
             projectDesc: [{required: true, message: "项目描述不能为空", trigger: "change"}],
             status: [{required: true, message: "状态必须选择", trigger: "change"}]
           },
@@ -253,15 +253,24 @@
         //提交项目
         submitForm(){
           let _this = this;
+          let leaderName = _this.$refs.leaderName.selected.label;
           _this.$refs.addform.validate(valid => {
             if (valid) {
               let addform = _this.addform;
-              debugger
+              addform.leaderName = leaderName;
               addform.projectId = _this.projectId;
               if (addform.projectId != undefined) {
 
               } else {
-
+                debugger
+                addBusiProject(addform).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("新增成功");
+                    this.addopen = false;
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
               }
             }
           });

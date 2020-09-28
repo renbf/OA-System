@@ -55,7 +55,7 @@ public class BusiProjectController
 	 */
 	@PostMapping("/add")
 	@ResponseBody
-	public Map<String,Object> addSave(BusiProject busiProject)
+	public Map<String,Object> addSave(@RequestBody BusiProject busiProject)
 	{		
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try {

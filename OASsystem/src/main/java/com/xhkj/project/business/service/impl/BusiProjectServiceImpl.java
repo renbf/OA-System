@@ -1,16 +1,19 @@
 package com.xhkj.project.business.service.impl;
 
+import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.security.service.TokenService;
+import com.xhkj.project.business.domain.BusiProjectMember;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
 import com.xhkj.project.system.domain.SysUser;
+import com.xhkj.project.system.mapper.SysUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
-import java.util.Date;
-import java.util.Map;
-import java.util.HashMap;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiProjectMapper;
 import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.service.IBusiProjectService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -34,6 +38,10 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private TokenService tokenService;
 	@Autowired
 	private BusiProjectMapper busiProjectMapper;
+	@Autowired
+	private BusiProjectMemberMapper busiProjectMemberMapper;
+	@Autowired
+	private SysUserMapper sysUserMapper;
 
 	/**
      * 查询项目信息
@@ -75,11 +83,30 @@ public class BusiProjectServiceImpl implements IBusiProjectService
      * @return 结果
      */
 	@Override
+	@Transactional
 	public Map<String,Object> insertBusiProject(BusiProject busiProject)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Date> projectDate = busiProject.getProjectDate();
+			busiProject.setProjectStartDate(projectDate.get(0));
+			busiProject.setProjectEndDate(projectDate.get(1));
+			busiProject.setProjectProgress("0");
+			busiProject.setDeleteFlag("0");
+			busiProject.setCreateBy(username);
+			busiProject.setCreateTime(now);
+			busiProject.setUpdateTime(now);
 			busiProjectMapper.insertBusiProject(busiProject);
+			Long projectId = busiProject.getProjectId();
+			List<BusiProjectMember> list = new ArrayList<>();
+			List<Long> userList = busiProject.getUserList();
+			List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
+			for (SysUser sysUser : sysUsers) {
+
+			}
+			busiProjectMemberMapper.insertBusiProjectMemberBatch(list);
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);

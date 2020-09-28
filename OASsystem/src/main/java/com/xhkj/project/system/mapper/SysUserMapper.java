@@ -119,4 +119,6 @@ public interface SysUserMapper
     public SysUser selectDeptLeaderByRoleId(@Param("roleId") Long roleId);
 
     public List<SysUser> userDeptUsers(List<SysRoleDeptVo> sysRoleDeptVos);
+
+    public List<SysUser> selectUsersByIds(List<Long> userList);
 }

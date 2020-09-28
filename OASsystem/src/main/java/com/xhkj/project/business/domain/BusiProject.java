@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 项目表 busi_project
@@ -41,6 +42,26 @@ public class BusiProject extends BaseEntity
 	/** 排序字段 */
 	private Integer sortOrder;
 	//以上自动生成的尽量别动
+	private List<Date> projectDate;
+
+	private List<Long> userList;
+
+	public List<Date> getProjectDate() {
+		return projectDate;
+	}
+
+	public void setProjectDate(List<Date> projectDate) {
+		this.projectDate = projectDate;
+	}
+
+	public List<Long> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<Long> userList) {
+		this.userList = userList;
+	}
+
 	public void setProjectId(Long projectId)
 	{
 		this.projectId = projectId;

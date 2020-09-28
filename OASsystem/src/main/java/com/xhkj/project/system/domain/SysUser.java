@@ -108,9 +108,19 @@ public class SysUser extends BaseEntity
     /** 停用结束时间 */
     @JsonIgnore
     private String dateStopEndTime;
+    //部门名称
+    private String deptName;
     public SysUser()
     {
 
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
     }
 
     public String getDateStopBeginTime() {

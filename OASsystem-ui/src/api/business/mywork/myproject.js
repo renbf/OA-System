@@ -8,6 +8,15 @@ export function listBusiProject(query) {
     params: query
   })
 }
+// 新增项目
+export function addBusiProject(data) {
+  return request({
+    url: '/api/busiProject/add',
+    method: 'post',
+    data: data
+  })
+}
+
 
 export function project_progress() {
   return {

@@ -243,4 +243,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{item.deptId}
 		</foreach>
 	</select>
+
+	<select id="selectUsersByIds" parameterType="java.util.List" resultMap="SysUserResult">
+		<include refid="selectUser"/>
+		,d.dept_name
+		from sys_user u
+		join sys_dept d on u.dept_id = d.dept_id
+		where 1=1
+		and u.user_id in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
 </mapper> 
