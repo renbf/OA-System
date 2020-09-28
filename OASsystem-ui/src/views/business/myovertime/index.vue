@@ -129,7 +129,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(GLOBAL.SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -484,7 +484,6 @@ export default {
       overPeriodEnd: "",
       overPeriodVal: [],
       overDayVal: [],
-      SYS_CHECK_STATUS: "sys_check_status",
 
       // 查询参数
       queryParams: {
@@ -560,7 +559,7 @@ export default {
 
     });
     //审批状态
-    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+    this.statusOptions =  this.selectDictByType(this.GLOBAL.SYS_CHECK_STATUS)
 
     //系统是否
     this.getDicts("sys_yes_no").then(response => {

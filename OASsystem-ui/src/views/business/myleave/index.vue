@@ -126,7 +126,7 @@
       </el-table-column>
       <el-table-column label="请假类型" align="center" width="150">
         <template slot-scope="scope">
-          <span>{{ selectDictLabelByType(BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
+          <span>{{ selectDictLabelByType(GLOBAL.BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="理由陈述" prop="leaveReason" :show-overflow-tooltip="true" align="center"/>
@@ -137,7 +137,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{ selectDictLabelByType(SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
+          <span>{{ selectDictLabelByType(GLOBAL.SYS_CHECK_STATUS, scope.row.approvalStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="当前审批人" prop="curApprover" :show-overflow-tooltip="true" align="center"/>
@@ -583,10 +583,6 @@ export default {
       annual_leave_show: false,
       leavePrecautions:[],
       leaveDateRange: [],
-
-      BUS_LEAVE_TYPE: "bus_leave_type",
-      SYS_CHECK_STATUS: "sys_check_status",
-
       realOvertimeSurTime: 0,
       realAnnLeaSurTime: 0,
 
@@ -647,9 +643,9 @@ export default {
     this.form.dateRange.push([]);
 
     //获取请假类型
-    this.options =  this.selectDictByType(this.BUS_LEAVE_TYPE)
+    this.options = this.selectDictByType(this.GLOBAL.BUS_LEAVE_TYPE)
     //审批状态
-    this.statusOptions =  this.selectDictByType(this.SYS_CHECK_STATUS)
+    this.statusOptions = this.selectDictByType(this.GLOBAL.SYS_CHECK_STATUS)
 
     //获取工时
     listComConfig({}).then(response => {
@@ -748,13 +744,13 @@ export default {
         if(Object.is(this.workHourUnit,'时')){
           this.form.overtimeSurTime += this.timeBackUp[index];
         }else if(Object.is(this.workHourUnit,'天')){
-          this.form.overtimeSurTime += this.floatDiv(this.timeBackUp[index],this.workHour);
+          this.form.overtimeSurTime += this.common.floatDiv(this.timeBackUp[index],this.workHour);
         }
       }
 
       if(Object.is(this.form.leaveType,'4')){
         // 年休假时长重新计算
-        this.form.annLeaSurTime += this.floatDiv(this.form.leaveHours,this.workHour);
+        this.form.annLeaSurTime += this.common.floatDiv(this.form.leaveHours,this.workHour);
       }
 
       if(this.timeBackUp[index]){
@@ -762,7 +758,7 @@ export default {
         if(Object.is(this.workHourUnit,'时')){
           this.form.leaveHours -= this.timeBackUp[index];
         }else if(Object.is(this.workHourUnit,'天')){
-          this.form.leaveHours -= this.floatDiv(this.timeBackUp[index],this.workHour);
+          this.form.leaveHours -= this.common.floatDiv(this.timeBackUp[index],this.workHour);
         }
 
         this.timeBackUp[index] = null;
@@ -804,7 +800,7 @@ export default {
       }
 
       if(this.form.dateRange){
-        let timehour = this.calculateHours(this.form.dateRange,this.workHour,index);
+        let timehour = this.common.calculateHours(this.form.dateRange,this.workHour,index);
 
         // 计算请假时长
         // if(this.timeBackUp[index]){
@@ -825,14 +821,14 @@ export default {
           if(Object.is(this.workHourUnit,'时')){
             this.form.overtimeSurTime -= timehour;
           }else if(Object.is(this.workHourUnit,'天')){
-            this.form.overtimeSurTime -= this.floatDiv(this.timeBackUp[index],this.workHour);
+            this.form.overtimeSurTime -= this.common.floatDiv(this.timeBackUp[index],this.workHour);
           }
         }
 
         if(Object.is(this.workHourUnit,'时')){
           this.form.leaveHours += timehour;
         }else if(Object.is(this.workHourUnit,'天')){
-          this.form.leaveHours += this.floatDiv(this.timeBackUp[index],this.workHour);
+          this.form.leaveHours += this.common.floatDiv(this.timeBackUp[index],this.workHour);
         }
 
         if(Object.is(this.form.leaveType,'4')){
@@ -843,7 +839,7 @@ export default {
             return;
           }
           // 年休假时长重新计算
-          this.form.annLeaSurTime -= this.floatDiv(this.form.leaveHours,this.workHour);
+          this.form.annLeaSurTime -= this.common.floatDiv(this.form.leaveHours,this.workHour);
         }
 
       }
@@ -940,7 +936,7 @@ export default {
         //重新计算并备份
         if(this.form.dateRange){
           for (let i = 0; i < this.form.dateRange.length; i++) {
-            this.timeBackUp.push(this.calculateHours(this.form.dateRange,this.workHour,i));
+            this.timeBackUp.push(this.common.calculateHours(this.form.dateRange,this.workHour,i));
           }
         }
 

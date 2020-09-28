@@ -1,5 +1,7 @@
 import moment from 'moment'
 import request from "@/utils/request";
+import de from "element-ui/src/locale/lang/de";
+import Vue from "vue";
 
 /**
  * 通用js方法封装处理
@@ -69,25 +71,28 @@ export function addDateRange(params, dateRange) {
 }
 
 //所有字典
-var dictAllData;
-// request({
-//   url: '/system/dict/data/getAllDict',
-//   method: 'get',
-// }).then(response=>{
-//   if(response.code == 200){
-//     dictAllData = response.data;
-//     console.log(dictAllData,111)
-//   }
-// })
+
+export function getAllDict(dataType) {
+  request({
+    url: '/system/dict/data/getAllDict',
+    method: 'get',
+  }).then(response=>{
+    if(response.code == 200){
+      sessionStorage.setItem("alldict",JSON.stringify(response.data))
+    }
+  })
+}
 
 export function selectDictByType(dataType) {
-   return dictAllData[dataType];
+   const dictoArray = JSON.parse(sessionStorage.getItem("alldict"));
+   return dictoArray[dataType];
 }
 
 // 根据类型 回显数据字典
 export function selectDictLabelByType(dataType, value) {
+  const dictoArray = JSON.parse(sessionStorage.getItem("alldict"));
   var actions = [];
-  var datas = dictAllData[dataType];
+  var datas = dictoArray[dataType];
 
   Object.keys(datas).map((key) => {
     if (datas[key].dictValue == ('' + value)) {
@@ -317,4 +322,25 @@ export function arrayToStr(arr,attribute){
   return str;
 }
 
-
+export default {
+  praseStrEmpty,
+  sprintf,
+  download,
+  selectDictLabel,
+  selectDictLabelByType,
+  selectDictByType,
+  getAllDict,
+  addDateRange,
+  resetForm,
+  parseTime,
+  handleTree,
+  isNotEmpty,
+  toHourDifference,
+  calculateHours,
+  gethours,
+  floatAdd,
+  floatSub,
+  floatMul,
+  floatDiv,
+  arrayToStr,
+}

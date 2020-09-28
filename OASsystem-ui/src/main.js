@@ -1,5 +1,4 @@
 import Vue from "vue";
-
 import "./assets/styles/element-variables.scss";
 import "normalize.css/normalize.css"; // a modern alternative to CSS resets
 import "@/assets/styles/index.scss"; // global css
@@ -21,12 +20,15 @@ import exportImport from '@/components/customize/exportImport'
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 
-import {parseTime, resetForm, addDateRange, selectDictByType,selectDictLabelByType, selectDictLabel, download,
-        handleTree, calculateHours, isNotEmpty, floatAdd, floatSub, floatMul, floatDiv } from "@/utils/common";
+import {parseTime, resetForm, addDateRange, selectDictByType,selectDictLabelByType, selectDictLabel, handleTree,isNotEmpty} from "@/utils/common";
 
-import {GLOBAL} from "@/utils/global";
+import common from "@/utils/common";
+Vue.prototype.common = common;
+
+import GLOBAL from "@/utils/global";
 Vue.prototype.GLOBAL = GLOBAL;
 
+Vue.prototype.storage = sessionStorage;
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts;
@@ -38,14 +40,9 @@ Vue.prototype.addDateRange = addDateRange;
 Vue.prototype.selectDictByType = selectDictByType;
 Vue.prototype.selectDictLabelByType = selectDictLabelByType;
 Vue.prototype.selectDictLabel = selectDictLabel;
-Vue.prototype.download = download;
 Vue.prototype.handleTree = handleTree;
-Vue.prototype.calculateHours = calculateHours;
 Vue.prototype.isNotEmpty = isNotEmpty;
-Vue.prototype.floatAdd = floatAdd;
-Vue.prototype.floatSub = floatSub;
-Vue.prototype.floatMul = floatMul;
-Vue.prototype.floatDiv = floatDiv;
+Vue.prototype.storage = window.sessionStorage;
 
 Vue.config.devtools = true;
 Vue.prototype.msgSuccess = function(msg) {
