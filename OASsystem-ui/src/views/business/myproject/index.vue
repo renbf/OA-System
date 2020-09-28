@@ -11,7 +11,7 @@
         >
       </el-col>
     </el-row>
-    <el-row>
+    <el-row >
       <h3>进行中</h3>
     </el-row>
     <el-row class="doing">
@@ -28,8 +28,37 @@
         </div>
       </el-card>
     </el-row>
+    <el-row class="doing">
+      <el-card class="box-card lf">
+        <div slot="header" class="clearfix">
+          <span><b>OA项目开发</b></span>
+          <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
+          <p>2020-05-22至2020-12-31</p>
+        </div>
+        <div class="text item"  @click="projectdetail">
+          <p>公司内容OA系统开发项目</p>
+          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <el-progress :percentage="50"></el-progress>
+        </div>
+      </el-card>
+    </el-row>
+    <el-row class="doing">
+      <el-card class="box-card lf">
+        <div slot="header" class="clearfix">
+          <span><b>OA项目开发</b></span>
+          <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
+          <p>2020-05-22至2020-12-31</p>
+        </div>
+        <div class="text item"  @click="projectdetail">
+          <p>公司内容OA系统开发项目</p>
+          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <el-progress :percentage="50"></el-progress>
+        </div>
+      </el-card>
+    </el-row>
+
     <el-row>
-      <h3>已完成</h3>
+      <h3 class="h3">已完成</h3>
     </el-row>
     <el-row class="end">
       <el-card class="box-card lf">
@@ -45,7 +74,34 @@
         </div>
       </el-card>
     </el-row>
-
+    <el-row class="end">
+      <el-card class="box-card lf">
+        <div slot="header" class="clearfix">
+          <span><b>OA项目开发</b></span>
+          <p>2020-05-22至2020-12-31</p>
+        </div>
+        <div class="text item">
+          <p>公司内容OA系统开发项目</p>
+          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
+          <el-progress :percentage="100"  :format="format"></el-progress>
+        </div>
+      </el-card>
+    </el-row>
+    <el-row class="end">
+      <el-card class="box-card lf">
+        <div slot="header" class="clearfix">
+          <span><b>OA项目开发</b></span>
+          <p>2020-05-22至2020-12-31</p>
+        </div>
+        <div class="text item">
+          <p>公司内容OA系统开发项目</p>
+          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
+          <el-progress :percentage="100"  :format="format"></el-progress>
+        </div>
+      </el-card>
+    </el-row>
 
 
 
@@ -299,5 +355,17 @@
 .myproject .doing .el-card__header,.myproject .end .el-card__header{
   padding:2px 20px;
 }
+  .doing{
+    float:left;
+    margin-bottom: 10px;
+    margin-left: 50px;
+  }
+  .h3{
+    margin-top: 300px;
+  }
+  .end{
+    float: left;
+    margin-left: 50px;
+  }
 
 </style>
