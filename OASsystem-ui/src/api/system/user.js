@@ -125,3 +125,12 @@ export function importTemplate() {
     method: 'get'
   })
 }
+
+//获取当前用户管理的部门列表
+export function userDeptUsers(query) {
+  return request({
+    url: '/system/user/userDeptUsers',
+    method: 'get',
+    params: query
+  })
+}

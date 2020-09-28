@@ -1,6 +1,8 @@
 package com.xhkj.project.system.mapper;
 
 import java.util.List;
+
+import com.xhkj.project.system.domain.vo.SysRoleDeptVo;
 import org.apache.ibatis.annotations.Param;
 import com.xhkj.project.system.domain.SysDept;
 
@@ -106,4 +108,6 @@ public interface SysDeptMapper
      * @return 结果
      */
     public int deleteDeptById(Long deptId);
+    //用户管理的部门
+    public List<SysRoleDeptVo> userDeptList(@Param("userId") Long userId);
 }

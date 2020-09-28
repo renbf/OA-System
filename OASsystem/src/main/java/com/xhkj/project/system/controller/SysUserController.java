@@ -2,6 +2,7 @@ package com.xhkj.project.system.controller;
 
 import java.util.List;
 
+import com.xhkj.common.exception.CustomException;
 import com.xhkj.project.system.domain.SysDept;
 import com.xhkj.project.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,5 +208,25 @@ public class SysUserController extends BaseController
         userService.checkUserAllowed(user);
         user.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(userService.updateUserStatus(user));
+    }
+
+    /**
+     * 获取当前用户管理的部门下的所有员工列表
+     */
+    @GetMapping("/userDeptUsers")
+    public AjaxResult userDeptUsers()
+    {
+        AjaxResult ajaxResult = new AjaxResult();
+        try {
+            ajaxResult = userService.userDeptUsers();
+        } catch (Exception e) {
+            if (e instanceof CustomException) {
+                CustomException be = (CustomException)e;
+                ajaxResult = AjaxResult.error(-1, be.getMessage());
+            }else{
+                ajaxResult = AjaxResult.error("获取当前用户管理的部门下的所有员工列表异常");
+            }
+        }
+        return ajaxResult;
     }
 }

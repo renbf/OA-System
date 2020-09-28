@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
 
 // 查询项目列表
 export function listBusiProject(query) {

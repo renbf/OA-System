@@ -58,3 +58,11 @@ export function delDept(deptId) {
     method: 'delete'
   })
 }
+//获取当前用户管理的部门列表
+export function userDeptList(query) {
+  return request({
+    url: '/system/dept/userDeptList',
+    method: 'get',
+    params: query
+  })
+}

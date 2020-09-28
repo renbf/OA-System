@@ -59,7 +59,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
 			List<BusiProject> list = busiProjectMapper.selectBusiProjectList(busiProject);
-			resultMap.put("code",0);
+			resultMap.put("code",200);
 			resultMap.put("data",list);
 		} catch (Exception e) {
 			log.error("",e);
@@ -80,7 +80,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
 			busiProjectMapper.insertBusiProject(busiProject);
-			resultMap.put("code",0);
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
@@ -100,7 +100,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
 				busiProjectMapper.updateBusiProject(busiProject);
-			resultMap.put("code",0);
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
@@ -120,7 +120,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
 				busiProjectMapper.deleteBusiProjectByIds(ids.split(","));
-			resultMap.put("code",0);
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
@@ -138,7 +138,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			SysUser user = loginUser.getUser();
 			busiProjectVo.setMemberId(user.getUserId());
 			List<BusiProjectVo> list = busiProjectMapper.selectBusiProjects(busiProjectVo);
-			resultMap.put("code",0);
+			resultMap.put("code",200);
 			resultMap.put("data",list);
 		} catch (Exception e) {
 			log.error("",e);

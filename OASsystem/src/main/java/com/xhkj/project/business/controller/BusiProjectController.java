@@ -9,11 +9,7 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 
 import com.xhkj.project.business.domain.BusiProject;
@@ -39,6 +35,7 @@ public class BusiProjectController
 	 * 查询项目列表
 	 */
 	@GetMapping("/list")
+	@ResponseBody
 	public Map<String,Object> list(BusiProjectVo busiProjectVo)
 	{
         Map<String,Object> resultMap = new HashMap<String,Object>();

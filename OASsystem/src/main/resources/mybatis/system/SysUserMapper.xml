@@ -234,4 +234,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where 1=1
 		and ur.role_id = #{roleId}
 	</select>
+
+	<select id="userDeptUsers" parameterType="java.util.List" resultMap="SysUserResult">
+		<include refid="selectUser"/>
+		from sys_user u
+		where u.dept_id in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item.deptId}
+		</foreach>
+	</select>
 </mapper> 

@@ -168,4 +168,6 @@ public interface ISysUserService
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
 
     public boolean checkDeptLeaderByRole(SysUser user);
+
+    public AjaxResult userDeptUsers();
 }

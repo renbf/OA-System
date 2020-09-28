@@ -53,58 +53,72 @@
     <el-dialog :title="addproject"
                :visible.sync="addopen"
                width="650px" class="abow_dialog">
-      <el-form  ref="form" :model="addform" :rules="addrules" label-width="80px">
+      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
         <el-form-item label="项目名称" prop="name">
-          <el-input v-model="addform.name"></el-input>
+          <el-input v-model="addform.projectName"></el-input>
+        </el-form-item>
+        <el-form-item label="负责人" prop="leaderId">
+          <el-select v-model="addform.leaderId" placeholder="请选择">
+            <el-option
+              v-for="item in userDeptUserList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="部门" prop="bumenStatus">
           <el-checkbox-group v-model="addform.bumenStatus" @change="handleCheckedCitiesChange">
-            <!--              <el-checkbox-button v-for="dict in department"-->
-            <!--                                  :key="dict.dictValue"-->
-            <!--                                  :label="dict.dictValue"-->
-            <!--                                  :name="dict.dictLabel"-->
-            <!--                                  border-->
-            <!--              ></el-checkbox-button>-->
             <el-checkbox v-for="dict in department"
-                         :label="dict.dictLabel"
-                         border>
-              {{dict.dictLabel}}
+                         :label="dict.deptId"
+                         border>{{dict.deptName}}
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="参与人员" prop="peoplevalue">
+        <el-form-item label="参与人员" prop="userList">
           <template>
             <el-transfer
               filterable
               :filter-method="filterMethod"
               filter-placeholder="请输入成员名称"
-              v-model="addform.peoplevalue"
-              :data="canyupeople">
+              v-model="addform.userList"
+              :data="memberList">
             </el-transfer>
           </template>
         </el-form-item>
         <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
+          <!--<el-time-picker
             is-range
             v-model="addform.projecttime"
             range-separator="至"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
             placeholder="选择时间范围">
-          </el-time-picker>
+          </el-time-picker>-->
+
+          <el-date-picker
+            v-model="addform.projecttime"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
         </el-form-item>
         <!--        项目描述-->
-        <el-form-item label="项目描述" prop="projectremark">
+        <el-form-item label="项目描述" prop="projectDesc">
           <el-input
             type="textarea"
             placeholder="请输入"
-            v-model="addform.projectremark"
+            v-model="addform.projectDesc"
           >
           </el-input>
         </el-form-item>
-        <el-form-item  label="状态"  prop="projectstatus">
+        <el-form-item  label="状态"  prop="status">
           <el-switch
-            v-model="addform.projectstatus"
+            v-model="addform.status"
+            active-value="1"
+            inactive-value="0"
             active-text="启用">
           </el-switch>
           <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
@@ -123,109 +137,138 @@
             </div>
           </el-collapse-item>
         </el-collapse>
-        <div slot="footer" class="dialog-footer">
-          <el-button>取消</el-button>
-          <el-button type="primary">确定</el-button>
-        </div>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-  import { listDept } from "@/api/system/dept";
+  import { listDept,userDeptList } from "@/api/system/dept";
+  import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject } from "@/api/business/mywork/myproject";
     export default {
       name: "index",
       data() {
-        const generateData = _ => {
-          const data = [];
-          const namelist = ['迈克尔', '丹尼斯', '伊利斯', '卡梅隆'];
-          const canyu = ['迈克尔', '丹尼斯', '伊利斯', '卡梅隆'];
-          namelist.forEach((name, index) => {
-            data.push({
-              label: name,
-              key: index,
-              pinyin: canyu[index]
-            });
-          });
-          return data;
-        };
         return {
           // 穿梭框
-          canyupeople: generateData(),
+          // canyupeople: generateData(),
           addproject: '',
           addopen: false,
           addform: {
-            name: '',
+            projectName: '',
             bumenStatus: [],
-            projectremark: '',
+            projectDesc: '',
             projecttime: '',
-            peoplevalue: [],
+            userList: [],
+            status:''
           },
           addrules: {
-            name: [{required: true, message: "项目名称不能为空", trigger: "change"}],
+            projectName: [{required: true, message: "项目名称不能为空", trigger: "change"}],
             bumenStatus: [{required: true, message: "部门不能为空", trigger: "change"}],
-            peoplevalue: [{required: true, message: "参与人员不能为空", trigger: "change"}],
+            userList: [{required: true, message: "参与人员不能为空", trigger: "change"}],
             projecttime: [{required: true, message: "项目时间不能为空", trigger: "change"}],
-            projectremark: [{required: true, message: "项目描述不能为空", trigger: "change"}],
-            projectstatus: [{required: true, message: "状态必须选择", trigger: "change"}]
+            projectDesc: [{required: true, message: "项目描述不能为空", trigger: "change"}],
+            status: [{required: true, message: "状态必须选择", trigger: "change"}]
           },
-          department: [
-            {
-              dictValue: "1",
-              dictLabel: "技术部"
-            },
-            {
-              dictValue: "2",
-              dictLabel: "软件部"
-            }
-          ],
+          department: [],
 
           matters_needing_attention: undefined,
 // 穿梭框内容
 
-          filterMethod(query, item) {
-            return item.pinyin.indexOf(query) > -1;
-          },
           busiProjectUseList:[],
           busiProjectDoneList:[],
+          //责任人
+          userDeptUserList:[],
+          memberList:[]
         }
 
       },
       created() {
         //获取部门列表
-        listDept({parentId: '100'}).then(response => {
-          response.data.forEach((val) => this.bumenOptions.push({'dictValue': val.deptId, 'dictLabel': val.deptName})
-          )
+        userDeptList().then(response => {
+          if (response.code == 200) {
+            this.department = response.data;
+          }
         });
-        this.listBusiProject();
+        this.getlistBusiProject();
+        this.getUserDeptUsers();
       },
 
       methods: {
-        listBusiProject() {
+        getlistBusiProject() {
+          let _this = this;
           listBusiProject({projectProgress:'0'}).then(response => {
-            if(response.code == 0){
-              busiProjectUseList = response.data;
+            if(response.code == 200){
+              _this.busiProjectUseList = response.data;
             }
           });
 
           listBusiProject({projectProgress:'1'}).then(response => {
-            if(response.code == 0){
-              busiProjectDoneList = response.data;
+            if(response.code == 200){
+              _this.busiProjectDoneList = response.data;
             }
           });
 
         },
+        getUserDeptUsers() {
+          let _this = this;
+          userDeptUsers().then(response => {
+            if (response.code == 200) {
+              _this.userDeptUserList = response.data;
+            }
+          });
+        },
         handleAdd() {
           this.addproject = "新建项目";
-          this.addopen = true
+          this.addopen = true;
         },
         format(percentage) {
           return percentage === 100 ? '完成' : `${percentage}%`;
         },
-        handleCheckedCitiesChange() {
+        handleCheckedCitiesChange(list) {
+          let _this = this;
+          _this.memberList = [];
+          for (var i in list) {
+            let deptId = list[i];
+            _this.userDeptUserList.forEach((val) => {
+                if (val.deptId == deptId) {
+                  _this.memberList.push({key: val.userId,label: val.nickName});
+                }
+              }
+            );
+          }
+          let a =_this.memberList;
         },
+        filterMethod(query, item) {
+          // let aa = item.label.indexOf(query) > -1;
+          if (query == "") {
+            return true;
+          }else{
+            return item.label.indexOf(query) > -1;
+          }
+        },
+        //提交项目
+        submitForm(){
+          let _this = this;
+          _this.$refs.addform.validate(valid => {
+            if (valid) {
+              let addform = _this.addform;
+              debugger
+              addform.projectId = _this.projectId;
+              if (addform.projectId != undefined) {
 
+              } else {
+
+              }
+            }
+          });
+        },
+        cancel() {
+          this.addopen = false;
+        },
         editproject() {
         },
         projectdetail() {

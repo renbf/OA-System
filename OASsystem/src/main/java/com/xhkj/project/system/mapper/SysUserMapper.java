@@ -2,6 +2,7 @@ package com.xhkj.project.system.mapper;
 
 import java.util.List;
 
+import com.xhkj.project.system.domain.vo.SysRoleDeptVo;
 import org.apache.ibatis.annotations.Param;
 
 import com.xhkj.project.system.domain.SysUser;
@@ -116,4 +117,6 @@ public interface SysUserMapper
     public SysUser selectDeptLeaderByDeptId(@Param("deptId") Long deptId);
 
     public SysUser selectDeptLeaderByRoleId(@Param("roleId") Long roleId);
+
+    public List<SysUser> userDeptUsers(List<SysRoleDeptVo> sysRoleDeptVos);
 }

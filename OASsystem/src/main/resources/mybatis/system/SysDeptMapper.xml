@@ -156,4 +156,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		update sys_dept set del_flag = '2' where dept_id = #{deptId}
 	</delete>
 
+	<resultMap type="com.xhkj.project.system.domain.vo.SysRoleDeptVo" id="SysRoleDeptVoResult">
+		<result property="roleId"     column="role_id"      />
+		<result property="roleName"     column="role_name"      />
+		<result property="deptId"     column="dept_id"      />
+		<result property="deptName"     column="dept_name"      />
+	</resultMap>
+
+	<select id="userDeptList" parameterType="java.util.Map" resultMap="SysRoleDeptVoResult">
+		select r.role_id,r.role_name,rd.dept_id,d.dept_name
+		from sys_user u
+		join sys_user_role ur on ur.user_id = u.user_id
+		join sys_role r on ur.role_id = r.role_id
+		join sys_role_dept rd on rd.role_id = r.role_id
+		join sys_dept d on rd.dept_id = d.dept_id
+		where 1=1
+		<if test="userId != null and userId != 0">
+			and u.user_id = #{userId}
+		</if>
+	</select>
+
 </mapper> 

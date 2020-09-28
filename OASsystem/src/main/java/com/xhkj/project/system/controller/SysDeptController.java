@@ -166,4 +166,25 @@ public class SysDeptController extends BaseController
         }
         return ajaxResult;
     }
+
+    /**
+     * 获取当前用户管理的部门列表
+     */
+    @GetMapping("/userDeptList")
+    public AjaxResult userDeptList()
+    {
+        AjaxResult ajaxResult = new AjaxResult();
+        try {
+            ajaxResult = deptService.userDeptList();
+        } catch (Exception e) {
+            if (e instanceof CustomException) {
+                CustomException be = (CustomException)e;
+                ajaxResult = AjaxResult.error(-1, be.getMessage());
+            }else{
+                ajaxResult = AjaxResult.error("获取当前用户管理的部门列表异常");
+            }
+        }
+        return ajaxResult;
+    }
+
 }

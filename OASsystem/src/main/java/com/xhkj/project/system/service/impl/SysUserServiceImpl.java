@@ -8,6 +8,7 @@ import java.util.Objects;
 import com.xhkj.common.utils.DateUtils;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.system.domain.*;
+import com.xhkj.project.system.domain.vo.SysRoleDeptVo;
 import com.xhkj.project.system.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,9 @@ public class SysUserServiceImpl implements ISysUserService
     private SysUserMapper sysUserMapper;
     @Autowired
     private SysRoleDeptMapper sysRoleDeptMapper;
+    @Autowired
+    private SysDeptMapper deptMapper;
+
     /**
      * 根据条件分页查询用户列表
      *
@@ -494,5 +498,31 @@ public class SysUserServiceImpl implements ISysUserService
             }
         }
         return flag;
+    }
+
+    @Override
+    public AjaxResult userDeptUsers() {
+        try {
+            Long userId = Long.valueOf(SecurityUtils.getUserId());
+            List<SysRoleDeptVo> sysRoleDeptVos = null;
+            if (SecurityUtils.isAdmin(userId)) {
+                sysRoleDeptVos = deptMapper.userDeptList(null);
+            }else{
+                sysRoleDeptVos = deptMapper.userDeptList(userId);
+            }
+            if (CollectionUtils.isNotEmpty(sysRoleDeptVos)) {
+                List<SysUser> sysUsers = sysUserMapper.userDeptUsers(sysRoleDeptVos);
+                return AjaxResult.success(sysUsers);
+            }else{
+                return AjaxResult.error("没有数据");
+            }
+        } catch (Exception e) {
+            log.error("获取当前用户管理的部门下的所有员工列表异常",e);
+            if (e instanceof CustomException) {
+                throw (CustomException)e;
+            }else{
+                throw new RuntimeException();
+            }
+        }
     }
 }

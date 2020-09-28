@@ -100,4 +100,9 @@ public interface ISysDeptService
      * @return 结果
      */
     public AjaxResult deleteDeptById(Long deptId);
+
+
+    public AjaxResult userDeptList();
+
+
 }

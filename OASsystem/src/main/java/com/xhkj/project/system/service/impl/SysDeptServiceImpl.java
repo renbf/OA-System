@@ -9,6 +9,7 @@ import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.system.domain.SysRole;
 import com.xhkj.project.system.domain.SysRoleDept;
+import com.xhkj.project.system.domain.vo.SysRoleDeptVo;
 import com.xhkj.project.system.mapper.SysRoleDeptMapper;
 import com.xhkj.project.system.service.ISysRoleService;
 import org.apache.commons.collections.CollectionUtils;
@@ -313,6 +314,27 @@ public class SysDeptServiceImpl implements ISysDeptService
             return AjaxResult.success();
         } catch (Exception e) {
             log.error("删除部门异常",e);
+            if (e instanceof CustomException) {
+                throw (CustomException)e;
+            }else{
+                throw new RuntimeException();
+            }
+        }
+    }
+
+    @Override
+    public AjaxResult userDeptList() {
+        try {
+            Long userId = Long.valueOf(SecurityUtils.getUserId());
+            List<SysRoleDeptVo> sysRoleDeptVos = null;
+            if (SecurityUtils.isAdmin(userId)) {
+                sysRoleDeptVos = deptMapper.userDeptList(null);
+            }else{
+                sysRoleDeptVos = deptMapper.userDeptList(userId);
+            }
+            return AjaxResult.success(sysRoleDeptVos);
+        } catch (Exception e) {
+            log.error("获取当前用户管理的部门列表异常",e);
             if (e instanceof CustomException) {
                 throw (CustomException)e;
             }else{
