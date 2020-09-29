@@ -210,6 +210,11 @@ export const constantRoutes = [
         component: () => import("@/views/business/myreader/reader"),
         meta: { title: "我的待办", icon: "" }
       },
+      {
+        path:"little",
+        component: () => import("@/views/business/myreader/little"),
+        meta: { title: "加班审批", icon: "" }
+      },
     ]
   },
   // 部门及角色

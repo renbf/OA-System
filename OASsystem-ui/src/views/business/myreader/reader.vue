@@ -1,95 +1,49 @@
 
 <template>
   <div class="contain-reader">
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >加班审批</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">12</span>件</div>
-    </el-card>
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >请假审批</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">0</span>件</div>
-    </el-card>
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >面试申请</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">0</span>件</div>
-    </el-card>
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >差旅费报销（元）</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">0</span>件</div>
-    </el-card>
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >费用报销</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">0</span>件</div>
-    </el-card>
-    <el-card class="box-card" >
-      <div slot="header" class="clearfix">
-
-        <span class="big" >入职申请</span>
-        <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-      </div>
-      <div class="father"> <span class="son">待审批</span></div>
-      <div class="father"> <span class="conten">0</span>件</div>
-    </el-card>  <el-card class="box-card" >
+    <el-card class="box-card" v-for="item in req">
     <div slot="header" class="clearfix">
 
-      <span class="big" >离职申请</span>
-      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
+      <span class="big" >{{item.titles}}</span>
+      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"  @click.native="edit"></el-button>
     </div>
-    <div class="father"> <span class="son">待审批</span></div>
-    <div class="father"> <span class="conten">0</span>件</div>
-  </el-card>  <el-card class="box-card" >
-    <div slot="header" class="clearfix">
-
-      <span class="big" >调岗申请</span>
-      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-    </div>
-    <div class="father"> <span class="son">待审批</span></div>
-    <div class="father"> <span class="conten">0</span>件</div>
-  </el-card>  <el-card class="box-card" >
-    <div slot="header" class="clearfix">
-
-      <span class="big" >xxx项目组申请</span>
-      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"></el-button>
-    </div>
-    <div class="father"> <span class="son">待审批</span></div>
-    <div class="father"> <span class="conten">0</span>件</div>
+    <div class="father"> <span class="son">{{item.ready}}</span></div>
+    <div class="father"> <span class="conten">{{item.number}}</span>件</div>
   </el-card>
 
 
-
-  </div>
-
-
-
+</div>
 </template>
 
 
 <script>
+  export default {
+    name: "page-reader",
+    data(){
+      return{
+        req:[
+          {index:1,titles:"加班审批",ready:"待审批",number:"12"},
+          {index:2,titles:"请假审批",ready:"待审批",number:"0"},
+          {index:3,titles:"面试申请",ready:"待审批",number:"0"},
+          {index:4,titles:"差旅费报销（元）",ready:"待审批",number:"0"},
+          {index:5,titles:"费用报销（元）",ready:"待审批",number:"0"},
+          {index:6,titles:"入职申请",ready:"待审批",number:"0"},
+          {index:7,titles:"离职申请",ready:"待审批",number:"0"},
+          {index:8,titles:"调岗申请",ready:"待审批",number:"0"},
+          {index:9,titles:"xxx项目组职申请",ready:"待审批",number:"0"},
+
+
+        ]
+      }
+    },
+    methods:{
+      edit(){
+        this.$router.push({ path:'/myreader/little'})
+
+      }
+    }
+
+  }
 
 </script>
 
