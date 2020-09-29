@@ -199,6 +199,19 @@ export const constantRoutes = [
       },
     ]
   },
+
+  {
+    path:"/myreader",
+    component: Layout,
+    hidden: true,
+    children:[
+      {
+        path:"index",
+        component: () => import("@/views/business/myreader/reader"),
+        meta: { title: "我的待办", icon: "" }
+      },
+    ]
+  },
   // 部门及角色
   {
     path:"/dictrole",

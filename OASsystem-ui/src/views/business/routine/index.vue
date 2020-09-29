@@ -418,7 +418,7 @@ export default {
         row.zhuangtai[0].dictValue
       );
     },
-    // 取消按钮
+    // 取消按
     cancel() {
       this.open = false;
       this.reset();
