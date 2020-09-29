@@ -73,7 +73,7 @@ public class BusiProjectController
 	 */
 	@PostMapping("/edit")
 	@ResponseBody
-	public Map<String,Object> editSave(BusiProject busiProject)
+	public Map<String,Object> editSave(@RequestBody BusiProject busiProject)
 	{		
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try {

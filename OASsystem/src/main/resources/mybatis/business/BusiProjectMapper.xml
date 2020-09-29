@@ -158,8 +158,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBusiProjectbasicColums"/>
         ,(select GROUP_CONCAT(pm.dept_name SEPARATOR ',') from busi_project_member pm where pm.project_id = p.project_id) deptNames
         from busi_project p
-        join busi_project_member pm on pm.project_id = p.project_id
-        where (p.leader_id = #{memberId} or pm.member_id = #{memberId})
+        where 1=1
+        <if test="memberId != null">
+            and (p.leader_id = #{memberId} or exists (
+             select 1 from busi_project_member pm where pm.project_id = p.project_id and pm.member_id = #{memberId}
+            ))
+        </if>
         <if test="projectProgress != null  and projectProgress != '' ">
          and p.project_progress = #{projectProgress}
         </if>

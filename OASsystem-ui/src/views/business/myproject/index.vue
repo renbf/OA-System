@@ -14,44 +14,16 @@
     <el-row >
       <h3>进行中</h3>
     </el-row>
-    <el-row class="doing">
+    <el-row class="doing" v-for="item in busiProjectUseList">
       <el-card class="box-card lf">
         <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
+          <span><b>{{item.projectName}}</b></span>
           <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
-          <p>2020-05-22至2020-12-31</p>
+          <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
-          <el-progress :percentage="50"></el-progress>
-        </div>
-      </el-card>
-    </el-row>
-    <el-row class="doing">
-      <el-card class="box-card lf">
-        <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
-          <p>2020-05-22至2020-12-31</p>
-        </div>
-        <div class="text item"  @click="projectdetail">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
-          <el-progress :percentage="50"></el-progress>
-        </div>
-      </el-card>
-    </el-row>
-    <el-row class="doing">
-      <el-card class="box-card lf">
-        <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
-          <p>2020-05-22至2020-12-31</p>
-        </div>
-        <div class="text item"  @click="projectdetail">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <p>{{item.projectDesc}}</p>
+          <p><span>总计项目任务:35件</span><span>部门:{{item.deptNames}}</span></p>
           <el-progress :percentage="50"></el-progress>
         </div>
       </el-card>
@@ -60,43 +32,15 @@
     <el-row>
       <h3 class="h3">已完成</h3>
     </el-row>
-    <el-row class="end">
+    <el-row class="end" v-for="item in busiProjectDoneList">
       <el-card class="box-card lf">
         <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
-          <p>2020-05-22至2020-12-31</p>
+          <span><b>{{item.projectName}}</b></span>
+          <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
-          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
-          <el-progress :percentage="100"  :format="format"></el-progress>
-        </div>
-      </el-card>
-    </el-row>
-    <el-row class="end">
-      <el-card class="box-card lf">
-        <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
-          <p>2020-05-22至2020-12-31</p>
-        </div>
-        <div class="text item">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
-          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
-          <el-progress :percentage="100"  :format="format"></el-progress>
-        </div>
-      </el-card>
-    </el-row>
-    <el-row class="end">
-      <el-card class="box-card lf">
-        <div slot="header" class="clearfix">
-          <span><b>OA项目开发</b></span>
-          <p>2020-05-22至2020-12-31</p>
-        </div>
-        <div class="text item">
-          <p>公司内容OA系统开发项目</p>
-          <p><span>总计项目任务:35件</span><span>部门:软件部</span></p>
+          <p>{{item.projectDesc}}</p>
+          <p><span>总计项目任务:35件</span><span>部门:{{item.deptNames}}</span></p>
           <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
           <el-progress :percentage="100"  :format="format"></el-progress>
         </div>
@@ -259,15 +203,23 @@
           listBusiProject({projectProgress:'0'}).then(response => {
             if(response.code == 200){
               _this.busiProjectUseList = response.data;
+              _this.formatList(_this.busiProjectUseList);
             }
           });
 
           listBusiProject({projectProgress:'1'}).then(response => {
             if(response.code == 200){
               _this.busiProjectDoneList = response.data;
+              _this.formatList(_this.busiProjectUseList);
             }
           });
 
+        },
+        formatList(list) {
+          list.forEach((val) =>{
+            val.projectStartDate = val.projectStartDate.substring(0, 10);
+            val.projectEndDate = val.projectEndDate.substring(0, 10);
+          })
         },
         getUserDeptUsers() {
           let _this = this;

@@ -135,7 +135,31 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-				busiProjectMapper.updateBusiProject(busiProject);
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Date> projectDate = busiProject.getProjectDate();
+			busiProject.setProjectStartDate(projectDate.get(0));
+			busiProject.setProjectEndDate(projectDate.get(1));
+			busiProject.setUpdateBy(username);
+			busiProject.setUpdateTime(now);
+			busiProjectMapper.updateBusiProject(busiProject);
+			Long projectId = busiProject.getProjectId();
+			busiProjectMemberMapper.deleteBusiProjectMemberByProjectId(projectId);
+			List<BusiProjectMember> list = new ArrayList<>();
+			List<Long> userList = busiProject.getUserList();
+			if (CollectionUtils.isNotEmpty(userList)) {
+				List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
+				for (SysUser sysUser : sysUsers) {
+					BusiProjectMember busiProjectMember = new BusiProjectMember();
+					busiProjectMember.setProjectId(projectId);
+					busiProjectMember.setDeptId(sysUser.getDeptId());
+					busiProjectMember.setDeptName(sysUser.getDeptName());
+					busiProjectMember.setMemberId(sysUser.getUserId());
+					busiProjectMember.setMemberName(sysUser.getNickName());
+					list.add(busiProjectMember);
+				}
+				busiProjectMemberMapper.insertBusiProjectMemberBatch(list);
+			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
@@ -170,9 +194,10 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	public Map<String, Object> selectBusiProjects(BusiProjectVo busiProjectVo) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-			SysUser user = loginUser.getUser();
-			busiProjectVo.setMemberId(user.getUserId());
+            Long userId = Long.valueOf(SecurityUtils.getUserId());
+            if (!SecurityUtils.isAdmin(userId)) {
+                busiProjectVo.setMemberId(userId);
+            }
 			List<BusiProjectVo> list = busiProjectMapper.selectBusiProjects(busiProjectVo);
 			resultMap.put("code",200);
 			resultMap.put("data",list);

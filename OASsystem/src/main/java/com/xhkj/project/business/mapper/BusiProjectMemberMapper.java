@@ -66,4 +66,7 @@ public interface BusiProjectMemberMapper
 	 */
 	public int insertBusiProjectMemberBatch(List<BusiProjectMember> list);
 	//以上自动生成的尽量别动
+
+	public int deleteBusiProjectMemberByProjectId(Long projectId);
+
 }

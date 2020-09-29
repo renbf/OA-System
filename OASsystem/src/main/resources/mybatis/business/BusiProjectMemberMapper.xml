@@ -84,5 +84,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+
+    <delete id="deleteBusiProjectMemberByProjectId" parameterType="java.lang.Long">
+        delete from busi_project_member where project_id = #{projectId}
+    </delete>
+
+
 </mapper>
