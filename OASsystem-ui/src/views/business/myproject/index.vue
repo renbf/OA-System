@@ -18,7 +18,7 @@
       <el-card class="box-card lf">
         <div slot="header" class="clearfix">
           <span><b>{{item.projectName}}</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click="editproject"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail">
@@ -287,6 +287,7 @@
           this.addopen = false;
         },
         editproject() {
+          console.log(123)
         },
         projectdetail() {
           console.log(123)
@@ -308,7 +309,7 @@
   padding:2px 20px;
 }
   .doing{
-    float:left;
+    display:inline-block;
     margin-bottom: 10px;
     margin-left: 50px;
   }
