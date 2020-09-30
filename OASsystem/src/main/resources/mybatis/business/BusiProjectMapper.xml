@@ -156,7 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBusiProjects" parameterType="com.xhkj.project.business.domain.vo.BusiProjectVo" resultMap="BusiProjectResultVo">
         <include refid="selectBusiProjectbasicColums"/>
-        ,(select GROUP_CONCAT(pm.dept_name SEPARATOR ',') from busi_project_member pm where pm.project_id = p.project_id) deptNames
+        ,(select GROUP_CONCAT(distinct pm.dept_name SEPARATOR ',') from busi_project_member pm where pm.project_id = p.project_id) deptNames
         from busi_project p
         where 1=1
         <if test="memberId != null">
