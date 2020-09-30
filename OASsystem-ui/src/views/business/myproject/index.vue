@@ -23,7 +23,7 @@
         </div>
         <div class="text item"  @click="projectdetail(item)">
           <p>{{item.projectDesc}}</p>
-          <p><span>总计项目任务:35件</span><span>部门:{{item.deptNames}}</span></p>
+          <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
           <el-progress :percentage="50"></el-progress>
         </div>
       </el-card>
@@ -40,7 +40,7 @@
         </div>
         <div class="text item">
           <p>{{item.projectDesc}}</p>
-          <p><span>总计项目任务:35件</span><span>部门:{{item.deptNames}}</span></p>
+          <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
           <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
           <el-progress :percentage="100"  :format="format"></el-progress>
         </div>
@@ -87,15 +87,6 @@
           </template>
         </el-form-item>
         <el-form-item label="项目日期" prop="tasktime">
-          <!--<el-time-picker
-            is-range
-            v-model="addform.projecttime"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>-->
-
           <el-date-picker
             v-model="addform.projectDate"
             type="daterange"

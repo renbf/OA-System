@@ -45,8 +45,18 @@ public class BusiProjectVo extends BaseEntity
 	private String deptNames;
 	/** 成员id */
 	private Long memberId;
+	/** 任务个数 */
+	private Integer taskNums;
 	/** 项目成员 */
 	private List<BusiProjectMember> busiProjectMembers;
+
+	public Integer getTaskNums() {
+		return taskNums;
+	}
+
+	public void setTaskNums(Integer taskNums) {
+		this.taskNums = taskNums;
+	}
 
 	public List<BusiProjectMember> getBusiProjectMembers() {
 		return busiProjectMembers;
