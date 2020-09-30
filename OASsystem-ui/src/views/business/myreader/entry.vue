@@ -24,6 +24,15 @@
     <div class="seach" >
       <span style="margin-left:20px;" >申请时间</span>
       <el-date-picker
+      style="margin-left:20px;"
+      v-model="value1"
+      type="daterange"
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期">
+    </el-date-picker>
+      <span style="margin-left:20px;" >复试时间</span>
+      <el-date-picker
         style="margin-left:20px;"
         v-model="value1"
         type="daterange"
@@ -40,15 +49,13 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <span style="margin-left:20px;">部门</span>
-      <el-select v-model="value" placeholder="请选择部门" style="margin-left:20px;">
-        <el-option
-          v-for="item in options"
-          :key="item.value1"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+
+      <el-input
+        placeholder="面试人姓名"
+        v-model="input"
+        style="width:150px;margin-left:10px"
+        clearable>
+      </el-input>
 
 
       <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
@@ -66,45 +73,34 @@
       </el-table-column>
       <el-table-column
         prop="date"
-        label="报销时间"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="申请人"
-        width="100">
-      </el-table-column>
-      <el-table-column
-        prop="app"
-        label="项目"
-        width="400"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="time"
-        label="部门"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="timetwo"
-        label="原借款"
+        label="申请时间"
         width="200">
       </el-table-column>
       <el-table-column
-        prop="bumen"
-        label="应退（补）金额">
+        prop="name"
+        label="姓名"
+        width="200">
+      </el-table-column>
+
+      <el-table-column
+        prop="time"
+        label="入职部门"
+        width="200">
       </el-table-column>
       <el-table-column
-        prop="bumen"
-        label="报销项目">
+        prop="timetwo"
+        label="岗位"
+        width="300">
       </el-table-column>
-      <el-table-column
-        prop="bumen"
-        label="总金额">
-      </el-table-column>
+
+
       <el-table-column
         prop="bumen"
         label="状态">
+      </el-table-column>
+      <el-table-column
+        prop="bumen"
+        label="操作">
       </el-table-column>
 
     </el-table>
@@ -271,7 +267,7 @@
     methods:{
       goBack(){
 
-        this.$router.push({ path:'/myreader/reader'})
+        this.$router.push({ path:'/myreader/index'})
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

@@ -238,9 +238,19 @@ export const constantRoutes = [
         meta: { title: "费用审批", icon: "" }
       },
       {
-        path:"money",
-        component: () => import("@/views/business/myreader/money"),
-        meta: { title: "费用审批", icon: "" }
+        path:"entry",
+        component: () => import("@/views/business/myreader/entry"),
+        meta: { title: "入职申请", icon: "" }
+      },
+      {
+        path:"down",
+        component: () => import("@/views/business/myreader/down"),
+        meta: { title: "离职申请", icon: "" }
+      },
+      {
+        path:"xxx",
+        component: () => import("@/views/business/myreader/xxx"),
+        meta: { title: "xxx项目组申请", icon: "" }
       },
     ]
   },

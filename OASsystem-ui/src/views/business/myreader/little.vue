@@ -251,7 +251,7 @@
     methods:{
       goBack(){
 
-        this.$router.push({ path:'/myreader/reader'})
+        this.$router.push({ path:'/myreader/index'})
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

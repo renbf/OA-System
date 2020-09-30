@@ -23,14 +23,15 @@
 
     <div class="seach" >
       <span style="margin-left:20px;" >申请时间</span>
-      <el-date-picker
-        style="margin-left:20px;"
+      <el-time-picker
+        style="width:200px;margin-left:20px"
+        is-range
         v-model="value1"
-        type="daterange"
         range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
-      </el-date-picker>
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
+        placeholder="选择时间范围">
+      </el-time-picker>
       <span style="margin-left:20px;">状态</span>
       <el-select v-model="value" placeholder="请选择状态" style="margin-left:20px;">
         <el-option
@@ -105,6 +106,10 @@
       <el-table-column
         prop="bumen"
         label="状态">
+      </el-table-column>
+      <el-table-column
+        prop="bumen"
+        label="操作">
       </el-table-column>
 
     </el-table>
@@ -271,7 +276,7 @@
     methods:{
       goBack(){
 
-        this.$router.push({ path:'/myreader/reader'})
+        this.$router.push({ path:'/myreader/index'})
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

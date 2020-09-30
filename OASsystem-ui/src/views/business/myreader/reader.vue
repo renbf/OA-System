@@ -53,6 +53,12 @@
         else if (id===6) {
           this.$router.push({ path:'/myreader/entry'})
         }
+        else if (id===7) {
+          this.$router.push({ path:'/myreader/down'})
+        }
+        else if (id===9) {
+          this.$router.push({ path:'/myreader/xxx'})
+        }
 
       }
     }
