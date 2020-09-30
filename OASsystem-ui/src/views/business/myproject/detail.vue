@@ -1,7 +1,22 @@
 <template>
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
-      <el-collapse-item :title="title" name="1">
+      <!--<el-collapse-item :title="title" name="1" >-->
+      <div class="one">{{title}}
+        <el-button icon="el-icon-edit-outline" circle></el-button>
+
+        <el-button icon=" el-icon-switch-button" circle></el-button>
+
+        <el-button icon="el-icon-delete" circle></el-button>
+        <el-switch
+          class="sty"
+          v-model="value2"
+          disabled>
+        </el-switch>
+        <span style="margin-left:10px">禁用</span>
+      </div>
+
+
         <el-card class="box-card">
           <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
             <el-form  ref="form" :model="detailform" label-width="80px">
@@ -683,6 +698,13 @@
 
 
 <style lang="scss" scoped>
+  .sty{
+    margin-left: 10px;
+  }
+  .one{
+    height: 60px;
+    line-height: 60px;
+  }
   .demo{
   padding: 5px 15px;
   position: relative;
