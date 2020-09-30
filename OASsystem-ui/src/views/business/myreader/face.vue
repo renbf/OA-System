@@ -4,7 +4,7 @@
   <div class="contain-face">
     <!--导航栏-->
     <el-card class="header">
-      <el-page-header @back="goBack" content="请假审批">
+      <el-page-header @back="goBack" content="面试申请">
       </el-page-header>
 
     </el-card>
@@ -20,14 +20,15 @@
 
     <div class="seach" >
       <span style="margin-left:20px;" >申请时间</span>
-      <el-date-picker
-        style="margin-left:20px;"
+      <el-time-picker
+        style="width:200px;margin-left:20px"
+        is-range
         v-model="value1"
-        type="daterange"
         range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
-      </el-date-picker>
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
+        placeholder="选择时间范围">
+      </el-time-picker>
       <span style="margin-left:20px;" >复试时间</span>
       <el-date-picker
         style="margin-left:20px;"
@@ -267,7 +268,7 @@
     methods:{
       goBack(){
 
-        this.$router.push({ path:'/myreader/reader'})
+        this.$router.push({ path:'/myreader/index'})
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

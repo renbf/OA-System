@@ -2,7 +2,7 @@
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
       <!--<el-collapse-item :title="title" name="1" >-->
-      <div class="one">{{title}}
+      <div class="one" name="1">{{title}}
         <el-button icon="el-icon-edit-outline" circle></el-button>
 
         <el-button icon=" el-icon-switch-button" circle></el-button>
