@@ -89,5 +89,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from busi_project_member where project_id = #{projectId}
     </delete>
 
+    <select id="selectBusiProjectMembers" parameterType="java.lang.Long" resultMap="BusiProjectMemberResult">
+        <include refid="selectBusiProjectMemberbasicColums"/>
+        from busi_project_member pm
+        where 1=1
+        and pm.project_id = #{projectId}
+    </select>
 
 </mapper>

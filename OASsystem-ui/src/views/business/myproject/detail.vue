@@ -284,7 +284,8 @@
 </template>
 
 <script>
-  import project_progress from './project_progress'
+  import project_progress from './project_progress';
+  import { getProjectInfo } from "@/api/business/mywork/myproject";
   export default {
     name: "detail",
     components: {
@@ -292,6 +293,9 @@
     },
     data() {
       return {
+        projectId:this.$route.query.projectId,
+        projectInfo: {},
+        deptMemberList: [],
         title: "OA项目开发 编号：xcv23456 项目人：迈克尔",
         currentOffset: 0,
         windowSize: 3,
@@ -419,6 +423,7 @@
       this.getDicts("sys_check_status").then(response => {
         this.statusOptions = response.data;
       });
+      this.getProject();
     },
     computed: {
       atEndOfList() {
@@ -455,6 +460,37 @@
       },
     },
     methods: {
+      getProject() {
+        let _this = this;
+        getProjectInfo({projectId:_this.projectId}).then(response => {
+          if(response.code == 200){
+            _this.projectInfo = response.data;
+            let busiProjectMembers= _this.projectInfo.busiProjectMembers;
+            _this.getDeptMemberList(busiProjectMembers);
+          }
+        });
+      },
+      getDeptMemberList(busiProjectMembers) {
+        let _this = this;
+        let map = new Map();
+        let deptMemberList = _this.deptMemberList;
+        busiProjectMembers.forEach((val)=>{
+          let deptId = val.deptId;
+          if (map.has(deptId)) {
+            let index = map.get(deptId);
+            let deptObj = deptMemberList[index];
+            let members = deptObj.members;
+            members.push({memberId:val.memberId,memberName:val.memberName});
+          }else{
+            let size = map.size;
+            map.set(deptId,size);
+            let members = [];
+            members.push({memberId:val.memberId,memberName:val.memberName});
+            deptMemberList.push({deptId:deptId,deptName:val.deptName,members:members});
+          }
+        });
+
+      },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
         if (direction === 1 && !this.atEndOfList) {

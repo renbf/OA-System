@@ -69,4 +69,5 @@ public interface BusiProjectMemberMapper
 
 	public int deleteBusiProjectMemberByProjectId(Long projectId);
 
+	public List<BusiProjectMember> selectBusiProjectMembers(Long projectId);
 }

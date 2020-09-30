@@ -169,4 +169,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
+    <select id="selectBusiProject" parameterType="java.lang.Long" resultMap="BusiProjectResultVo">
+        <include refid="selectBusiProjectbasicColums"/>
+        ,(select GROUP_CONCAT(pm.dept_name SEPARATOR ',') from busi_project_member pm where pm.project_id = p.project_id) deptNames
+        from busi_project p
+        where 1=1
+        and p.project_id = #{projectId}
+    </select>
+
 </mapper>

@@ -207,4 +207,21 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		}
 		return resultMap;
 	}
+
+    @Override
+    public Map<String, Object> getProjectInfo(Long projectId) {
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        try {
+			BusiProjectVo busiProjectVo = busiProjectMapper.selectBusiProject(projectId);
+			List<BusiProjectMember> busiProjectMembers = busiProjectMemberMapper.selectBusiProjectMembers(projectId);
+			busiProjectVo.setBusiProjectMembers(busiProjectMembers);
+
+			resultMap.put("code",200);
+            resultMap.put("data",busiProjectVo);
+        } catch (Exception e) {
+            log.error("",e);
+            throw new RuntimeException();
+        }
+        return resultMap;
+    }
 }

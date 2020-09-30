@@ -18,10 +18,10 @@
       <el-card class="box-card lf">
         <div slot="header" class="clearfix">
           <span><b>{{item.projectName}}</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject(item)"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
-        <div class="text item"  @click="projectdetail">
+        <div class="text item"  @click="projectdetail(item)">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:35件</span><span>部门:{{item.deptNames}}</span></p>
           <el-progress :percentage="50"></el-progress>
@@ -289,9 +289,10 @@
         editproject() {
           console.log(123)
         },
-        projectdetail() {
+        projectdetail(item) {
+          let projectId = item.projectId;
           console.log(123)
-          this.$router.push({ path:'/myproject/detail'})
+          this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         }
       }
     }

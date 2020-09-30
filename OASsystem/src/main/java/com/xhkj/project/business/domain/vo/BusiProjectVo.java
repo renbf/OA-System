@@ -1,10 +1,12 @@
 package com.xhkj.project.business.domain.vo;
 
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.business.domain.BusiProjectMember;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 项目表 busi_project
@@ -43,6 +45,17 @@ public class BusiProjectVo extends BaseEntity
 	private String deptNames;
 	/** 成员id */
 	private Long memberId;
+	/** 项目成员 */
+	private List<BusiProjectMember> busiProjectMembers;
+
+	public List<BusiProjectMember> getBusiProjectMembers() {
+		return busiProjectMembers;
+	}
+
+	public void setBusiProjectMembers(List<BusiProjectMember> busiProjectMembers) {
+		this.busiProjectMembers = busiProjectMembers;
+	}
+
 	public void setProjectId(Long projectId)
 	{
 		this.projectId = projectId;

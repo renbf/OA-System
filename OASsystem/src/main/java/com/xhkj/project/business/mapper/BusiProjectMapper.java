@@ -70,4 +70,7 @@ public interface BusiProjectMapper
 	//以上自动生成的尽量别动
 
 	public List<BusiProjectVo> selectBusiProjects(BusiProjectVo busiProjectVo);
+
+	public BusiProjectVo selectBusiProject(Long projectId);
+
 }

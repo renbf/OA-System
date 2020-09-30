@@ -55,4 +55,6 @@ public interface IBusiProjectService
 	//以上自动生成的尽量别动
 
 	public Map<String, Object> selectBusiProjects(BusiProjectVo busiProjectVo);
+
+	public Map<String, Object> getProjectInfo(Long projectId);
 }

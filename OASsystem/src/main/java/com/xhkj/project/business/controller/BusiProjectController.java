@@ -103,5 +103,23 @@ public class BusiProjectController
         }
         return resultMap;
 	}
+
+	/**
+	 * 查询项目列表
+	 */
+	@GetMapping("/getProjectInfo")
+	@ResponseBody
+	public Map<String,Object> getProjectInfo(Long projectId)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.getProjectInfo(projectId);
+		} catch (Exception e) {
+			log.error("查询项目列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","查询项目列表异常");
+		}
+		return resultMap;
+	}
 	
 }

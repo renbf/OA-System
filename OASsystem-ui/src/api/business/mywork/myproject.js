@@ -16,7 +16,14 @@ export function addBusiProject(data) {
     data: data
   })
 }
-
+// 查询项目信息
+export function getProjectInfo(query) {
+  return request({
+    url: '/api/busiProject/getProjectInfo',
+    method: 'get',
+    params: query
+  })
+}
 
 export function project_progress() {
   return {
