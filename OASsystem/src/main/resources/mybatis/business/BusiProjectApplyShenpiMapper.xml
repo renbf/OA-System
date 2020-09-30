@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiProjectApplyShenpiMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiProjectApplyShenpi" id="BusiProjectApplyShenpiResult">
+        <result property="projectApplyShenpiId"    column="project_apply_shenpi_id"    />
+        <result property="projectApplyId"    column="project_apply_id"    />
+        <result property="shenpiUserId"    column="shenpi_user_id"    />
+        <result property="shenpiUserName"    column="shenpi_user_name"    />
+        <result property="checkStatus"    column="check_status"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectBusiProjectApplyShenpibasicColums">
+        select pas.project_apply_shenpi_id, pas.project_apply_id, pas.shenpi_user_id, pas.shenpi_user_name, pas.check_status, pas.sort_order, pas.create_by, pas.create_time, pas.update_by, pas.update_time, pas.remark
+    </sql>
+	
+    <select id="selectBusiProjectApplyShenpiList" parameterType="com.xhkj.project.business.domain.BusiProjectApplyShenpi" resultMap="BusiProjectApplyShenpiResult">
+        <include refid="selectBusiProjectApplyShenpibasicColums"/>
+        from busi_project_apply_shenpi pas
+        <where>  
+            <if test="projectApplyShenpiId != null "> and pas.project_apply_shenpi_id = #{projectApplyShenpiId}</if>
+             <if test="projectApplyId != null "> and pas.project_apply_id = #{projectApplyId}</if>
+             <if test="shenpiUserId != null "> and pas.shenpi_user_id = #{shenpiUserId}</if>
+             <if test="shenpiUserName != null  and shenpiUserName != '' "> and pas.shenpi_user_name = #{shenpiUserName}</if>
+             <if test="checkStatus != null  and checkStatus != '' "> and pas.check_status = #{checkStatus}</if>
+             <if test="sortOrder != null "> and pas.sort_order = #{sortOrder}</if>
+             <if test="createBy != null  and createBy != '' "> and pas.create_by = #{createBy}</if>
+             <if test="createTime != null "> and pas.create_time = #{createTime}</if>
+             <if test="updateBy != null  and updateBy != '' "> and pas.update_by = #{updateBy}</if>
+             <if test="updateTime != null "> and pas.update_time = #{updateTime}</if>
+             <if test="remark != null  and remark != '' "> and pas.remark = #{remark}</if>
+         </where>
+    </select>
+    
+    <select id="selectBusiProjectApplyShenpiById" parameterType="Long" resultMap="BusiProjectApplyShenpiResult">
+        <include refid="selectBusiProjectApplyShenpibasicColums"/>
+        from busi_project_apply_shenpi pas
+        where pas.project_apply_shenpi_id = #{projectApplyShenpiId}
+    </select>
+        
+    <insert id="insertBusiProjectApplyShenpi" parameterType="com.xhkj.project.business.domain.BusiProjectApplyShenpi" useGeneratedKeys="true" keyProperty="projectApplyShenpiId">
+        insert into busi_project_apply_shenpi
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="projectApplyId != null  ">project_apply_id,</if>
+			<if test="shenpiUserId != null  ">shenpi_user_id,</if>
+			<if test="shenpiUserName != null  and shenpiUserName != ''  ">shenpi_user_name,</if>
+			<if test="checkStatus != null  and checkStatus != ''  ">check_status,</if>
+			<if test="sortOrder != null  ">sort_order,</if>
+			<if test="createBy != null  and createBy != ''  ">create_by,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="projectApplyId != null  ">#{projectApplyId},</if>
+			<if test="shenpiUserId != null  ">#{shenpiUserId},</if>
+			<if test="shenpiUserName != null  and shenpiUserName != ''  ">#{shenpiUserName},</if>
+			<if test="checkStatus != null  and checkStatus != ''  ">#{checkStatus},</if>
+			<if test="sortOrder != null  ">#{sortOrder},</if>
+			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateBusiProjectApplyShenpi" parameterType="com.xhkj.project.business.domain.BusiProjectApplyShenpi">
+        update busi_project_apply_shenpi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectApplyId != null  ">project_apply_id = #{projectApplyId},</if>
+            <if test="shenpiUserId != null  ">shenpi_user_id = #{shenpiUserId},</if>
+            <if test="shenpiUserName != null  and shenpiUserName != ''  ">shenpi_user_name = #{shenpiUserName},</if>
+            <if test="checkStatus != null  and checkStatus != ''  ">check_status = #{checkStatus},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where project_apply_shenpi_id = #{projectApplyShenpiId}
+    </update>
+
+	<delete id="deleteBusiProjectApplyShenpiById" parameterType="Long">
+        delete from busi_project_apply_shenpi where project_apply_shenpi_id = #{projectApplyShenpiId}
+    </delete>
+	
+    <delete id="deleteBusiProjectApplyShenpiByIds" parameterType="String">
+        delete from busi_project_apply_shenpi where project_apply_shenpi_id in 
+        <foreach item="projectApplyShenpiId" collection="array" open="(" separator="," close=")">
+            #{projectApplyShenpiId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiProjectApplyShenpiBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="projectApplyShenpiId">
+        insert into busi_project_apply_shenpi ( project_apply_id, shenpi_user_id, shenpi_user_name, check_status, sort_order, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.projectApplyId}, #{item.shenpiUserId}, #{item.shenpiUserName}, #{item.checkStatus}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    
+</mapper>
