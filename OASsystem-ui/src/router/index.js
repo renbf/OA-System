@@ -227,6 +227,21 @@ export const constantRoutes = [
         component: () => import("@/views/business/myreader/face"),
         meta: { title: "面试申请", icon: "" }
       },
+      {
+        path:"business",
+        component: () => import("@/views/business/myreader/business"),
+        meta: { title: "差旅费报销审批", icon: "" }
+      },
+      {
+        path:"money",
+        component: () => import("@/views/business/myreader/money"),
+        meta: { title: "费用审批", icon: "" }
+      },
+      {
+        path:"money",
+        component: () => import("@/views/business/myreader/money"),
+        meta: { title: "费用审批", icon: "" }
+      },
     ]
   },
   // 部门及角色

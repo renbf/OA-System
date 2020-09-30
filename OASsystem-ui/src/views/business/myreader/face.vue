@@ -11,9 +11,9 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="success">成功按钮</el-button>
-      <el-button type="danger">危险按钮</el-button>
-      <el-button type="warning">警告按钮</el-button>
+      <el-button type="success"> <span class="el-icon-check"></span>通过</el-button>
+      <el-button type="danger"> <span class="el-icon-close"></span>拒绝</el-button>
+      <el-button type="warning"><span class="el-icon-download"></span>导出</el-button>
 
     </div>
     <!-- seach栏-->
@@ -82,33 +82,26 @@
       </el-table-column>
       <el-table-column
         prop="app"
-        label="项目"
+        label="姓名"
       >
       </el-table-column>
       <el-table-column
         prop="time"
-        label="请假时长"
+        label="应聘部门"
         width="170">
       </el-table-column>
       <el-table-column
         prop="timetwo"
-        label="请假时间">
+        label="应聘岗位">
       </el-table-column>
       <el-table-column
         prop="type"
-        label="请假类型">
+        label="期望薪资">
       </el-table-column>
       <el-table-column
         prop="bumen"
-        label="部门">
+        label="复试时间">
       </el-table-column>
-      <el-table-column
-        prop="zhuangtai"
-        label="状态">
-      </el-table-column><el-table-column
-      prop="caozuo"
-      label="操作">
-    </el-table-column>
 
     </el-table>
     <el-pagination

@@ -10,9 +10,9 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="success">成功按钮</el-button>
-      <el-button type="danger">危险按钮</el-button>
-      <el-button type="warning">警告按钮</el-button>
+      <el-button type="success"> <span class="el-icon-check"></span>通过</el-button>
+      <el-button type="danger"> <span class="el-icon-close"></span>拒绝</el-button>
+      <el-button type="warning"><span class="el-icon-download"></span>导出</el-button>
 
     </div>
     <!-- seach栏-->

@@ -44,6 +44,14 @@
           this.$router.push({ path:'/myreader/leave'})
         }else if (id===3) {
           this.$router.push({ path:'/myreader/face'})
+        }else if (id===4) {
+          this.$router.push({ path:'/myreader/business'})
+        }
+        else if (id===5) {
+          this.$router.push({ path:'/myreader/money'})
+        }
+        else if (id===6) {
+          this.$router.push({ path:'/myreader/entry'})
         }
 
       }
