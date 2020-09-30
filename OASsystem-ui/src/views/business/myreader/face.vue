@@ -1,9 +1,10 @@
 
+
 <template>
-  <div class="contain-little">
+  <div class="contain-face">
     <!--导航栏-->
     <el-card class="header">
-      <el-page-header @back="goBack" content="加班审批">
+      <el-page-header @back="goBack" content="请假审批">
       </el-page-header>
 
     </el-card>
@@ -17,41 +18,49 @@
     </div>
     <!-- seach栏-->
 
-     <div class="seach" >
-       <span style="margin-left:20px;" >申请时间</span>
-       <el-date-picker
-         style="margin-left:20px;"
-         v-model="value1"
-         type="daterange"
-         range-separator="至"
-         start-placeholder="开始日期"
-         end-placeholder="结束日期">
-       </el-date-picker>
-       <span style="margin-left:20px;">状态</span>
-       <el-select v-model="value" placeholder="请选择状态" style="margin-left:20px;">
-         <el-option
-           v-for="item in options"
-           :key="item.value"
-           :label="item.label"
-           :value="item.value">
-         </el-option>
-       </el-select>
-       <span style="margin-left:20px;">部门</span>
-       <el-select v-model="value" placeholder="请选择部门" style="margin-left:20px;">
-         <el-option
-           v-for="item in res"
-           :key="item.value"
-           :label="item.label"
-           :value="item.value">
-         </el-option>
-       </el-select>
+    <div class="seach" >
+      <span style="margin-left:20px;" >申请时间</span>
+      <el-date-picker
+        style="margin-left:20px;"
+        v-model="value1"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期">
+      </el-date-picker>
+      <span style="margin-left:20px;" >复试时间</span>
+      <el-date-picker
+        style="margin-left:20px;"
+        v-model="value1"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期">
+      </el-date-picker>
+      <span style="margin-left:20px;">状态</span>
+      <el-select v-model="value" placeholder="请选择状态" style="margin-left:20px;">
+        <el-option
+          v-for="item in options"
+          :key="item.value1"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <span style="margin-left:20px;">姓名</span>
 
 
+      <el-input
+        placeholder="面试人姓名"
+        v-model="input"
+        style="width:150px;margin-left:10px"
+        clearable>
+      </el-input>
 
-       <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
-       <el-button style="margin-left:20px;"> <span class="el-icon-refresh-right"></span>重置</el-button>
 
-     </div>
+      <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
+      <el-button style="margin-left:20px;"> <span class="el-icon-refresh-right"></span>重置</el-button>
+
+    </div>
 
     <el-table
       class="tables"
@@ -62,32 +71,32 @@
         width="55">
       </el-table-column>
       <el-table-column
-      prop="date"
-      label="申请时间"
-      width="180">
-    </el-table-column>
-      <el-table-column
-        prop="name"
-        label="申请人"
+        prop="date"
+        label="申请时间"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="理由陈述">
+        prop="name"
+        label="申请人"
+        width="170">
       </el-table-column>
       <el-table-column
         prop="app"
         label="项目"
-        >
+      >
       </el-table-column>
       <el-table-column
         prop="time"
-        label="加班时长"
-        width="130">
+        label="请假时长"
+        width="170">
       </el-table-column>
       <el-table-column
         prop="timetwo"
-        label="加班时间">
+        label="请假时间">
+      </el-table-column>
+      <el-table-column
+        prop="type"
+        label="请假类型">
       </el-table-column>
       <el-table-column
         prop="bumen"
@@ -120,7 +129,7 @@
 
 <script>
   export default {
-    name: "page-little",
+    name: "page-face",
     data(){
       return{
         //状态选择数据
@@ -152,9 +161,22 @@
           value: '选项4',
           label: '开发部'
         }, ],
+
+        lx: [{
+          value: '选项1',
+          label: '加班调休'
+        }, {
+          value: '选项2',
+          label: '事假'
+        }, {
+          value: '选项3',
+          label: '年假'
+        }, ],
+
         //表格数据
         tableData: [{
           date: '2016-05-02',
+          type:"加班调休",
           name: '迈克尔',
           address: '小贷报表处理',
           app:'马克尔/河北省小贷管理系统',
@@ -242,8 +264,9 @@
 
 
         ],
-        value: '',
-      value1: ''
+        value1: '',
+        value2: '',
+        value3: ''
 
       }
 
@@ -266,6 +289,7 @@
 
 <style lang="scss">
 
+
   .header{
     margin-bottom: 20px;
   }
@@ -275,10 +299,10 @@
   .seach{
     margin-top: 20px;
   }
-.tables{
-  margin-left: 20px;
-  margin-top: 30px;
-}
+  .tables{
+    margin-left: 20px;
+    margin-top: 30px;
+  }
   .el-pagination{
     float:right;
   }

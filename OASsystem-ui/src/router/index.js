@@ -215,6 +215,18 @@ export const constantRoutes = [
         component: () => import("@/views/business/myreader/little"),
         meta: { title: "加班审批", icon: "" }
       },
+
+      {
+        path:"leave",
+        component: () => import("@/views/business/myreader/leave"),
+        meta: { title: "请假审批", icon: "" }
+      },
+
+      {
+        path:"face",
+        component: () => import("@/views/business/myreader/face"),
+        meta: { title: "面试申请", icon: "" }
+      },
     ]
   },
   // 部门及角色

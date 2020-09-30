@@ -5,7 +5,7 @@
     <div slot="header" class="clearfix">
 
       <span class="big" >{{item.titles}}</span>
-      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"  @click.native="edit"></el-button>
+      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"  @click.native="edit(item.index)"></el-button>
     </div>
     <div class="father"> <span class="son">{{item.ready}}</span></div>
     <div class="father"> <span class="conten">{{item.number}}</span>件</div>
@@ -37,8 +37,14 @@
       }
     },
     methods:{
-      edit(){
-        this.$router.push({ path:'/myreader/little'})
+      edit(id){
+        if(id===1){
+          this.$router.push({ path:'/myreader/little'})
+        } else if (id===2) {
+          this.$router.push({ path:'/myreader/leave'})
+        }else if (id===3) {
+          this.$router.push({ path:'/myreader/face'})
+        }
 
       }
     }
