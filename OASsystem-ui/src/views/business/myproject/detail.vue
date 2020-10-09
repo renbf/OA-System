@@ -3,7 +3,7 @@
     <el-collapse v-model="activeNames" @change="handleChange">
       <!--<el-collapse-item :title="title" name="1" >-->
       <div class="one" name="1">{{title}}
-        <el-button icon="el-icon-edit-outline" circle></el-button>
+        <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
         <el-button icon=" el-icon-switch-button" circle></el-button>
 
@@ -22,10 +22,10 @@
           <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
             <el-form  ref="form" :model="detailform" label-width="80px">
               <el-form-item label="部门">
-                <el-tag type="info">软件部</el-tag>
+                <el-tag type="info">{{projectInfo.deptNames}}</el-tag>
               </el-form-item>
               <el-form-item label="项目任务">
-                <el-tag type="info">35件</el-tag>
+                <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
               </el-form-item>
               <el-form-item label="项目时间">
                 <el-date-picker
@@ -296,6 +296,91 @@
 <!--        项目进度甘特图-->
       <component :is="activeIndex"></component>
     </div>
+
+    <el-dialog :title="addproject"
+               :visible.sync="addopen"
+               width="650px" class="abow_dialog">
+      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
+        <el-form-item label="项目名称" prop="name">
+          <el-input v-model="addform.projectName"></el-input>
+        </el-form-item>
+        <el-form-item label="负责人" prop="leaderId">
+          <el-select v-model="addform.leaderId" placeholder="请选择" ref="leaderName">
+            <el-option
+              v-for="item in userDeptUserList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部门" prop="bumenStatus">
+          <el-checkbox-group v-model="addform.bumenStatus" @change="handleCheckedCitiesChange">
+            <el-checkbox v-for="dict in department"
+                         :label="dict.deptId"
+                         border>{{dict.deptName}}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="参与人员" prop="userList">
+          <template>
+            <el-transfer
+              filterable
+              :filter-method="filterMethod"
+              filter-placeholder="请输入成员名称"
+              v-model="addform.userList"
+              :data="memberList">
+            </el-transfer>
+          </template>
+        </el-form-item>
+        <el-form-item label="项目日期" prop="tasktime">
+          <el-date-picker
+            v-model="addform.projectDate"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
+        </el-form-item>
+        <!--        项目描述-->
+        <el-form-item label="项目描述" prop="projectDesc">
+          <el-input
+            type="textarea"
+            placeholder="请输入"
+            v-model="addform.projectDesc"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item  label="状态"  prop="status">
+          <el-switch
+            v-model="addform.status"
+            active-value="1"
+            inactive-value="0"
+            active-text="启用">
+          </el-switch>
+          <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
+        </el-form-item>
+        <el-collapse v-model="matters_needing_attention">
+          <el-collapse-item title="项目注意事项" name="1">
+            <div>
+              1、当项目状态为“禁用”时，可对项目进行“删除”操作。
+            </div>
+            <div>
+              2、当项目任务有人参与并发表过内容时，项目与项目任务则不能被删除。但可“关闭项目”与“项目任务”。
+            </div>
+            <div>3、项目任务状态为“禁用”时，可对任务进行“删除”操作。</div>
+            <div>
+              4、当“关闭项目”或“关闭任务”后“项目”与“任务”将仅能“查看”
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -309,7 +394,30 @@
     },
     data() {
       return {
+        addproject: '',
+        addopen: false,
         projectId:this.$route.query.projectId,
+        addform: {
+          projectName: '',
+          bumenStatus: [],
+          projectDesc: '',
+          projectDate: '',
+          userList: [],
+          status:''
+        },
+        addrules: {
+          projectName: [{required: true, message: "项目名称不能为空", trigger: "change"}],
+          bumenStatus: [{required: true, message: "部门不能为空", trigger: "change"}],
+          userList: [{required: true, message: "参与人员不能为空", trigger: "change"}],
+          projectDate: [{required: true, message: "项目时间不能为空", trigger: "change"}],
+          projectDesc: [{required: true, message: "项目描述不能为空", trigger: "change"}],
+          status: [{required: true, message: "状态必须选择", trigger: "change"}]
+        },
+        //责任人
+        userDeptUserList:[],
+        memberList:[],
+        department: [],
+        matters_needing_attention: undefined,
         projectInfo: {},
         deptMemberList: [],
         title: "OA项目开发 编号：xcv23456 项目人：迈克尔",
@@ -546,8 +654,60 @@
         } else {
           this.model = '时间'
         }
-      }
+      },
+      handleEdit() {
+        this.addproject = "修改项目";
+        this.addopen = true;
+      },
+      handleCheckedCitiesChange(list) {
+        let _this = this;
+        _this.memberList = [];
+        for (var i in list) {
+          let deptId = list[i];
+          _this.userDeptUserList.forEach((val) => {
+              if (val.deptId == deptId) {
+                _this.memberList.push({key: val.userId,label: val.nickName});
+              }
+            }
+          );
+        }
+        let a =_this.memberList;
+      },
+      filterMethod(query, item) {
+        // let aa = item.label.indexOf(query) > -1;
+        if (query == "") {
+          return true;
+        }else{
+          return item.label.indexOf(query) > -1;
+        }
+      },
+      cancel() {
+        this.addopen = false;
+      },
+      //提交项目
+      submitForm(){
+        let _this = this;
+        let leaderName = _this.$refs.leaderName.selected.label;
+        _this.$refs.addform.validate(valid => {
+          if (valid) {
+            let addform = _this.addform;
+            addform.leaderName = leaderName;
+            addform.projectId = _this.projectId;
+            if (addform.projectId != undefined) {
 
+            } else {
+              addBusiProject(addform).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("新增成功");
+                  this.addopen = false;
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }
+          }
+        });
+      },
     }
 
   }

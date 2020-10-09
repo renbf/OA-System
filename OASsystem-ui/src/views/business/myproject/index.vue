@@ -261,7 +261,6 @@
               if (addform.projectId != undefined) {
 
               } else {
-                debugger
                 addBusiProject(addform).then(response => {
                   if (response.code === 200) {
                     this.msgSuccess("新增成功");
@@ -277,8 +276,9 @@
         cancel() {
           this.addopen = false;
         },
-        editproject() {
-          console.log(123)
+        editproject(item) {
+          let projectId = item.projectId;
+          this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         },
         projectdetail(item) {
           let projectId = item.projectId;

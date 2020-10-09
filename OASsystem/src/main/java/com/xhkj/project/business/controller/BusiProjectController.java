@@ -105,7 +105,7 @@ public class BusiProjectController
 	}
 
 	/**
-	 * 查询项目列表
+	 * 查询项目详情
 	 */
 	@GetMapping("/getProjectInfo")
 	@ResponseBody
@@ -115,9 +115,9 @@ public class BusiProjectController
 		try {
 			resultMap = busiProjectService.getProjectInfo(projectId);
 		} catch (Exception e) {
-			log.error("查询项目列表异常",e);
+			log.error("查询项目详情异常",e);
 			resultMap.put("code",-1);
-			resultMap.put("msg","查询项目列表异常");
+			resultMap.put("msg","查询项目详情异常");
 		}
 		return resultMap;
 	}
