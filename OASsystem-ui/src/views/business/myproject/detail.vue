@@ -9,9 +9,10 @@
 
         <el-button icon="el-icon-delete" circle></el-button>
         <el-switch
-          class="sty"
-          v-model="value2"
-          disabled>
+          v-model="value"
+          active-color="#999999"
+          inactive-color="#ff4949"
+        style="margin-left:10px;">
         </el-switch>
         <span style="margin-left:10px">禁用</span>
       </div>
@@ -430,7 +431,9 @@
             status: '报送'
           },
         ],
-        activeIndex: 'project_progress'
+        activeIndex: 'project_progress',
+
+        value: true
       }
     },
     created() {
