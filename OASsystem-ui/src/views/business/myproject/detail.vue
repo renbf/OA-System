@@ -387,6 +387,8 @@
 <script>
   import project_progress from './project_progress';
   import { getProjectInfo } from "@/api/business/mywork/myproject";
+  import { userDeptList } from "@/api/system/dept";
+
   export default {
     name: "detail",
     components: {
@@ -550,6 +552,12 @@
         this.statusOptions = response.data;
       });
       this.getProject();
+      //获取部门列表
+      userDeptList().then(response => {
+        if (response.code == 200) {
+          this.department = response.data;
+        }
+      });
     },
     computed: {
       atEndOfList() {
@@ -655,9 +663,29 @@
           this.model = '时间'
         }
       },
+
       handleEdit() {
         this.addproject = "修改项目";
         this.addopen = true;
+        let projectInfo = this.projectInfo;
+        let deptMemberList = this.deptMemberList;
+        let busiProjectMembers = projectInfo.busiProjectMembers;
+        let userList = [];
+        let bumenStatus = [];
+        busiProjectMembers.forEach((val) =>{
+          userList.push(val.memberId);
+        });
+        deptMemberList.forEach((val) =>{
+          bumenStatus.push(val.deptId);
+        });
+        this.addform = {
+          projectName: projectInfo.projectName,
+            bumenStatus: bumenStatus,
+            projectDesc: projectInfo.projectDesc,
+            projectDate: [projectInfo.projectStartDate,projectInfo.projectEndDate],
+            userList: userList,
+            status:projectInfo.status
+        }
       },
       handleCheckedCitiesChange(list) {
         let _this = this;
