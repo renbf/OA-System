@@ -28,13 +28,20 @@
                 <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
               </el-form-item>
               <el-form-item label="项目时间">
-                <el-date-picker
-                  v-model="detailform.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
+                <div class="div1" >
+                  <i class="el-icon-date" style="margin-left:10px;"></i>
+                  <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{data1}}</span>
+                  <span style="margin-left:40px;">至</span>
+                  <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{data2}}</span>
+
+
+                </div>
+
+
+
+
+
+
               </el-form-item>
               <el-form-item label="理由陈述">
                 <el-input type="textarea" v-model="detailform.remark"></el-input>
@@ -541,7 +548,9 @@
         ],
         activeIndex: 'project_progress',
 
-        value: true
+        value: true,
+        data1:'2010-1-11',
+        data2:'2020-2-22'
       }
     },
     created() {
@@ -714,6 +723,14 @@
 </script>
 
 <style>
+
+  .div1{
+    width: 360px;
+    height: 30px;
+    border-radius: 5px;
+   line-height: 30px;
+    border:1px solid rgba(221, 221, 221,0.8)
+  }
   .projectdetail .gantt-elastic__grid-line-time {
     display: none;
   }
