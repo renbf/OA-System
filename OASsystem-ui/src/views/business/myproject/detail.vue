@@ -309,9 +309,12 @@
         <!--        项目描述-->
         <el-form-item label="项目描述" prop="projectDesc">
           <el-input
+            :rows="8"
             type="textarea"
-            placeholder="请输入"
+            placeholder="请输入内容"
             v-model="addform.projectDesc"
+            maxlength="120"
+            show-word-limit
           >
           </el-input>
         </el-form-item>
@@ -340,6 +343,7 @@
         </el-collapse>
       </el-form>
       <div slot="footer" class="dialog-footer">
+
         <el-button @click="cancel">取消</el-button>
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
