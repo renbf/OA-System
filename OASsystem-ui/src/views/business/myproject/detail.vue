@@ -70,7 +70,6 @@
             </div>
           </div>
         </el-card>
-      </el-collapse-item>
     </el-collapse>
 <!--    项目组申请-->
     <div>
@@ -120,28 +119,20 @@
       <span>{{model}}模式</span>
     </span>
   </div>
-  <h3>项目任务</h3>
+    <!--项目任务模块-->
+    <!--项目任务模块-->
+    <!--项目任务模块-->
+
+    <div  style="margin-bottom: 10px">
+  <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
+    <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
+    </el-button>
+    <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
+    <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
+    </div>
+
     <div v-if="model=='列表'">
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button
-            type="success"
-            icon="el-icon-message"
-            size="mini"
-            @click="handleReport"
-          >报送</el-button
-          >
-        </el-col>
-        <el-col :span="1.5">
-          <el-button
-            type="warning"
-            icon="el-icon-download"
-            size="mini"
-            @click="handleExport"
-          >导出</el-button
-          >
-        </el-col>
-      </el-row>
+
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
         <el-form-item label="任务时间">
           <el-date-picker
@@ -155,7 +146,7 @@
             end-placeholder="结束日期"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="任务状态">
+        <el-form-item label="状态">
           <el-select
             v-model="queryParams.projectstatus"
             placeholder="选择状态"
@@ -165,22 +156,6 @@
           >
             <el-option
               v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select
-            v-model="queryParams.status"
-            placeholder="选择部门"
-            clearable
-            size="small"
-            style="width: 240px"
-          >
-            <el-option
-              v-for="dict in status"
               :key="dict.dictValue"
               :label="dict.dictLabel"
               :value="dict.dictValue"
@@ -290,51 +265,46 @@
       <component :is="activeIndex"></component>
     </div>
 
+
+    <!--新建模块-->
+    <!--新建模块-->
+    <!--新建模块-->
+
     <el-dialog :title="addproject"
-               :visible.sync="addopen"
-               width="650px" class="abow_dialog">
+               :visible.sync="add3"
+               width="800px" class="abow_dialog">
       <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="项目名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="addform.projectName"></el-input>
         </el-form-item>
-        <el-form-item label="负责人" prop="leaderId">
-          <el-select v-model="addform.leaderId" placeholder="请选择" ref="leaderName">
-            <el-option
-              v-for="item in userDeptUserList"
-              :key="item.userId"
-              :label="item.nickName"
-              :value="item.userId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="部门" prop="bumenStatus">
-          <el-checkbox-group v-model="addform.bumenStatus" @change="handleCheckedCitiesChange">
-            <el-checkbox v-for="dict in department"
-                         :label="dict.deptId"
-                         border>{{dict.deptName}}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="参与人员" prop="userList">
-          <template>
-            <el-transfer
-              filterable
-              :filter-method="filterMethod"
-              filter-placeholder="请输入成员名称"
-              v-model="addform.userList"
-              :data="memberList">
-            </el-transfer>
-          </template>
-        </el-form-item>
-        <el-form-item label="项目日期" prop="tasktime">
-          <el-date-picker
-            v-model="addform.projectDate"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
 
+
+        <el-form-item label="参与人员" prop="userList">
+          <el-transfer
+            :titles="['项目成员', '参与成员']"
+            filterable
+            :filter-method="filterMethod"
+            filter-placeholder="项目成员"
+            v-model="valuess"
+            :data="datas"
+          style="margin-bottom: 2px">
+          </el-transfer>
+
+
+        </el-form-item>
+        <el-form-item label="项目时间" prop="tasktime">
+          <el-time-picker
+            is-range
+            v-model="value1"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围">
+          </el-time-picker>
         </el-form-item>
         <!--        项目描述-->
         <el-form-item label="项目描述" prop="projectDesc">
@@ -374,15 +344,18 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
+
   import project_progress from './project_progress';
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject } from "@/api/business/mywork/myproject";
+
 
   export default {
     name: "detail",
@@ -390,9 +363,26 @@
       project_progress
     },
     data() {
+      const generateData = _ => {
+        const data = [];
+        const cities = ['宏观', '丽丽', '钱及', '张三',  ];
+        const pinyin = ['宏观', '丽丽', '钱及', '张三',  ];
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          });
+        });
+        return data;
+      };
       return {
-        addproject: '',
-        addopen: false,
+        //新建编辑项目任务里面的任务时间
+        value1:'',
+        datas: generateData(),
+        valuess: [],
+        addprojects: '',
+        add3:false,
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
@@ -537,7 +527,11 @@
         activeIndex: 'project_progress',
 
         value: true,
+
+
       }
+
+
     },
     created() {
       // 状态
@@ -588,6 +582,16 @@
       },
     },
     methods: {
+      //新建编辑项目任务
+      filterMethod(query, item) {
+        return item.pinyin.indexOf(query) > -1;
+      },
+
+      add2(){
+        this.addproject = "新建/编辑项目任务";
+        this.add3=true;
+
+      },
       getProject() {
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
@@ -751,7 +755,6 @@
 </script>
 
 <style>
-
   .div1{
     width: 360px;
     height: 30px;

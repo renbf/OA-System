@@ -6,6 +6,7 @@ import "@/assets/styles/common.scss"; // common css
 import "./assets/icons"; // icon
 import "./permission"; // permission control
 
+
 import Cookies from "js-cookie";
 import Element from "element-ui";
 import moment from 'moment'
