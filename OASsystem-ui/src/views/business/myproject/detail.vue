@@ -20,7 +20,7 @@
 
         <el-card class="box-card">
           <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-            <el-form  ref="form" :model="detailform" label-width="80px">
+            <el-form  ref="form" :model="projectInfo" label-width="80px">
               <el-form-item label="部门">
                 <el-tag type="info">{{projectInfo.deptNames}}</el-tag>
               </el-form-item>
@@ -30,38 +30,24 @@
               <el-form-item label="项目时间">
                 <div class="div1" >
                   <i class="el-icon-date" style="margin-left:10px;"></i>
-                  <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{data1}}</span>
+                  <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{projectInfo.projectStartDate}}</span>
                   <span style="margin-left:40px;">至</span>
-                  <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{data2}}</span>
-
-
+                  <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{projectInfo.projectEndDate}}</span>
                 </div>
-
-
-
-
-
-
               </el-form-item>
               <el-form-item label="理由陈述">
-                <el-input type="textarea" v-model="detailform.remark"></el-input>
+                <el-input type="textarea" v-model="projectInfo.projectDesc"></el-input>
               </el-form-item>
             </el-form>
           </div>
           <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
             <p>参与人员</p>
-            <p>软件部</p>
-            <p>
-              <el-tag type="info">迈克尔</el-tag>
-              <el-tag type="info">丹尼尔</el-tag>
-              <el-tag type="info">斯坦</el-tag>
-            </p>
-            <p>设计部</p>
-            <p>
-              <el-tag type="info">迈克尔</el-tag>
-              <el-tag type="info">丹尼尔</el-tag>
-              <el-tag type="info">斯坦</el-tag>
-            </p>
+            <template v-for="item in deptMemberList">
+              <p>{{item.deptName}}</p>
+              <p>
+                <el-tag type="info" v-for="item1 in item.members">{{item1.memberName}}</el-tag>
+              </p>
+            </template>
           </div>
           <div style="width: 15%;float:left;padding:0 20px;position: relative">
             <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
@@ -395,6 +381,8 @@
   import project_progress from './project_progress';
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
+  import { userDeptUsers } from "@/api/system/user";
+  import { listBusiProject,editBusiProject } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -408,6 +396,7 @@
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
+          leaderId:undefined,
           bumenStatus: [],
           projectDesc: '',
           projectDate: '',
@@ -428,6 +417,7 @@
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
+        //部门成员列表
         deptMemberList: [],
         title: "OA项目开发 编号：xcv23456 项目人：迈克尔",
         currentOffset: 0,
@@ -498,10 +488,6 @@
           }
         ],
         activeNames: ['1'],
-        detailform: {
-          time: "",
-          remark: '公司内容OA系统开发项目，用于公司OA系统的整体开发，涉及工作管理模块，我的部门模块，我的工作模块，系统设置模块等。'
-        },
         projectprocess: '30',
         timeprocess: '60',
         statusOptions: [],
@@ -551,8 +537,6 @@
         activeIndex: 'project_progress',
 
         value: true,
-        data1:'2010-1-11',
-        data2:'2020-2-22'
       }
     },
     created() {
@@ -567,6 +551,7 @@
           this.department = response.data;
         }
       });
+      this.getUserDeptUsers();
     },
     computed: {
       atEndOfList() {
@@ -608,6 +593,8 @@
         getProjectInfo({projectId:_this.projectId}).then(response => {
           if(response.code == 200){
             _this.projectInfo = response.data;
+            _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
+            _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
             let busiProjectMembers= _this.projectInfo.busiProjectMembers;
             _this.getDeptMemberList(busiProjectMembers);
           }
@@ -616,6 +603,7 @@
       getDeptMemberList(busiProjectMembers) {
         let _this = this;
         let map = new Map();
+        _this.deptMemberList = [];
         let deptMemberList = _this.deptMemberList;
         busiProjectMembers.forEach((val)=>{
           let deptId = val.deptId;
@@ -633,6 +621,14 @@
           }
         });
 
+      },
+      getUserDeptUsers() {
+        let _this = this;
+        userDeptUsers().then(response => {
+          if (response.code == 200) {
+            _this.userDeptUserList = response.data;
+          }
+        });
       },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
@@ -687,8 +683,10 @@
         deptMemberList.forEach((val) =>{
           bumenStatus.push(val.deptId);
         });
+        this.handleCheckedCitiesChange(bumenStatus);
         this.addform = {
-          projectName: projectInfo.projectName,
+            projectName: projectInfo.projectName,
+            leaderId:projectInfo.leaderId,
             bumenStatus: bumenStatus,
             projectDesc: projectInfo.projectDesc,
             projectDate: [projectInfo.projectStartDate,projectInfo.projectEndDate],
@@ -698,6 +696,8 @@
       },
       handleCheckedCitiesChange(list) {
         let _this = this;
+        let userList = _this.addform.userList;
+        _this.addform.userList = [];
         _this.memberList = [];
         for (var i in list) {
           let deptId = list[i];
@@ -708,7 +708,6 @@
             }
           );
         }
-        let a =_this.memberList;
       },
       filterMethod(query, item) {
         // let aa = item.label.indexOf(query) > -1;
@@ -731,16 +730,17 @@
             addform.leaderName = leaderName;
             addform.projectId = _this.projectId;
             if (addform.projectId != undefined) {
-
-            } else {
-              addBusiProject(addform).then(response => {
+              editBusiProject(addform).then(response => {
                 if (response.code === 200) {
-                  this.msgSuccess("新增成功");
+                  this.msgSuccess("修改成功");
                   this.addopen = false;
+                  this.getProject();
                 } else {
                   this.msgError(response.msg);
                 }
               });
+            } else {
+
             }
           }
         });

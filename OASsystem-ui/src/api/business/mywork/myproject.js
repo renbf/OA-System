@@ -16,6 +16,16 @@ export function addBusiProject(data) {
     data: data
   })
 }
+
+// 编辑项目
+export function editBusiProject(data) {
+  return request({
+    url: '/api/busiProject/edit',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询项目信息
 export function getProjectInfo(query) {
   return request({
