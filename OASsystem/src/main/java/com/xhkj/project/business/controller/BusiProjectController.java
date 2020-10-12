@@ -1,5 +1,6 @@
 package com.xhkj.project.business.controller;
 
+import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,5 +122,58 @@ public class BusiProjectController
 		}
 		return resultMap;
 	}
-	
+
+	/**
+	 * 启用禁用项目
+	 */
+	@PostMapping("/changeStatus")
+	@ResponseBody
+	public Map<String,Object> changeStatus(@RequestBody BusiProject busiProject)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.changeStatus(busiProject);
+		} catch (Exception e) {
+			log.error("启用禁用项目异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","启用禁用项目异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 新增任务
+	 */
+	@PostMapping("/addTask")
+	@ResponseBody
+	public Map<String,Object> addTask(@RequestBody BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.insertBusiTask(busiTask);
+		} catch (Exception e) {
+			log.error("新增任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","新增任务异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 查询任务列表
+	 */
+	@GetMapping("/listTask")
+	@ResponseBody
+	public Map<String,Object> listTask(BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.selectListTask(busiTask);
+		} catch (Exception e) {
+			log.error("查询项目列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","查询项目列表异常");
+		}
+		return resultMap;
+	}
 }

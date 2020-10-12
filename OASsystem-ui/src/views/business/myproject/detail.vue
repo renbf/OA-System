@@ -1,17 +1,19 @@
 <template>
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
-      <!--<el-collapse-item :title="title" name="1" >-->
-      <div class="one" name="1">{{title}}
+      <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
         <el-button icon=" el-icon-switch-button" circle></el-button>
 
         <el-button icon="el-icon-delete" circle></el-button>
         <el-switch
-          v-model="value"
+          v-model="projectInfo.status"
           active-color="#999999"
           inactive-color="#ff4949"
+          active-value="1"
+          inactive-value="0"
+          @change="changeStatusHandle"
         style="margin-left:10px;">
         </el-switch>
         <span style="margin-left:10px">禁用</span>
@@ -382,7 +384,7 @@
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -745,6 +747,20 @@
           }
         });
       },
+      changeStatusHandle(value) {
+        let _this = this;
+        let form = {
+          projectId:_this.projectId,
+          status:value
+        };
+        changeStatus(form).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("修改成功");
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      }
     }
 
   }

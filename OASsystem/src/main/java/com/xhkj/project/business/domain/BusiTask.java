@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 任务表 busi_task
@@ -39,7 +40,27 @@ public class BusiTask extends BaseEntity
 	/** 排序字段 */
 	private Integer sortOrder;
 //以上自动生成的尽量别动
-	public void setTaskId(Long taskId) 
+	private List<Date> taskDate;
+
+	private List<Long> userList;
+
+	public List<Date> getTaskDate() {
+		return taskDate;
+	}
+
+	public void setTaskDate(List<Date> taskDate) {
+		this.taskDate = taskDate;
+	}
+
+	public List<Long> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<Long> userList) {
+		this.userList = userList;
+	}
+
+	public void setTaskId(Long taskId)
 	{
 		this.taskId = taskId;
 	}

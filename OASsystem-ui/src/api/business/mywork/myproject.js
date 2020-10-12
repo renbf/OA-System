@@ -25,6 +25,14 @@ export function editBusiProject(data) {
     data: data
   })
 }
+// 启用禁用项目
+export function changeStatus(data) {
+  return request({
+    url: '/api/busiProject/changeStatus',
+    method: 'post',
+    data: data
+  })
+}
 
 // 查询项目信息
 export function getProjectInfo(query) {
