@@ -72,7 +72,6 @@
             </div>
           </div>
         </el-card>
-      </el-collapse-item>
     </el-collapse>
 <!--    项目组申请-->
     <div>
@@ -122,28 +121,20 @@
       <span>{{model}}模式</span>
     </span>
   </div>
-  <h3>项目任务</h3>
+
+    <!--项目任务模块-->
+    <!--项目任务模块-->
+    <!--项目任务模块-->
+
+    <div  style="margin-bottom: 10px">
+      <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
+      <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
+      </el-button>
+      <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
+      <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
+    </div>
     <div v-if="model=='列表'">
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button
-            type="success"
-            icon="el-icon-message"
-            size="mini"
-            @click="handleReport"
-          >报送</el-button
-          >
-        </el-col>
-        <el-col :span="1.5">
-          <el-button
-            type="warning"
-            icon="el-icon-download"
-            size="mini"
-            @click="handleExport"
-          >导出</el-button
-          >
-        </el-col>
-      </el-row>
+
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
         <el-form-item label="任务时间">
           <el-date-picker
@@ -157,7 +148,7 @@
             end-placeholder="结束日期"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="任务状态">
+        <el-form-item label="状态">
           <el-select
             v-model="queryParams.projectstatus"
             placeholder="选择状态"
@@ -167,22 +158,6 @@
           >
             <el-option
               v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select
-            v-model="queryParams.status"
-            placeholder="选择部门"
-            clearable
-            size="small"
-            style="width: 240px"
-          >
-            <el-option
-              v-for="dict in status"
               :key="dict.dictValue"
               :label="dict.dictLabel"
               :value="dict.dictValue"
@@ -275,13 +250,7 @@
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
             <div>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit-outline"
-                @click.stop="handleUpdate(scope.row)"
-              >编辑</el-button
-              >
+
             </div>
           </template>
         </el-table-column>
@@ -376,6 +345,100 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
+
+
+<!--项目任务模块-->
+    <!--项目任务模块-->
+    <!--项目任务模块-->
+
+
+
+    <el-dialog :title="header1"
+               :visible.sync="add3"
+               width="800px" class="abow_dialog">
+      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
+        <el-form-item label="名称" prop="name">
+          <el-input
+            style="width:520px;"
+            type="text"
+            placeholder="请输入标题"
+            v-model="addform.projectName"
+            maxlength="10"
+            show-word-limit
+          >
+          </el-input>
+        </el-form-item>
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
+        <!--参与人员分栏模块-->
+
+
+        <el-form-item label="参与人员" prop="userList">
+          <el-transfer
+            :titles="['项目成员', '参与成员']"
+            filterable
+            :filter-method="filterMethod"
+            filter-placeholder="项目成员"
+            v-model="valuess"
+            :data="datas"
+            style="margin-bottom: 2px">
+          </el-transfer>
+
+
+        </el-form-item>
+        <el-form-item label="项目时间" prop="tasktime">
+          <el-time-picker
+            is-range
+            v-model="value1"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围">
+          </el-time-picker>
+        </el-form-item>
+        <!--        项目描述-->
+        <el-form-item label="项目描述" prop="projectDesc">
+          <el-input
+            :rows="8"
+            type="textarea"
+            placeholder="请输入内容"
+            v-model="addform.projectDesc"
+            maxlength="120"
+            show-word-limit
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item  label="状态"  prop="status">
+          <el-switch
+            v-model="addform.status"
+            active-value="1"
+            inactive-value="0"
+            active-text="启用">
+          </el-switch>
+          <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
+        </el-form-item>
+        <el-collapse v-model="matters_needing_attention">
+          <el-collapse-item title="项目注意事项" name="1">
+            <div>
+              1、当项目状态为“禁用”时，可对项目进行“删除”操作。
+            </div>
+            <div>
+              2、当项目任务有人参与并发表过内容时，项目与项目任务则不能被删除。但可“关闭项目”与“项目任务”。
+            </div>
+            <div>3、项目任务状态为“禁用”时，可对任务进行“删除”操作。</div>
+            <div>
+              4、当“关闭项目”或“关闭任务”后“项目”与“任务”将仅能“查看”
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -395,6 +458,7 @@
       return {
         addproject: '',
         addopen: false,
+        add3:false,
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
@@ -590,6 +654,12 @@
       },
     },
     methods: {
+      add2(){
+
+        this.header1 = "新项目任务";
+        this.add3=true;
+
+      },
       getProject() {
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
@@ -767,7 +837,6 @@
 </script>
 
 <style>
-
   .div1{
     width: 360px;
     height: 30px;

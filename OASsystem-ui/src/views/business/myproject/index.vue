@@ -52,7 +52,7 @@
 <!--    新建项目-->
     <el-dialog :title="addproject"
                :visible.sync="addopen"
-               width="650px" class="abow_dialog">
+               width="800px" class="abow_dialog">
       <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="addform.projectName"></el-input>
