@@ -197,6 +197,11 @@ export const constantRoutes = [
         component: () => import("@/views/business/myproject/detail"),
         meta: { title: "项目详情", icon: "" }
       },
+      {
+        path:"look",
+        component: () => import("@/views/business/myproject/look"),
+        meta: { title: "OA项目开发", icon: "" }
+      },
     ]
   },
 
