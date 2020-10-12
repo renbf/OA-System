@@ -382,7 +382,8 @@
             filter-placeholder="项目成员"
             v-model="valuess"
             :data="datas"
-            style="margin-bottom: 2px">
+            style="margin-bottom: 2px;"
+          >
           </el-transfer>
 
 
@@ -455,10 +456,25 @@
       project_progress
     },
     data() {
+      const generateData = _ => {
+        const data = [];
+        const cities = ['宏观', '丽丽', '钱及', '张三',  ];
+        const pinyin = ['宏观', '丽丽', '钱及', '张三',  ];
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          });
+        });
+        return data;
+      };
       return {
-        addproject: '',
-        addopen: false,
-        add3:false,
+        value1: "",
+        datas: generateData(),
+        valuess: [],
+        addprojects: "",
+        add3: false,
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
@@ -654,9 +670,14 @@
       },
     },
     methods: {
+      //新建编辑项目任务
+      filterMethod(query, item) {
+        return item.pinyin.indexOf(query) > -1;
+      },
+
       add2(){
 
-        this.header1 = "新项目任务";
+        this.header1 = "新建项目任务";
         this.add3=true;
 
       },
