@@ -33,7 +33,6 @@ export function changeStatus(data) {
     data: data
   })
 }
-
 // 查询项目信息
 export function getProjectInfo(query) {
   return request({
@@ -43,6 +42,23 @@ export function getProjectInfo(query) {
   })
 }
 
+// 新增任务
+export function addBusiTask(data) {
+  return request({
+    url: '/api/busiProject/addTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询任务列表
+export function listTask(query) {
+  return request({
+    url: '/api/busiProject/listTask',
+    method: 'get',
+    params: query
+  })
+}
 export function project_progress() {
   return {
     code: 200,

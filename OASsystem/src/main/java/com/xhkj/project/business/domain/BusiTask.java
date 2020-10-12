@@ -18,9 +18,11 @@ import java.util.List;
 public class BusiTask extends BaseEntity
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	/** 任务ID */
 	private Long taskId;
+	/** 任务编号 */
+	private Integer taskNumber;
 	/** 任务名称 */
 	private String taskName;
 	/** 项目ID */
@@ -33,10 +35,14 @@ public class BusiTask extends BaseEntity
 	private String taskDesc;
 	/** 是否启用（0否 1是） */
 	private String status;
-	/** 项目进度（0进行中 1完成） */
+	/** 任务进度（0进行中 100完成） */
 	private String taskProgress;
-	/** 是否删除（0否 1是） */
-	private String deleteFlag;
+	/** 时间进度 */
+	private String timeProgress;
+	/** 任务状态（0进行中 1完成） */
+	private String taskStatus;
+	/** 关闭原因 */
+	private String closeReason;
 	/** 排序字段 */
 	private Integer sortOrder;
 //以上自动生成的尽量别动
@@ -65,109 +71,139 @@ public class BusiTask extends BaseEntity
 		this.taskId = taskId;
 	}
 
-	public Long getTaskId() 
+	public Long getTaskId()
 	{
 		return taskId;
 	}
-	public void setTaskName(String taskName) 
+	public void setTaskNumber(Integer taskNumber)
+	{
+		this.taskNumber = taskNumber;
+	}
+
+	public Integer getTaskNumber()
+	{
+		return taskNumber;
+	}
+	public void setTaskName(String taskName)
 	{
 		this.taskName = taskName;
 	}
 
-	public String getTaskName() 
+	public String getTaskName()
 	{
 		return taskName;
 	}
-	public void setProjectId(Long projectId) 
+	public void setProjectId(Long projectId)
 	{
 		this.projectId = projectId;
 	}
 
-	public Long getProjectId() 
+	public Long getProjectId()
 	{
 		return projectId;
 	}
-	public void setTaskStartDate(Date taskStartDate) 
+	public void setTaskStartDate(Date taskStartDate)
 	{
 		this.taskStartDate = taskStartDate;
 	}
 
-	public Date getTaskStartDate() 
+	public Date getTaskStartDate()
 	{
 		return taskStartDate;
 	}
-	public void setTaskEndDate(Date taskEndDate) 
+	public void setTaskEndDate(Date taskEndDate)
 	{
 		this.taskEndDate = taskEndDate;
 	}
 
-	public Date getTaskEndDate() 
+	public Date getTaskEndDate()
 	{
 		return taskEndDate;
 	}
-	public void setTaskDesc(String taskDesc) 
+	public void setTaskDesc(String taskDesc)
 	{
 		this.taskDesc = taskDesc;
 	}
 
-	public String getTaskDesc() 
+	public String getTaskDesc()
 	{
 		return taskDesc;
 	}
-	public void setStatus(String status) 
+	public void setStatus(String status)
 	{
 		this.status = status;
 	}
 
-	public String getStatus() 
+	public String getStatus()
 	{
 		return status;
 	}
-	public void setTaskProgress(String taskProgress) 
+	public void setTaskProgress(String taskProgress)
 	{
 		this.taskProgress = taskProgress;
 	}
 
-	public String getTaskProgress() 
+	public String getTaskProgress()
 	{
 		return taskProgress;
 	}
-	public void setDeleteFlag(String deleteFlag) 
+	public void setTimeProgress(String timeProgress)
 	{
-		this.deleteFlag = deleteFlag;
+		this.timeProgress = timeProgress;
 	}
 
-	public String getDeleteFlag() 
+	public String getTimeProgress()
 	{
-		return deleteFlag;
+		return timeProgress;
 	}
-	public void setSortOrder(Integer sortOrder) 
+	public void setTaskStatus(String taskStatus)
+	{
+		this.taskStatus = taskStatus;
+	}
+
+	public String getTaskStatus()
+	{
+		return taskStatus;
+	}
+	public void setCloseReason(String closeReason)
+	{
+		this.closeReason = closeReason;
+	}
+
+	public String getCloseReason()
+	{
+		return closeReason;
+	}
+	public void setSortOrder(Integer sortOrder)
 	{
 		this.sortOrder = sortOrder;
 	}
 
-	public Integer getSortOrder() 
+	public Integer getSortOrder()
 	{
 		return sortOrder;
 	}
 
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("taskId", getTaskId())
-            .append("taskName", getTaskName())
-            .append("projectId", getProjectId())
-            .append("taskStartDate", getTaskStartDate())
-            .append("taskEndDate", getTaskEndDate())
-            .append("taskDesc", getTaskDesc())
-            .append("status", getStatus())
-            .append("taskProgress", getTaskProgress())
-            .append("deleteFlag", getDeleteFlag())
-            .append("sortOrder", getSortOrder())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("remark", getRemark())
-            .toString();
-    }
+	public String toString() {
+		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+				.append("taskId", getTaskId())
+				.append("taskNumber", getTaskNumber())
+				.append("taskName", getTaskName())
+				.append("projectId", getProjectId())
+				.append("taskStartDate", getTaskStartDate())
+				.append("taskEndDate", getTaskEndDate())
+				.append("taskDesc", getTaskDesc())
+				.append("status", getStatus())
+				.append("taskProgress", getTaskProgress())
+				.append("timeProgress", getTimeProgress())
+				.append("taskStatus", getTaskStatus())
+				.append("closeReason", getCloseReason())
+				.append("sortOrder", getSortOrder())
+				.append("createBy", getCreateBy())
+				.append("createTime", getCreateTime())
+				.append("updateBy", getUpdateBy())
+				.append("updateTime", getUpdateTime())
+				.append("remark", getRemark())
+				.toString();
+	}
 }

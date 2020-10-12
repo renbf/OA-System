@@ -260,7 +260,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			busiTask.setTaskStartDate(taskDate.get(0));
 			busiTask.setTaskEndDate(taskDate.get(1));
 			busiTask.setTaskProgress("0");
-			busiTask.setDeleteFlag("0");
+            busiTask.setTimeProgress("0");
+            busiTask.setTaskStatus("0");
 			busiTask.setCreateBy(username);
 			busiTask.setCreateTime(now);
 			busiTask.setUpdateTime(now);

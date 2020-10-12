@@ -356,13 +356,13 @@
     <el-dialog :title="header1"
                :visible.sync="add3"
                width="800px" class="abow_dialog">
-      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="名称" prop="name">
+      <el-form  ref="taskform" :model="taskform" :rules="taskrules" label-width="80px">
+        <el-form-item label="名称" prop="taskName">
           <el-input
             style="width:520px;"
             type="text"
-            placeholder="请输入标题"
-            v-model="addform.projectName"
+            placeholder="请输入名称"
+            v-model="taskform.taskName"
             maxlength="10"
             show-word-limit
           >
@@ -380,30 +380,29 @@
             filterable
             :filter-method="filterMethod"
             filter-placeholder="项目成员"
-            v-model="valuess"
-            :data="datas"
+            v-model="taskform.userList"
+            :data="taskMemberList"
             style="margin-bottom: 2px">
           </el-transfer>
 
 
         </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
-            is-range
-            v-model="value1"
+        <el-form-item label="任务时间" prop="taskDate">
+          <el-date-picker
+            v-model="taskform.taskDate"
+            type="daterange"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
         </el-form-item>
         <!--        项目描述-->
-        <el-form-item label="项目描述" prop="projectDesc">
+        <el-form-item label="任务描述" prop="taskDesc">
           <el-input
             :rows="8"
             type="textarea"
             placeholder="请输入内容"
-            v-model="addform.projectDesc"
+            v-model="taskform.taskDesc"
             maxlength="120"
             show-word-limit
           >
@@ -411,7 +410,7 @@
         </el-form-item>
         <el-form-item  label="状态"  prop="status">
           <el-switch
-            v-model="addform.status"
+            v-model="taskform.status"
             active-value="1"
             inactive-value="0"
             active-text="启用">
@@ -435,8 +434,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
 
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="taskCancel">取消</el-button>
+        <el-button type="primary" @click="taskSubmitForm">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -447,7 +446,7 @@
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,listTask } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -480,11 +479,27 @@
         //责任人
         userDeptUserList:[],
         memberList:[],
+        taskMemberList:[],
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
         //部门成员列表
         deptMemberList: [],
+        header1: '',
+        taskform:{
+          taskName:'',
+          taskDate: '',
+          taskDesc:'',
+          status:'',
+          userList: [],
+        },
+        taskrules: {
+          taskName: [{required: true, message: "任务名称不能为空", trigger: "change"}],
+          taskDate: [{required: true, message: "任务时间不能为空", trigger: "change"}],
+          taskDesc: [{required: true, message: "任务描述不能为空", trigger: "change"}],
+          userList: [{required: true, message: "参与人员不能为空", trigger: "change"}],
+          status: [{required: true, message: "状态必须选择", trigger: "change"}]
+        },
         title: "OA项目开发 编号：xcv23456 项目人：迈克尔",
         currentOffset: 0,
         windowSize: 3,
@@ -677,8 +692,10 @@
         let map = new Map();
         _this.deptMemberList = [];
         let deptMemberList = _this.deptMemberList;
+        _this.taskMemberList = [];
         busiProjectMembers.forEach((val)=>{
           let deptId = val.deptId;
+          _this.taskMemberList.push({key:val.memberId,label:val.memberName});
           if (map.has(deptId)) {
             let index = map.get(deptId);
             let deptObj = deptMemberList[index];
@@ -692,7 +709,6 @@
             deptMemberList.push({deptId:deptId,deptName:val.deptName,members:members});
           }
         });
-
       },
       getUserDeptUsers() {
         let _this = this;
@@ -792,6 +808,9 @@
       cancel() {
         this.addopen = false;
       },
+      taskCancel() {
+        this.add3 = false;
+      },
       //提交项目
       submitForm(){
         let _this = this;
@@ -813,6 +832,28 @@
               });
             } else {
 
+            }
+          }
+        });
+      },
+      taskSubmitForm() {
+        let _this = this;
+        _this.$refs.taskform.validate(valid => {
+          if (valid) {
+            let form = _this.taskform;
+            form.projectId = _this.projectId;
+            if (form.taskId != undefined) {
+
+            } else {
+              addBusiTask(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.addopen = false;
+                  this.getProject();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
             }
           }
         });
