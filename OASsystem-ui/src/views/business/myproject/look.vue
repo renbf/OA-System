@@ -24,7 +24,7 @@
               </div>
             </el-form-item>
             <el-form-item label="理由陈述">
-             <div class="reason"> {{reason2}}</div>
+              <div class="reason"> {{reason2}}</div>
             </el-form-item>
 
           </el-form>
@@ -62,6 +62,10 @@
       </el-card>
     </el-collapse>
     <!--    项目组申请-->
+    <!--    项目组申请-->
+    <!--    项目组申请-->
+    <!--    项目组申请-->
+
     <div >
       <p class="apply">
         <span>项目组申请</span>
@@ -69,7 +73,7 @@
           <el-button>全部报送</el-button>
         </span>
         <span>
-          <el-button icon="el-icon-right" size="small" circle></el-button>
+          <el-button icon="el-icon-right" size="small" circle @click="submission"></el-button>
         </span>
       </p>
     </div>
@@ -256,6 +260,7 @@
           align="center"
           class-name="small-padding fixed-width"
         >
+
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
             <span class="el-icon-edit-outline">编辑</span>
@@ -264,6 +269,20 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="block">
+        <el-pagination
+          style="float:right;margin-top:10px;margin-bottom:80px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage4"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="400">
+        </el-pagination>
+      </div>
+
     </div>
     <div v-if="model=='时间'">
       <!--        项目进度甘特图-->
@@ -287,6 +306,7 @@
       project_progress
     },
     data() {
+
       const generateData = _ => {
         const data = [];
         const cities = ['宏观', '丽丽', '钱及', '张三',  ];
@@ -301,6 +321,8 @@
         return data;
       };
       return {
+        //页码当前页码数据
+        currentPage4: 4,
         //OA项目开发card头部数据
         //OA项目开发card头部数据
         //OA项目开发card头部数据
@@ -533,6 +555,18 @@
       },
     },
     methods: {
+      //全部报送任务
+      submission(){
+        this.$router.push({ path:'/myproject/submission'})
+      },
+
+      //页码跳转任务
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
       //新建编辑项目任务
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
@@ -544,6 +578,7 @@
         this.add3=true;
 
       },
+
       getProject() {
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
@@ -925,3 +960,4 @@
     }
   }
 </style>
+
