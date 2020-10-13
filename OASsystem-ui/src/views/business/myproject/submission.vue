@@ -10,13 +10,65 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="primary"> <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
+      <el-button type="primary text" @click="dialogVisible=true" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
       <el-button type="danger"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
       <el-button type="success"> <span class="el-icon-message" style="margin-right:3px;"></span>报送</el-button>
-
       <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
-
     </div>
+
+
+    <!--新建申请弹框一层-->
+    <!--新建申请弹框一层-->
+    <!--新建申请弹框一层-->
+    <el-dialog
+      title="新建项目申请"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <el-form>
+        <el-form-item><span>标题</span>
+          <el-input
+            type="text"
+            placeholder="请输入内容"
+            v-model="text"
+            maxlength="10"
+            show-word-limit
+            style="width:400px;margin-left:50px;"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item><span>申请内容</span>
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="textarea2"
+            style="width:400px;margin-left:20px;">
+          </el-input></el-form-item>
+        <el-form-item><span>审批人</span>
+
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="add4"></el-button>
+          <span style="margin-left:10px;">{{annotation}}</span>
+        </el-form-item>
+        <el-form-item style="padding:0 70px" >
+          <el-tag style="width:70px;margin-right:5px;" type="info" >{{one}}</el-tag><i class="el-icon-arrow-right"></i>
+          <el-tag style="width:70px;margin-right:5px;" type="info">{{two}}</el-tag><i class="el-icon-arrow-right"></i>
+          <el-tag style="width:70px;margin-right:5px;" type="info">{{tree}}</el-tag><i class="el-icon-arrow-right"></i>
+          <el-tag style="width:70px;margin-right:5px;" type="info">{{four}}</el-tag><i class="el-icon-arrow-right"></i>
+
+
+
+        </el-form-item>
+
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">保存</el-button>
+    <el-button type="primary" @click="dialogVisible = false">提交</el-button>
+  </span>
+    </el-dialog>
+
+
     <!-- seach栏-->
 
     <div class="seach" >
@@ -120,6 +172,24 @@
     name: "page-little",
     data(){
       return{
+        // 审批人
+        one:'张三',
+        two:'张三',
+        tree:'张三',
+        four:"李四",
+
+
+        //新建项目审批注释
+        annotation:"注：审批顺序添加顺序依次审批",
+        //新建项目申请里标题数据
+        text: '',
+        //新建项目申请里申请内容
+        textarea2: '',
+        //新建任务弹框布尔类型确认谈框
+        //新建任务弹框布尔类型确认谈框
+        //新建任务弹框布尔类型确认谈框
+
+        dialogVisible: false,
         //陈述理由数据
         input: '',
         //状态选择数据
@@ -248,6 +318,19 @@
 
     },
     methods:{
+      //添加批注人
+      add4(){
+
+      },
+      //新建申请任务
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+
       goBack(){
 
         this.$router.push({ path:'/myreader/index'})
