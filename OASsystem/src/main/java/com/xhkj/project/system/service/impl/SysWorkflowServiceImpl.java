@@ -670,6 +670,10 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
         return AjaxResult.success(sysWorkflowNodes);
     }
 
+    @Transactional
+    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace) {
+        return submitToNextWorkflowDo(workflowBillTrace,null,null);
+    }
 
     /**
      * 执行回调方法
@@ -680,14 +684,12 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
      */
     @Override
     public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
-        //保存回调方法相应参数
-
-        return submitToNextWorkflow(workflowBillTrace);
+        return submitToNextWorkflowDo(workflowBillTrace,className,methodName);
     }
 
 
     @Transactional
-    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace) {
+    public AjaxResult submitToNextWorkflowDo(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
         try {
             Date now = new Date();
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -719,6 +721,9 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                 workflowBill.setCreateBy(username);
                 workflowBill.setCreateTime(now);
                 workflowBill.setUpdateTime(now);
+
+                workflowBill.setClassName(className);
+                workflowBill.setMethodName(methodName);
                 workflowBillMapper.insertWorkflowBill(workflowBill);
             }else{
                 Long deptId = user.getDeptId();
@@ -755,15 +760,15 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                             workflowBillUp.setWorkflowNodeId(workflowBill.getWorkflowNodeId());
 
 
-                            String className = "";
-                            String methodName = "";
+                            String classNamePass = workflowBill.getClassName();
+                            String methodNamePass  = workflowBill.getMethodName();
                             //如果有回调方法  则进行调用
-                            if(StringUtils.isNoneBlank(className) && StringUtils.isNoneBlank(methodName)){
+                            if(StringUtils.isNoneBlank(classNamePass) && StringUtils.isNoneBlank(methodNamePass)){
                                 Class[] parameterTypes = {Long.class};
                                 Object[] parameters = {billId};
 
                                 try {
-                                    ReflectionUtils.invokeMethod(className,methodName,parameterTypes,parameters);
+                                    ReflectionUtils.invokeMethod(classNamePass,methodNamePass,parameterTypes,parameters);
                                 } catch (InvocationTargetException e) {
                                     e.printStackTrace();
                                 }

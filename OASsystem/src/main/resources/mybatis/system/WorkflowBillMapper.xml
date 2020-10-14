@@ -20,10 +20,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remarks"    column="remarks"    />
+
+        <result property="className"    column="class_name"    />
+        <result property="methodName"    column="method_name"    />
     </resultMap>
 
     <sql id="selectWorkflowBillbasicColums">
-        select b.bill_id, b.workflow_id, b.workflow_name, b.workflow_group_id, b.workflow_step_id, b.workflow_step_node_id, b.workflow_node_id, b.bill_status, b.orgin_handler, b.sort_order, b.create_by, b.create_time, b.update_by, b.update_time, b.remarks
+        select b.bill_id, b.workflow_id, b.workflow_name, b.workflow_group_id, b.workflow_step_id, b.workflow_step_node_id, b.workflow_node_id, b.bill_status, b.orgin_handler, b.sort_order, b.create_by, b.create_time, b.update_by, b.update_time, b.remarks,b.class_name,b.method_name
     </sql>
 
     <select id="selectWorkflowBillList" parameterType="com.xhkj.project.system.domain.WorkflowBill" resultMap="WorkflowBillResult">
@@ -72,6 +75,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
             <if test="updateTime != null  ">update_time,</if>
             <if test="remarks != null  and remarks != ''  ">remarks,</if>
+
+            <if test="className != null  and className != ''  ">class_name,</if>
+            <if test="methodName != null  and methodName != ''  ">method_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="billId != null  ">#{billId},</if>
@@ -89,13 +95,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
             <if test="updateTime != null  ">#{updateTime},</if>
             <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+
+            <if test="className != null  and className != ''  ">#{className},</if>
+            <if test="methodName != null  and methodName != ''  ">#{methodName},</if>
         </trim>
     </insert>
 
     <update id="updateWorkflowBill" parameterType="com.xhkj.project.system.domain.WorkflowBill">
         update workflow_bill
         <trim prefix="SET" suffixOverrides=",">
-            <if test="workflowId != null  ">workflow_id = #{workflowId},</if>
             <if test="workflowName != null  and workflowName != ''  ">workflow_name = #{workflowName},</if>
             <if test="workflowGroupId != null  ">workflow_group_id = #{workflowGroupId},</if>
             <if test="workflowStepId != null  ">workflow_step_id = #{workflowStepId},</if>
@@ -109,8 +117,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
             <if test="updateTime != null  ">update_time = #{updateTime},</if>
             <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+
+            <if test="className != null  and className != ''  ">class_name = #{className},</if>
+            <if test="methodName != null  and methodName != ''  ">method_name = #{methodName},</if>
         </trim>
-        where bill_id = #{billId}
+        where bill_id = #{billId} and workflow_id = #{workflowId}
     </update>
 
     <delete id="deleteWorkflowBillById" parameterType="Long">
