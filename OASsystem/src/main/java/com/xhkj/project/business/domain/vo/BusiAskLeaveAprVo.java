@@ -1,5 +1,6 @@
 package com.xhkj.project.business.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xhkj.project.business.domain.BusiAskLeave;
 import com.xhkj.project.system.domain.WorkflowBill;
 
@@ -28,6 +29,7 @@ public class BusiAskLeaveAprVo extends BusiAskLeave {
     /** 经办人=创建记录的用户名 */
     private String orginHandler;
     /** 申请时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date applyTime;
     /** 备注 */
     private String remarks;
