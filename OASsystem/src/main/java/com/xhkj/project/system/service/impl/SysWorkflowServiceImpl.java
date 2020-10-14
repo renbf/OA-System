@@ -1,5 +1,7 @@
 package com.xhkj.project.system.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Objects;
 
 import com.xhkj.common.constant.UserConstants;
 import com.xhkj.common.exception.CustomException;
+import com.xhkj.common.utils.ReflectionUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.common.utils.StringUtils;
 import com.xhkj.common.utils.spring.SpringUtils;
@@ -667,9 +670,27 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
         return AjaxResult.success(sysWorkflowNodes);
     }
 
+
     @Override
-    @Transactional
     public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace) {
+        return submitToNextWorkflowBB(workflowBillTrace,null,null);
+    }
+
+    /**
+     * 执行回调方法
+     * @param workflowBillTrace
+     * @param className  bean 名称
+     * @param methodName 方法名称
+     * @return
+     */
+    @Override
+    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
+        return submitToNextWorkflowBB(workflowBillTrace,className,methodName);
+    }
+
+
+    @Transactional
+    public AjaxResult submitToNextWorkflowBB(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
         try {
             Date now = new Date();
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -735,6 +756,20 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                             workflowBillUp.setWorkflowStepId(workflowBill.getWorkflowStepId());
                             workflowBillUp.setWorkflowStepNodeId(workflowBill.getWorkflowStepNodeId());
                             workflowBillUp.setWorkflowNodeId(workflowBill.getWorkflowNodeId());
+
+
+                            //如果有回调方法  则进行调用
+                            if(StringUtils.isNoneBlank(className) && StringUtils.isNoneBlank(methodName)){
+                                Class[] parameterTypes = {Long.class};
+                                Object[] parameters = {billId};
+
+                                try {
+                                    ReflectionUtils.invokeMethod(className,methodName,parameterTypes,parameters);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
                         }else{
                             //审核中
                             billStatus = "1";

@@ -80,6 +80,8 @@ public class DataScopeAspect
             // 如果是超级管理员，则不过滤数据
             if (!currentUser.isAdmin())
             {
+                String s1 = controllerDataScope.deptAlias();
+                String s = controllerDataScope.userAlias();
                 dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
                         controllerDataScope.userAlias());
             }

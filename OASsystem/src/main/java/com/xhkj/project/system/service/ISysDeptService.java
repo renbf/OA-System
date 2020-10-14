@@ -21,6 +21,9 @@ public interface ISysDeptService
      */
     public List<SysDept> selectDeptList(SysDept dept);
 
+    public List<SysDept> getDeptList(SysDept dept);
+
+
     /**
      * 构建前端所需要树结构
      * 

@@ -392,7 +392,7 @@
 import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork,extraWorkSumbit } from "@/api/business/mywork/extrawork";
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
-import { listDept } from "@/api/system/dept";
+import { getDeptList } from "@/api/system/dept";
 
 
 export default {
@@ -566,7 +566,7 @@ export default {
       response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
     });
     //获取部门列表
-    listDept({parentId:'100'}).then(response => {
+    getDeptList({parentId:'100'}).then(response => {
       response.data.forEach( (val) => this.department.push({'dictValue': val.deptId,'dictLabel': val.deptName}) )
     });
 

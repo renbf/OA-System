@@ -9,6 +9,16 @@ export function listDept(query) {
   })
 }
 
+// 查询部门列表
+export function getDeptList(query) {
+  return request({
+    url: '/system/dept/getDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
+
 // 查询部门详细
 export function getDept(deptId) {
   return request({

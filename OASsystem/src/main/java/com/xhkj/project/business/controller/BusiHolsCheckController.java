@@ -26,7 +26,8 @@ public class BusiHolsCheckController extends BaseController
      */
     @GetMapping("getHolsCheckInfo")
     public AjaxResult holsRestHours(){
-        return AjaxResult.success(iBusiHolsCheckService.selectBusiHolsCheckById(SecurityUtils.getLoginUser().getUser().getUserId()));
+
+        return AjaxResult.success(iBusiHolsCheckService.selectBusiHolsCheckById(Long.valueOf(SecurityUtils.getUserId()));
     }
 
 

@@ -37,7 +37,7 @@ public class SysCompanyConfigController extends BaseController
     /**
      * 查询公司配置列表
      */
-    @PreAuthorize("@ss.hasPermi('system:comconfig:list')")
+//    @PreAuthorize("@ss.hasPermi('system:comconfig:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysCompanyConfig sysCompanyConfig)
     {

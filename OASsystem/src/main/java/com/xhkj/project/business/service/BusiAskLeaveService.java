@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiAskLeave;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 
 /**
@@ -30,6 +31,7 @@ public interface BusiAskLeaveService
      */
     public List<BusiAskLeave> selectBusiAskLeaveList(BusiAskLeave busiAskLeave);
 
+
     /**
      * 新增请假倒休
      * 
@@ -37,6 +39,9 @@ public interface BusiAskLeaveService
      * @return 结果
      */
     public int insertBusiAskLeave(BusiAskLeaveVo busiAskLeaveVo);
+
+
+    public void approvedToDo(Long LeaveId);
 
     /**
      * 修改请假倒休
@@ -63,4 +68,7 @@ public interface BusiAskLeaveService
     public int deleteBusiAskLeaveById(Long leaveId);
 
     public int leaveSumbit(Long[] leaveIds);
+
+    public List<BusiAskLeaveAprVo> approveList(BusiAskLeaveAprVo busiAskLeave);
+
 }

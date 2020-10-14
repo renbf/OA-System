@@ -2,6 +2,8 @@ package com.xhkj.project.business.controller;
 
 import java.util.List;
 
+import com.xhkj.framework.aspectj.lang.annotation.DataScope;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 import com.xhkj.project.business.service.BusiHolsCheckService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,6 +44,7 @@ public class BusiAskLeaveController extends BaseController
      * 查询请假倒休列表
      */
     @PreAuthorize("@ss.hasPermi('business:leave:list')")
+    @DataScope(deptAlias = "sys_dept", userAlias = "sys_user")
     @GetMapping("/list")
     public TableDataInfo list(BusiAskLeave busiAskLeave)
     {
@@ -116,6 +119,15 @@ public class BusiAskLeaveController extends BaseController
     public AjaxResult leaveSumbit(@PathVariable("leaveIds") Long[] leaveIds)
     {
         return toAjax(busiAskLeaveService.leaveSumbit(leaveIds));
+    }
+
+
+    @GetMapping("/approveList")
+    public TableDataInfo approveList(BusiAskLeaveAprVo busiAskLeave)
+    {
+        startPage();
+        List<BusiAskLeaveAprVo> list = busiAskLeaveService.approveList(busiAskLeave);
+        return getDataTable(list);
     }
 
 }
