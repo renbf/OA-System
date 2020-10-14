@@ -14,19 +14,14 @@
     <el-row >
       <h3>进行中</h3>
     </el-row>
-
-    <!--进行中项目模块-->
-    <!--进行中项目模块-->
-    <!--进行中项目模块-->
     <el-row class="doing" v-for="item in busiProjectUseList">
-
-      <el-card class="box-card lf" >
+      <el-card class="box-card lf">
         <div slot="header" class="clearfix">
           <span><b>{{item.projectName}}</b></span>
           <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject(item)"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
-        <div class="text item" @click="projectdetail(item)">
+        <div class="text item"  @click="projectdetail(item)">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
           <el-progress :percentage="50"></el-progress>
@@ -286,7 +281,9 @@
           this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         },
         projectdetail(item) {
-          this.$router.push({ path:'/myproject/look'})
+          let projectId = item.projectId;
+          console.log(123)
+          this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         }
       }
     }

@@ -123,31 +123,18 @@
       <span>{{model}}模式</span>
     </span>
   </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
     <!--项目任务模块-->
     <!--项目任务模块-->
     <!--项目任务模块-->
 
     <div  style="margin-bottom: 10px">
-<<<<<<< HEAD
-  <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
-    <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
-    </el-button>
-    <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
-    <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
-    </div>
-
-=======
       <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
       <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
       </el-button>
       <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
->>>>>>> dev
     <div v-if="model=='列表'">
 
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
@@ -282,56 +269,58 @@
       <component :is="activeIndex"></component>
     </div>
 
-
-    <!--新建模块-->
-    <!--新建模块-->
-    <!--新建模块-->
-
     <el-dialog :title="addproject"
-               :visible.sync="add3"
-               width="800px" class="abow_dialog">
+               :visible.sync="addopen"
+               width="650px" class="abow_dialog">
       <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="名称" prop="name">
+        <el-form-item label="项目名称" prop="name">
           <el-input v-model="addform.projectName"></el-input>
         </el-form-item>
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-
-
-        <el-form-item label="参与人员" prop="userList">
-          <el-transfer
-            :titles="['项目成员', '参与成员']"
-            filterable
-            :filter-method="filterMethod"
-            filter-placeholder="项目成员"
-            v-model="valuess"
-            :data="datas"
-          style="margin-bottom: 2px">
-          </el-transfer>
-
-
+        <el-form-item label="负责人" prop="leaderId">
+          <el-select v-model="addform.leaderId" placeholder="请选择" ref="leaderName">
+            <el-option
+              v-for="item in userDeptUserList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
-            is-range
-            v-model="value1"
+        <el-form-item label="部门" prop="bumenStatus">
+          <el-checkbox-group v-model="addform.bumenStatus" @change="handleCheckedCitiesChange">
+            <el-checkbox v-for="dict in department"
+                         :label="dict.deptId"
+                         border>{{dict.deptName}}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="参与人员" prop="userList">
+          <template>
+            <el-transfer
+              filterable
+              :filter-method="filterMethod"
+              filter-placeholder="请输入成员名称"
+              v-model="addform.userList"
+              :data="memberList">
+            </el-transfer>
+          </template>
+        </el-form-item>
+        <el-form-item label="项目日期" prop="tasktime">
+          <el-date-picker
+            v-model="addform.projectDate"
+            type="daterange"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
         </el-form-item>
         <!--        项目描述-->
         <el-form-item label="项目描述" prop="projectDesc">
           <el-input
-            :rows="8"
             type="textarea"
-            placeholder="请输入内容"
+            placeholder="请输入"
             v-model="addform.projectDesc"
-            maxlength="120"
-            show-word-limit
           >
           </el-input>
         </el-form-item>
@@ -360,14 +349,11 @@
         </el-collapse>
       </el-form>
       <div slot="footer" class="dialog-footer">
-
         <el-button @click="cancel">取消</el-button>
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
 
-<<<<<<< HEAD
-=======
 
 <!--项目任务模块-->
     <!--项目任务模块-->
@@ -468,18 +454,15 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
->>>>>>> dev
   </div>
 </template>
 
 <script>
-
   import project_progress from './project_progress';
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus } from "@/api/business/mywork/myproject";
-
 
   export default {
     name: "detail",
@@ -487,10 +470,7 @@
       project_progress
     },
     data() {
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
       const generateData = _ => {
         const data = [];
         const cities = ['宏观', '丽丽', '钱及', '张三',  ];
@@ -505,21 +485,12 @@
         return data;
       };
       return {
-<<<<<<< HEAD
-        //新建编辑项目任务里面的任务时间
-        value1:'',
-        datas: generateData(),
-        valuess: [],
-        addprojects: '',
-        add3:false,
-=======
         num: 1,
         value1: "",
         datas: generateData(),
         valuess: [],
         addprojects: "",
         add3: false,
->>>>>>> dev
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
@@ -664,11 +635,7 @@
         activeIndex: 'project_progress',
 
         value: true,
-
-
       }
-
-
     },
     created() {
 
@@ -720,25 +687,18 @@
       },
     },
     methods: {
-<<<<<<< HEAD
-=======
       //计数器控件数据
       handleChange(value){
         console.log(value);
       },
->>>>>>> dev
       //新建编辑项目任务
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
 
       add2(){
-<<<<<<< HEAD
-        this.addproject = "新建/编辑项目任务";
-=======
 
         this.header1 = "新建项目任务";
->>>>>>> dev
         this.add3=true;
 
       },
