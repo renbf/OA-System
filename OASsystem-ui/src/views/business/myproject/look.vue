@@ -1,93 +1,83 @@
 <template>
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
-      <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
-        <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
-
-        <el-button icon=" el-icon-switch-button" circle></el-button>
-
-        <el-button icon="el-icon-delete" circle></el-button>
-        <el-switch
-          v-model="projectInfo.status"
-          active-color="#999999"
-          inactive-color="#ff4949"
-          active-value="1"
-          inactive-value="0"
-          @change="changeStatusHandle"
-        style="margin-left:10px;">
-        </el-switch>
-        <span style="margin-left:10px">禁用</span>
+      <div class="one" name="1">{{title}}
       </div>
 
 
-        <el-card class="box-card">
-          <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-            <el-form  ref="form" :model="projectInfo" label-width="80px">
-              <el-form-item label="部门">
-                <el-tag type="info">{{projectInfo.deptNames}}</el-tag>
-              </el-form-item>
-              <el-form-item label="项目任务">
-                <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
-              </el-form-item>
-              <el-form-item label="项目时间">
-                <div class="div1" >
-                  <i class="el-icon-date" style="margin-left:10px;"></i>
-                  <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{projectInfo.projectStartDate}}</span>
-                  <span style="margin-left:40px;">至</span>
-                  <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{projectInfo.projectEndDate}}</span>
-                </div>
-              </el-form-item>
-              <el-form-item label="理由陈述">
-                <el-input type="textarea" v-model="projectInfo.projectDesc"></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-          <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-            <p>参与人员</p>
-            <template v-for="item in deptMemberList">
-              <p>{{item.deptName}}</p>
-              <p>
-                <el-tag type="info" v-for="item1 in item.members">{{item1.memberName}}</el-tag>
+      <el-card class="box-card">
+        <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+          <el-form  ref="form" :model="projectInfo" label-width="80px">
+            <el-form-item label="部门" >
+              <el-tag type="info" style="margin-right:10px;">{{section1}}</el-tag>
+              <el-tag type="info">{{section2}}</el-tag>
+            </el-form-item>
+            <el-form-item label="项目任务">
+              <el-tag type="info">{{task}}件</el-tag>
+            </el-form-item>
+            <el-form-item label="项目时间">
+              <div class="div1" >
+                <i class="el-icon-date" style="margin-left:10px;"></i>
+                <span style="margin-left:40px;color:rgba(48, 49, 51,0.9);" >{{time1}}</span>
+                <span style="margin-left:40px;">至</span>
+                <span style="margin-left:40px; color:rgba(48, 49, 51,0.8);">{{time2}}</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="理由陈述">
+              <div class="reason"> {{reason2}}</div>
+            </el-form-item>
+
+          </el-form>
+        </div>
+        <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+          <p>参与人员</p>
+          <template v-for="item in software">
+            <p>{{item.software1}}</p>
+            <p>
+              <el-tag type="info" v-for="item1 in design" style="margin-left:10px">{{item1.design2}}</el-tag>
+
+            </p>
+          </template>
+        </div>
+        <div style="width: 15%;float:left;padding:0 20px;position: relative">
+          <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
+          <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
+          <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
+            <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
+              <p style="margin-top:60%;margin-bottom:0">
+                <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
+                <span>任务进度</span>
               </p>
-            </template>
-          </div>
-
-
-          <div style="width: 15%;float:left;padding:0 20px;position: relative">
-            <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
-            <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
-            <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
-                <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
-                  <p style="margin-top:60%;margin-bottom:0">
-                    <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
-                    <span>任务进度</span>
-                  </p>
-                  <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
-                </div>
-                <div class="lf" style="width:50%;height: 100%;text-align: center">
-                  <p style="margin-top: 60%;margin-bottom:0">
-                    <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
-                    <span>时间进度</span>
-                  </p>
-                  <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
-                </div>
+              <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
+            </div>
+            <div class="lf" style="width:50%;height: 100%;text-align: center">
+              <p style="margin-top: 60%;margin-bottom:0">
+                <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
+                <span>时间进度</span>
+              </p>
+              <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
             </div>
           </div>
-        </el-card>
+        </div>
+      </el-card>
     </el-collapse>
-<!--    项目组申请-->
-    <div>
+    <!--    项目组申请-->
+    <!--    项目组申请-->
+    <!--    项目组申请-->
+    <!--    项目组申请-->
+
+    <div >
       <p class="apply">
         <span>项目组申请</span>
         <span>
           <el-button>全部报送</el-button>
         </span>
         <span>
-          <el-button icon="el-icon-right" size="small" circle></el-button>
+          <el-button icon="el-icon-right" size="small" circle @click="submission"></el-button>
         </span>
       </p>
     </div>
-    <div class="card-carousel-wrapper">
+    <div class="card-carousel-wrapper" style="margin-left:-110px;">
       <el-button class="card-carousel--nav__left" type="info" icon="el-icon-arrow-left" circle @click="moveCarousel(-1)" :disabled="atHeadOfList"></el-button>
       <div class="card-carousel">
         <div class="card-carousel--overflow-container">
@@ -116,38 +106,24 @@
       <el-button class="card-carousel--nav__right" type="info" icon="el-icon-arrow-right" circle @click="moveCarousel(1)" :disabled="atEndOfList"></el-button>
     </div>
 
-<!--    更换视图-->
-  <div class="clear">
+    <!--    更换视图-->
+    <div class="clear">
     <span class="rt">
       <span class="el-icon-menu" @click="changemodel"></span>
       <span>{{model}}模式</span>
     </span>
-  </div>
-<<<<<<< HEAD
-=======
+    </div>
 
->>>>>>> dev
     <!--项目任务模块-->
     <!--项目任务模块-->
     <!--项目任务模块-->
 
     <div  style="margin-bottom: 10px">
-<<<<<<< HEAD
-  <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
-    <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
-    </el-button>
-    <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
-    <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
-    </div>
+      <div style="font-size:18px;font-weight: bold;margin-right:10px; margin-bottom:10px;">项目任务</div>
+      <el-button type="success"><span class="el-icon-message" style="margin-right:3px;"></span>报送</el-button>
 
-=======
-      <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
-      <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
-      </el-button>
-      <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
-      <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
+      <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
->>>>>>> dev
     <div v-if="model=='列表'">
 
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
@@ -163,6 +139,27 @@
             end-placeholder="结束日期"
           ></el-date-picker>
         </el-form-item>
+
+
+        <el-form-item label="任务状态">
+          <el-select
+            v-model="queryParams.projectstatus"
+            placeholder="选择状态"
+            clearable
+            size="small"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="dict in statusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+
+
         <el-form-item label="状态">
           <el-select
             v-model="queryParams.projectstatus"
@@ -193,7 +190,7 @@
           >
         </el-form-item>
       </el-form>
-<!--      列表-->
+      <!--      列表-->
       <el-table
         ref="multipleTable"
         v-loading="loading"
@@ -263,223 +260,45 @@
           align="center"
           class-name="small-padding fixed-width"
         >
+
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
-            <div>
-              <el-switch
-                v-model="value"
-                active-color="#13ce66"
-                inactive-color="rgba(220, 223, 230,0.8)"
-                active-text="启用">
-              </el-switch>
-            </div>
+            <span class="el-icon-edit-outline">编辑</span>
+            <span class="el-icon-message" style="margin-left:5px;">报送</span>
+
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="block">
+        <el-pagination
+          style="float:right;margin-top:10px;margin-bottom:80px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage4"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="400">
+        </el-pagination>
+      </div>
+
     </div>
     <div v-if="model=='时间'">
-<!--        项目进度甘特图-->
+      <!--        项目进度甘特图-->
       <component :is="activeIndex"></component>
     </div>
 
 
-    <!--新建模块-->
-    <!--新建模块-->
-    <!--新建模块-->
-
-    <el-dialog :title="addproject"
-               :visible.sync="add3"
-               width="800px" class="abow_dialog">
-      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="addform.projectName"></el-input>
-        </el-form-item>
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-
-
-        <el-form-item label="参与人员" prop="userList">
-          <el-transfer
-            :titles="['项目成员', '参与成员']"
-            filterable
-            :filter-method="filterMethod"
-            filter-placeholder="项目成员"
-            v-model="valuess"
-            :data="datas"
-          style="margin-bottom: 2px">
-          </el-transfer>
-
-
-        </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
-            is-range
-            v-model="value1"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>
-        </el-form-item>
-        <!--        项目描述-->
-        <el-form-item label="项目描述" prop="projectDesc">
-          <el-input
-            :rows="8"
-            type="textarea"
-            placeholder="请输入内容"
-            v-model="addform.projectDesc"
-            maxlength="120"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item  label="状态"  prop="status">
-          <el-switch
-            v-model="addform.status"
-            active-value="1"
-            inactive-value="0"
-            active-text="启用">
-          </el-switch>
-          <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
-        </el-form-item>
-        <el-collapse v-model="matters_needing_attention">
-          <el-collapse-item title="项目注意事项" name="1">
-            <div>
-              1、当项目状态为“禁用”时，可对项目进行“删除”操作。
-            </div>
-            <div>
-              2、当项目任务有人参与并发表过内容时，项目与项目任务则不能被删除。但可“关闭项目”与“项目任务”。
-            </div>
-            <div>3、项目任务状态为“禁用”时，可对任务进行“删除”操作。</div>
-            <div>
-              4、当“关闭项目”或“关闭任务”后“项目”与“任务”将仅能“查看”
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
-      </div>
-    </el-dialog>
-
-<<<<<<< HEAD
-=======
-
-<!--项目任务模块-->
-    <!--项目任务模块-->
-    <!--项目任务模块-->
-
-
-
-    <el-dialog :title="header1"
-               :visible.sync="add3"
-               width="800px" class="abow_dialog">
-      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input
-            style="width:520px;"
-            type="text"
-            placeholder="请输入标题"
-            v-model="addform.projectName"
-            maxlength="10"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-<el-form-item label="任务编号">
-  <template>
-    <el-input-number v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字" style="width: 520px"></el-input-number>
-  </template>
-
-
-</el-form-item>
-
-        <el-form-item label="参与人员" prop="userList">
-          <el-transfer
-            :titles="['项目成员', '参与成员']"
-            filterable
-            :filter-method="filterMethod"
-            filter-placeholder="项目成员"
-            v-model="valuess"
-            :data="datas"
-            style="margin-bottom: 2px;"
-          >
-          </el-transfer>
-
-
-        </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
-            is-range
-            v-model="value1"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>
-        </el-form-item>
-        <!--        项目描述-->
-        <el-form-item label="项目描述" prop="projectDesc">
-          <el-input
-            :rows="8"
-            type="textarea"
-            placeholder="请输入内容"
-            v-model="addform.projectDesc"
-            maxlength="120"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item  label="状态"  prop="status">
-          <el-switch
-            v-model="addform.status"
-            active-value="1"
-            inactive-value="0"
-            active-text="启用">
-          </el-switch>
-          <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
-        </el-form-item>
-        <el-collapse v-model="matters_needing_attention">
-          <el-collapse-item title="项目注意事项" name="1">
-            <div>
-              1、当项目状态为“禁用”时，可对项目进行“删除”操作。
-            </div>
-            <div>
-              2、当项目任务有人参与并发表过内容时，项目与项目任务则不能被删除。但可“关闭项目”与“项目任务”。
-            </div>
-            <div>3、项目任务状态为“禁用”时，可对任务进行“删除”操作。</div>
-            <div>
-              4、当“关闭项目”或“关闭任务”后“项目”与“任务”将仅能“查看”
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
-      </div>
-    </el-dialog>
->>>>>>> dev
   </div>
 </template>
 
 <script>
-
   import project_progress from './project_progress';
   import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus } from "@/api/business/mywork/myproject";
-
 
   export default {
     name: "detail",
@@ -487,10 +306,7 @@
       project_progress
     },
     data() {
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
       const generateData = _ => {
         const data = [];
         const cities = ['宏观', '丽丽', '钱及', '张三',  ];
@@ -505,21 +321,22 @@
         return data;
       };
       return {
-<<<<<<< HEAD
-        //新建编辑项目任务里面的任务时间
-        value1:'',
-        datas: generateData(),
-        valuess: [],
-        addprojects: '',
-        add3:false,
-=======
-        num: 1,
+        //页码当前页码数据
+        currentPage4: 4,
+        //OA项目开发card头部数据
+        //OA项目开发card头部数据
+        //OA项目开发card头部数据
+        section1:"软件部",
+        section2:"设计部",
+        task:"35",
         value1: "",
+        time1:"2020-06-21",
+        time2:"2021-04-12",
+        reason2:"公司内容OA系统开发项目，用于公司OA系统的整体开发",
         datas: generateData(),
         valuess: [],
-        addprojects: "",
+        addprojects: "公司内日",
         add3: false,
->>>>>>> dev
         projectId:this.$route.query.projectId,
         addform: {
           projectName: '',
@@ -530,6 +347,29 @@
           userList: [],
           status:''
         },
+        software:[
+          {
+            software1:'软件部'
+          },
+          {
+            software1:'设计部'
+          },
+
+        ],
+        design:[
+          {
+            design2:'迈克尔',
+
+          },
+          {
+            design2:'但你',
+
+          },
+          {
+            design2:'李爱华',
+
+          }
+        ],
         addrules: {
           projectName: [{required: true, message: "项目名称不能为空", trigger: "change"}],
           bumenStatus: [{required: true, message: "部门不能为空", trigger: "change"}],
@@ -664,14 +504,9 @@
         activeIndex: 'project_progress',
 
         value: true,
-
-
       }
-
-
     },
     created() {
-
       // 状态
       this.getDicts("sys_check_status").then(response => {
         this.statusOptions = response.data;
@@ -720,28 +555,30 @@
       },
     },
     methods: {
-<<<<<<< HEAD
-=======
-      //计数器控件数据
-      handleChange(value){
-        console.log(value);
+      //全部报送任务
+      submission(){
+        this.$router.push({ path:'/myproject/submission'})
       },
->>>>>>> dev
+
+      //页码跳转任务
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
       //新建编辑项目任务
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
 
       add2(){
-<<<<<<< HEAD
-        this.addproject = "新建/编辑项目任务";
-=======
 
         this.header1 = "新建项目任务";
->>>>>>> dev
         this.add3=true;
 
       },
+
       getProject() {
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
@@ -839,13 +676,13 @@
         });
         this.handleCheckedCitiesChange(bumenStatus);
         this.addform = {
-            projectName: projectInfo.projectName,
-            leaderId:projectInfo.leaderId,
-            bumenStatus: bumenStatus,
-            projectDesc: projectInfo.projectDesc,
-            projectDate: [projectInfo.projectStartDate,projectInfo.projectEndDate],
-            userList: userList,
-            status:projectInfo.status
+          projectName: projectInfo.projectName,
+          leaderId:projectInfo.leaderId,
+          bumenStatus: bumenStatus,
+          projectDesc: projectInfo.projectDesc,
+          projectDate: [projectInfo.projectStartDate,projectInfo.projectEndDate],
+          userList: userList,
+          status:projectInfo.status
         }
       },
       handleCheckedCitiesChange(list) {
@@ -919,11 +756,19 @@
 </script>
 
 <style>
+  .reason{
+    width: 360px;
+    height:100px;
+    border:2px solid rgba(239, 240, 243,0.9);
+    border-radius: 10px;
+    padding: 0 20px;
+    font-size: 12px;
+  }
   .div1{
     width: 360px;
     height: 30px;
     border-radius: 5px;
-   line-height: 30px;
+    line-height: 30px;
     border:1px solid rgba(221, 221, 221,0.8)
   }
   .projectdetail .gantt-elastic__grid-line-time {
@@ -983,12 +828,12 @@
   /*  transform: rotate(45deg) scale(0.9);*/
   /*}*/
 
- .projectdetail .card-carousel-cards {
+  .projectdetail .card-carousel-cards {
     display: block;
     transition: transform 150ms ease-out;
     transform: translatex(0px);
     width: 4000px;
-   overflow: hidden;
+    overflow: hidden;
   }
   .projectdetail .card-carousel-cards .card-carousel--card {
     width:322px;
@@ -1081,37 +926,38 @@
     line-height: 60px;
   }
   .demo{
-  padding: 5px 15px;
-  position: relative;
-  .chart-title {
-    position: absolute;
-    transform: translateX(-50%);
-    left: 50%;
-    i {
-      font-style: normal;
-      padding-right: 20px;
+    padding: 5px 15px;
+    position: relative;
+    .chart-title {
+      position: absolute;
+      transform: translateX(-50%);
+      left: 50%;
+      i {
+        font-style: normal;
+        padding-right: 20px;
+      }
+      i:before {
+        content: '';
+        display: inline-block;
+        width: 30px;
+        height: 15px;
+        border-radius: 5px;
+        vertical-align: bottom;
+        margin-right: 3px;
+        background-color: #3e84e9;
+      }
+      i.to-be-completed:before {
+        background-color: #d4cece;
+      }
+      i.timeout:before {
+        background-color: #c23531;
+      }
     }
-    i:before {
-      content: '';
-      display: inline-block;
-      width: 30px;
-      height: 15px;
-      border-radius: 5px;
-      vertical-align: bottom;
-      margin-right: 3px;
-      background-color: #3e84e9;
+    #gantt-chart {
+      margin: 1em auto;
+      height: 500px;
+      width: 100%;
     }
-    i.to-be-completed:before {
-      background-color: #d4cece;
-    }
-    i.timeout:before {
-      background-color: #c23531;
-    }
-  }
-  #gantt-chart {
-    margin: 1em auto;
-    height: 500px;
-    width: 100%;
-  }
   }
 </style>
+

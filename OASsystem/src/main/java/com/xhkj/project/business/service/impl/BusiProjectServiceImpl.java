@@ -5,8 +5,12 @@ import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.security.service.TokenService;
 import com.xhkj.project.business.domain.BusiProjectMember;
+import com.xhkj.project.business.domain.BusiTask;
+import com.xhkj.project.business.domain.BusiTaskMember;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
+import com.xhkj.project.business.mapper.BusiTaskMapper;
+import com.xhkj.project.business.mapper.BusiTaskMemberMapper;
 import com.xhkj.project.system.domain.SysUser;
 import com.xhkj.project.system.mapper.SysUserMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -43,6 +47,10 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiProjectMemberMapper busiProjectMemberMapper;
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	@Autowired
+	private BusiTaskMapper busiTaskMapper;
+	@Autowired
+	private BusiTaskMemberMapper busiTaskMemberMapper;
 
 	/**
      * 查询项目信息
@@ -224,4 +232,72 @@ public class BusiProjectServiceImpl implements IBusiProjectService
         }
         return resultMap;
     }
+
+	@Override
+	public Map<String, Object> changeStatus(BusiProject busiProject) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiProject.setUpdateBy(username);
+			busiProject.setUpdateTime(now);
+			busiProjectMapper.updateBusiProject(busiProject);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> insertBusiTask(BusiTask busiTask) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Date> taskDate = busiTask.getTaskDate();
+			busiTask.setTaskStartDate(taskDate.get(0));
+			busiTask.setTaskEndDate(taskDate.get(1));
+			busiTask.setTaskProgress("0");
+			busiTask.setDeleteFlag("0");
+			busiTask.setCreateBy(username);
+			busiTask.setCreateTime(now);
+			busiTask.setUpdateTime(now);
+			busiTaskMapper.insertBusiTask(busiTask);
+			Long taskId = busiTask.getTaskId();
+			List<BusiTaskMember> list = new ArrayList<>();
+			List<Long> userList = busiTask.getUserList();
+			if (CollectionUtils.isNotEmpty(userList)) {
+				List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
+				for (SysUser sysUser : sysUsers) {
+					BusiTaskMember busiTaskMember = new BusiTaskMember();
+					busiTaskMember.setTaskId(taskId);
+					busiTaskMember.setMemberId(sysUser.getUserId());
+					busiTaskMember.setMemberName(sysUser.getNickName());
+					list.add(busiTaskMember);
+				}
+				busiTaskMemberMapper.insertBusiTaskMemberBatch(list);
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> selectListTask(BusiTask busiTask) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			List<BusiTask> list = busiTaskMapper.selectBusiTaskList(busiTask);
+			resultMap.put("code",200);
+			resultMap.put("data",list);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
 }

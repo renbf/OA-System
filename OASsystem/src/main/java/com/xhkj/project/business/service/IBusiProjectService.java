@@ -1,6 +1,7 @@
 package com.xhkj.project.business.service;
 
 import com.xhkj.project.business.domain.BusiProject;
+import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 
 import java.util.Map;
@@ -36,7 +37,7 @@ public interface IBusiProjectService
      * @return 结果
      */
 	public Map<String, Object> insertBusiProject(BusiProject busiProject);
-	
+
 	/**
      * 修改项目
      * 
@@ -44,7 +45,7 @@ public interface IBusiProjectService
      * @return 结果
      */
 	public Map<String, Object> updateBusiProject(BusiProject busiProject);
-		
+
 	/**
      * 删除项目信息
      * 
@@ -57,4 +58,10 @@ public interface IBusiProjectService
 	public Map<String, Object> selectBusiProjects(BusiProjectVo busiProjectVo);
 
 	public Map<String, Object> getProjectInfo(Long projectId);
+
+	public Map<String, Object> changeStatus(BusiProject busiProject);
+
+	public Map<String, Object> insertBusiTask(BusiTask busiTask);
+
+	public Map<String, Object> selectListTask(BusiTask busiTask);
 }
