@@ -671,11 +671,6 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
     }
 
 
-    @Override
-    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace) {
-        return submitToNextWorkflowBB(workflowBillTrace,null,null);
-    }
-
     /**
      * 执行回调方法
      * @param workflowBillTrace
@@ -685,12 +680,14 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
      */
     @Override
     public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
-        return submitToNextWorkflowBB(workflowBillTrace,className,methodName);
+        //保存回调方法相应参数
+
+        return submitToNextWorkflow(workflowBillTrace);
     }
 
 
     @Transactional
-    public AjaxResult submitToNextWorkflowBB(WorkflowBillTrace workflowBillTrace,String className,String methodName) {
+    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace) {
         try {
             Date now = new Date();
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -758,6 +755,8 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                             workflowBillUp.setWorkflowNodeId(workflowBill.getWorkflowNodeId());
 
 
+                            String className = "";
+                            String methodName = "";
                             //如果有回调方法  则进行调用
                             if(StringUtils.isNoneBlank(className) && StringUtils.isNoneBlank(methodName)){
                                 Class[] parameterTypes = {Long.class};

@@ -44,8 +44,8 @@ public class BusiAskLeaveController extends BaseController
      * 查询请假倒休列表
      */
     @PreAuthorize("@ss.hasPermi('business:leave:list')")
-    @DataScope(deptAlias = "sys_dept", userAlias = "sys_user")
     @GetMapping("/list")
+    @DataScope(deptAlias = "sd", userAlias = "su")
     public TableDataInfo list(BusiAskLeave busiAskLeave)
     {
         startPage();

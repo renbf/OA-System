@@ -35,7 +35,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          ifnull(wb.bill_status,2) as approval_Status
         from busi_ask_leave bal
         left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
-        left join sys_user sys_user on sys_user.user_id = bal.user_id
+        left join sys_user su on su.user_id = bal.user_id
+        left join sys_dept sd on sd.dept_id = su.dept_id
         <where>
             <if test="userId != null "> and bal.user_id = #{userId}</if>
             <if test="leaveType != null  and leaveType != ''"> and bal.leave_type = #{leaveType}</if>
@@ -154,7 +155,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         bal.leave_end_time,
         ifnull(wb.bill_status,2) as approval_Status,
         wb.create_time as applyTime,
-        su.nick_name as orginHandler
+        su.nick_name as orginHandler,
+        wb.bill_status
         from busi_ask_leave bal
         left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
         left join sys_user su on su.user_name = wb.orgin_Handler

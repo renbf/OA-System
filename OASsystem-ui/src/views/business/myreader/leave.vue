@@ -9,12 +9,35 @@
     </el-card>
     <!--按钮区-->
 
-    <div class="btn">
-      <el-button type="success"> <span class="el-icon-check"></span>通过</el-button>
-      <el-button type="danger"> <span class="el-icon-close"></span>拒绝</el-button>
-      <el-button type="warning"><span class="el-icon-download"></span>导出</el-button>
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          icon="el-icon-check"
+          size="mini"
+          :disabled="multiple"
+          @click="pass"
+        >通过</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          icon="el-icon-close"
+          size="mini"
+          @click="refuse"
+        >拒绝</el-button
+        >
+      </el-col>
 
-    </div>
+      <!--导出-->
+      <el-col :span="1.5">
+        <export-import
+          excel-title="我的审批列表"
+          exp-function="json"
+          :set-export-data="setExportData"/>
+      </el-col>
+    </el-row>
     <!-- seach栏-->
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="申请时间" prop="approvalDate">
@@ -116,15 +139,20 @@
 
       <el-table-column
         align="center"
-        prop="leaveHours"
         label="请假时长"
         width="170">
+        <template slot-scope="scope">
+          <span>{{scope.row.leaveHours}}{{scope.row.leaveHoursUnit}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         align="center"
-        prop="leaveDates"
         label="请假时间">
+        <template slot-scope="scope">
+          <span>{{scope.row.leaveDates}}</span>
+        </template>
       </el-table-column>
+
       <el-table-column label="请假类型" align="center">
         <template slot-scope="scope">
           <span>{{ selectDictLabelByType(GLOBAL.BUS_LEAVE_TYPE, scope.row.leaveType) }}</span>
@@ -139,27 +167,25 @@
       </el-table-column>
       <el-table-column
         align="center"
-        prop="billStatus"
         label="状态">
+        <template slot-scope="scope">
+          <span>{{ selectDictLabelByType(GLOBAL.SYS_CHECK_STATUS, scope.row.billStatus) }}</span>
+        </template>
       </el-table-column>
       <el-table-column
-      align="center"
-      prop="caozuo"
-      label="操作">
-    </el-table-column>
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <div v-if="scope.row.billStatus == 0 || scope.row.billStatus == 1">
+            <el-button size="mini" type="text" icon="el-icon-check" @click.stop="pass(scope.row)">通过</el-button>
+            <el-button size="mini" type="text" icon="el-icon-close" @click.stop="refuse(scope.row)">拒绝</el-button>
+          </div>
+        </template>
+      </el-table-column>
 
     </el-table>
-<!--    <el-pagination-->
-<!--      style="margin-top:15px"-->
-<!--      @size-change="handleSizeChange"-->
-<!--      @current-change="handleCurrentChange"-->
-<!--      :current-page="currentPage4"-->
-<!--      :page-sizes="[100, 200, 300, 400]"-->
-<!--      :page-size="100"-->
-<!--      layout="total, sizes, prev, pager, next, jumper"-->
-<!--      :total="400">-->
-<!--    </el-pagination>-->
-
 
     <pagination
       v-show="total > 0"
@@ -175,7 +201,7 @@
 
 <script>
 
-  import {approveList } from "@/api/business/mywork/leave";
+  import {approveList,leaveSumbit } from "@/api/business/mywork/leave";
 
   export default {
     name: "page-leave",
@@ -242,6 +268,35 @@
           this.total = response.total;
           this.loading = false;
         });
+      },
+      pass(data){
+        const leaveIds = row.leaveId || this.ids;
+        this.$confirm(
+          "请确认是否报送",
+          {
+            dangerouslyUseHTMLString: true,
+            distinguishCancelAndClose: true,
+            confirmButtonText: "报送",
+            cancelButtonText: "返回列表",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            leaveSumbit(leaveIds).then(response => {
+              if (response.code === 200) {
+                this.msgSuccess("报送成功");
+                this.reset();
+                this.getList();
+              }
+            })
+          })
+          .catch(() => {
+            this.reset();
+            this.getList();
+          });
+      },
+      refuse(data){
+
       },
       goBack(){
         this.$router.push({ path:'/myreader/index'})
