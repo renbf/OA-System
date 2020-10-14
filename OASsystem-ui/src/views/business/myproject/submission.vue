@@ -47,7 +47,7 @@
           </el-input></el-form-item>
         <el-form-item><span>审批人</span>
 
-          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="add4"></el-button>
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="dialog2=true"></el-button>
           <span style="margin-left:10px;">{{annotation}}</span>
         </el-form-item>
         <el-form-item style="padding:0 70px" >
@@ -65,6 +65,30 @@
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">保存</el-button>
     <el-button type="primary" @click="dialogVisible = false">提交</el-button>
+  </span>
+    </el-dialog>
+
+
+
+
+
+    <!--新建申请弹框二层-->
+    <!--新建申请弹框二层-->
+    <!--新建申请弹框二层-->
+    <el-dialog
+      title="添加审批人"
+      :visible.sync="dialog2"
+      width="30%"
+      :before-close="handleClose2">
+      <el-form>
+        <el-form-item><span>审批人</span>
+          <el-cascader :options="select" style="margin-left:20px;width:400px;"></el-cascader>
+
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialog2= false">取 消</el-button>
+    <el-button type="primary" @click="dialog2 = false">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -172,6 +196,8 @@
     name: "page-little",
     data(){
       return{
+
+
         // 审批人
         one:'张三',
         two:'张三',
@@ -190,8 +216,10 @@
         //新建任务弹框布尔类型确认谈框
 
         dialogVisible: false,
+        dialog2:false,
         //陈述理由数据
         input: '',
+
         //状态选择数据
         options: [{
           value: '选项1',
@@ -312,24 +340,29 @@
 
         ],
         value: '',
-        value1: ''
+        value1: '',
+        select:[{
+          value: 'ziyuan',
+          label: '软件部',
+          children: [{
+            value: 'axure',
+            label: '任宝峰'
+          }, {
+            value: 'sketch',
+            label: '嘉琪'
+          }, {
+            value: 'jiaohu',
+            label: '安仔'
+          }]
+
+        }]
 
       }
 
     },
+
     methods:{
       //添加批注人
-      add4(){
-
-      },
-      //新建申请任务
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
 
       goBack(){
 

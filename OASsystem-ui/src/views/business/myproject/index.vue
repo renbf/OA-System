@@ -292,22 +292,22 @@
     }
 </script>
 
-<style>
-.myproject .doing,.myproject .end{
-  width: 316px;
-}
-.myproject .doing .clearfix,.myproject .end .clearfix{
-  margin:0;
-  margin-top: 10px;
-}
+  <style>
+   .myproject .doing,.myproject .end{
+     width: 316px;
+   }
+  .myproject .doing .clearfix,.myproject .end .clearfix{
+    margin:0;
+    margin-top: 10px;
+  }
 .myproject .doing .el-card__header,.myproject .end .el-card__header{
   padding:2px 20px;
 }
   .doing{
-    display:inline-block;
-    margin-bottom: 10px;
-    margin-left: 50px;
-  }
+      display:inline-block;
+      margin-bottom: 10px;
+      margin-left: 50px;
+    }
   .h3{
     margin-top: 300px;
   }
