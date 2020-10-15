@@ -1,5 +1,7 @@
 package com.xhkj.project.business.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
@@ -8,6 +10,7 @@ import com.xhkj.project.business.domain.BusiProjectMember;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.BusiTaskMember;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
 import com.xhkj.project.business.mapper.BusiTaskMapper;
 import com.xhkj.project.business.mapper.BusiTaskMemberMapper;
@@ -251,6 +254,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	}
 
 	@Override
+	@Transactional
 	public Map<String, Object> insertBusiTask(BusiTask busiTask) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
@@ -289,12 +293,67 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	}
 
 	@Override
-	public Map<String, Object> selectListTask(BusiTask busiTask) {
+	@Transactional
+	public Map<String, Object> updateBusiTask(BusiTask busiTask) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			List<BusiTask> list = busiTaskMapper.selectBusiTaskList(busiTask);
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Date> taskDate = busiTask.getTaskDate();
+			busiTask.setTaskStartDate(taskDate.get(0));
+			busiTask.setTaskEndDate(taskDate.get(1));
+			busiTask.setUpdateBy(username);
+			busiTask.setUpdateTime(now);
+			busiTaskMapper.updateBusiTask(busiTask);
+			Long taskId = busiTask.getTaskId();
+			busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
+			List<BusiTaskMember> list = new ArrayList<>();
+			List<Long> userList = busiTask.getUserList();
+			if (CollectionUtils.isNotEmpty(userList)) {
+				List<SysUser> sysUsers = sysUserMapper.selectUsersByIds(userList);
+				for (SysUser sysUser : sysUsers) {
+					BusiTaskMember busiTaskMember = new BusiTaskMember();
+					busiTaskMember.setTaskId(taskId);
+					busiTaskMember.setMemberId(sysUser.getUserId());
+					busiTaskMember.setMemberName(sysUser.getNickName());
+					list.add(busiTaskMember);
+				}
+				busiTaskMemberMapper.insertBusiTaskMemberBatch(list);
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> selectListTask(BusiTaskVo busiTaskVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			if (Objects.nonNull(busiTaskVo.getPage()) && Objects.nonNull(busiTaskVo.getLimit())) {
+				PageHelper.startPage(busiTaskVo.getPage(), busiTaskVo.getLimit());
+			}
+			List<BusiTaskVo> list = busiTaskMapper.selectBusiTasks(busiTaskVo);
+			PageInfo<BusiTaskVo> pageInfo = new PageInfo<BusiTaskVo>(list);
 			resultMap.put("code",200);
 			resultMap.put("data",list);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> getTaskInfo(Long taskId) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			List<BusiTaskMember> busiTaskMembers = busiTaskMemberMapper.selectBusiTaskMembers(taskId);
+
+			resultMap.put("code",200);
+			resultMap.put("data",busiTaskMembers);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();

@@ -1,7 +1,9 @@
 package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiTask;
-import java.util.List;	
+import com.xhkj.project.business.domain.vo.BusiTaskVo;
+
+import java.util.List;
 /**
  * 任务 数据层
  * 
@@ -25,7 +27,7 @@ public interface BusiTaskMapper
      * @return 任务集合
      */
 	public List<BusiTask> selectBusiTaskList(BusiTask busiTask);
-	
+
 	/**
      * 新增任务
      * 
@@ -66,4 +68,6 @@ public interface BusiTaskMapper
 	 */
 	public int insertBusiTaskBatch(List<BusiTask> list);
 	//以上自动生成的尽量别动
+
+	public List<BusiTaskVo> selectBusiTasks(BusiTaskVo busiTaskVo);
 }

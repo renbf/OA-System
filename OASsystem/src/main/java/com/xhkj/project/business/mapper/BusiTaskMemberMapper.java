@@ -66,4 +66,8 @@ public interface BusiTaskMemberMapper
 	 */
 	public int insertBusiTaskMemberBatch(List<BusiTaskMember> list);
 	//以上自动生成的尽量别动
+
+	public List<BusiTaskMember> selectBusiTaskMembers(Long taskId);
+
+	public int deleteBusiTaskMemberByTaskId(Long taskId);
 }

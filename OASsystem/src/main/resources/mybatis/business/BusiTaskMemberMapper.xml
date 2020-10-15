@@ -74,5 +74,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+
+    <select id="selectBusiTaskMembers" parameterType="java.lang.Long" resultMap="BusiTaskMemberResult">
+        <include refid="selectBusiTaskMemberbasicColums"/>
+        from busi_task_member tm
+        where tm.task_id = #{taskId}
+    </select>
+
+    <delete id="deleteBusiTaskMemberByTaskId" parameterType="java.lang.Long">
+        delete from busi_task_member where task_id = #{taskId}
+    </delete>
+
 </mapper>

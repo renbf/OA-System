@@ -47,6 +47,11 @@ public class BaseEntity implements Serializable
     @JsonIgnore
     private String endTime;
 
+    /**第几页*/
+    private Integer page;
+    /**每页几条*/
+    private Integer limit;
+
     /** 请求参数 */
     private Map<String, Object> params;
 
@@ -152,5 +157,21 @@ public class BaseEntity implements Serializable
     public void setParams(Map<String, Object> params)
     {
         this.params = params;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 }

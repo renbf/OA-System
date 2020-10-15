@@ -41,6 +41,14 @@ export function getProjectInfo(query) {
     params: query
   })
 }
+// 查询任务信息
+export function getTaskInfo(query) {
+  return request({
+    url: '/api/busiProject/getTaskInfo',
+    method: 'get',
+    params: query
+  })
+}
 
 // 新增任务
 export function addBusiTask(data) {
@@ -51,6 +59,14 @@ export function addBusiTask(data) {
   })
 }
 
+// 修改任务
+export function updateBusiTask(data) {
+  return request({
+    url: '/api/busiProject/updateTask',
+    method: 'post',
+    data: data
+  })
+}
 // 查询任务列表
 export function listTask(query) {
   return request({
