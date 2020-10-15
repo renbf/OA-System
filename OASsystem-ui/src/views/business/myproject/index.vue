@@ -281,9 +281,8 @@
           this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         },
         projectdetail(item) {
-          let projectId = item.projectId;
-          console.log(123)
-          this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
+
+          this.$router.push({ path:'/myproject/look'})
         }
       }
     }
