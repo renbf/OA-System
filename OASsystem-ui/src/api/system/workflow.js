@@ -51,3 +51,12 @@ export function exportWorkflow(query) {
     params: query
   })
 }
+
+// 审批
+export function approve(billIds,workflowId,checkStatus) {
+  return request({
+    url: '/system/workflow/approve/' + billIds + '/' + workflowId  + '/' +  checkStatus,
+    method: 'get',
+  })
+}
+

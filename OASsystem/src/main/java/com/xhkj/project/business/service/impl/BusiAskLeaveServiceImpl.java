@@ -232,7 +232,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         int code = (int)ajaxResult.get(CODE_TAG);
         int num = code == 200 ? 1 : 0;
 
-        return 1;
+        return num;
 
     }
 
