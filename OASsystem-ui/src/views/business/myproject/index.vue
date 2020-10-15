@@ -168,8 +168,9 @@
 
           matters_needing_attention: undefined,
 // 穿梭框内容
-
+          //进行中
           busiProjectUseList:[],
+          //已完成
           busiProjectDoneList:[],
           //责任人
           userDeptUserList:[],
@@ -191,19 +192,26 @@
       methods: {
         getlistBusiProject() {
           let _this = this;
-          listBusiProject({projectProgress:'0'}).then(response => {
+          listBusiProject().then(response => {
             if(response.code == 200){
-              _this.busiProjectUseList = response.data;
-              _this.formatList(_this.busiProjectUseList);
+              let projectList = response.data;
+              _this.formatList(projectList);
+              projectList.forEach((val)=>{
+                let projectProgress = parseInt(val.projectProgress);
+                if(projectProgress < 100){
+                  _this.busiProjectUseList.push(val);
+                }else{
+                  _this.busiProjectDoneList.push(val);
+                }
+              });
             }
           });
-
-          listBusiProject({projectProgress:'1'}).then(response => {
-            if(response.code == 200){
-              _this.busiProjectDoneList = response.data;
-              _this.formatList(_this.busiProjectUseList);
-            }
-          });
+          // listBusiProject({projectProgress:'100'}).then(response => {
+          //   if(response.code == 200){
+          //     _this.busiProjectDoneList = response.data;
+          //     _this.formatList(_this.busiProjectUseList);
+          //   }
+          // });
 
         },
         formatList(list) {

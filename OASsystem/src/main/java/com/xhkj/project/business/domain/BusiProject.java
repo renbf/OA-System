@@ -35,10 +35,12 @@ public class BusiProject extends BaseEntity
 	private String projectDesc;
 	/** 是否启用（0否 1是） */
 	private String status;
-	/** 项目进度（0进行中 1完成） */
+	/** 项目进度（0进行中 100完成） */
 	private String projectProgress;
 	/** 是否删除（0否 1是） */
 	private String deleteFlag;
+	/** 关闭原因 */
+	private String closeReason;
 	/** 排序字段 */
 	private Integer sortOrder;
 	//以上自动生成的尽量别动
@@ -60,6 +62,14 @@ public class BusiProject extends BaseEntity
 
 	public void setUserList(List<Long> userList) {
 		this.userList = userList;
+	}
+
+	public String getCloseReason() {
+		return closeReason;
+	}
+
+	public void setCloseReason(String closeReason) {
+		this.closeReason = closeReason;
 	}
 
 	public void setProjectId(Long projectId)

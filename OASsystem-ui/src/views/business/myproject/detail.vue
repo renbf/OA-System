@@ -54,7 +54,7 @@
 
 
           <div style="width: 15%;float:left;padding:0 20px;position: relative">
-            <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
+            <svg-bar :value="projectInfo.projectProgress" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
             <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
             <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
                 <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
@@ -62,7 +62,7 @@
                     <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
                     <span>任务进度</span>
                   </p>
-                  <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
+                  <p style="margin-top: 0"><b style="font-size: 25px;">{{projectInfo.projectProgress}}%</b></p>
                 </div>
                 <div class="lf" style="width:50%;height: 100%;text-align: center">
                   <p style="margin-top: 60%;margin-bottom:0">
@@ -191,7 +191,8 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.timeProgress}}%
+            <span v-show="scope.row.timeProgress <= 0">0%</span>
+            <span v-show="scope.row.timeProgress > 0">{{scope.row.timeProgress}}%</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -470,6 +471,7 @@
         deptMemberList: [],
         header1: '',
         taskform:{
+          taskId:undefined,
           taskName:'',
           taskNumber:undefined,
           taskDate: '',
@@ -492,14 +494,14 @@
         loading: false,
         model: '列表',
         activeNames: ['1'],
-        projectprocess: '30',
-        timeprocess: '60',
+        projectprocess: '',
+        timeprocess: '',
         statusOptions: [],
         queryParams: {
           taskDates: '',
           taskStatus: '',
           page:1,
-          limit:2
+          limit:10
         },
         status: [
           {
@@ -585,6 +587,11 @@
             _this.projectInfo = response.data;
             _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
             _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
+            //任务时间进度
+            _this.timeprocess = _this.projectInfo.timeProgress;
+            if(_this.timeprocess < 0){
+              _this.timeprocess = 0;
+            }
             let busiProjectMembers= _this.projectInfo.busiProjectMembers;
             _this.getDeptMemberList(busiProjectMembers);
           }
