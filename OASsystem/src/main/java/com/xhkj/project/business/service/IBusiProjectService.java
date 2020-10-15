@@ -3,6 +3,7 @@ package com.xhkj.project.business.service;
 import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.domain.vo.BusiTaskVo;
 
 import java.util.Map;
 
@@ -63,5 +64,10 @@ public interface IBusiProjectService
 
 	public Map<String, Object> insertBusiTask(BusiTask busiTask);
 
-	public Map<String, Object> selectListTask(BusiTask busiTask);
+	public Map<String, Object> updateBusiTask(BusiTask busiTask);
+
+	public Map<String, Object> selectListTask(BusiTaskVo busiTaskVo);
+
+	public Map<String, Object> getTaskInfo(Long taskId);
+
 }

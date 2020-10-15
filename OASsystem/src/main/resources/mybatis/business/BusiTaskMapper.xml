@@ -3,9 +3,10 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xhkj.project.business.mapper.BusiTaskMapper">
-    
+
     <resultMap type="com.xhkj.project.business.domain.BusiTask" id="BusiTaskResult">
         <result property="taskId"    column="task_id"    />
+        <result property="taskNumber"    column="task_number"    />
         <result property="taskName"    column="task_name"    />
         <result property="projectId"    column="project_id"    />
         <result property="taskStartDate"    column="task_start_date"    />
@@ -13,7 +14,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskDesc"    column="task_desc"    />
         <result property="status"    column="status"    />
         <result property="taskProgress"    column="task_progress"    />
-        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="timeProgress"    column="time_progress"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="closeReason"    column="close_reason"    />
         <result property="sortOrder"    column="sort_order"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -21,78 +24,88 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
     </resultMap>
-	
-	<sql id="selectBusiTaskbasicColums">
-        select t.task_id, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.delete_flag, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+
+    <sql id="selectBusiTaskbasicColums">
+        select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.time_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
     </sql>
-	
+
     <select id="selectBusiTaskList" parameterType="com.xhkj.project.business.domain.BusiTask" resultMap="BusiTaskResult">
         <include refid="selectBusiTaskbasicColums"/>
         from busi_task t
-        <where>  
+        <where>
             <if test="taskId != null "> and t.task_id = #{taskId}</if>
-             <if test="taskName != null  and taskName != '' "> and t.task_name = #{taskName}</if>
-             <if test="projectId != null "> and t.project_id = #{projectId}</if>
-             <if test="taskStartDate != null "> and t.task_start_date = #{taskStartDate}</if>
-             <if test="taskEndDate != null "> and t.task_end_date = #{taskEndDate}</if>
-             <if test="taskDesc != null  and taskDesc != '' "> and t.task_desc = #{taskDesc}</if>
-             <if test="status != null  and status != '' "> and t.status = #{status}</if>
-             <if test="taskProgress != null  and taskProgress != '' "> and t.task_progress = #{taskProgress}</if>
-             <if test="deleteFlag != null  and deleteFlag != '' "> and t.delete_flag = #{deleteFlag}</if>
-             <if test="sortOrder != null "> and t.sort_order = #{sortOrder}</if>
-             <if test="createBy != null  and createBy != '' "> and t.create_by = #{createBy}</if>
-             <if test="createTime != null "> and t.create_time = #{createTime}</if>
-             <if test="updateBy != null  and updateBy != '' "> and t.update_by = #{updateBy}</if>
-             <if test="updateTime != null "> and t.update_time = #{updateTime}</if>
-             <if test="remark != null  and remark != '' "> and t.remark = #{remark}</if>
-         </where>
+            <if test="taskNumber != null "> and t.task_number = #{taskNumber}</if>
+            <if test="taskName != null  and taskName != '' "> and t.task_name = #{taskName}</if>
+            <if test="projectId != null "> and t.project_id = #{projectId}</if>
+            <if test="taskStartDate != null "> and t.task_start_date = #{taskStartDate}</if>
+            <if test="taskEndDate != null "> and t.task_end_date = #{taskEndDate}</if>
+            <if test="taskDesc != null  and taskDesc != '' "> and t.task_desc = #{taskDesc}</if>
+            <if test="status != null  and status != '' "> and t.status = #{status}</if>
+            <if test="taskProgress != null  and taskProgress != '' "> and t.task_progress = #{taskProgress}</if>
+            <if test="timeProgress != null  and timeProgress != '' "> and t.time_progress = #{timeProgress}</if>
+            <if test="taskStatus != null  and taskStatus != '' "> and t.task_status = #{taskStatus}</if>
+            <if test="closeReason != null  and closeReason != '' "> and t.close_reason = #{closeReason}</if>
+            <if test="sortOrder != null "> and t.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and t.create_by = #{createBy}</if>
+            <if test="createTime != null "> and t.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and t.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and t.update_time = #{updateTime}</if>
+            <if test="remark != null  and remark != '' "> and t.remark = #{remark}</if>
+        </where>
     </select>
-    
+
     <select id="selectBusiTaskById" parameterType="Long" resultMap="BusiTaskResult">
         <include refid="selectBusiTaskbasicColums"/>
         from busi_task t
         where t.task_id = #{taskId}
     </select>
-        
+
     <insert id="insertBusiTask" parameterType="com.xhkj.project.business.domain.BusiTask" useGeneratedKeys="true" keyProperty="taskId">
         insert into busi_task
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="taskName != null  and taskName != ''  ">task_name,</if>
-			<if test="projectId != null  ">project_id,</if>
-			<if test="taskStartDate != null  ">task_start_date,</if>
-			<if test="taskEndDate != null  ">task_end_date,</if>
-			<if test="taskDesc != null  and taskDesc != ''  ">task_desc,</if>
-			<if test="status != null  and status != ''  ">status,</if>
-			<if test="taskProgress != null  and taskProgress != ''  ">task_progress,</if>
-			<if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag,</if>
-			<if test="sortOrder != null  ">sort_order,</if>
-			<if test="createBy != null  and createBy != ''  ">create_by,</if>
-			<if test="createTime != null  ">create_time,</if>
-			<if test="updateBy != null  and updateBy != ''  ">update_by,</if>
-			<if test="updateTime != null  ">update_time,</if>
-			<if test="remark != null  and remark != ''  ">remark,</if>
-         </trim>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskNumber != null  ">task_number,</if>
+            <if test="taskName != null  and taskName != ''  ">task_name,</if>
+            <if test="projectId != null  ">project_id,</if>
+            <if test="taskStartDate != null  ">task_start_date,</if>
+            <if test="taskEndDate != null  ">task_end_date,</if>
+            <if test="taskDesc != null  and taskDesc != ''  ">task_desc,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="taskProgress != null  and taskProgress != ''  ">task_progress,</if>
+            <if test="timeProgress != null  and timeProgress != ''  ">time_progress,</if>
+            <if test="taskStatus != null  and taskStatus != ''  ">task_status,</if>
+            <if test="closeReason != null  and closeReason != ''  ">close_reason,</if>
+            <if test="sortOrder != null  ">sort_order,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="taskName != null  and taskName != ''  ">#{taskName},</if>
-			<if test="projectId != null  ">#{projectId},</if>
-			<if test="taskStartDate != null  ">#{taskStartDate},</if>
-			<if test="taskEndDate != null  ">#{taskEndDate},</if>
-			<if test="taskDesc != null  and taskDesc != ''  ">#{taskDesc},</if>
-			<if test="status != null  and status != ''  ">#{status},</if>
-			<if test="taskProgress != null  and taskProgress != ''  ">#{taskProgress},</if>
-			<if test="deleteFlag != null  and deleteFlag != ''  ">#{deleteFlag},</if>
-			<if test="sortOrder != null  ">#{sortOrder},</if>
-			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
-			<if test="createTime != null  ">#{createTime},</if>
-			<if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
-			<if test="updateTime != null  ">#{updateTime},</if>
-			<if test="remark != null  and remark != ''  ">#{remark},</if>
-         </trim>
+            <if test="taskNumber != null  ">#{taskNumber},</if>
+            <if test="taskName != null  and taskName != ''  ">#{taskName},</if>
+            <if test="projectId != null  ">#{projectId},</if>
+            <if test="taskStartDate != null  ">#{taskStartDate},</if>
+            <if test="taskEndDate != null  ">#{taskEndDate},</if>
+            <if test="taskDesc != null  and taskDesc != ''  ">#{taskDesc},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="taskProgress != null  and taskProgress != ''  ">#{taskProgress},</if>
+            <if test="timeProgress != null  and timeProgress != ''  ">#{timeProgress},</if>
+            <if test="taskStatus != null  and taskStatus != ''  ">#{taskStatus},</if>
+            <if test="closeReason != null  and closeReason != ''  ">#{closeReason},</if>
+            <if test="sortOrder != null  ">#{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+        </trim>
     </insert>
-	 
+
     <update id="updateBusiTask" parameterType="com.xhkj.project.business.domain.BusiTask">
         update busi_task
         <trim prefix="SET" suffixOverrides=",">
+            <if test="taskNumber != null  ">task_number = #{taskNumber},</if>
             <if test="taskName != null  and taskName != ''  ">task_name = #{taskName},</if>
             <if test="projectId != null  ">project_id = #{projectId},</if>
             <if test="taskStartDate != null  ">task_start_date = #{taskStartDate},</if>
@@ -100,7 +113,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskDesc != null  and taskDesc != ''  ">task_desc = #{taskDesc},</if>
             <if test="status != null  and status != ''  ">status = #{status},</if>
             <if test="taskProgress != null  and taskProgress != ''  ">task_progress = #{taskProgress},</if>
-            <if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag = #{deleteFlag},</if>
+            <if test="timeProgress != null  and timeProgress != ''  ">time_progress = #{timeProgress},</if>
+            <if test="taskStatus != null  and taskStatus != ''  ">task_status = #{taskStatus},</if>
+            <if test="closeReason != null  and closeReason != ''  ">close_reason = #{closeReason},</if>
             <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
             <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
             <if test="createTime != null  ">create_time = #{createTime},</if>
@@ -111,23 +126,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where task_id = #{taskId}
     </update>
 
-	<delete id="deleteBusiTaskById" parameterType="Long">
+    <delete id="deleteBusiTaskById" parameterType="Long">
         delete from busi_task where task_id = #{taskId}
     </delete>
-	
+
     <delete id="deleteBusiTaskByIds" parameterType="String">
-        delete from busi_task where task_id in 
+        delete from busi_task where task_id in
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
     </delete>
 
     <insert id="insertBusiTaskBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="taskId">
-        insert into busi_task ( task_name, project_id, task_start_date, task_end_date, task_desc, status, task_progress, delete_flag, sort_order, create_by, create_time, update_by, update_time, remark) values
+        insert into busi_task ( task_number, task_name, project_id, task_start_date, task_end_date, task_desc, status, task_progress, time_progress, task_status, close_reason, sort_order, create_by, create_time, update_by, update_time, remark) values
         <foreach item="item" collection="list" separator=",">
-            ( #{item.taskName}, #{item.projectId}, #{item.taskStartDate}, #{item.taskEndDate}, #{item.taskDesc}, #{item.status}, #{item.taskProgress}, #{item.deleteFlag}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+            ( #{item.taskNumber}, #{item.taskName}, #{item.projectId}, #{item.taskStartDate}, #{item.taskEndDate}, #{item.taskDesc}, #{item.status}, #{item.taskProgress}, #{item.timeProgress}, #{item.taskStatus}, #{item.closeReason}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+    <resultMap type="com.xhkj.project.business.domain.vo.BusiTaskVo" id="BusiTaskVoResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNumber"    column="task_number"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="taskStartDate"    column="task_start_date"    />
+        <result property="taskEndDate"    column="task_end_date"    />
+        <result property="taskDesc"    column="task_desc"    />
+        <result property="status"    column="status"    />
+        <result property="taskProgress"    column="task_progress"    />
+        <result property="timeProgress"    column="time_progress"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="closeReason"    column="close_reason"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="memberNums"    column="memberNums"    />
+    </resultMap>
+
+    <select id="selectBusiTasks" parameterType="com.xhkj.project.business.domain.vo.BusiTaskVo" resultMap="BusiTaskVoResult">
+        select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        ,(select count(1) from busi_task_member tm where tm.task_id = t.task_id) memberNums,
+        round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress
+        from busi_task t
+        <where>
+            <if test="taskId != null "> and t.task_id = #{taskId}</if>
+            <if test="taskNumber != null "> and t.task_number = #{taskNumber}</if>
+            <if test="taskName != null  and taskName != '' "> and t.task_name = #{taskName}</if>
+            <if test="projectId != null "> and t.project_id = #{projectId}</if>
+            <if test="taskStartDate != null "> and t.task_start_date >= #{taskStartDate}</if>
+            <if test="taskEndDate != null "> and t.task_end_date <![CDATA[ <= ]]> #{taskEndDate}</if>
+            <if test="taskDesc != null  and taskDesc != '' "> and t.task_desc = #{taskDesc}</if>
+            <if test="status != null  and status != '' "> and t.status = #{status}</if>
+            <if test="taskProgress != null  and taskProgress != '' "> and t.task_progress = #{taskProgress}</if>
+            <if test="timeProgress != null  and timeProgress != '' "> and t.time_progress = #{timeProgress}</if>
+            <if test="taskStatus != null  and taskStatus != '' "> and t.task_status = #{taskStatus}</if>
+            <if test="closeReason != null  and closeReason != '' "> and t.close_reason = #{closeReason}</if>
+            <if test="sortOrder != null "> and t.sort_order = #{sortOrder}</if>
+            <if test="createBy != null  and createBy != '' "> and t.create_by = #{createBy}</if>
+            <if test="createTime != null "> and t.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and t.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and t.update_time = #{updateTime}</if>
+            <if test="remark != null  and remark != '' "> and t.remark = #{remark}</if>
+        </where>
+    </select>
+
 </mapper>

@@ -1,11 +1,10 @@
-package com.xhkj.project.business.domain;
+package com.xhkj.project.business.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xhkj.framework.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.io.Serializable;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @author rbf
  * @date 2020-09-30
  */
-public class BusiTask extends BaseEntity
+public class BusiTaskVo extends BaseEntity
 {
 	private static final long serialVersionUID = 1L;
 
@@ -30,9 +29,11 @@ public class BusiTask extends BaseEntity
 	private Long projectId;
 	/** 任务开始日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date taskStartDate;
 	/** 任务结束日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date taskEndDate;
 	/** 任务描述 */
 	private String taskDesc;
@@ -49,9 +50,19 @@ public class BusiTask extends BaseEntity
 	/** 排序字段 */
 	private Integer sortOrder;
 //以上自动生成的尽量别动
+	//参与人数
+	private Integer memberNums;
 	private List<Date> taskDate;
 
 	private List<Long> userList;
+
+	public Integer getMemberNums() {
+		return memberNums;
+	}
+
+	public void setMemberNums(Integer memberNums) {
+		this.memberNums = memberNums;
+	}
 
 	public List<Date> getTaskDate() {
 		return taskDate;

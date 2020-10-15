@@ -2,6 +2,7 @@ package com.xhkj.project.business.controller;
 
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
@@ -164,15 +165,51 @@ public class BusiProjectController
 	 */
 	@GetMapping("/listTask")
 	@ResponseBody
-	public Map<String,Object> listTask(BusiTask busiTask)
+	public Map<String,Object> listTask(BusiTaskVo busiTaskVo)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			resultMap = busiProjectService.selectListTask(busiTask);
+			resultMap = busiProjectService.selectListTask(busiTaskVo);
 		} catch (Exception e) {
-			log.error("查询项目列表异常",e);
+			log.error("查询任务列表异常",e);
 			resultMap.put("code",-1);
-			resultMap.put("msg","查询项目列表异常");
+			resultMap.put("msg","查询任务列表异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 查询任务详情
+	 */
+	@GetMapping("/getTaskInfo")
+	@ResponseBody
+	public Map<String,Object> getTaskInfo(Long taskId)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.getTaskInfo(taskId);
+		} catch (Exception e) {
+			log.error("查询任务详情异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","查询任务详情异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 修改任务
+	 */
+	@PostMapping("/updateTask")
+	@ResponseBody
+	public Map<String,Object> updateTask(@RequestBody BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.updateBusiTask(busiTask);
+		} catch (Exception e) {
+			log.error("修改任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","修改任务异常");
 		}
 		return resultMap;
 	}

@@ -75,55 +75,6 @@
           </div>
         </el-card>
     </el-collapse>
-<!--    项目组申请-->
-    <div>
-      <p class="apply">
-        <span>项目组申请</span>
-        <span>
-          <el-button>全部报送</el-button>
-        </span>
-        <span>
-          <el-button icon="el-icon-right" size="small" circle></el-button>
-        </span>
-      </p>
-    </div>
-    <div class="card-carousel-wrapper">
-      <el-button class="card-carousel--nav__left" type="info" icon="el-icon-arrow-left" circle @click="moveCarousel(-1)" :disabled="atHeadOfList"></el-button>
-      <div class="card-carousel">
-        <div class="card-carousel--overflow-container">
-          <div class="card-carousel-cards clear" :style="{ transform: 'translateX' + '(' + currentOffset + 'px' + ')'}">
-            <div class="card-carousel--card lf" v-for="item in applyproject">
-              <div style="border-bottom:1px solid #ddd">
-                <p>
-                  <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-message" type="danger"></el-button>
-                  </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-delete"></el-button>
-                  </span>
-                </p>
-                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
-              </div>
-              <div>
-                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.applypeople}}</p>
-                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.applyreason}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <el-button class="card-carousel--nav__right" type="info" icon="el-icon-arrow-right" circle @click="moveCarousel(1)" :disabled="atEndOfList"></el-button>
-    </div>
-
-<!--    更换视图-->
-  <div class="clear">
-    <span class="rt">
-      <span class="el-icon-menu" @click="changemodel"></span>
-      <span>{{model}}模式</span>
-    </span>
-  </div>
-
     <!--项目任务模块-->
     <!--项目任务模块-->
     <!--项目任务模块-->
@@ -140,7 +91,7 @@
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
         <el-form-item label="任务时间">
           <el-date-picker
-            v-model="queryParams.tasktime"
+            v-model="queryParams.taskDates"
             size="small"
             style="width: 240px"
             value-format="yyyy-MM-dd"
@@ -152,7 +103,7 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-select
-            v-model="queryParams.projectstatus"
+            v-model="queryParams.taskStatus"
             placeholder="选择状态"
             clearable
             size="small"
@@ -191,60 +142,80 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="编号"
-          prop="number"
+          prop="taskNumber"
           :show-overflow-tooltip="true"
           style="width:20px;"
         />
         <el-table-column
           label="标题"
-          prop="title"
+          prop="taskName"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务内容"
-          prop="content"
+          prop="taskDesc"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="更新日期"
-          prop="updata"
+          prop="updateTime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="参与人"
-          prop="joinpeople"
           :show-overflow-tooltip="true"
-        />
+        ><template slot-scope="scope">
+          {{scope.row.memberNums}}人
+        </template>
+        </el-table-column>
         <el-table-column
           label="开始时间"
-          prop="begintime"
+          prop="taskStartDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="结束时间"
-          prop="endtime"
+          prop="taskEndDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务进度"
-          prop="taskprogress"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            {{scope.row.taskProgress}}%
+          </template>
+        </el-table-column>
         <el-table-column
           label="时间进度"
-          prop="timeprogress"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            {{scope.row.timeProgress}}%
+          </template>
+        </el-table-column>
         <el-table-column
           label="任务状态"
-          prop="taskstatus"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            <span v-show="scope.row.taskStatus == 0">进行中</span>
+            <span v-show="scope.row.taskStatus == 1">完成</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="状态"
-          prop="status"
           :show-overflow-tooltip="true"
-        />
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-value="1"
+              inactive-value="0"
+              active-text="启用">
+            </el-switch>
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -253,12 +224,13 @@
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
             <div>
-              <el-switch
-                v-model="value"
-                active-color="#13ce66"
-                inactive-color="rgba(220, 223, 230,0.8)"
-                active-text="启用">
-              </el-switch>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit-outline"
+                @click.stop="handleUpdate(scope.row)"
+              >编辑</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -364,13 +336,13 @@
     <el-dialog :title="header1"
                :visible.sync="add3"
                width="800px" class="abow_dialog">
-      <el-form  ref="addform" :model="addform" :rules="addrules" label-width="80px">
-        <el-form-item label="名称" prop="name">
+      <el-form  ref="taskform" :model="taskform" :rules="taskrules" label-width="80px">
+        <el-form-item label="名称" prop="taskName">
           <el-input
             style="width:520px;"
             type="text"
-            placeholder="请输入标题"
-            v-model="addform.projectName"
+            placeholder="请输入名称"
+            v-model="taskform.taskName"
             maxlength="10"
             show-word-limit
           >
@@ -380,12 +352,10 @@
         <!--参与人员分栏模块-->
         <!--参与人员分栏模块-->
         <!--参与人员分栏模块-->
-<el-form-item label="任务编号">
+<el-form-item label="任务编号" prop="taskNumber">
   <template>
-    <el-input-number v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字" style="width: 520px"></el-input-number>
+    <el-input-number v-model="taskform.taskNumber" :min="1" :max="10" label="描述文字" style="width: 520px"></el-input-number>
   </template>
-
-
 </el-form-item>
 
         <el-form-item label="参与人员" prop="userList">
@@ -394,31 +364,29 @@
             filterable
             :filter-method="filterMethod"
             filter-placeholder="项目成员"
-            v-model="valuess"
-            :data="datas"
-            style="margin-bottom: 2px;"
-          >
+            v-model="taskform.userList"
+            :data="taskMemberList"
+            style="margin-bottom: 2px">
           </el-transfer>
 
 
         </el-form-item>
-        <el-form-item label="项目时间" prop="tasktime">
-          <el-time-picker
-            is-range
-            v-model="value1"
+        <el-form-item label="任务时间" prop="taskDate">
+          <el-date-picker
+            v-model="taskform.taskDate"
+            type="daterange"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围">
-          </el-time-picker>
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
         </el-form-item>
         <!--        项目描述-->
-        <el-form-item label="项目描述" prop="projectDesc">
+        <el-form-item label="任务描述" prop="taskDesc">
           <el-input
             :rows="8"
             type="textarea"
             placeholder="请输入内容"
-            v-model="addform.projectDesc"
+            v-model="taskform.taskDesc"
             maxlength="120"
             show-word-limit
           >
@@ -426,7 +394,7 @@
         </el-form-item>
         <el-form-item  label="状态"  prop="status">
           <el-switch
-            v-model="addform.status"
+            v-model="taskform.status"
             active-value="1"
             inactive-value="0"
             active-text="启用">
@@ -450,8 +418,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
 
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="taskCancel">取消</el-button>
+        <el-button type="primary" @click="taskSubmitForm">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -459,10 +427,9 @@
 
 <script>
   import project_progress from './project_progress';
-  import { getProjectInfo } from "@/api/business/mywork/myproject";
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -470,26 +437,9 @@
       project_progress
     },
     data() {
-
-      const generateData = _ => {
-        const data = [];
-        const cities = ['宏观', '丽丽', '钱及', '张三',  ];
-        const pinyin = ['宏观', '丽丽', '钱及', '张三',  ];
-        cities.forEach((city, index) => {
-          data.push({
-            label: city,
-            key: index,
-            pinyin: pinyin[index]
-          });
-        });
-        return data;
-      };
       return {
-        num: 1,
-        value1: "",
-        datas: generateData(),
-        valuess: [],
-        addprojects: "",
+        addproject: "",
+        addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
         addform: {
@@ -512,87 +462,44 @@
         //责任人
         userDeptUserList:[],
         memberList:[],
+        taskMemberList:[],
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
         //部门成员列表
         deptMemberList: [],
+        header1: '',
+        taskform:{
+          taskName:'',
+          taskNumber:undefined,
+          taskDate: '',
+          taskDesc:'',
+          status:'',
+          userList: [],
+        },
+        taskrules: {
+          taskName: [{required: true, message: "任务名称不能为空", trigger: "change"}],
+          taskNumber: [{required: true, message: "任务编号不能为空", trigger: "change"}],
+          taskDate: [{required: true, message: "任务时间不能为空", trigger: "change"}],
+          taskDesc: [{required: true, message: "任务描述不能为空", trigger: "change"}],
+          userList: [{required: true, message: "参与人员不能为空", trigger: "change"}],
+          status: [{required: true, message: "状态必须选择", trigger: "change"}]
+        },
         title: "OA项目开发 编号：xcv23456 项目人：迈克尔",
         currentOffset: 0,
         windowSize: 3,
         paginationFactor: 322,
         loading: false,
         model: '列表',
-        applyproject: [
-          {
-            title: '任务时间增加申请1',
-            applytime: '2020-05-21',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请2',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请3',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请4',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请5',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请6',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请7',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请8',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请9',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请10',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          }
-        ],
         activeNames: ['1'],
         projectprocess: '30',
         timeprocess: '60',
         statusOptions: [],
         queryParams: {
-          tasktime: '',
-          projectstatus: '',
-          status: ""
+          taskDates: '',
+          taskStatus: '',
+          page:1,
+          limit:2
         },
         status: [
           {
@@ -604,34 +511,7 @@
             dictLabel: "已报送"
           }
         ],
-        taskList: [
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            taskprogress: '30%',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            taskprogress: '30%',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-        ],
+        taskList: [],
         activeIndex: 'project_progress',
 
         value: true,
@@ -640,7 +520,7 @@
     created() {
 
       // 状态
-      this.getDicts("sys_check_status").then(response => {
+      this.getDicts("task_status").then(response => {
         this.statusOptions = response.data;
       });
       this.getProject();
@@ -651,11 +531,9 @@
         }
       });
       this.getUserDeptUsers();
+      this.getTaskList();
     },
     computed: {
-      atEndOfList() {
-        return this.currentOffset <= (this.paginationFactor * -1) * (this.applyproject.length - this.windowSize);
-      },
       atHeadOfList() {
         return this.currentOffset === 0;
       },
@@ -697,10 +575,8 @@
       },
 
       add2(){
-
         this.header1 = "新建项目任务";
         this.add3=true;
-
       },
       getProject() {
         let _this = this;
@@ -719,8 +595,10 @@
         let map = new Map();
         _this.deptMemberList = [];
         let deptMemberList = _this.deptMemberList;
+        _this.taskMemberList = [];
         busiProjectMembers.forEach((val)=>{
           let deptId = val.deptId;
+          _this.taskMemberList.push({key:val.memberId,label:val.memberName});
           if (map.has(deptId)) {
             let index = map.get(deptId);
             let deptObj = deptMemberList[index];
@@ -734,7 +612,6 @@
             deptMemberList.push({deptId:deptId,deptName:val.deptName,members:members});
           }
         });
-
       },
       getUserDeptUsers() {
         let _this = this;
@@ -744,13 +621,18 @@
           }
         });
       },
-      moveCarousel(direction) {
-        // Find a more elegant way to express the :style. consider using props to make it truly generic
-        if (direction === 1 && !this.atEndOfList) {
-          this.currentOffset -= this.paginationFactor;
-        } else if (direction === -1 && !this.atHeadOfList) {
-          this.currentOffset += this.paginationFactor;
-        }
+      getTaskList() {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.projectId = _this.projectId;
+        queryParams.taskStartDate = queryParams.taskDates[0];
+        queryParams.taskEndDate = queryParams.taskDates[1];
+        queryParams.taskDates = "";
+        listTask(queryParams).then(response => {
+          if (response.code == 200) {
+            _this.taskList = response.data;
+          }
+        });
       },
       handleChange() {
       },
@@ -760,8 +642,8 @@
       },
       /** 搜索按钮操作 */
       handleQuery() {
-        this.queryParams.pageNum = 1;
-        // this.getList();
+        this.queryParams.page = 1;
+        this.getTaskList();
       },
       /** 重置按钮操作 */
       resetQuery() {
@@ -773,7 +655,30 @@
       },
       handleSelectionChange() {
       },
-      handleUpdate() {
+      handleUpdate(item) {
+        this.header1 = "编辑项目任务";
+        this.add3=true;
+        this.updateSetValue(item);
+      },
+      updateSetValue(item) {
+        let _this = this;
+        _this.taskform = {
+            taskId:item.taskId,
+            taskName:item.taskName,
+            taskNumber:item.taskNumber,
+            taskDate: [item.taskStartDate,item.taskEndDate],
+            taskDesc:item.taskDesc,
+            status:item.status,
+            userList: [],
+        };
+        getTaskInfo({taskId:item.taskId}).then(response => {
+          if(response.code == 200){
+            let taskMembers = response.data;
+            taskMembers.forEach((val) =>{
+              _this.taskform.userList.push(val.memberId);
+            });
+          }
+        });
       },
       changemodel() {
         if (this.model == '时间') {
@@ -834,6 +739,9 @@
       cancel() {
         this.addopen = false;
       },
+      taskCancel() {
+        this.add3 = false;
+      },
       //提交项目
       submitForm(){
         let _this = this;
@@ -855,6 +763,36 @@
               });
             } else {
 
+            }
+          }
+        });
+      },
+      taskSubmitForm() {
+        let _this = this;
+        _this.$refs.taskform.validate(valid => {
+          if (valid) {
+            let form = _this.taskform;
+            form.projectId = _this.projectId;
+            if (form.taskId != undefined) {
+              updateBusiTask(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.add3 = false;
+                  this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            } else {
+              addBusiTask(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.add3 = false;
+                  this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
             }
           }
         });
