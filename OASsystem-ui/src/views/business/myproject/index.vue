@@ -24,7 +24,7 @@
         <div class="text item"  @click="projectdetail(item)">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
-          <el-progress :percentage="50"></el-progress>
+          <el-progress :percentage="item.projectProgress"></el-progress>
         </div>
       </el-card>
     </el-row>
@@ -196,6 +196,8 @@
             if(response.code == 200){
               let projectList = response.data;
               _this.formatList(projectList);
+              _this.busiProjectUseList = [];
+              _this.busiProjectDoneList = [];
               projectList.forEach((val)=>{
                 let projectProgress = parseInt(val.projectProgress);
                 if(projectProgress < 100){
@@ -273,6 +275,7 @@
                   if (response.code === 200) {
                     this.msgSuccess("新增成功");
                     this.addopen = false;
+                    this.getlistBusiProject();
                   } else {
                     this.msgError(response.msg);
                   }

@@ -34,8 +34,8 @@ public class BusiProjectVo extends BaseEntity
 	private String projectDesc;
 	/** 是否启用（0否 1是） */
 	private String status;
-	/** 项目进度（0进行中 1完成） */
-	private String projectProgress;
+	/** 项目进度（0进行中 100完成） */
+	private Integer projectProgress;
 	/** 是否删除（0否 1是） */
 	private String deleteFlag;
 	/** 关闭原因 */
@@ -168,12 +168,12 @@ public class BusiProjectVo extends BaseEntity
 	{
 		return status;
 	}
-	public void setProjectProgress(String projectProgress)
+	public void setProjectProgress(Integer projectProgress)
 	{
 		this.projectProgress = projectProgress;
 	}
 
-	public String getProjectProgress()
+	public Integer getProjectProgress()
 	{
 		return projectProgress;
 	}

@@ -36,7 +36,7 @@ public class BusiProject extends BaseEntity
 	/** 是否启用（0否 1是） */
 	private String status;
 	/** 项目进度（0进行中 100完成） */
-	private String projectProgress;
+	private Integer projectProgress;
 	/** 是否删除（0否 1是） */
 	private String deleteFlag;
 	/** 关闭原因 */
@@ -144,15 +144,15 @@ public class BusiProject extends BaseEntity
 	{
 		return status;
 	}
-	public void setProjectProgress(String projectProgress)
-	{
+
+	public Integer getProjectProgress() {
+		return projectProgress;
+	}
+
+	public void setProjectProgress(Integer projectProgress) {
 		this.projectProgress = projectProgress;
 	}
 
-	public String getProjectProgress()
-	{
-		return projectProgress;
-	}
 	public void setDeleteFlag(String deleteFlag)
 	{
 		this.deleteFlag = deleteFlag;

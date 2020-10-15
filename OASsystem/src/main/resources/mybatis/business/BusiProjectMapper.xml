@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectEndDate != null "> and p.project_end_date = #{projectEndDate}</if>
             <if test="projectDesc != null  and projectDesc != '' "> and p.project_desc = #{projectDesc}</if>
             <if test="status != null  and status != '' "> and p.status = #{status}</if>
-            <if test="projectProgress != null  and projectProgress != '' "> and p.project_progress = #{projectProgress}</if>
+            <if test="projectProgress != null "> and p.project_progress = #{projectProgress}</if>
             <if test="deleteFlag != null  and deleteFlag != '' "> and p.delete_flag = #{deleteFlag}</if>
             <if test="closeReason != null  and closeReason != '' "> and p.close_reason = #{closeReason}</if>
             <if test="sortOrder != null "> and p.sort_order = #{sortOrder}</if>
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectEndDate != null  ">project_end_date,</if>
             <if test="projectDesc != null  and projectDesc != ''  ">project_desc,</if>
             <if test="status != null  and status != ''  ">status,</if>
-            <if test="projectProgress != null  and projectProgress != ''  ">project_progress,</if>
+            <if test="projectProgress != null  ">project_progress,</if>
             <if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag,</if>
             <if test="closeReason != null  and closeReason != ''  ">close_reason,</if>
             <if test="sortOrder != null  ">sort_order,</if>
@@ -86,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectEndDate != null  ">#{projectEndDate},</if>
             <if test="projectDesc != null  and projectDesc != ''  ">#{projectDesc},</if>
             <if test="status != null  and status != ''  ">#{status},</if>
-            <if test="projectProgress != null  and projectProgress != ''  ">#{projectProgress},</if>
+            <if test="projectProgress != null  ">#{projectProgress},</if>
             <if test="deleteFlag != null  and deleteFlag != ''  ">#{deleteFlag},</if>
             <if test="closeReason != null  and closeReason != ''  ">#{closeReason},</if>
             <if test="sortOrder != null  ">#{sortOrder},</if>
@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectEndDate != null  ">project_end_date = #{projectEndDate},</if>
             <if test="projectDesc != null  and projectDesc != ''  ">project_desc = #{projectDesc},</if>
             <if test="status != null  and status != ''  ">status = #{status},</if>
-            <if test="projectProgress != null  and projectProgress != ''  ">project_progress = #{projectProgress},</if>
+            <if test="projectProgress != null  ">project_progress = #{projectProgress},</if>
             <if test="deleteFlag != null  and deleteFlag != ''  ">delete_flag = #{deleteFlag},</if>
             <if test="closeReason != null  and closeReason != ''  ">close_reason = #{closeReason},</if>
             <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
