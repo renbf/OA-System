@@ -14,13 +14,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
 
-    <select id="selectBusiAskLeaveById" parameterType="BusiAskLeave" resultType="long">
+    <select id="selectBusiAskLeaveById" parameterType="Long" resultType="com.xhkj.project.business.domain.BusiAskLeave">
         <include refid="selectBusiAskLeaveVo"/>
-        <where>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if>
-        </where>
+        where leave_id = #{leaveId}
     </select>
+
+
+    <select id="selectBusiAskLeaveVoById" parameterType="Long" resultType="com.xhkj.project.business.domain.vo.BusiAskLeaveVo">
+        <include refid="selectBusiAskLeaveVo"/>
+        where leave_id = #{leaveId}
+    </select>
+
+
 
     <select id="selectBusiAskLeaveList" parameterType="BusiAskLeave" resultType="com.xhkj.project.business.domain.BusiAskLeave">
         select
@@ -28,7 +33,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          bal.update_time,bal.remark,bal.dept_id,bal.in_prj_flag,bal.leave_prj_name,bal.overtime_sur_Time,bal.annLea_sur_Time,bal.leave_begin_time,
          bal.leave_end_time,
          ifnull(wb.bill_status,2) as approval_Status
-        from busi_ask_leave bal left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
+        from busi_ask_leave bal
+        left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
+        left join sys_user su on su.user_id = bal.user_id
+        left join sys_dept sd on sd.dept_id = su.dept_id
         <where>
             <if test="userId != null "> and bal.user_id = #{userId}</if>
             <if test="leaveType != null  and leaveType != ''"> and bal.leave_type = #{leaveType}</if>
@@ -37,6 +45,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null "> and bal.update_time = #{updateTime}</if>
             <if test="beginTime != null and beginTime != ''"> and bal.leave_begin_time >= #{beginTime}</if>
             <if test="endTime != null and endTime != ''"> and bal.leave_end_time <![CDATA[ <= ]]> #{endTime} </if>
+            <if test="createBy != null and createBy != ''"> and bal.create_by = #{createBy} </if>
+            ${dataScope}
         </where>
         order by create_time desc
     </select>
@@ -120,5 +130,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{leaveId}
         </foreach>
     </delete>
+
+
+    <select id="approveList" parameterType="BusiAskLeaveAprVo" resultType="com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo">
+        select
+        bal.leave_id,
+        bal.user_id,
+        bal.leave_type,
+        bal.leave_hours,
+        bal.leave_hours_unit,
+        bal.leave_dates,
+        bal.leave_reason,
+        bal.create_by,
+        bal.create_time,
+        bal.update_by,
+        bal.update_time,
+        bal.remark,
+        bal.dept_id,
+        bal.in_prj_flag,
+        bal.leave_prj_name,
+        bal.overtime_sur_Time,
+        bal.annLea_sur_Time,
+        bal.leave_begin_time,
+        bal.leave_end_time,
+        ifnull(wb.bill_status,2) as approval_Status,
+        wb.create_time as applyTime,
+        su.nick_name as orginHandler,
+        wb.bill_status
+        from busi_ask_leave bal
+        left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
+        left join sys_user su on su.user_name = wb.orgin_Handler
+        where 1=1
+        and wb.workflow_node_id in (
+        select swn.workflow_node_id from sys_workflow_node swn
+        left join sys_workflow_node_checker swnc on swnc.workflow_node_id = swn.workflow_node_id
+        where swn.workflow_node_checker_type = 2 -- 指定人员
+        and swn.workflow_node_check_type = 1   -- 依次审批
+        and swnc.workflow_node_user_id = #{userId}
+        )
+        order by wb.create_time desc
+    </select>
     
 </mapper>

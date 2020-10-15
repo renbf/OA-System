@@ -89,4 +89,7 @@ public interface ISysWorkflowService
      * @return
      */
     public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace);
+
+    public AjaxResult submitToNextWorkflow(WorkflowBillTrace workflowBillTrace,String className,String methodName);
+
 }

@@ -38,13 +38,26 @@ public class SysDeptController extends BaseController
     /**
      * 获取部门列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+//    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list")
     public AjaxResult list(SysDept dept)
     {
         List<SysDept> depts = deptService.selectDeptList(dept);
         return AjaxResult.success(depts);
     }
+
+    /**
+     * 页面下拉选用
+     * @param dept
+     * @return
+     */
+    @GetMapping("/getDeptList")
+    public AjaxResult getDeptList(SysDept dept)
+    {
+        List<SysDept> depts = deptService.getDeptList(dept);
+        return AjaxResult.success(depts);
+    }
+
 
     /**
      * 根据部门编号获取详细信息

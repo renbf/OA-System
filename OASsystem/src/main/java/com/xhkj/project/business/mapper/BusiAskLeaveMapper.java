@@ -2,6 +2,8 @@ package com.xhkj.project.business.mapper;
 
 import java.util.List;
 import com.xhkj.project.business.domain.BusiAskLeave;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 
 /**
  * 请假倒休Mapper接口
@@ -19,6 +21,9 @@ public interface BusiAskLeaveMapper
      * @return 请假倒休集合
      */
     public BusiAskLeave selectBusiAskLeaveById(Long leaveId);
+
+    public BusiAskLeaveVo selectBusiAskLeaveVoById(Long leaveId);
+
 
     /**
      * 查询请假倒休列表
@@ -59,4 +64,8 @@ public interface BusiAskLeaveMapper
      * @return 结果
      */
     public int deleteBusiAskLeaveByIds(Long[] leaveIds);
+
+    public List<BusiAskLeaveAprVo> approveList(BusiAskLeaveAprVo busiAskLeave);
+
+
 }

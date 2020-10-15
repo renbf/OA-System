@@ -55,6 +55,13 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectDeptList(dept);
     }
 
+
+    @Override
+    public List<SysDept> getDeptList(SysDept dept)
+    {
+        return deptMapper.getDeptList(dept);
+    }
+
     /**
      * 构建前端所需要树结构
      * 

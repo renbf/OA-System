@@ -48,6 +48,28 @@ public class WorkflowBill extends BaseEntity
     /** 备注 */
     private String remarks;
     //以上自动生成的尽量别动
+
+    //回调方法--类名称
+    private String className;
+    //回调方法--方法名称
+    private String methodName;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
     public void setBillId(Long billId)
     {
         this.billId = billId;

@@ -11,8 +11,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.xhkj.common.constant.DictConst;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.StringUtils;
+import com.xhkj.framework.aspectj.lang.annotation.DataScope;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiHolsCheck;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 import com.xhkj.project.business.service.BusiHolsCheckService;
 import com.xhkj.project.system.domain.SysCompanyConfig;
@@ -36,7 +38,7 @@ import static com.xhkj.framework.web.domain.AjaxResult.CODE_TAG;
 
 /**
  * 请假倒休Service业务层处理
- * 
+ *
  * @author xhkj
  * @date 2020-04-15
  */
@@ -62,7 +64,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
     /**
      * 查询请假倒休列表
-     * 
+     *
      * @param busiAskLeave 请假倒休
      * @return 请假倒休
      */
@@ -74,7 +76,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
     /**
      * 新增请假倒休
-     * 
+     *
      * @param busiAskLeave 请假倒休
      * @return 结果
      */
@@ -133,13 +135,15 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         }
     }
 
+
+
     /**
-     * 审核通过以后再进行更新
+     * 审核通过以后执行的方法
      * 更新加班、年休假时长
      * @param busiAskLeaveVo
      * @param userId
      */
-    private void updateLeaveSurTime(BusiAskLeaveVo busiAskLeaveVo, Long userId) {
+    private void updateLeaveSurTime(BusiAskLeaveVo busiAskLeaveVo) {
         String leaveType = busiAskLeaveVo.getLeaveType();
         if(StringUtils.equals(leaveType, DictConst.BUS_LEAVE_TYPE_1)||StringUtils.equals(leaveType,DictConst.BUS_LEAVE_TYPE_4)){
             BusiHolsCheck busiHolsCheck = new BusiHolsCheck();
@@ -153,17 +157,19 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
                 busiHolsCheck.setHolsRestDays(new BigDecimal(busiAskLeaveVo.getAnnLeaSurTime()));
             }
 
-            busiHolsCheck.setUserId(userId);
+            busiHolsCheck.setUserId(Long.valueOf(SecurityUtils.getUserId()));
             busiHolsCheckService.updateBusiHolsCheck(busiHolsCheck);
         }
     }
 
     /**
      * 修改请假倒休
-     * 
+     *
      * @param busiAskLeave 请假倒休
      * @return 结果
      */
+
+
     @Override
     @Transactional
     public int updateBusiAskLeave(BusiAskLeaveVo busiAskLeaveVo)
@@ -186,7 +192,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
     /**
      * 批量删除请假倒休
-     * 
+     *
      * @param leaveIds 需要删除的请假倒休ID
      * @return 结果
      */
@@ -198,7 +204,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
     /**
      * 删除请假倒休信息
-     * 
+     *
      * @param leaveId 请假倒休ID
      * @return 结果
      */
@@ -219,16 +225,31 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
             wfbt.setWorkflowId(2l);
 
             //发起流程申请
-            ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt);
+            ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt,"busiAskLeaveServiceImpl","approvedToDo");
 
         }
 
         int code = (int)ajaxResult.get(CODE_TAG);
         int num = code == 200 ? 1 : 0;
 
-        return num;
+        return 1;
 
     }
 
+    /**
+     * 审核通过后执行的方法
+     */
+    public void approvedToDo(Long leaveId){
+        BusiAskLeaveVo busiAskLeaveVo = busiAskLeaveMapper.selectBusiAskLeaveVoById(leaveId);
+        updateLeaveSurTime(busiAskLeaveVo);
+    }
+
+
+    @Override
+    public List<BusiAskLeaveAprVo> approveList(BusiAskLeaveAprVo busiAskLeave)
+    {
+        busiAskLeave.setUserId(Long.valueOf(SecurityUtils.getUserId()));
+        return busiAskLeaveMapper.approveList(busiAskLeave);
+    }
 
 }

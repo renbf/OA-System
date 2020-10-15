@@ -69,6 +69,15 @@ export function leaveSumbit(leaveIds) {
   });
 }
 
+// 查询待审批
+export function approveList(query) {
+  return request({
+    url: "/business/leave/approveList",
+    method: "get",
+    params: query
+  });
+}
+
 // 假json
 export function leaveList() {
   return {

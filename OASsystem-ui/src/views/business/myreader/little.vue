@@ -119,6 +119,8 @@
 
 
 <script>
+  import {listLeave } from "@/api/business/mywork/leave";
+
   export default {
     name: "page-little",
     data(){
@@ -248,7 +250,18 @@
       }
 
     },
+    created() {
+      this.getList()
+    },
     methods:{
+      getList(){
+        this.loading = true;
+        listLeave(this.addDateRange(this.queryParams, this.leaveDateRange)).then(response => {
+          this.leaveList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      },
       goBack(){
 
         this.$router.push({ path:'/myreader/index'})
