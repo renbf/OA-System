@@ -348,12 +348,12 @@
             value: 'axure',
             label: '任宝峰'
           }, {
-            value: 'sketch',
-            label: '嘉琪'
-          }, {
-            value: 'jiaohu',
-            label: '安仔'
-          }]
+                  value: 'sketch',
+          label: '嘉琪'
+        }, {
+          value: 'jiaohu',
+          label: '安仔'
+        }]
 
         }]
 
