@@ -447,7 +447,7 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
             SysWorkflowNode sysWorkflowNode = new SysWorkflowNode();
             sysWorkflowNode.setWorkflowStepNodeId(workflowStepNodeId);
             sysWorkflowNode.setWorkflowNodeCheckerType(workflowNodeCheckerType);
-            sysWorkflowNode.setWorkflowNodeCheckType("3");
+            sysWorkflowNode.setWorkflowNodeCheckType("1");
             sysWorkflowNode.setWorkflowNodeName(workflowNodeName);
             sysWorkflowNode.setIsMessage("0");
             sysWorkflowNode.setSortOrder(sortOrder + 1);

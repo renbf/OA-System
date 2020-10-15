@@ -75,55 +75,6 @@
           </div>
         </el-card>
     </el-collapse>
-<!--    项目组申请-->
-    <div>
-      <p class="apply">
-        <span>项目组申请</span>
-        <span>
-          <el-button>全部报送</el-button>
-        </span>
-        <span>
-          <el-button icon="el-icon-right" size="small" circle></el-button>
-        </span>
-      </p>
-    </div>
-    <div class="card-carousel-wrapper">
-      <el-button class="card-carousel--nav__left" type="info" icon="el-icon-arrow-left" circle @click="moveCarousel(-1)" :disabled="atHeadOfList"></el-button>
-      <div class="card-carousel">
-        <div class="card-carousel--overflow-container">
-          <div class="card-carousel-cards clear" :style="{ transform: 'translateX' + '(' + currentOffset + 'px' + ')'}">
-            <div class="card-carousel--card lf" v-for="item in applyproject">
-              <div style="border-bottom:1px solid #ddd">
-                <p>
-                  <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-message" type="danger"></el-button>
-                  </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-delete"></el-button>
-                  </span>
-                </p>
-                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
-              </div>
-              <div>
-                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.applypeople}}</p>
-                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.applyreason}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <el-button class="card-carousel--nav__right" type="info" icon="el-icon-arrow-right" circle @click="moveCarousel(1)" :disabled="atEndOfList"></el-button>
-    </div>
-
-<!--    更换视图-->
-  <div class="clear">
-    <span class="rt">
-      <span class="el-icon-menu" @click="changemodel"></span>
-      <span>{{model}}模式</span>
-    </span>
-  </div>
-
     <!--项目任务模块-->
     <!--项目任务模块-->
     <!--项目任务模块-->
@@ -486,25 +437,7 @@
       project_progress
     },
     data() {
-
-      const generateData = _ => {
-        const data = [];
-        const cities = ['宏观', '丽丽', '钱及', '张三',  ];
-        const pinyin = ['宏观', '丽丽', '钱及', '张三',  ];
-        cities.forEach((city, index) => {
-          data.push({
-            label: city,
-            key: index,
-            pinyin: pinyin[index]
-          });
-        });
-        return data;
-      };
       return {
-        num: 1,
-        value1: "",
-        datas: generateData(),
-        valuess: [],
         addproject: "",
         addopen:false,
         add3: false,
@@ -558,68 +491,6 @@
         paginationFactor: 322,
         loading: false,
         model: '列表',
-        applyproject: [
-          {
-            title: '任务时间增加申请1',
-            applytime: '2020-05-21',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请2',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请3',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请4',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请5',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请6',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请7',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请8',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请9',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请10',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          }
-        ],
         activeNames: ['1'],
         projectprocess: '30',
         timeprocess: '60',
@@ -663,9 +534,6 @@
       this.getTaskList();
     },
     computed: {
-      atEndOfList() {
-        return this.currentOffset <= (this.paginationFactor * -1) * (this.applyproject.length - this.windowSize);
-      },
       atHeadOfList() {
         return this.currentOffset === 0;
       },
@@ -765,14 +633,6 @@
             _this.taskList = response.data;
           }
         });
-      },
-      moveCarousel(direction) {
-        // Find a more elegant way to express the :style. consider using props to make it truly generic
-        if (direction === 1 && !this.atEndOfList) {
-          this.currentOffset -= this.paginationFactor;
-        } else if (direction === -1 && !this.atHeadOfList) {
-          this.currentOffset += this.paginationFactor;
-        }
       },
       handleChange() {
       },
