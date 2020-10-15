@@ -1,3 +1,5 @@
+
+//数据字典定义常量   开始
 /** 用户性别 */
 const SYS_USER_SEX = "sys_user_sex";
 /** 菜单状态 */
@@ -24,9 +26,18 @@ const BUS_LEAVE_TYPE = "bus_leave_type";
 const SYS_CHECK_STATUS = "sys_check_status";
 /** 交通类型 */
 const TRANSPORT_TYPE = "transport_type";
+//数据字典定义常量   结束
 
+
+//流程定义常量
+/** 加班流程标识 */
+const EXTRA_WORKFLOWID = 1;
+/** 请假流程标识 */
+const LEAVE_WORKFLOWID = 2;
+//流程定义常量
 
 export default {
+  //数据字典定义常量   开始
   SYS_USER_SEX,
   SYS_SHOW_HIDE,
   SYS_NORMAL_DISABLE,
@@ -39,5 +50,12 @@ export default {
   SYS_COMMON_STATUS,
   BUS_LEAVE_TYPE,
   SYS_CHECK_STATUS,
-  TRANSPORT_TYPE
+  TRANSPORT_TYPE,
+  //数据字典定义常量   结束
+
+
+  //流程定义常量   开始
+  LEAVE_WORKFLOWID,
+  EXTRA_WORKFLOWID
+  //流程定义常量   结束
 }

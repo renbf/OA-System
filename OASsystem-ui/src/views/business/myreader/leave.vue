@@ -213,7 +213,6 @@
       return{
         // 选中数组
         ids: [],
-        checkStatus: '',
         departmentOption: [],
         leaveTypeOptions: [],
         statusOptions: [],
@@ -286,37 +285,36 @@
         this.ids = selection.map(item => item.leaveId);
         this.multiple = !selection.length;
       },
+      //审核通过
       approvePass(row){
-        const leaveIds = row.leaveId || this.ids;
-        this.checkStatus = '1';
-        this.$confirm(
-          "请确认是否审核通过",
-          {
-            dangerouslyUseHTMLString: true,
-            distinguishCancelAndClose: true,
-            confirmButtonText: "通过",
-            cancelButtonText: "返回列表",
-            type: "warning"
-          }
-        )
-          .then(() => {
-            this.approve(leaveIds,2,this.checkStatus).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("审核通过");
-                //this.reset();
-                this.getList();
-              }
-            })
-          })
-          .catch((e) => {
-            console.log(e)
-            //this.reset();
+        if(this.isNotEmpty(row.leaveId)){
+          this.ids.push(row.leaveId)
+        }
+        this.approveDo('1')
+      },
+      //审核拒绝
+      approveRefuse(row){
+        if(this.isNotEmpty(row.leaveId)){
+          this.ids.push(row.leaveId)
+        }
+        this.approveDo()
+      },
+
+      approveDo(checkStatus){
+        var para = {
+          billIds: this.ids,
+          workflowId: this.GLOBAL.LEAVE_WORKFLOWID,
+          checkStatus: checkStatus
+        }
+        this.approve(para).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("审核成功");
             this.getList();
-          });
+          }
+        })
       },
-      approveRefuse(data){
-        this.checkStatus = '0';
-      },
+
+
       goBack(){
         this.$router.push({ path:'/myreader/index'})
       },

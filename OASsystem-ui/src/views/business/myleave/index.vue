@@ -516,38 +516,6 @@ export default {
           size: "large",
           type: "info",
           description: "这里是审核内容,如未填写默认为'审核通过'"
-        },
-        {
-          content: "主管审批",
-          placement: "top",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          size: "large",
-          type: "info",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
-        },
-        {
-          content: "主管审批",
-          size: "large",
-          placement: "top",
-          type: "info",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
-        },
-        {
-          content: "主管审批",
-          size: "large",
-          placement: "top",
-          type: "info",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
-        },
-        {
-          content: "主管审批",
-          size: "large",
-          placement: "top",
-          type: "info",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
         }
       ],
       // 遮罩层
@@ -908,6 +876,27 @@ export default {
       this.ids = selection.map(item => item.leaveId);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
+
+
+      //查看流程节点信息
+      getBillTraceInfo(this.form).then(response => {
+        if (response.code === 200) {
+          this.activities = response.data;
+        } else {
+          this.msgError(response.msg);
+        }
+      });
+
+      // activities: [
+      //   {
+      //     content: "主管审批",
+      //     placement: "top",
+      //     timestamp: "丹尼尔（软件部)2020-05-22 ",
+      //     size: "large",
+      //     type: "success",
+      //     icon: "el-icon-check",
+      //     description: "这里是审核内容,如未填写默认为'审核通过'"
+
     },
     /** 新增按钮操作 */
     handleAdd() {
