@@ -8,6 +8,7 @@ import com.xhkj.common.exception.CustomException;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.project.system.domain.SysWorkflowGroup;
 import com.xhkj.project.system.domain.SysWorkflowNode;
+import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.domain.vo.SysWorkflowNodeVo;
 import com.xhkj.project.system.domain.vo.SysWorkflowStepVo;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,8 @@ import com.xhkj.framework.web.controller.BaseController;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.common.utils.poi.ExcelUtil;
 import com.xhkj.framework.web.page.TableDataInfo;
+
+import static com.xhkj.framework.web.domain.AjaxResult.CODE_TAG;
 
 /**
  * 流程定义Controller
@@ -303,4 +306,27 @@ public class SysWorkflowController extends BaseController
         AjaxResult ajaxResult = sysWorkflowService.getSysWorkflowNodes(workflowStepNodeId);
         return ajaxResult;
     }
+
+
+    /**
+     * 审批方法
+     * @return
+     */
+    @GetMapping("/approve/{billIds}/{workflowId}/{checkStatus}")
+    //
+    public AjaxResult approve(@PathVariable Long[] billIds,@PathVariable Long workflowId,@PathVariable String checkStatus)
+    {
+        AjaxResult ajaxResult = null;
+        WorkflowBillTrace workflowBillTrace = new WorkflowBillTrace();
+        workflowBillTrace.setWorkflowId(workflowId);
+        for (int i = 0; i < billIds.length; i++) {
+            Long billId = billIds[i];
+            workflowBillTrace.setBillId(billId);
+            workflowBillTrace.setCheckStatus(checkStatus);
+            ajaxResult = sysWorkflowService.submitToNextWorkflow(workflowBillTrace);
+        }
+
+        return ajaxResult;
+    }
+
 }

@@ -16,7 +16,7 @@
           icon="el-icon-check"
           size="mini"
           :disabled="multiple"
-          @click="pass"
+          @click="approvePass"
         >通过</el-button
         >
       </el-col>
@@ -24,8 +24,9 @@
         <el-button
           type="danger"
           icon="el-icon-close"
+          :disabled="multiple"
           size="mini"
-          @click="refuse"
+          @click="approveRefuse"
         >拒绝</el-button
         >
       </el-col>
@@ -35,7 +36,9 @@
         <export-import
           excel-title="我的审批列表"
           exp-function="json"
-          :set-export-data="setExportData"/>
+          :disabled="multiple"
+          :set-export-data="setExportData"
+        />
       </el-col>
     </el-row>
     <!-- seach栏-->
@@ -107,6 +110,7 @@
 
     <el-table
       class="tables"
+      @selection-change="handleSelectionChange"
       :data="tableData"
       style="width: 100%">
       <el-table-column
@@ -179,8 +183,8 @@
       >
         <template slot-scope="scope">
           <div v-if="scope.row.billStatus == 0 || scope.row.billStatus == 1">
-            <el-button size="mini" type="text" icon="el-icon-check" @click.stop="pass(scope.row)">通过</el-button>
-            <el-button size="mini" type="text" icon="el-icon-close" @click.stop="refuse(scope.row)">拒绝</el-button>
+            <el-button size="mini" type="text" icon="el-icon-check" @click.stop="approvePass(scope.row)">通过</el-button>
+            <el-button size="mini" type="text" icon="el-icon-close" @click.stop="approveRefuse(scope.row)">拒绝</el-button>
           </div>
         </template>
       </el-table-column>
@@ -207,9 +211,14 @@
     name: "page-leave",
     data(){
       return{
+        // 选中数组
+        ids: [],
+        checkStatus: '',
         departmentOption: [],
         leaveTypeOptions: [],
         statusOptions: [],
+        // 非多个禁用
+        multiple: true,
         // 总条数
         total: 0,
         // 查询参数
@@ -261,6 +270,9 @@
       });
     },
     methods:{
+      setExportData(){
+
+      },
       getList(){
         this.loading = true;
         approveList(this.queryParams).then(response => {
@@ -269,34 +281,41 @@
           this.loading = false;
         });
       },
-      pass(data){
+      // 多选框选中数据
+      handleSelectionChange(selection) {
+        this.ids = selection.map(item => item.leaveId);
+        this.multiple = !selection.length;
+      },
+      approvePass(row){
         const leaveIds = row.leaveId || this.ids;
+        this.checkStatus = '1';
         this.$confirm(
-          "请确认是否报送",
+          "请确认是否审核通过",
           {
             dangerouslyUseHTMLString: true,
             distinguishCancelAndClose: true,
-            confirmButtonText: "报送",
+            confirmButtonText: "通过",
             cancelButtonText: "返回列表",
             type: "warning"
           }
         )
           .then(() => {
-            leaveSumbit(leaveIds).then(response => {
+            this.approve(leaveIds,2,this.checkStatus).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("报送成功");
-                this.reset();
+                this.msgSuccess("审核通过");
+                //this.reset();
                 this.getList();
               }
             })
           })
-          .catch(() => {
-            this.reset();
+          .catch((e) => {
+            console.log(e)
+            //this.reset();
             this.getList();
           });
       },
-      refuse(data){
-
+      approveRefuse(data){
+        this.checkStatus = '0';
       },
       goBack(){
         this.$router.push({ path:'/myreader/index'})

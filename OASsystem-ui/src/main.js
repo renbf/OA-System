@@ -21,6 +21,7 @@ import exportImport from '@/components/customize/exportImport'
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { getDeptList } from "@/api/system/dept";
+import { approve } from "@/api/system/workflow";
 import {parseTime, resetForm, addDateRange, selectDictByType,selectDictLabelByType, selectDictLabel, handleTree,isNotEmpty} from "@/utils/common";
 
 import common from "@/utils/common";
@@ -32,6 +33,7 @@ Vue.prototype.GLOBAL = GLOBAL;
 Vue.prototype.storage = sessionStorage;
 
 // 全局方法挂载
+Vue.prototype.approve = approve;
 Vue.prototype.getDeptList = getDeptList;
 Vue.prototype.getDicts = getDicts;
 Vue.prototype.moment = moment;

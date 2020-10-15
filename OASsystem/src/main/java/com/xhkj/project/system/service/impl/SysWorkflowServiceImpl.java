@@ -772,7 +772,6 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                                 } catch (InvocationTargetException e) {
                                     e.printStackTrace();
                                 }
-                                return null;
                             }
                         }else{
                             //审核中
