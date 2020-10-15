@@ -5,7 +5,7 @@
       </div>
 
 
-      <el-card class="box-card">
+      <el-card class="box-card" style="height:300px;">
         <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
           <el-form  ref="form" :model="projectInfo" label-width="80px">
             <el-form-item label="部门" >
