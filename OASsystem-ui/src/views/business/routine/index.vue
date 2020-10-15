@@ -95,6 +95,8 @@
         >
       </el-form-item>
     </el-form>
+
+
     <el-table
       ref="multipleTable"
       v-loading="loading"
@@ -103,7 +105,7 @@
       @row-click="handleRowClick"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column
+      <el-table-columnd
         label="标题"
         prop="workTitle"
         :show-overflow-tooltip="true"
