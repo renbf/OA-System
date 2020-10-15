@@ -6,11 +6,13 @@ import java.util.List;
 import com.xhkj.common.constant.UserConstants;
 import com.xhkj.common.exception.CustomException;
 import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.common.utils.bean.BeanUtils;
 import com.xhkj.project.system.domain.SysWorkflowGroup;
 import com.xhkj.project.system.domain.SysWorkflowNode;
 import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.domain.vo.SysWorkflowNodeVo;
 import com.xhkj.project.system.domain.vo.SysWorkflowStepVo;
+import com.xhkj.project.system.domain.vo.WorkflowBillTraceVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -312,17 +314,18 @@ public class SysWorkflowController extends BaseController
      * 审批方法
      * @return
      */
-    @GetMapping("/approve/{billIds}/{workflowId}/{checkStatus}")
-    //
-    public AjaxResult approve(@PathVariable Long[] billIds,@PathVariable Long workflowId,@PathVariable String checkStatus)
+    @PostMapping("/approve")
+    public AjaxResult approve(@RequestBody WorkflowBillTraceVo workflowBillTraceVo)
     {
         AjaxResult ajaxResult = null;
+        Long[] billIds = workflowBillTraceVo.getBillIds();
+
         WorkflowBillTrace workflowBillTrace = new WorkflowBillTrace();
-        workflowBillTrace.setWorkflowId(workflowId);
+        BeanUtils.copyProperties(workflowBillTraceVo, workflowBillTrace);
+
         for (int i = 0; i < billIds.length; i++) {
             Long billId = billIds[i];
             workflowBillTrace.setBillId(billId);
-            workflowBillTrace.setCheckStatus(checkStatus);
             ajaxResult = sysWorkflowService.submitToNextWorkflow(workflowBillTrace);
         }
 

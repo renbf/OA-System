@@ -53,10 +53,11 @@ export function exportWorkflow(query) {
 }
 
 // 审批
-export function approve(billIds,workflowId,checkStatus) {
+export function approve(data) {
   return request({
-    url: '/system/workflow/approve/' + billIds + '/' + workflowId  + '/' +  checkStatus,
-    method: 'get',
+    url: '/system/workflow/approve',
+    method: 'post',
+    data: data
   })
 }
 

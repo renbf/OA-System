@@ -15,6 +15,7 @@
       <h3>进行中</h3>
     </el-row>
     <el-row class="doing" v-for="item in busiProjectUseList">
+
       <el-card class="box-card lf">
         <div slot="header" class="clearfix">
           <span><b>{{item.projectName}}</b></span>
