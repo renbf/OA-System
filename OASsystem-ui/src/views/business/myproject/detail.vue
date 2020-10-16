@@ -79,14 +79,14 @@
     <!--项目任务模块-->
     <!--项目任务模块-->
 
-    <div  style="margin-bottom: 10px">
-      <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
+    <div  style="margin-bottom: 10px;margin-top:45px;" >
+      <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
       <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
       </el-button>
       <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
-    <div v-if="model=='列表'">
+    <div v-if="model=='列表'" style="margin-top:20px;">
 
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
         <el-form-item label="任务时间">
