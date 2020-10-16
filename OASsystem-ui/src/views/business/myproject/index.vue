@@ -14,17 +14,18 @@
     <el-row >
       <h3>进行中</h3>
     </el-row>
-    <el-row class="doing" v-for="item in busiProjectUseList">
+    <el-row class="doing" v-for="(item,index) in finishList">
 
-      <el-card class="box-card lf">
+      <el-card class="box-card lf" :class="cards[index]">
         <div slot="header" class="clearfix">
-          <span><b>{{item.projectName}}</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject(item)"></el-button>
-          <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
+          <span><b>{{item.finishName}}</b></span>
+          <el-button icon="el-icon-delete" style="float: right;" circle v-if="index == 1"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.native="editproject(item)"></el-button>
+          <p>{{item.finishStartDate}}至{{item.finishEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail(item)">
-          <p>{{item.projectDesc}}</p>
-          <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
+          <p>{{item.finishDesc}}</p>
+          <p><span>总计项目任务:{{item.finishNums}}件</span><span>部门:{{item.finishNames}}</span></p>
           <el-progress :percentage="item.projectProgress"></el-progress>
         </div>
       </el-card>
@@ -145,7 +146,39 @@
       name: "index",
       data() {
         return {
-          // 穿梭框
+          cards:[
+            "card1",
+            "card2",
+            "card3",
+
+          ],
+          //完成
+          finishList:[{
+            finishName:"项目任务一",
+            finishStartDate:"2020-10-17",
+            finishEndDate:"2020-12-11",
+            finishDesc:"OA项目1",
+            finishNums:"99",
+            finishNames:"工程部，开发部"
+
+          },{
+            finishName:"项目任务二",
+            finishStartDate:"2020-10-17",
+            finishEndDate:"2020-12-11",
+            finishDesc:"OA项目3",
+            finishNums:"99",
+            finishNames:"工程部，开发部",
+
+
+          },{
+              finishName:"项目任务三",
+              finishStartDate:"2020-10-17",
+              finishEndDate:"2020-12-11",
+              finishDesc:"OA项目3",
+              finishNums:"99",
+              finishNames:"工程部，开发部"
+
+            }],
           // canyupeople: generateData(),
           addproject: '',
           addopen: false,
@@ -301,6 +334,10 @@
 </script>
 
   <style>
+    .card2{
+      background-color: rgba(242, 242, 242,0.5);
+      color:rgba(169, 169, 169,0.8);
+    }
    .myproject .doing,.myproject .end{
      width: 316px;
    }

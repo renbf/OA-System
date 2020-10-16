@@ -61,3 +61,12 @@ export function approve(data) {
   })
 }
 
+
+//根据流程ID查询流程审批记录
+export function getBillTraces(billId) {
+  return request({
+    url: '/system/workflow/getBillTraces/' + billId,
+    method: 'get'
+  })
+}
+

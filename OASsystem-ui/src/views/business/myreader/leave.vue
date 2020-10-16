@@ -112,6 +112,7 @@
       class="tables"
       @selection-change="handleSelectionChange"
       :data="tableData"
+      @row-click="handleRowClick"
       style="width: 100%">
       <el-table-column
         align="center"
@@ -183,13 +184,186 @@
       >
         <template slot-scope="scope">
           <div v-if="scope.row.billStatus == 0 || scope.row.billStatus == 1">
-            <el-button size="mini" type="text" icon="el-icon-check" @click.stop="approvePass(scope.row)">通过</el-button>
-            <el-button size="mini" type="text" icon="el-icon-close" @click.stop="approveRefuse(scope.row)">拒绝</el-button>
+            <el-button size="mini" type="text" @click.stop="handleRowClick(scope.row)">审批</el-button>
           </div>
         </template>
       </el-table-column>
 
     </el-table>
+
+    <el-dialog
+      :title="title"
+      :visible.sync="detail"
+      width="900px"
+      id="diadetail"
+    >
+      <el-col :span="10">
+        <el-timeline>
+          <el-timeline-item
+            v-for="(activity, index) in activities"
+            :key="index"
+            :icon="activity.icon"
+            :type="activity.type"
+            :color="activity.color"
+            :size="large"
+            :timestamp="activity.timestamp"
+          >
+            <p>{{ activity.workflowNodeName }}</p>
+            <p>{{ activity.checkRemarks }}</p>
+          </el-timeline-item>
+        </el-timeline>
+      </el-col>
+      <el-col :span="12">
+        <el-form ref="form" :model="form" label-width="80px">
+          <el-form-item label="部门" prop="deptId">
+            <el-select disabled placeholder="请选择" clearable v-model="form.deptId">
+              <el-option
+                v-for="(item, index) in departmentOption"
+                class="width_to"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+                disabled
+              ></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="在项目中" prop="inPrjFlag">
+            <el-radio-group v-model="form.inPrjFlag" disabled>
+              <el-radio
+                v-for="(dict,index) in yesOrNo"
+                :key="index"
+                :label="dict.dictValue"
+                :value="dict.dictValue"
+              >{{ dict.dictLabel }}</el-radio
+              >
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item
+            label="请假项目"
+            class="leave_after"
+            prop="leavePrjName"
+            v-show="form.inPrjFlag"
+          >
+            <el-select
+              v-model="form.leavePrjName"
+              placeholder="请选择"
+              clearable
+              :style="{ width: '100%' }"
+              disabled
+            >
+              <el-option
+                v-for="(item, index) in overtime_options"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="请假类型" class="leave_after" prop="leaveType">
+            <el-col :span="10">
+              <el-select
+                disabled
+                v-model="form.leaveType"
+                placeholder="请选择"
+                clearable
+                :style="{ width: '100%' }"
+              >
+                <el-option
+                  v-for="(item, index) in leaveTypeOptions"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                ></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="14" v-show="overtime_show">
+              <span class="over font_margin_top">加班:</span>
+              <input v-model="form.overtimeSurTime" readonly class="width" />
+              <span class="margin-right font_margin_top">{{workHourUnit}}</span>
+            </el-col>
+
+            <el-col :span="14" v-show="annual_leave_show">
+              <span class="font_margin_top">年休假时长:</span>
+              <input v-model="form.annLeaSurTime" readonly class="width" />
+              <span class="font_margin_top">天</span>
+            </el-col>
+          </el-form-item>
+
+          <el-form-item label="请假时间" prop="Leave_time" class="Leave_time">
+            <el-col
+              :span="20"
+              class="mar-bot"
+              v-for="(item, index) in form.dateRange"
+              :key="index"
+            >
+              <el-date-picker
+                disabled
+                v-model="item[0]"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd HH:mm"
+                format="yyyy-MM-dd HH:mm"
+                :default-time="['08:30:00', '12:00:00']"
+              >
+              </el-date-picker>
+            </el-col>
+          </el-form-item>
+
+          <el-row>
+            <el-col :span="15">
+              <el-form-item label="请假时长" prop="leaveHours">
+                <el-input disabled v-model="form.leaveHours"></el-input>
+                <span class="margin-right font_margin_top">{{form.leaveHoursUnit}}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-form-item label="理由陈述" prop="leaveReason">
+            <el-input
+              type="textarea"
+              placeholder="请输入"
+              disabled
+              v-model="form.leaveReason"
+            >
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="审核意见" prop="leaveReason">
+            <el-input
+              type="textarea"
+              placeholder="请输入"
+              v-model="checkRemarks"
+            >
+            </el-input>
+          </el-form-item>
+
+            <el-row :gutter="10" class="mb8">
+              <el-col :span="1.5">
+                <el-button
+                  type="success"
+                  icon="el-icon-check"
+                  size="mini"
+                  @click="approvePass(form.leaveId)"
+                >通过</el-button
+                >
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                  type="danger"
+                  icon="el-icon-close"
+                  size="mini"
+                  @click="approveRefuse(form.leaveId)"
+                >拒绝</el-button
+                >
+              </el-col>
+            </el-row>
+        </el-form>
+      </el-col>
+    </el-dialog>
 
     <pagination
       v-show="total > 0"
@@ -211,13 +385,21 @@
     name: "page-leave",
     data(){
       return{
+        detail: false,
         // 选中数组
         ids: [],
+        title: '',
+        yesOrNo: [],
+        activities: [],
         departmentOption: [],
         leaveTypeOptions: [],
         statusOptions: [],
         // 非多个禁用
         multiple: true,
+        checkRemarks: '',
+        workHourUnit: '',
+        annual_leave_show: false,
+        overtime_show: false,
         // 总条数
         total: 0,
         // 查询参数
@@ -229,7 +411,20 @@
           approvalDate: '',
           approvalStatus: ''
         },
-
+        form: {
+          leaveId:'',
+          inPrjFlag: true,
+          leaveType: '',
+          deptId: '',
+          leavePrjName: '',
+          leaveReason: '',
+          leaveHours: 0,
+          dateRange: [[]],
+          saveFlag: true,
+          overtimeSurTime: 0,
+          leaveHoursUnit: '',
+          annLeaSurTime: 0,
+        },
         //表格数据
         tableData: [{
           applyTime: '2016-05-02',
@@ -267,6 +462,10 @@
       this.getDeptList({parentId:'100'}).then(response => {
         response.data.forEach( (val) => this.departmentOption.push({'dictValue': val.deptId,'dictLabel': val.deptName}) )
       });
+      //系统是否
+      this.getDicts("sys_yes_no").then(response => {
+        response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
+      });
     },
     methods:{
       setExportData(){
@@ -285,26 +484,31 @@
         this.ids = selection.map(item => item.leaveId);
         this.multiple = !selection.length;
       },
-      //审核通过
-      approvePass(row){
-        if(this.isNotEmpty(row.leaveId)){
-          this.ids.push(row.leaveId)
+
+
+      approvePass(leaveId){
+        if(!this.isNotEmpty(this.ids)){
+          this.ids.push(leaveId)
         }
         this.approveDo('1')
+        this.detail=false;
       },
+
       //审核拒绝
-      approveRefuse(row){
-        if(this.isNotEmpty(row.leaveId)){
-          this.ids.push(row.leaveId)
+      approveRefuse(leaveId){
+        if(!this.isNotEmpty(this.ids)){
+          this.ids.push(leaveId)
         }
         this.approveDo()
+        this.detail=false;
       },
 
       approveDo(checkStatus){
         var para = {
           billIds: this.ids,
           workflowId: this.GLOBAL.LEAVE_WORKFLOWID,
-          checkStatus: checkStatus
+          checkStatus: checkStatus,
+          checkRemarks: this.checkRemarks
         }
         this.approve(para).then(response => {
           if (response.code === 200) {
@@ -314,7 +518,46 @@
         })
       },
 
+      handleRowClick(row) {
+        if(row.leaveId){
+          // 这里的弹框标题是动态获取
+          this.detail = true;
 
+          let name = row.orginHandler;
+          this.title = name + " / 请假申请查看";
+          this.form = row;
+          this.form.dateRange = eval(this.form.leaveDates)
+
+          this.overleaveHoursShow(this.form.leaveType);
+
+          //查看流程节点信息
+          this.getBillTraces(this.form.leaveId).then(response => {
+
+            if (response.code === 200) {
+              this.activities = response.data;
+              this.activities.forEach( e=>{
+                e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
+                e.type = 'success'
+                e.icon = "el-icon-check"
+                e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
+              })
+
+            } else {
+              this.msgError(response.msg);
+            }
+          });
+        }
+      },
+      //根据请假类型剩余时长展示
+      overleaveHoursShow(leaveType){
+        if(leaveType){
+          if (leaveType == 1) {
+            this.overtime_show = true;
+          }else if(leaveType == 4){
+            this.annual_leave_show = true;
+          }
+        }
+      },
       goBack(){
         this.$router.push({ path:'/myreader/index'})
       },
@@ -350,6 +593,9 @@
   }
   .el-pagination{
     float:right;
+  }
+  #diadetail .el-dialog__body {
+    height: 650px;
   }
 
 </style>

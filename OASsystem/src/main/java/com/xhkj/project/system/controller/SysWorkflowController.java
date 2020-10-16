@@ -13,6 +13,7 @@ import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.domain.vo.SysWorkflowNodeVo;
 import com.xhkj.project.system.domain.vo.SysWorkflowStepVo;
 import com.xhkj.project.system.domain.vo.WorkflowBillTraceVo;
+import com.xhkj.project.system.mapper.WorkflowBillTraceMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -47,6 +48,9 @@ public class SysWorkflowController extends BaseController
 {
     @Autowired
     private ISysWorkflowService sysWorkflowService;
+    @Autowired
+    private WorkflowBillTraceMapper workflowBillTraceMapper;
+
 
     /**
      * 新增流程名称
@@ -332,4 +336,10 @@ public class SysWorkflowController extends BaseController
         return ajaxResult;
     }
 
+
+    @GetMapping("/getBillTraces/{billiId}")
+    public AjaxResult getBillTraces(@PathVariable Long billiId)
+    {
+        return AjaxResult.success(workflowBillTraceMapper.getBillTraces(billiId));
+    }
 }

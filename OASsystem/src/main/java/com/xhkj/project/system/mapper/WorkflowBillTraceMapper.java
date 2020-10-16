@@ -1,7 +1,9 @@
 package com.xhkj.project.system.mapper;
 
 import com.xhkj.project.system.domain.WorkflowBillTrace;
-import java.util.List;	
+import com.xhkj.project.system.domain.vo.WorkflowBillTraceVo;
+
+import java.util.List;
 /**
  * 追踪审核单审批 数据层
  * 
@@ -66,4 +68,11 @@ public interface WorkflowBillTraceMapper
 	 */
 	public int insertWorkflowBillTraceBatch(List<WorkflowBillTrace> list);
 	//以上自动生成的尽量别动
+
+
+	/**
+	 * 获取流程审批信息
+	 * @return
+	 */
+	public List<WorkflowBillTraceVo> getBillTraces(Long billiId);
 }

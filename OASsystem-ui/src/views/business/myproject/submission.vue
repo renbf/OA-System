@@ -91,8 +91,21 @@
     <el-button type="primary" @click="dialog2 = false">确 定</el-button>
   </span>
     </el-dialog>
+<!--table弹框三层-->
+    <!--table弹框三层-->
+    <!--table弹框三层-->
 
-
+    <el-dialog
+      title="提示"
+      :visible.sync="submissionopen"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="submissionopen = false">取 消</el-button>
+    <el-button type="primary" @click="submissionopen = false">确 定</el-button>
+  </span>
+    </el-dialog>
     <!-- seach栏-->
 
     <div class="seach" >
@@ -125,7 +138,8 @@
     </div>
 
     <el-table
-      class="tables"
+         @row-click="submissionClick"
+
       :data="tableData"
       style="width: 100%">
       <el-table-column
@@ -196,6 +210,7 @@
     name: "page-little",
     data(){
       return{
+        submissionopen:"false",
 
 
         // 审批人
@@ -362,6 +377,9 @@
     },
 
     methods:{
+      submissionClick(){
+        this.submissionopen=true;
+      },
       //添加批注人
 
       goBack(){
