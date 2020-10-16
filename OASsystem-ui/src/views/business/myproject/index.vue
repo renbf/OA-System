@@ -19,7 +19,8 @@
       <el-card class="box-card lf" :class="cards[index]">
         <div slot="header" class="clearfix">
           <span><b>{{item.finishName}}</b></span>
-          <el-button icon="el-icon-setting" style="float: right;" circle @click.native="editproject(item)"></el-button>
+          <el-button icon="el-icon-delete" style="float: right;" circle v-if="index == 1"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.native="editproject(item)"></el-button>
           <p>{{item.finishStartDate}}至{{item.finishEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail(item)">
@@ -335,7 +336,7 @@
   <style>
     .card2{
       background-color: rgba(242, 242, 242,0.5);
-      color:rgba(169, 169, 169,0.8)
+      color:rgba(169, 169, 169,0.8);
     }
    .myproject .doing,.myproject .end{
      width: 316px;
