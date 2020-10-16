@@ -195,8 +195,9 @@
             <span v-show="scope.row.timeprogress > 0">{{scope.row.timeprogress}}%</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="任务状态"
+          label="状态"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -204,10 +205,12 @@
             <span v-show="scope.row.taskStatus == 1">完成</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="状态"
+          label="任务状态"
           :show-overflow-tooltip="true"
         >
+
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.status"
@@ -217,6 +220,7 @@
             </el-switch>
           </template>
         </el-table-column>
+
         <el-table-column
           label="操作"
           align="center"
@@ -360,7 +364,6 @@
             v-model="textarea2">
           </el-input>
         </el-form-item>
-
         <el-form-item>
 
           <el-collapse >
