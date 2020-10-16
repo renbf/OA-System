@@ -40,9 +40,9 @@ public class BusiTaskVo extends BaseEntity
 	/** 是否启用（0否 1是） */
 	private String status;
 	/** 任务进度（0进行中 100完成） */
-	private String taskProgress;
+	private Integer taskProgress;
 	/** 时间进度 */
-	private String timeProgress;
+	private Integer timeProgress;
 	/** 任务状态（0进行中 1完成） */
 	private String taskStatus;
 	/** 关闭原因 */
@@ -152,21 +152,21 @@ public class BusiTaskVo extends BaseEntity
 	{
 		return status;
 	}
-	public void setTaskProgress(String taskProgress)
+	public void setTaskProgress(Integer taskProgress)
 	{
 		this.taskProgress = taskProgress;
 	}
 
-	public String getTaskProgress()
+	public Integer getTaskProgress()
 	{
 		return taskProgress;
 	}
-	public void setTimeProgress(String timeProgress)
+	public void setTimeProgress(Integer timeProgress)
 	{
 		this.timeProgress = timeProgress;
 	}
 
-	public String getTimeProgress()
+	public Integer getTimeProgress()
 	{
 		return timeProgress;
 	}

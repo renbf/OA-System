@@ -41,8 +41,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskEndDate != null "> and t.task_end_date = #{taskEndDate}</if>
             <if test="taskDesc != null  and taskDesc != '' "> and t.task_desc = #{taskDesc}</if>
             <if test="status != null  and status != '' "> and t.status = #{status}</if>
-            <if test="taskProgress != null  and taskProgress != '' "> and t.task_progress = #{taskProgress}</if>
-            <if test="timeProgress != null  and timeProgress != '' "> and t.time_progress = #{timeProgress}</if>
+            <if test="taskProgress != null "> and t.task_progress = #{taskProgress}</if>
+            <if test="timeProgress != null "> and t.time_progress = #{timeProgress}</if>
             <if test="taskStatus != null  and taskStatus != '' "> and t.task_status = #{taskStatus}</if>
             <if test="closeReason != null  and closeReason != '' "> and t.close_reason = #{closeReason}</if>
             <if test="sortOrder != null "> and t.sort_order = #{sortOrder}</if>
@@ -70,8 +70,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskEndDate != null  ">task_end_date,</if>
             <if test="taskDesc != null  and taskDesc != ''  ">task_desc,</if>
             <if test="status != null  and status != ''  ">status,</if>
-            <if test="taskProgress != null  and taskProgress != ''  ">task_progress,</if>
-            <if test="timeProgress != null  and timeProgress != ''  ">time_progress,</if>
+            <if test="taskProgress != null  ">task_progress,</if>
+            <if test="timeProgress != null  ">time_progress,</if>
             <if test="taskStatus != null  and taskStatus != ''  ">task_status,</if>
             <if test="closeReason != null  and closeReason != ''  ">close_reason,</if>
             <if test="sortOrder != null  ">sort_order,</if>
@@ -89,8 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskEndDate != null  ">#{taskEndDate},</if>
             <if test="taskDesc != null  and taskDesc != ''  ">#{taskDesc},</if>
             <if test="status != null  and status != ''  ">#{status},</if>
-            <if test="taskProgress != null  and taskProgress != ''  ">#{taskProgress},</if>
-            <if test="timeProgress != null  and timeProgress != ''  ">#{timeProgress},</if>
+            <if test="taskProgress != null  ">#{taskProgress},</if>
+            <if test="timeProgress != null  ">#{timeProgress},</if>
             <if test="taskStatus != null  and taskStatus != ''  ">#{taskStatus},</if>
             <if test="closeReason != null  and closeReason != ''  ">#{closeReason},</if>
             <if test="sortOrder != null  ">#{sortOrder},</if>
@@ -112,8 +112,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskEndDate != null  ">task_end_date = #{taskEndDate},</if>
             <if test="taskDesc != null  and taskDesc != ''  ">task_desc = #{taskDesc},</if>
             <if test="status != null  and status != ''  ">status = #{status},</if>
-            <if test="taskProgress != null  and taskProgress != ''  ">task_progress = #{taskProgress},</if>
-            <if test="timeProgress != null  and timeProgress != ''  ">time_progress = #{timeProgress},</if>
+            <if test="taskProgress != null  ">task_progress = #{taskProgress},</if>
+            <if test="timeProgress != null  ">time_progress = #{timeProgress},</if>
             <if test="taskStatus != null  and taskStatus != ''  ">task_status = #{taskStatus},</if>
             <if test="closeReason != null  and closeReason != ''  ">close_reason = #{closeReason},</if>
             <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>

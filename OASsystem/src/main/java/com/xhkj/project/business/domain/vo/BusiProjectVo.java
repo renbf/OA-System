@@ -34,10 +34,12 @@ public class BusiProjectVo extends BaseEntity
 	private String projectDesc;
 	/** 是否启用（0否 1是） */
 	private String status;
-	/** 项目进度（0进行中 1完成） */
-	private String projectProgress;
+	/** 项目进度（0进行中 100完成） */
+	private Integer projectProgress;
 	/** 是否删除（0否 1是） */
 	private String deleteFlag;
+	/** 关闭原因 */
+	private String closeReason;
 	/** 排序字段 */
 	private Integer sortOrder;
 	//以上自动生成的尽量别动
@@ -45,10 +47,38 @@ public class BusiProjectVo extends BaseEntity
 	private String deptNames;
 	/** 成员id */
 	private Long memberId;
-	/** 任务个数 */
+	/** 任务总个数 */
 	private Integer taskNums;
 	/** 项目成员 */
 	private List<BusiProjectMember> busiProjectMembers;
+	/** 完成的任务数 */
+	private Integer finishNums;
+	/** 时间进度 */
+	private Integer timeProgress;
+
+	public String getCloseReason() {
+		return closeReason;
+	}
+
+	public void setCloseReason(String closeReason) {
+		this.closeReason = closeReason;
+	}
+
+	public Integer getFinishNums() {
+		return finishNums;
+	}
+
+	public void setFinishNums(Integer finishNums) {
+		this.finishNums = finishNums;
+	}
+
+	public Integer getTimeProgress() {
+		return timeProgress;
+	}
+
+	public void setTimeProgress(Integer timeProgress) {
+		this.timeProgress = timeProgress;
+	}
 
 	public Integer getTaskNums() {
 		return taskNums;
@@ -138,12 +168,12 @@ public class BusiProjectVo extends BaseEntity
 	{
 		return status;
 	}
-	public void setProjectProgress(String projectProgress)
+	public void setProjectProgress(Integer projectProgress)
 	{
 		this.projectProgress = projectProgress;
 	}
 
-	public String getProjectProgress()
+	public Integer getProjectProgress()
 	{
 		return projectProgress;
 	}

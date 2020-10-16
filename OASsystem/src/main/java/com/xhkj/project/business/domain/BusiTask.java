@@ -29,19 +29,19 @@ public class BusiTask extends BaseEntity
 	/** 项目ID */
 	private Long projectId;
 	/** 任务开始日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date taskStartDate;
 	/** 任务结束日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date taskEndDate;
 	/** 任务描述 */
 	private String taskDesc;
 	/** 是否启用（0否 1是） */
 	private String status;
 	/** 任务进度（0进行中 100完成） */
-	private String taskProgress;
+	private Integer taskProgress;
 	/** 时间进度 */
-	private String timeProgress;
+	private Integer timeProgress;
 	/** 任务状态（0进行中 1完成） */
 	private String taskStatus;
 	/** 关闭原因 */
@@ -141,24 +141,23 @@ public class BusiTask extends BaseEntity
 	{
 		return status;
 	}
-	public void setTaskProgress(String taskProgress)
-	{
+
+	public Integer getTaskProgress() {
+		return taskProgress;
+	}
+
+	public void setTaskProgress(Integer taskProgress) {
 		this.taskProgress = taskProgress;
 	}
 
-	public String getTaskProgress()
-	{
-		return taskProgress;
+	public Integer getTimeProgress() {
+		return timeProgress;
 	}
-	public void setTimeProgress(String timeProgress)
-	{
+
+	public void setTimeProgress(Integer timeProgress) {
 		this.timeProgress = timeProgress;
 	}
 
-	public String getTimeProgress()
-	{
-		return timeProgress;
-	}
 	public void setTaskStatus(String taskStatus)
 	{
 		this.taskStatus = taskStatus;

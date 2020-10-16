@@ -4,9 +4,9 @@
       <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
-        <el-button icon=" el-icon-switch-button" circle></el-button>
+        <el-button icon=" el-icon-switch-button" circle  @click="dialogVisible = true" ></el-button>
 
-        <el-button icon="el-icon-delete" circle></el-button>
+        <el-button icon="el-icon-delete" circle ></el-button>
         <el-switch
           v-model="projectInfo.status"
           active-color="#999999"
@@ -54,7 +54,7 @@
 
 
           <div style="width: 15%;float:left;padding:0 20px;position: relative">
-            <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
+            <svg-bar :value="projectInfo.projectProgress" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
             <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
             <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
                 <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
@@ -62,7 +62,7 @@
                     <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
                     <span>任务进度</span>
                   </p>
-                  <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
+                  <p style="margin-top: 0"><b style="font-size: 25px;">{{projectInfo.projectProgress}}%</b></p>
                 </div>
                 <div class="lf" style="width:50%;height: 100%;text-align: center">
                   <p style="margin-top: 60%;margin-bottom:0">
@@ -79,14 +79,14 @@
     <!--项目任务模块-->
     <!--项目任务模块-->
 
-    <div  style="margin-bottom: 10px">
-      <span style="font-size:18px;font-weight: bold;margin-right:10px;">项目任务</span>
+    <div  style="margin-bottom: 10px;margin-top:45px;" >
+      <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
       <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
       </el-button>
       <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
-    <div v-if="model=='列表'">
+    <div v-if="model=='列表'" style="margin-top:20px;">
 
       <el-form :modal="queryParams" ref="queryForm" :inline="true">
         <el-form-item label="任务时间">
@@ -135,47 +135,47 @@
       <el-table
         ref="multipleTable"
         v-loading="loading"
-        :data="taskList"
+        :data="dataList"
         @selection-change="handleSelectionChange"
         @row-click="handleRowClick"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="编号"
-          prop="taskNumber"
+          prop="number"
           :show-overflow-tooltip="true"
           style="width:20px;"
         />
         <el-table-column
           label="标题"
-          prop="taskName"
+          prop="title"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务内容"
-          prop="taskDesc"
+          prop="content"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="更新日期"
-          prop="updateTime"
+          prop="updata"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="参与人"
           :show-overflow-tooltip="true"
         ><template slot-scope="scope">
-          {{scope.row.memberNums}}人
+          {{scope.row.joinpeople}}
         </template>
         </el-table-column>
         <el-table-column
           label="开始时间"
-          prop="taskStartDate"
+          prop="begintime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="结束时间"
-          prop="taskEndDate"
+          prop="endtime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
@@ -183,7 +183,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.taskProgress}}%
+            {{scope.row.progress}}%
           </template>
         </el-table-column>
         <el-table-column
@@ -191,11 +191,13 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.timeProgress}}%
+            <span v-show="scope.row.timeprogress <= 0">0%</span>
+            <span v-show="scope.row.timeprogress > 0">{{scope.row.timeprogress}}%</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="任务状态"
+          label="状态"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -203,10 +205,12 @@
             <span v-show="scope.row.taskStatus == 1">完成</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="状态"
+          label="任务状态"
           :show-overflow-tooltip="true"
         >
+
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.status"
@@ -216,6 +220,7 @@
             </el-switch>
           </template>
         </el-table-column>
+
         <el-table-column
           label="操作"
           align="center"
@@ -235,6 +240,18 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination
+          style="float:right;margin-top:30px;margin-bottom:80px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage4"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="400">
+        </el-pagination>
+      </div>
     </div>
     <div v-if="model=='时间'">
 <!--        项目进度甘特图-->
@@ -325,6 +342,53 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
+
+
+<!--关闭按钮模块-->
+
+    <el-dialog
+      title="关闭项目"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <el-divider></el-divider>
+      <el-form>
+        <el-form-item>
+          关闭原因
+
+          <el-input
+            style="width:400px;margin-left:20px; vertical-align:text-top;display:inline-block;height:100px;"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入至少20字的原因描述"
+            v-model="textarea2">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+
+          <el-collapse >
+            <el-collapse-item title=" 关闭注意事项" name="1">
+              <div>
+                1、当执行关闭操作后，项目将自动默认完成所有任务，并不可在进行修改和编辑。
+              </div>
+              <div>
+                2、关闭操作完成后将不可逆转。
+              </div>
+              <div>3、关闭后参与人将不能再进行项目的编辑操作。</div>
+
+            </el-collapse-item>
+          </el-collapse>
+        </el-form-item>
+
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
+
 
 
 <!--项目任务模块-->
@@ -438,10 +502,44 @@
     },
     data() {
       return {
+        dialogVisible: false,
+        //关闭原因
+        textarea2: '',
+        //关闭按钮布尔类型控制
+
         addproject: "",
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
+        //新建编辑项目任务table数据
+        dataList: [
+          {
+            number: '#01',
+            title: '报销数据库设计',
+            content: '报销数据库设计整体设计',
+            updata: '2020-07-01',
+            joinpeople: '12人',
+            begintime: '2020-07-01',
+            endtime: '2020-07-02',
+            progress: '30',
+            timeprogress: '50%',
+            taskstatus: '正常',
+            status: '报送'
+          },
+          {
+            number: '#01',
+            title: '报销数据库设计',
+            content: '报销数据库设计整体设计',
+            updata: '2020-07-01',
+            joinpeople: '12人',
+            begintime: '2020-07-01',
+            endtime: '2020-07-02',
+            progress: '30',
+            timeprogress: '50%',
+            taskstatus: '正常',
+            status: '报送'
+          },
+        ],
         addform: {
           projectName: '',
           leaderId:undefined,
@@ -470,6 +568,7 @@
         deptMemberList: [],
         header1: '',
         taskform:{
+          taskId:undefined,
           taskName:'',
           taskNumber:undefined,
           taskDate: '',
@@ -492,14 +591,14 @@
         loading: false,
         model: '列表',
         activeNames: ['1'],
-        projectprocess: '30',
-        timeprocess: '60',
+        projectprocess: '',
+        timeprocess: '',
         statusOptions: [],
         queryParams: {
           taskDates: '',
           taskStatus: '',
           page:1,
-          limit:2
+          limit:10
         },
         status: [
           {
@@ -565,6 +664,7 @@
       },
     },
     methods: {
+      //关闭按钮
       //计数器控件数据
       handleChange(value){
         console.log(value);
@@ -585,6 +685,11 @@
             _this.projectInfo = response.data;
             _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
             _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
+            //任务时间进度
+            _this.timeprocess = _this.projectInfo.timeProgress;
+            if(_this.timeprocess < 0){
+              _this.timeprocess = 0;
+            }
             let busiProjectMembers= _this.projectInfo.busiProjectMembers;
             _this.getDeptMemberList(busiProjectMembers);
           }
@@ -817,6 +922,9 @@
 </script>
 
 <style>
+  element.style{
+    height: 300px !important;
+  }
   .div1{
     width: 360px;
     height: 30px;

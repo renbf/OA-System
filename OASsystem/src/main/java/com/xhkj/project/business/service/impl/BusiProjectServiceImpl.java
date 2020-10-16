@@ -105,7 +105,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			List<Date> projectDate = busiProject.getProjectDate();
 			busiProject.setProjectStartDate(projectDate.get(0));
 			busiProject.setProjectEndDate(projectDate.get(1));
-			busiProject.setProjectProgress("0");
+			busiProject.setProjectProgress(0);
 			busiProject.setDeleteFlag("0");
 			busiProject.setCreateBy(username);
 			busiProject.setCreateTime(now);
@@ -263,8 +263,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			List<Date> taskDate = busiTask.getTaskDate();
 			busiTask.setTaskStartDate(taskDate.get(0));
 			busiTask.setTaskEndDate(taskDate.get(1));
-			busiTask.setTaskProgress("0");
-            busiTask.setTimeProgress("0");
+			busiTask.setTaskProgress(0);
+            busiTask.setTimeProgress(0);
             busiTask.setTaskStatus("0");
 			busiTask.setCreateBy(username);
 			busiTask.setCreateTime(now);
