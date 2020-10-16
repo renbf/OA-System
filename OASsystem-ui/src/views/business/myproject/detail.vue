@@ -4,9 +4,9 @@
       <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
-        <el-button icon=" el-icon-switch-button" circle @click="closebt = true"></el-button>
+        <el-button icon=" el-icon-switch-button" circle  @click="dialogVisible = true" ></el-button>
 
-        <el-button icon="el-icon-delete" circle></el-button>
+        <el-button icon="el-icon-delete" circle ></el-button>
         <el-switch
           v-model="projectInfo.status"
           active-color="#999999"
@@ -330,52 +330,50 @@
 
 <!--关闭按钮模块-->
 
-
-
     <el-dialog
       title="关闭项目"
-      :visible.sync="closebt"
+      :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
-      <div style="margin-top:-40px;">
-        <el-divider></el-divider></div>
-
-     <el-form>
-       <el-form-item>
+      <el-divider></el-divider>
+      <el-form>
+        <el-form-item>
           关闭原因
 
-         <el-input
-           style="width:400px;margin-left:20px; vertical-align:text-top;display:inline-block;height:100px;"
-           type="textarea"
-           :autosize="{ minRows: 2, maxRows: 4}"
-           placeholder="请输入至少20字的原因描述"
-           v-model="textarea2">
-         </el-input>
-       </el-form-item>
-       <el-divider></el-divider>
-       <el-form-item>
+          <el-input
+            style="width:400px;margin-left:20px; vertical-align:text-top;display:inline-block;height:100px;"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入至少20字的原因描述"
+            v-model="textarea2">
+          </el-input>
+        </el-form-item>
+        <el-divider></el-divider>
+        <el-form-item>
 
-         <el-collapse >
-           <el-collapse-item title=" 关闭注意事项" name="1">
-             <div>
-               1、当执行关闭操作后，项目将自动默认完成所有任务，并不可在进行修改和编辑。
-             </div>
-             <div>
-               2、关闭操作完成后将不可逆转。
-             </div>
-             <div>3、关闭后参与人将不能再进行项目的编辑操作。</div>
+          <el-collapse >
+            <el-collapse-item title=" 关闭注意事项" name="1">
+              <div>
+                1、当执行关闭操作后，项目将自动默认完成所有任务，并不可在进行修改和编辑。
+              </div>
+              <div>
+                2、关闭操作完成后将不可逆转。
+              </div>
+              <div>3、关闭后参与人将不能再进行项目的编辑操作。</div>
 
-           </el-collapse-item>
-         </el-collapse>
-       </el-form-item>
+            </el-collapse-item>
+          </el-collapse>
+        </el-form-item>
 
 
-     </el-form>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="closebt = false">取 消</el-button>
-    <el-button type="primary" @click="closebt= false">确 定</el-button>
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
   </span>
     </el-dialog>
+
+
 
 
 <!--项目任务模块-->
@@ -489,7 +487,7 @@
     },
     data() {
       return {
-        closebt:"false",
+        dialogVisible: false,
         //关闭原因
         textarea2: '',
         //关闭按钮布尔类型控制
@@ -623,7 +621,6 @@
     },
     methods: {
       //关闭按钮
-
       //计数器控件数据
       handleChange(value){
         console.log(value);
