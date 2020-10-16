@@ -356,11 +356,11 @@
             :icon="activity.icon"
             :type="activity.type"
             :color="activity.color"
-            :size="activity.size"
+            :size="large"
             :timestamp="activity.timestamp"
           >
-            <p>{{ activity.content }}</p>
-            <p>{{ activity.description }}</p>
+            <p>{{ activity.workflowNodeName }}</p>
+            <p>{{ activity.checkRemarks }}</p>
           </el-timeline-item>
         </el-timeline>
       </el-col>
@@ -485,6 +485,7 @@
         </el-form>
       </el-col>
     </el-dialog>
+
   </div>
 </template>
 
@@ -499,25 +500,8 @@ export default {
   name: "leave",
   data() {
     return {
-      activities: [
-        {
-          content: "主管审批",
-          placement: "top",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          size: "large",
-          type: "success",
-          icon: "el-icon-check",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
-        },
-        {
-          content: "主管审批",
-          placement: "top",
-          timestamp: "丹尼尔（软件部)2020-05-22 ",
-          size: "large",
-          type: "info",
-          description: "这里是审核内容,如未填写默认为'审核通过'"
-        }
-      ],
+      leaveForm: {},
+      activities: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -826,6 +810,22 @@ export default {
 
         this.overleaveHoursShow(this.form.leaveType);
 
+        //查看流程节点信息
+        this.getBillTraces(this.form.leaveId).then(response => {
+
+          if (response.code === 200) {
+            this.activities = response.data;
+            this.activities.forEach( e=>{
+              e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
+              e.type = 'success'
+              e.icon = "el-icon-check"
+              e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
+            })
+
+          } else {
+            this.msgError(response.msg);
+          }
+        });
       }
     },
 
@@ -876,27 +876,6 @@ export default {
       this.ids = selection.map(item => item.leaveId);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
-
-
-      //查看流程节点信息
-      getBillTraceInfo(this.form).then(response => {
-        if (response.code === 200) {
-          this.activities = response.data;
-        } else {
-          this.msgError(response.msg);
-        }
-      });
-
-      // activities: [
-      //   {
-      //     content: "主管审批",
-      //     placement: "top",
-      //     timestamp: "丹尼尔（软件部)2020-05-22 ",
-      //     size: "large",
-      //     type: "success",
-      //     icon: "el-icon-check",
-      //     description: "这里是审核内容,如未填写默认为'审核通过'"
-
     },
     /** 新增按钮操作 */
     handleAdd() {

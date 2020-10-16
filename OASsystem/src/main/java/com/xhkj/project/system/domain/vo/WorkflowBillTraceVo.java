@@ -46,14 +46,20 @@ public class WorkflowBillTraceVo extends BaseEntity
     private String checkRemarks;
     /** 附件路径 */
     private String checkAttachmentPath;
-    /** 审核人的用户ID = 创建者的用户ID */
-    private String createBy;
-    /** 创建时间=插入时间,保存到数据库中的时间 */
-    private Date createTime;
     //以上自动生成的尽量别动
 
     //批量审批流程id
     private Long[] billIds;
+    //审批步骤名称
+    private String workflowNodeName;
+
+    public String getWorkflowNodeName() {
+        return workflowNodeName;
+    }
+
+    public void setWorkflowNodeName(String workflowNodeName) {
+        this.workflowNodeName = workflowNodeName;
+    }
 
     public Long[] getBillIds() {
         return billIds;
@@ -197,24 +203,6 @@ public class WorkflowBillTraceVo extends BaseEntity
     public String getCheckAttachmentPath()
     {
         return checkAttachmentPath;
-    }
-    public void setCreateBy(String createBy)
-    {
-        this.createBy = createBy;
-    }
-
-    public String getCreateBy()
-    {
-        return createBy;
-    }
-    public void setCreateTime(Date createTime)
-    {
-        this.createTime = createTime;
-    }
-
-    public Date getCreateTime()
-    {
-        return createTime;
     }
 
     public String toString() {

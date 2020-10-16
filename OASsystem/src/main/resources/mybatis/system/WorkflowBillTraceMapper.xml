@@ -139,5 +139,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+
+    <select id="getBillTraces" resultType="com.xhkj.project.system.domain.vo.WorkflowBillTraceVo">
+        select bt.check_id, bt.bill_id, bt.workflow_id, bt.workflow_name, bt.workflow_group_id,
+        bt.workflow_step_id, bt.workflow_step_node_id, bt.workflow_node_id, bt.checker_user_id,
+        su.nick_name as checker_user_name , bt.checker_dept_name, bt.checker_user_post, bt.check_status,
+        bt.check_remarks, bt.check_attachment_path, bt.create_by, bt.create_time
+        ,swnc.workflow_node_name as workflowNodeName
+        from workflow_bill_trace bt
+        left join sys_workflow_node_checker swnc on swnc.workflow_node_id = bt.workflow_node_id
+        left join sys_user su on su.user_name = bt.checker_user_name
+        where bt.bill_id = #{billId}
+    </select>
 </mapper>

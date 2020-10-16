@@ -52,6 +52,15 @@ public class WorkflowBillTrace extends BaseEntity
     /** 创建时间=插入时间,保存到数据库中的时间 */
     private Date createTime;
     //以上自动生成的尽量别动
+
+
+    public WorkflowBillTrace() {
+    }
+
+    public WorkflowBillTrace(Long billId) {
+        this.billId = billId;
+    }
+
     public void setCheckId(Long checkId)
     {
         this.checkId = checkId;

@@ -757,7 +757,7 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                             billStatus = "99";
                             workflowBillUp.setWorkflowStepId(workflowBill.getWorkflowStepId());
                             workflowBillUp.setWorkflowStepNodeId(workflowBill.getWorkflowStepNodeId());
-                            workflowBillUp.setWorkflowNodeId(workflowBill.getWorkflowNodeId());
+                            workflowBillUp.setWorkflowNodeId(-1l);
 
 
                             String classNamePass = workflowBill.getClassName();
