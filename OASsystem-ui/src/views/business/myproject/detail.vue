@@ -135,47 +135,47 @@
       <el-table
         ref="multipleTable"
         v-loading="loading"
-        :data="taskList"
+        :data="dataList"
         @selection-change="handleSelectionChange"
         @row-click="handleRowClick"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="编号"
-          prop="taskNumber"
+          prop="number"
           :show-overflow-tooltip="true"
           style="width:20px;"
         />
         <el-table-column
           label="标题"
-          prop="taskName"
+          prop="title"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务内容"
-          prop="taskDesc"
+          prop="content"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="更新日期"
-          prop="updateTime"
+          prop="updata"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="参与人"
           :show-overflow-tooltip="true"
         ><template slot-scope="scope">
-          {{scope.row.memberNums}}人
+          {{scope.row.joinpeople}}
         </template>
         </el-table-column>
         <el-table-column
           label="开始时间"
-          prop="taskStartDate"
+          prop="begintime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="结束时间"
-          prop="taskEndDate"
+          prop="endtime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
@@ -183,7 +183,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.taskProgress}}%
+            {{scope.row.progress}}%
           </template>
         </el-table-column>
         <el-table-column
@@ -191,8 +191,8 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span v-show="scope.row.timeProgress <= 0">0%</span>
-            <span v-show="scope.row.timeProgress > 0">{{scope.row.timeProgress}}%</span>
+            <span v-show="scope.row.timeprogress <= 0">0%</span>
+            <span v-show="scope.row.timeprogress > 0">{{scope.row.timeprogress}}%</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -236,6 +236,18 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination
+          style="float:right;margin-top:30px;margin-bottom:80px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage4"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="400">
+        </el-pagination>
+      </div>
     </div>
     <div v-if="model=='时间'">
 <!--        项目进度甘特图-->
@@ -348,7 +360,7 @@
             v-model="textarea2">
           </el-input>
         </el-form-item>
-        <el-divider></el-divider>
+
         <el-form-item>
 
           <el-collapse >
@@ -496,6 +508,35 @@
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
+        //新建编辑项目任务table数据
+        dataList: [
+          {
+            number: '#01',
+            title: '报销数据库设计',
+            content: '报销数据库设计整体设计',
+            updata: '2020-07-01',
+            joinpeople: '12人',
+            begintime: '2020-07-01',
+            endtime: '2020-07-02',
+            progress: '30',
+            timeprogress: '50%',
+            taskstatus: '正常',
+            status: '报送'
+          },
+          {
+            number: '#01',
+            title: '报销数据库设计',
+            content: '报销数据库设计整体设计',
+            updata: '2020-07-01',
+            joinpeople: '12人',
+            begintime: '2020-07-01',
+            endtime: '2020-07-02',
+            progress: '30',
+            timeprogress: '50%',
+            taskstatus: '正常',
+            status: '报送'
+          },
+        ],
         addform: {
           projectName: '',
           leaderId:undefined,
