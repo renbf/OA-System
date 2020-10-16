@@ -137,47 +137,47 @@
       <el-table
         ref="multipleTable"
         v-loading="loading"
-        :data="dataList"
+        :data="taskList"
         @selection-change="handleSelectionChange"
         @row-click="handleRowClick"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="编号"
-          prop="number"
+          prop="taskNumber"
           :show-overflow-tooltip="true"
           style="width:20px;"
         />
         <el-table-column
           label="标题"
-          prop="title"
+          prop="taskName"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务内容"
-          prop="content"
+          prop="taskDesc"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="更新日期"
-          prop="updata"
+          prop="updateTime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="参与人"
           :show-overflow-tooltip="true"
         ><template slot-scope="scope">
-          {{scope.row.joinpeople}}
+          {{scope.row.memberNums}}人
         </template>
         </el-table-column>
         <el-table-column
           label="开始时间"
-          prop="begintime"
+          prop="taskStartDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="结束时间"
-          prop="endtime"
+          prop="taskEndDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
@@ -185,7 +185,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.progress}}%
+            {{scope.row.taskProgress}}%
           </template>
         </el-table-column>
         <el-table-column
@@ -193,13 +193,12 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span v-show="scope.row.timeprogress <= 0">0%</span>
-            <span v-show="scope.row.timeprogress > 0">{{scope.row.timeprogress}}%</span>
+            <span v-show="scope.row.timeProgress <= 0">0%</span>
+            <span v-show="scope.row.timeProgress > 0">{{scope.row.timeProgress}}%</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="状态"
+          label="任务状态"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -515,34 +514,6 @@
         add3: false,
         projectId:this.$route.query.projectId,
         //新建编辑项目任务table数据
-        dataList: [
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            progress: '30',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            progress: '30',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-        ],
         addform: {
           projectName: '',
           leaderId:undefined,
