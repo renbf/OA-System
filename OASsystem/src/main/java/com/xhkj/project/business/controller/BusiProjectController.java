@@ -91,13 +91,13 @@ public class BusiProjectController
 	/**
 	 * 删除项目
 	 */
-	@PostMapping( "/remove")
+	@DeleteMapping( "/remove/{projectId}")
 	@ResponseBody
-	public Map<String,Object> remove(String ids)
+	public Map<String,Object> remove(@PathVariable Long projectId)
 	{
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try {
-			resultMap = busiProjectService.deleteBusiProjectByIds(ids);
+			resultMap = busiProjectService.deleteBusiProjectByIds(projectId);
         } catch (Exception e) {
             log.error("删除项目异常",e);
             resultMap.put("code",-1);
@@ -213,4 +213,77 @@ public class BusiProjectController
 		}
 		return resultMap;
 	}
+
+	/**
+	 * 启用禁用任务
+	 */
+	@PostMapping("/changeTaskStatus")
+	@ResponseBody
+	public Map<String,Object> changeTaskStatus(@RequestBody BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.changeTaskStatus(busiTask);
+		} catch (Exception e) {
+			log.error("启用禁用任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","启用禁用任务异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 删除任务
+	 */
+	@DeleteMapping( "/removeTask/{taskId}")
+	@ResponseBody
+	public Map<String,Object> removeTask(@PathVariable Long taskId)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.removeTask(taskId);
+		} catch (Exception e) {
+			log.error("删除任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","删除任务异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 关闭项目
+	 */
+	@PostMapping("/closeProject")
+	@ResponseBody
+	public Map<String,Object> closeProject(@RequestBody BusiProject busiProject)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.closeProject(busiProject);
+		} catch (Exception e) {
+			log.error("关闭项目异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","关闭项目异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 关闭任务
+	 */
+	@PostMapping("/closeTask")
+	@ResponseBody
+	public Map<String,Object> closeTask(@RequestBody BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.closeTask(busiTask);
+		} catch (Exception e) {
+			log.error("关闭任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","关闭任务异常");
+		}
+		return resultMap;
+	}
+
 }

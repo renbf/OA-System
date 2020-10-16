@@ -2,11 +2,13 @@
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
       <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
+        <template v-if="projectInfo.status == 0">
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
         <el-button icon=" el-icon-switch-button" circle></el-button>
 
-        <el-button icon="el-icon-delete" circle></el-button>
+        <el-button icon="el-icon-delete" circle @click="handleDelete"></el-button>
+        </template>
         <el-switch
           v-model="projectInfo.status"
           active-color="#999999"
@@ -213,6 +215,7 @@
               v-model="scope.row.status"
               active-value="1"
               inactive-value="0"
+              @change="handlerTaskStatus(scope.row)"
               active-text="启用">
             </el-switch>
           </template>
@@ -430,7 +433,7 @@
   import project_progress from './project_progress';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -641,6 +644,19 @@
           }
         });
       },
+      handleDelete() {
+        let _this = this;
+        this.$confirm('是否确认删除项目吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delBusiProject(_this.projectId);
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.$router.push({ path:'/myproject/index'})
+        }).catch(function() {});
+      },
       handleChange() {
       },
       handleReport() {
@@ -811,6 +827,22 @@
           status:value
         };
         changeStatus(form).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("修改成功");
+            this.getTaskList();
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      },
+      //任务启用停用
+      handlerTaskStatus(item) {
+        let _this = this;
+        let form = {
+          taskId:item.taskId,
+          status:item.status
+        };
+        changeTaskStatus(form).then(response => {
           if (response.code === 200) {
             this.msgSuccess("修改成功");
           } else {

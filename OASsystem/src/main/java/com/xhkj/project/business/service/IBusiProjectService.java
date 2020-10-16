@@ -50,10 +50,10 @@ public interface IBusiProjectService
 	/**
      * 删除项目信息
      * 
-     * @param ids 需要删除的数据ID
+     * @param projectId 需要删除的数据ID
      * @return 结果
      */
-	public Map<String, Object> deleteBusiProjectByIds(String ids);
+	public Map<String, Object> deleteBusiProjectByIds(Long projectId);
 	//以上自动生成的尽量别动
 
 	public Map<String, Object> selectBusiProjects(BusiProjectVo busiProjectVo);
@@ -69,5 +69,13 @@ public interface IBusiProjectService
 	public Map<String, Object> selectListTask(BusiTaskVo busiTaskVo);
 
 	public Map<String, Object> getTaskInfo(Long taskId);
+
+	public Map<String, Object> changeTaskStatus(BusiTask busiTask);
+
+	public Map<String, Object> removeTask(Long taskId);
+
+	public Map<String, Object> closeProject(BusiProject busiProject);
+
+	public Map<String, Object> closeTask(BusiTask busiTask);
 
 }
