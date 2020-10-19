@@ -5,7 +5,7 @@
         <template v-if="projectInfo.status == 0">
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
-        <el-button icon=" el-icon-switch-button" circle  @click="dialogVisible = true" ></el-button>
+        <el-button icon=" el-icon-switch-button" circle  @click="handleClose" ></el-button>
 
         <el-button icon="el-icon-delete" circle @click="handleDelete"></el-button>
         </template>
@@ -238,6 +238,13 @@
                 @click.stop="handleUpdate(scope.row)"
               >编辑</el-button
               >
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit-outline"
+                @click.stop="handleCloseTask(scope.row)"
+              >关闭</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -389,8 +396,46 @@
   </span>
     </el-dialog>
 
+    <!--关闭任务-->
+    <el-dialog
+      title="关闭任务"
+      :visible.sync="dialogTaskVisible"
+      width="30%">
+      <el-divider></el-divider>
+      <el-form ref="closeTaskform" :model="closeTaskform" :rules="closeTaskformRules">
+        <el-form-item prop="closeReason">
+          关闭原因
+          <el-input
+            style="width:400px;margin-left:20px; vertical-align:text-top;display:inline-block;height:100px;"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入至少20字的原因描述"
+            v-model="closeTaskform.closeReason">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+
+          <el-collapse >
+            <el-collapse-item title=" 关闭注意事项" name="1">
+              <div>
+                1、当执行关闭操作后，项目将自动默认完成所有任务，并不可在进行修改和编辑。
+              </div>
+              <div>
+                2、关闭操作完成后将不可逆转。
+              </div>
+              <div>3、关闭后参与人将不能再进行项目的编辑操作。</div>
+
+            </el-collapse-item>
+          </el-collapse>
+        </el-form-item>
 
 
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogTaskVisible = false">取 消</el-button>
+    <el-button type="primary" @click="handleCloseTaskSubmit">确 定</el-button>
+  </span>
+    </el-dialog>
 
 <!--项目任务模块-->
     <!--项目任务模块-->
@@ -508,8 +553,14 @@
         dialogVisible: false,
         //关闭原因
         textarea2: '',
-        //关闭按钮布尔类型控制
-
+        dialogTaskVisible: false,
+        closeTaskform: {
+          taskId:undefined,
+          closeReason:undefined
+        },
+        closeTaskformRules: {
+          closeReason: [{required: true, message: "关闭不能为空", trigger: "blur"}],
+        },
         addproject: "",
         addopen:false,
         add3: false,
@@ -641,22 +692,12 @@
       },
     },
     methods: {
-      //关闭前操作
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
+      //关闭弹框
+      handleClose() {
+        this.dialogVisible = true;
+        this.textarea2 = '';
       }
     ,
-      //当前页码和页码条数改变时触发
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
       //计数器控件数据
       handleChange(value){
         console.log(value);
@@ -957,7 +998,7 @@
         let _this = this;
         let form = {
           projectId:_this.projectId,
-          closeReason:textarea2
+          closeReason:_this.textarea2
         };
         closeProject(form).then(response => {
           if (response.code === 200) {
@@ -965,6 +1006,23 @@
             this.dialogVisible = false;
           } else {
             this.msgError(response.msg);
+          }
+        });
+      },
+      //关闭任务
+      handleCloseTaskSubmit() {
+        let _this = this;
+        let form = _this.closeTaskform;
+        _this.$refs.closeTaskform.validate(valid => {
+          if (valid) {
+            closeTask(form).then(response => {
+              if (response.code === 200) {
+                this.msgSuccess("关闭成功");
+                this.dialogTaskVisible = false;
+              } else {
+                this.msgError(response.msg);
+              }
+            });
           }
         });
       },
@@ -979,7 +1037,21 @@
         let queryParams = _this.queryParams;
         queryParams.page = val;
         this.getTaskList();
+      },
+      //关闭任务弹框
+      handleCloseTask(item) {
+        this.dialogTaskVisible = true;
+        this.resetCloseTaskform();
+        this.closeTaskform.taskId = item.taskId;
+      },
+      resetCloseTaskform() {
+        this.closeTaskform = {
+            taskId:undefined,
+            closeReason:undefined
+        }
+        this.resetForm("closeTaskform");
       }
+
     }
 
   }
