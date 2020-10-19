@@ -182,7 +182,7 @@
     <el-dialog
       :title="title"
       :visible.sync="detail"
-      width="800px"
+      width="900px"
       id="diadetail"
     >
       <el-col :span="10">
@@ -447,7 +447,7 @@
         if(!this.isNotEmpty(this.ids)){
           this.ids.push(extraWorkId)
         }
-        this.approveDo()
+        this.approveDo('0')
         this.detail=false;
       },
 
@@ -534,7 +534,7 @@
     float:right;
   }
   #diadetail .el-dialog__body {
-    height: 650px;
+    height: 600px;
   }
 
 </style>

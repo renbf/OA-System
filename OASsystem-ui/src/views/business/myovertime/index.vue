@@ -148,8 +148,8 @@
             <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
           </div>
           <!-- 4 通过什么按钮都没有 -->
-          <div v-else-if="scope.row.approvalStatus == 4 || scope.row.approvalStatus == 3  "></div>
-          <div v-else-if="scope.row.approvalStatus == 5">
+          <div v-else-if="scope.row.approvalStatus == 0 || scope.row.approvalStatus == 1 || scope.row.approvalStatus == 99 "></div>
+          <div v-else-if="scope.row.approvalStatus == -1">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
             <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" >报送</el-button>
           </div>

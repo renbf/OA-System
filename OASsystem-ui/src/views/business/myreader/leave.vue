@@ -499,7 +499,7 @@
         if(!this.isNotEmpty(this.ids)){
           this.ids.push(leaveId)
         }
-        this.approveDo()
+        this.approveDo('0')
         this.detail=false;
       },
 

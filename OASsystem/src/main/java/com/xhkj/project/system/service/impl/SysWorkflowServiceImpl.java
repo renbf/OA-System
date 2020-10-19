@@ -783,6 +783,7 @@ public class SysWorkflowServiceImpl implements ISysWorkflowService
                     }else{
                         //拒绝
                         billStatus = "-1";
+                        workflowBillUp.setWorkflowNodeId(-1l);
                     }
                     workflowBillUp.setBillStatus(billStatus);
                     workflowBillUp.setUpdateBy(username);
