@@ -182,15 +182,34 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	/**
      * 删除项目对象
      * 
-     * @param ids 需要删除的数据ID
+     * @param projectId 需要删除的数据ID
      * @return 结果
      */
 	@Override
-	public Map<String,Object> deleteBusiProjectByIds(String ids)
+	@Transactional
+	public Map<String,Object> deleteBusiProjectByIds(Long projectId)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-				busiProjectMapper.deleteBusiProjectByIds(ids.split(","));
+			BusiProject busiProject = busiProjectMapper.selectBusiProjectById(projectId);
+			String status = busiProject.getStatus();
+			if ("1".equals(status)) {
+				resultMap.put("code",500);
+				resultMap.put("msg", "项目在启用中不能删除");
+				return resultMap;
+			}
+			busiProjectMapper.deleteBusiProjectById(projectId);
+			busiProjectMemberMapper.deleteBusiProjectMemberByProjectId(projectId);
+			BusiTask busiTask = new BusiTask();
+			busiTask.setProjectId(projectId);
+			List<BusiTask> busiTasks = busiTaskMapper.selectBusiTaskList(busiTask);
+			if (CollectionUtils.isNotEmpty(busiTasks)) {
+				for (BusiTask busiTask1 : busiTasks) {
+					Long taskId = busiTask1.getTaskId();
+					busiTaskMapper.deleteBusiTaskById(taskId);
+					busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
+				}
+			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
@@ -354,6 +373,80 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 
 			resultMap.put("code",200);
 			resultMap.put("data",busiTaskMembers);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> changeTaskStatus(BusiTask busiTask) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTask.setUpdateBy(username);
+			busiTask.setUpdateTime(now);
+			busiTaskMapper.updateBusiTask(busiTask);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> removeTask(Long taskId) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			BusiTask busiTask = busiTaskMapper.selectBusiTaskById(taskId);
+			String status = busiTask.getStatus();
+			if ("0".equals(status)) {
+				busiTaskMapper.deleteBusiTaskById(taskId);
+				busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
+				resultMap.put("code",200);
+			}else{
+				resultMap.put("code",-1);
+				resultMap.put("msg","在启用中，不能删除");
+			}
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> closeProject(BusiProject busiProject) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiProject.setUpdateBy(username);
+			busiProject.setUpdateTime(now);
+			busiProjectMapper.updateBusiProject(busiProject);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> closeTask(BusiTask busiTask) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTask.setUpdateBy(username);
+			busiTask.setUpdateTime(now);
+			busiTaskMapper.updateBusiTask(busiTask);
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();

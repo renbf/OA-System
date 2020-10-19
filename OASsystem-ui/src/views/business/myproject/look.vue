@@ -1,72 +1,71 @@
 <template>
   <div class="app-container travel_container projectdetail">
-    <el-collapse v-model="activeNames" @change="handleChange">
       <div class="one" name="1">{{title}}
       </div>
 
-
-      <el-card class="box-card" style="height:300px;">
-        <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-          <el-form  ref="form" :model="projectInfo" label-width="80px">
-            <el-form-item label="部门" >
-              <el-tag type="info" style="margin-right:10px;">{{section1}}</el-tag>
-              <el-tag type="info">{{section2}}</el-tag>
-            </el-form-item>
-            <el-form-item label="项目任务">
-              <el-tag type="info">{{task}}件</el-tag>
-            </el-form-item>
-            <el-form-item label="项目时间">
-              <div class="div1" >
-                <i class="el-icon-date" style="margin-left:10px;"></i>
-                <span style="margin-left:40px;color:rgba(48, 49, 51,0.9);" >{{time1}}</span>
-                <span style="margin-left:40px;">至</span>
-                <span style="margin-left:40px; color:rgba(48, 49, 51,0.8);">{{time2}}</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="理由陈述">
-              <div class="reason"> {{reason2}}</div>
-            </el-form-item>
-
-          </el-form>
-        </div>
-        <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-          <p>参与人员</p>
-          <template v-for="item in software">
-            <p>{{item.software1}}</p>
-            <p>
-              <el-tag type="info" v-for="item1 in design" style="margin-left:10px">{{item1.design2}}</el-tag>
-
-            </p>
-          </template>
-        </div>
-        <div style="width: 15%;float:left;padding:0 20px;position: relative">
-          <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
-          <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
-          <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
-            <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
-              <p style="margin-top:60%;margin-bottom:0">
-                <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
-                <span>任务进度</span>
-              </p>
-              <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
-            </div>
-            <div class="lf" style="width:50%;height: 100%;text-align: center">
-              <p style="margin-top: 60%;margin-bottom:0">
-                <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
-                <span>时间进度</span>
-              </p>
-              <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
-            </div>
+<div style="height:300px; width:1630px;">
+  <el-card class="box-card" >
+    <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+      <el-form  ref="form" :model="projectInfo" label-width="80px">
+        <el-form-item label="部门" >
+          <el-tag type="info" style="margin-right:10px;">{{section1}}</el-tag>
+          <el-tag type="info">{{section2}}</el-tag>
+        </el-form-item>
+        <el-form-item label="项目任务">
+          <el-tag type="info">{{task}}件</el-tag>
+        </el-form-item>
+        <el-form-item label="项目时间">
+          <div class="div1" >
+            <i class="el-icon-date" style="margin-left:10px;"></i>
+            <span style="margin-left:40px;color:rgba(48, 49, 51,0.9);" >{{time1}}</span>
+            <span style="margin-left:40px;">至</span>
+            <span style="margin-left:40px; color:rgba(48, 49, 51,0.8);">{{time2}}</span>
           </div>
+        </el-form-item>
+        <el-form-item label="理由陈述">
+          <div class="reason"> {{reason2}}</div>
+        </el-form-item>
+
+      </el-form>
+    </div>
+    <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+      <p>参与人员</p>
+      <template v-for="item in software">
+        <p>{{item.software1}}</p>
+        <p>
+          <el-tag type="info" v-for="item1 in design" style="margin-left:10px">{{item1.design2}}</el-tag>
+
+        </p>
+      </template>
+    </div>
+    <div style="width: 15%;float:left;padding:0 20px;position: relative">
+      <svg-bar :value="projectprocess" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
+      <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
+      <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
+        <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
+          <p style="margin-top:60%;margin-bottom:0">
+            <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
+            <span>任务进度</span>
+          </p>
+          <p style="margin-top: 0"><b style="font-size: 25px;">{{projectprocess}}%</b></p>
         </div>
-      </el-card>
-    </el-collapse>
+        <div class="lf" style="width:50%;height: 100%;text-align: center">
+          <p style="margin-top: 60%;margin-bottom:0">
+            <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
+            <span>时间进度</span>
+          </p>
+          <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
+        </div>
+      </div>
+    </div>
+  </el-card></div>
+
     <!--    项目组申请-->
     <!--    项目组申请-->
     <!--    项目组申请-->
     <!--    项目组申请-->
 
-    <div >
+    <div style="margin-top:40px;">
       <p class="apply">
         <span>项目组申请</span>
         <span>
@@ -454,7 +453,6 @@
             applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
           }
         ],
-        activeNames: ['1'],
         projectprocess: '30',
         timeprocess: '60',
         statusOptions: [],
@@ -580,16 +578,16 @@
       },
 
       getProject() {
-        let _this = this;
-        getProjectInfo({projectId:_this.projectId}).then(response => {
-          if(response.code == 200){
-            _this.projectInfo = response.data;
-            _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
-            _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
-            let busiProjectMembers= _this.projectInfo.busiProjectMembers;
-            _this.getDeptMemberList(busiProjectMembers);
-          }
-        });
+        // let _this = this;
+        // getProjectInfo({projectId:_this.projectId}).then(response => {
+        //   if(response.code == 200){
+        //     _this.projectInfo = response.data;
+        //     _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
+        //     _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
+        //     let busiProjectMembers= _this.projectInfo.busiProjectMembers;
+        //     _this.getDeptMemberList(busiProjectMembers);
+        //   }
+        // });
       },
       getDeptMemberList(busiProjectMembers) {
         let _this = this;
@@ -628,8 +626,6 @@
         } else if (direction === -1 && !this.atHeadOfList) {
           this.currentOffset += this.paginationFactor;
         }
-      },
-      handleChange() {
       },
       handleReport() {
       },

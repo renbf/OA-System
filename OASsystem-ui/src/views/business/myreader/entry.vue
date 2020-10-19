@@ -52,7 +52,7 @@
 
       <el-input
         placeholder="面试人姓名"
-        v-model="input"
+        v-model="input2"
         style="width:150px;margin-left:10px"
         clearable>
       </el-input>
@@ -108,7 +108,7 @@
       style="margin-top:15px"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
+      :current-page="entryPage4"
       :page-sizes="[100, 200, 300, 400]"
       :page-size="100"
       layout="total, sizes, prev, pager, next, jumper"
@@ -125,6 +125,8 @@
     name: "page-entry",
     data(){
       return{
+        input2:"",
+        entryPage4:1,
         //状态选择数据
         options: [{
           value: '选项1',

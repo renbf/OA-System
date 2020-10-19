@@ -33,6 +33,14 @@ export function changeStatus(data) {
     data: data
   })
 }
+
+// 删除项目
+export function delBusiProject(projectId) {
+  return request({
+    url: '/api/busiProject/remove/' + projectId,
+    method: 'delete'
+  })
+}
 // 查询项目信息
 export function getProjectInfo(query) {
   return request({
@@ -75,6 +83,34 @@ export function listTask(query) {
     params: query
   })
 }
+
+// 启用禁用任务
+export function changeTaskStatus(data) {
+  return request({
+    url: '/api/busiProject/changeTaskStatus',
+    method: 'post',
+    data: data
+  })
+}
+
+// 关闭项目
+export function closeProject(data) {
+  return request({
+    url: '/api/busiProject/closeProject',
+    method: 'post',
+    data: data
+  })
+}
+
+// 关闭任务
+export function closeTask(data) {
+  return request({
+    url: '/api/busiProject/closeTask',
+    method: 'post',
+    data: data
+  })
+}
+
 export function project_progress() {
   return {
     code: 200,

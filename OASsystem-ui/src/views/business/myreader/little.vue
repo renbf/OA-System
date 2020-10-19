@@ -418,6 +418,7 @@
       setExportData(){
 
       },
+
       getList(){
         this.loading = true;
         approveList(this.addDateRange(this.queryParams, this.approvalDate)).then(response => {
@@ -508,7 +509,8 @@
         this.approvalDate = '';
         this.handleQuery();
       },
-    }
+    },
+
   }
 
 </script>

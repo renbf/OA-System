@@ -2,11 +2,13 @@
   <div class="app-container travel_container projectdetail">
     <el-collapse v-model="activeNames" @change="handleChange">
       <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
+        <template v-if="projectInfo.status == 0">
         <el-button icon="el-icon-edit-outline" circle @click="handleEdit"></el-button>
 
         <el-button icon=" el-icon-switch-button" circle  @click="dialogVisible = true" ></el-button>
 
-        <el-button icon="el-icon-delete" circle ></el-button>
+        <el-button icon="el-icon-delete" circle @click="handleDelete"></el-button>
+        </template>
         <el-switch
           v-model="projectInfo.status"
           active-color="#999999"
@@ -135,47 +137,47 @@
       <el-table
         ref="multipleTable"
         v-loading="loading"
-        :data="dataList"
+        :data="taskList"
         @selection-change="handleSelectionChange"
         @row-click="handleRowClick"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="编号"
-          prop="number"
+          prop="taskNumber"
           :show-overflow-tooltip="true"
           style="width:20px;"
         />
         <el-table-column
           label="标题"
-          prop="title"
+          prop="taskName"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="任务内容"
-          prop="content"
+          prop="taskDesc"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="更新日期"
-          prop="updata"
+          prop="updateTime"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="参与人"
           :show-overflow-tooltip="true"
         ><template slot-scope="scope">
-          {{scope.row.joinpeople}}
+          {{scope.row.memberNums}}人
         </template>
         </el-table-column>
         <el-table-column
           label="开始时间"
-          prop="begintime"
+          prop="taskStartDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="结束时间"
-          prop="endtime"
+          prop="taskEndDate"
           :show-overflow-tooltip="true"
         />
         <el-table-column
@@ -183,7 +185,7 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            {{scope.row.progress}}%
+            {{scope.row.taskProgress}}%
           </template>
         </el-table-column>
         <el-table-column
@@ -191,13 +193,12 @@
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
-            <span v-show="scope.row.timeprogress <= 0">0%</span>
-            <span v-show="scope.row.timeprogress > 0">{{scope.row.timeprogress}}%</span>
+            <span v-show="scope.row.timeProgress <= 0">0%</span>
+            <span v-show="scope.row.timeProgress > 0">{{scope.row.timeProgress}}%</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="状态"
+          label="任务状态"
           :show-overflow-tooltip="true"
         >
           <template slot-scope="scope">
@@ -216,6 +217,7 @@
               v-model="scope.row.status"
               active-value="1"
               inactive-value="0"
+              @change="handlerTaskStatus(scope.row)"
               active-text="启用">
             </el-switch>
           </template>
@@ -493,7 +495,7 @@
   import project_progress from './project_progress';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -502,6 +504,8 @@
     },
     data() {
       return {
+        //当前页数
+        currentPage4:1,
         dialogVisible: false,
         //关闭原因
         textarea2: '',
@@ -512,34 +516,6 @@
         add3: false,
         projectId:this.$route.query.projectId,
         //新建编辑项目任务table数据
-        dataList: [
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            progress: '30',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-          {
-            number: '#01',
-            title: '报销数据库设计',
-            content: '报销数据库设计整体设计',
-            updata: '2020-07-01',
-            joinpeople: '12人',
-            begintime: '2020-07-01',
-            endtime: '2020-07-02',
-            progress: '30',
-            timeprogress: '50%',
-            taskstatus: '正常',
-            status: '报送'
-          },
-        ],
         addform: {
           projectName: '',
           leaderId:undefined,
@@ -618,6 +594,7 @@
     },
     created() {
 
+
       // 状态
       this.getDicts("task_status").then(response => {
         this.statusOptions = response.data;
@@ -664,7 +641,22 @@
       },
     },
     methods: {
-      //关闭按钮
+      //关闭前操作
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      }
+    ,
+      //当前页码和页码条数改变时触发
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
       //计数器控件数据
       handleChange(value){
         console.log(value);
@@ -738,6 +730,19 @@
             _this.taskList = response.data;
           }
         });
+      },
+      handleDelete() {
+        let _this = this;
+        this.$confirm('是否确认删除项目吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delBusiProject(_this.projectId);
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.$router.push({ path:'/myproject/index'})
+        }).catch(function() {});
       },
       handleChange() {
       },
@@ -909,6 +914,22 @@
           status:value
         };
         changeStatus(form).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("修改成功");
+            this.getTaskList();
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      },
+      //任务启用停用
+      handlerTaskStatus(item) {
+        let _this = this;
+        let form = {
+          taskId:item.taskId,
+          status:item.status
+        };
+        changeTaskStatus(form).then(response => {
           if (response.code === 200) {
             this.msgSuccess("修改成功");
           } else {
