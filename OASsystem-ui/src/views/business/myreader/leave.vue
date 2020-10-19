@@ -45,7 +45,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="申请时间" prop="approvalDate">
         <el-date-picker
-          v-model="queryParams.approvalDate"
+          v-model="approvalDate"
           size="small"
           style="width: 240px"
           value-format="yyyy-MM-dd"
@@ -55,9 +55,9 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="状态" prop="approvalStatus">
+      <el-form-item label="状态" prop="billStatus">
         <el-select
-          v-model="queryParams.approvalStatus"
+          v-model="queryParams.billStatus"
           placeholder="选择状态"
           clearable
           size="small"
@@ -71,8 +71,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="部门" prop="department">
-        <el-select v-model="queryParams.department" placeholder="请选择部门" style="margin-left:20px;">
+      <el-form-item label="部门" prop="deptId">
+        <el-select v-model="queryParams.deptId" placeholder="请选择部门" style="margin-left:20px;">
           <el-option
             v-for="item in departmentOption"
             :key="item.dictValue"
@@ -138,7 +138,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(overtime_options, scope.row.leavePrjName) }}</span>
+          <span>{{ selectDictLabel(overtimeOptions, scope.row.leavePrjName) }}</span>
         </template>
       </el-table-column>
 
@@ -254,7 +254,7 @@
               disabled
             >
               <el-option
-                v-for="(item, index) in overtime_options"
+                v-for="(item, index) in overtimeOptions"
                 :key="index"
                 :label="item.dictLabel"
                 :value="item.dictValue"
@@ -332,7 +332,7 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="审核意见" prop="leaveReason">
+          <el-form-item label="审核意见" prop="checkRemarks">
             <el-input
               type="textarea"
               placeholder="请输入"
@@ -403,13 +403,13 @@
         // 总条数
         total: 0,
         // 查询参数
+        approvalDate: '',
         queryParams: {
           pageNum: 1,
           pageSize: 10,
-          department: '',
+          deptId: '',
           leaveType: '',
-          approvalDate: '',
-          approvalStatus: ''
+          billStatus: ''
         },
         form: {
           leaveId:'',
@@ -437,7 +437,7 @@
           billStatus:'待审核',
           caozuo:'审批'
         }],
-        overtime_options: [
+        overtimeOptions: [
           {
             dictValue: "0",
             dictLabel: "小额贷款项目"
@@ -473,7 +473,7 @@
       },
       getList(){
         this.loading = true;
-        approveList(this.queryParams).then(response => {
+        approveList(this.addDateRange(this.queryParams, this.approvalDate)).then(response => {
           this.tableData = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -499,7 +499,7 @@
         if(!this.isNotEmpty(this.ids)){
           this.ids.push(leaveId)
         }
-        this.approveDo()
+        this.approveDo('0')
         this.detail=false;
       },
 
@@ -569,6 +569,7 @@
       /** 重置按钮操作 */
       resetQuery() {
         this.resetForm("queryForm");
+        this.approvalDate = '';
         this.handleQuery();
       },
     }

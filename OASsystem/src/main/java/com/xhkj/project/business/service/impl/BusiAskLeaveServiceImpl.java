@@ -150,8 +150,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
             //更新加班、年休假时长
             if(StringUtils.equals(leaveType,DictConst.BUS_LEAVE_TYPE_1)){
                 busiHolsCheck.setLeaveRest(new BigDecimal(busiAskLeaveVo.getOvertimeSurTime()));
-                String workHourUnit = sysCompanyConfigService.getConfigValue("workHourUnit");
-                busiHolsCheck.setLeaveRestUnit(workHourUnit);
+                busiHolsCheck.setLeaveRestUnit(busiAskLeaveVo.getLeaveHoursUnit());
             }
             if(StringUtils.equals(leaveType,DictConst.BUS_LEAVE_TYPE_4)){
                 busiHolsCheck.setHolsRestDays(new BigDecimal(busiAskLeaveVo.getAnnLeaSurTime()));
@@ -215,7 +214,7 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
     }
 
     @Override
-    public int leaveSumbit(Long[] leaveIds) {
+    public AjaxResult leaveSumbit(Long[] leaveIds) {
         AjaxResult ajaxResult = null;
         for (int i = 0; i < leaveIds.length; i++) {
             Long leaveId = leaveIds[i];
@@ -229,10 +228,10 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
         }
 
-        int code = (int)ajaxResult.get(CODE_TAG);
-        int num = code == 200 ? 1 : 0;
+//        int code = (int)ajaxResult.get(CODE_TAG);
+//        int num = code == 200 ? 1 : 0;
 
-        return num;
+        return ajaxResult;
 
     }
 

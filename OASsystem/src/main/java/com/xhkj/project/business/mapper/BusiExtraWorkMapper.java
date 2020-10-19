@@ -2,6 +2,8 @@ package com.xhkj.project.business.mapper;
 
 import java.util.List;
 import com.xhkj.project.business.domain.BusiExtraWork;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
 
 /**
  * 加班Mapper接口
@@ -58,4 +60,10 @@ public interface BusiExtraWorkMapper
      * @return 结果
      */
     public int deleteBusiExtraWorkByIds(Long[] extraWorkIds);
+
+
+    public List<BusiExtraWorkAprVo> approveList(BusiExtraWorkAprVo busiExtraWorkAprVo);
+
+
+
 }

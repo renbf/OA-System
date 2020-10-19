@@ -1,6 +1,10 @@
 package com.xhkj.project.business.controller;
 
 import java.util.List;
+
+import com.xhkj.framework.aspectj.lang.annotation.DataScope;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +42,7 @@ public class BusiExtraWorkController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:extraWork:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "sd", userAlias = "su")
     public TableDataInfo list(BusiExtraWork busiExtraWork)
     {
         startPage();
@@ -109,6 +114,17 @@ public class BusiExtraWorkController extends BaseController
     @PostMapping("/extraWorkSumbit/{extraWorkIds}")
     public AjaxResult extraWorkSumbit(@PathVariable("extraWorkIds") Long[] extraWorkIds)
     {
-        return toAjax(busiExtraWorkService.extraWorkSumbit(extraWorkIds));
+        return busiExtraWorkService.extraWorkSumbit(extraWorkIds);
     }
+
+
+    @GetMapping("/approveList")
+    public TableDataInfo approveList(BusiExtraWorkAprVo busiExtraWorkAprVo)
+    {
+        startPage();
+        List<BusiExtraWorkAprVo> list = busiExtraWorkService.approveList(busiExtraWorkAprVo);
+        return getDataTable(list);
+    }
+
+
 }
