@@ -2,12 +2,11 @@ package com.xhkj.project.business.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xhkj.project.business.domain.BusiAskLeave;
-import com.xhkj.project.system.domain.WorkflowBill;
+import com.xhkj.project.business.domain.BusiExtraWork;
 
 import java.util.Date;
-import java.util.Objects;
 
-public class BusiAskLeaveAprVo extends BusiAskLeave {
+public class BusiExtraWorkAprVo extends BusiExtraWork {
     private static final long serialVersionUID = 1L;
 
     /** 流程单ID */
@@ -24,7 +23,7 @@ public class BusiAskLeaveAprVo extends BusiAskLeave {
     private Long workflowStepNodeId;
     /** 流程审核节点ID */
     private Long workflowNodeId;
-    /** 审核状态  */
+    /** 审核状态 （0待审核 1审核中 99审核完成 -1审核未通过 -2已撤消) */
     private String billStatus;
     /** 经办人=创建记录的用户名 */
     private String orginHandler;

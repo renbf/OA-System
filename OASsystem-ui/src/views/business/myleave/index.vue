@@ -348,7 +348,7 @@
       width="800px"
       id="diadetail"
     >
-      <el-col :span="10">
+      <el-col :span="10" v-show="billTracesFlag">
         <el-timeline>
           <el-timeline-item
             v-for="(activity, index) in activities"
@@ -495,6 +495,7 @@ import { delLeaves,updateLeave, addLeave,listLeave,leaveSumbit } from "@/api/bus
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { getDeptList } from "@/api/system/dept";
+import {isNotEmpty} from "../../../utils/common";
 
 export default {
   name: "leave",
@@ -502,6 +503,7 @@ export default {
     return {
       leaveForm: {},
       activities: [],
+      billTracesFlag: true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -815,6 +817,9 @@ export default {
 
           if (response.code === 200) {
             this.activities = response.data;
+            if(!isNotEmpty(this.activities)){
+              this.billTracesFlag = false;
+            }
             this.activities.forEach( e=>{
               e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
               e.type = 'success'

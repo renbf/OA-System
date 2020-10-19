@@ -60,3 +60,11 @@ export function extraWorkSumbit(extraWorkIds) {
   });
 }
 
+export function approveList(query) {
+  return request({
+    url: "/business/extraWork/approveList",
+    method: "get",
+    params: query
+  });
+}
+

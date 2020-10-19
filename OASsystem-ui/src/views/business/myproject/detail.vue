@@ -503,6 +503,8 @@
     },
     data() {
       return {
+        //当前页数
+        currentPage4:1,
         dialogVisible: false,
         //关闭原因
         textarea2: '',
@@ -592,6 +594,7 @@
     },
     created() {
 
+
       // 状态
       this.getDicts("task_status").then(response => {
         this.statusOptions = response.data;
@@ -638,7 +641,22 @@
       },
     },
     methods: {
-      //关闭按钮
+      //关闭前操作
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      }
+    ,
+      //当前页码和页码条数改变时触发
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
       //计数器控件数据
       handleChange(value){
         console.log(value);

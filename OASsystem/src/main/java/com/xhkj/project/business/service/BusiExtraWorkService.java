@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiExtraWork;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
 
 /**
  * 加班Service接口
@@ -62,5 +64,11 @@ public interface BusiExtraWorkService
     public int deleteBusiExtraWorkById(Long extraWorkId);
 
 
-    public int extraWorkSumbit(Long[] extraWorkIds);
+    public AjaxResult extraWorkSumbit(Long[] extraWorkIds);
+
+
+    public List<BusiExtraWorkAprVo> approveList(BusiExtraWorkAprVo busiAskLeave);
+
+
+
 }

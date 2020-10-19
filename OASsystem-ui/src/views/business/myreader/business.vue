@@ -125,7 +125,7 @@
       style="margin-top:15px"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
+      :current-page="businessPage4"
       :page-sizes="[100, 200, 300, 400]"
       :page-size="100"
       layout="total, sizes, prev, pager, next, jumper"
@@ -142,6 +142,7 @@
     name: "page-business",
     data(){
       return{
+        businessPage4:1,
         //状态选择数据
         options: [{
           value: '选项1',

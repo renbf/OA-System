@@ -118,7 +118,7 @@ public class BusiAskLeaveController extends BaseController
     @PostMapping("/leaveSumbit/{leaveIds}")
     public AjaxResult leaveSumbit(@PathVariable("leaveIds") Long[] leaveIds)
     {
-        return toAjax(busiAskLeaveService.leaveSumbit(leaveIds));
+        return busiAskLeaveService.leaveSumbit(leaveIds);
     }
 
 
