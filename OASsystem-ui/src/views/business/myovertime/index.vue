@@ -50,7 +50,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="加班时间">
         <el-date-picker
-          v-model="DateRanges"
+          v-model="dateRanges"
           size="small"
           style="width: 240px"
           value-format="yyyy-MM-dd"
@@ -281,7 +281,7 @@
       width="800px"
       id="diadetail"
     >
-      <el-col :span="10">
+      <el-col :span="10" v-show="billTracesFlag">
         <el-timeline>
           <el-timeline-item
             v-for="(activity, index) in activities"
@@ -393,6 +393,7 @@ import { delExtraWorks,updateExtraWork, addExtraWork,listExtraWork,extraWorkSumb
 import { getHolsCheckInfo } from "@/api/business/mywork/holscheck";
 import { listComConfig} from "@/api/system/comconfig";
 import { getDeptList } from "@/api/system/dept";
+import {isNotEmpty} from "../../../utils/common";
 
 
 export default {
@@ -400,6 +401,7 @@ export default {
   data() {
     return {
       activities: [],
+      billTracesFlag: true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -426,7 +428,7 @@ export default {
       yesOrNo: [],
       workHour: "",
       overtimePrecautions:[],
-      DateRanges: [],
+      dateRanges: [],
 
       statusOptions: [],
       realOvertimeSurTime: 0,
@@ -562,7 +564,7 @@ export default {
     /** 查询日常工作列表 */
     getList() {
       this.loading = true;
-      listExtraWork(this.addDateRange(this.queryParams, this.DateRangess)).then(response => {
+      listExtraWork(this.addDateRange(this.queryParams, this.dateRanges)).then(response => {
         this.extraWorkList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -578,7 +580,7 @@ export default {
 
         var dateRangeCopy = [[]];
         dateRangeCopy[0].push(dateRange)
-        let timehour = this.calculateHours(dateRangeCopy,this.workHour,0);
+        let timehour = this.common.calculateHours(dateRangeCopy,this.workHour,0);
 
 
         let startDay = dateRange[0].split(" ")[0];
@@ -643,10 +645,13 @@ export default {
 
 
         //查看流程节点信息
-        this.getBillTraces(this.form.leaveId).then(response => {
+        this.getBillTraces(this.form.extraWorkId).then(response => {
 
           if (response.code === 200) {
             this.activities = response.data;
+            if(!isNotEmpty(this.activities)){
+              this.billTracesFlag = false;
+            }
             this.activities.forEach( e=>{
               e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
               e.type = 'success'
@@ -694,7 +699,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.DateRanges = [];
+      this.dateRanges = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },

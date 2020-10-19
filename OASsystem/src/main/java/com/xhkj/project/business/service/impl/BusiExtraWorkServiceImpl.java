@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.framework.web.domain.AjaxResult;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
 import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.service.ISysWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +108,7 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
 
 
     @Override
-    public int extraWorkSumbit(Long[] extraWorkIds) {
+    public AjaxResult extraWorkSumbit(Long[] extraWorkIds) {
 
         AjaxResult ajaxResult = null;
         for (int i = 0; i < extraWorkIds.length; i++) {
@@ -120,8 +122,19 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
             ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt);
 
         }
-        int code = (int)ajaxResult.get(CODE_TAG);
-        int num = code == 200 ? 1 : 0;
-        return num;
+//        int code = (int)ajaxResult.get(CODE_TAG);
+//        int num = code == 200 ? 1 : 0;
+        return ajaxResult;
     }
+
+
+
+    @Override
+    public List<BusiExtraWorkAprVo> approveList(BusiExtraWorkAprVo busiExtraWorkAprVo)
+    {
+        busiExtraWorkAprVo.setUserId(Long.valueOf(SecurityUtils.getUserId()));
+        return busiExtraWorkMapper.approveList(busiExtraWorkAprVo);
+    }
+
+
 }

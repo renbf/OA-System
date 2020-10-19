@@ -67,7 +67,7 @@ public interface BusiAskLeaveService
      */
     public int deleteBusiAskLeaveById(Long leaveId);
 
-    public int leaveSumbit(Long[] leaveIds);
+    public AjaxResult leaveSumbit(Long[] leaveIds);
 
     public List<BusiAskLeaveAprVo> approveList(BusiAskLeaveAprVo busiAskLeave);
 
