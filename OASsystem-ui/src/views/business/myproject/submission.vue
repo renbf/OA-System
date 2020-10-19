@@ -95,6 +95,54 @@
     <!--table弹框三层-->
     <!--table弹框三层-->
 
+    <el-dialog
+      style="position: relative"
+      title="审批项目申请"
+      :visible.sync="submissionClick"
+      width="45%"
+      :before-close="Close3">
+      <div style="height: 400px;width:200px;">
+        <el-steps direction="vertical" :active="1" finish-status="success">
+          <el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+          <el-step title="迈克尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+          <el-step title="伊利斯" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+
+        </el-steps>
+      </div>
+      <div style="float:right;top:0;right:0;" class="dialogtext">
+        <el-form>
+          <el-form-item style="margin-top:90px;font-weight: bold">
+            标题
+            <el-input
+              style="width:350px;margin-left: 40px"
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model="textarea1">
+            </el-input>
+            <div style="margin: 20px 0;"></div>
+
+          </el-form-item>
+          <el-form-item style="font-weight: bold">
+            申请内容
+            <el-input
+              style="width:350px;margin-left: 10px;margin-right:40px;"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="textarea3">
+            </el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="submissionClick = false">取 消</el-button>
+    <el-button type="primary" @click="submissionClick = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
 
     <!-- seach栏-->
 
@@ -128,10 +176,11 @@
     </div>
 
     <el-table
-         @row-click="submissionClick"
+
+         @row-click="submissionClick=true"
 
       :data="tableData"
-      style="width: 100%">
+      style="width: 100%;margin-top:20px;">
       <el-table-column
         type="selection"
         width="55">
@@ -200,9 +249,12 @@
     name: "page-little",
     data(){
       return{
+        textarea1:"项目任务延时申请",
+        textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
+
 
         submissionPage4:1,
-        submissionopen:"false",
+        submissionClick:false,
 
 
         // 审批人
@@ -369,6 +421,20 @@
     },
 
     methods:{
+      Close3(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
       lookClose(done){
         this.$confirm('确认关闭？')
           .then(_ => {
@@ -380,8 +446,8 @@
       handleClose2(){
 
       },
-      submissionClick(){
-        this.submissionopen=true;
+      submission(){
+        this.submissionClick=true;
       },
       //添加批注人
 
@@ -401,6 +467,10 @@
 </script>
 
 <style lang="scss">
+
+  .dialogtext{
+    position: absolute;
+  }
 
   .header{
     margin-bottom: 20px;
