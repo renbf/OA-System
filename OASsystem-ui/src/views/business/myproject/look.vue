@@ -3,8 +3,8 @@
       <div class="one" name="1">{{title}}
       </div>
 
-<div style="height:300px; width:1630px;">
-  <el-card class="box-card" >
+<div>
+  <el-card class="el-card5" >
     <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
       <el-form  ref="form" :model="projectInfo" label-width="80px">
         <el-form-item label="部门" >
@@ -752,6 +752,11 @@
 </script>
 
 <style>
+.el-card5{
+  width: 1600px;
+  height:300px !important
+
+}
   .reason{
     width: 360px;
     height:100px;
