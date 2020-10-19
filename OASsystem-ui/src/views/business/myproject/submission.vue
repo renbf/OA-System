@@ -24,7 +24,7 @@
       title="新建项目申请"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose">
+      :before-close="lookClose">
       <el-form>
         <el-form-item><span>标题</span>
           <el-input
@@ -95,17 +95,7 @@
     <!--table弹框三层-->
     <!--table弹框三层-->
 
-    <el-dialog
-      title="提示"
-      :visible.sync="submissionopen"
-      width="30%"
-      :before-close="handleClose">
-      <span>这是一段信息</span>
-      <span slot="footer" class="dialog-footer">
-    <el-button @click="submissionopen = false">取 消</el-button>
-    <el-button type="primary" @click="submissionopen = false">确 定</el-button>
-  </span>
-    </el-dialog>
+
     <!-- seach栏-->
 
     <div class="seach" >
@@ -191,9 +181,9 @@
     </el-table>
     <el-pagination
       style="margin-top:15px"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage4"
+      @size-change="submission1Change"
+      @current-change="submission2Change"
+      :current-page="submissionPage4"
       :page-sizes="[100, 200, 300, 400]"
       :page-size="100"
       layout="total, sizes, prev, pager, next, jumper"
@@ -210,6 +200,8 @@
     name: "page-little",
     data(){
       return{
+
+        submissionPage4:1,
         submissionopen:"false",
 
 
@@ -377,6 +369,17 @@
     },
 
     methods:{
+      lookClose(done){
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+
+      },
+      handleClose2(){
+
+      },
       submissionClick(){
         this.submissionopen=true;
       },
@@ -386,10 +389,10 @@
 
         this.$router.push({ path:'/myreader/index'})
       },
-      handleSizeChange(val) {
+      submission1Change(val) {
         console.log(`每页 ${val} 条`);
       },
-      handleCurrentChange(val) {
+      submission2Change(val) {
         console.log(`当前页: ${val}`);
       }
     }

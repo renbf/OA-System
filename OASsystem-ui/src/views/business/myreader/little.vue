@@ -106,7 +106,7 @@
       style="margin-top:15px"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
+      :current-page="littlePage4"
       :page-sizes="[100, 200, 300, 400]"
       :page-size="100"
       layout="total, sizes, prev, pager, next, jumper"
@@ -125,6 +125,8 @@
     name: "page-little",
     data(){
       return{
+
+        littlePage4:1,
         //状态选择数据
         options: [{
           value: '选项1',
@@ -254,6 +256,7 @@
       this.getList()
     },
     methods:{
+
       getList(){
         this.loading = true;
         listLeave(this.addDateRange(this.queryParams, this.leaveDateRange)).then(response => {
@@ -272,7 +275,8 @@
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
       }
-    }
+    },
+
   }
 
 </script>

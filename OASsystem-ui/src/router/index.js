@@ -217,7 +217,7 @@ export const constantRoutes = [
     children:[
       {
         path:"index",
-        component: () => import("@/views/business/myreader/reader"),
+        component: () => import("@/views/business/myreader/index"),
         meta: { title: "我的待办", icon: "" }
       },
       {
