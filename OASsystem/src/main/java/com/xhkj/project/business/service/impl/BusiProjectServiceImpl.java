@@ -358,6 +358,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			PageInfo<BusiTaskVo> pageInfo = new PageInfo<BusiTaskVo>(list);
 			resultMap.put("code",200);
 			resultMap.put("data",list);
+			resultMap.put("pageInfo",pageInfo);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();

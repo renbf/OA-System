@@ -16,10 +16,10 @@
     </el-row>
     <el-row class="doing" v-for="(item,index) in busiProjectUseList">
 
-      <el-card class="box-card lf" :class="cards[index]">
+      <el-card class="box-card lf" :class="statusClass(item)">
         <div slot="header" class="clearfix">
           <span><b>{{item.projectName}}</b></span>
-          <el-button icon="el-icon-delete" style="float: right;" circle v-if="index == 1"></el-button>
+          <el-button icon="el-icon-delete" style="float: right;" circle v-if="item.status == 0" @click="deleteProject(item)"></el-button>
           <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.native="editproject(item)"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
@@ -141,7 +141,7 @@
 <script>
   import { listDept,userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,addBusiProject } from "@/api/business/mywork/myproject";
+  import { listBusiProject,addBusiProject,delBusiProject } from "@/api/business/mywork/myproject";
     export default {
       name: "index",
       data() {
@@ -152,34 +152,6 @@
             "card3",
 
           ],
-          //完成
-          // finishList:[{
-          //   finishName:"项目任务一",
-          //   finishStartDate:"2020-10-17",
-          //   finishEndDate:"2020-12-11",
-          //   finishDesc:"OA项目1",
-          //   finishNums:"99",
-          //   finishNames:"工程部，开发部"
-          //
-          // },{
-          //   finishName:"项目任务二",
-          //   finishStartDate:"2020-10-17",
-          //   finishEndDate:"2020-12-11",
-          //   finishDesc:"OA项目3",
-          //   finishNums:"99",
-          //   finishNames:"工程部，开发部",
-          //
-          //
-          // },{
-          //     finishName:"项目任务三",
-          //     finishStartDate:"2020-10-17",
-          //     finishEndDate:"2020-12-11",
-          //     finishDesc:"OA项目3",
-          //     finishNums:"99",
-          //     finishNames:"工程部，开发部"
-          //
-          //   }],
-          // canyupeople: generateData(),
           addproject: '',
           addopen: false,
           addform: {
@@ -212,6 +184,9 @@
         }
 
       },
+      computed: {
+
+      },
       created() {
         //获取部门列表
         userDeptList().then(response => {
@@ -224,6 +199,13 @@
       },
 
       methods: {
+        statusClass(item) {
+          if (item.status == '0') {
+            return 'card2';
+          }else{
+            return 'card1';
+          }
+        },
         getlistBusiProject() {
           let _this = this;
           listBusiProject().then(response => {
@@ -242,13 +224,6 @@
               });
             }
           });
-          // listBusiProject({projectProgress:'100'}).then(response => {
-          //   if(response.code == 200){
-          //     _this.busiProjectDoneList = response.data;
-          //     _this.formatList(_this.busiProjectUseList);
-          //   }
-          // });
-
         },
         formatList(list) {
           list.forEach((val) =>{
@@ -328,6 +303,19 @@
         projectdetail(item) {
 
           this.$router.push({ path:'/myproject/look'})
+        },
+        deleteProject(item) {
+          let _this = this;
+          this.$confirm('是否确认删除项目吗?', "警告", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }).then(function() {
+            return delBusiProject(item.projectId);
+          }).then(() => {
+            this.msgSuccess("删除成功");
+            this.getlistBusiProject();
+          }).catch(function() {});
         }
       }
     }

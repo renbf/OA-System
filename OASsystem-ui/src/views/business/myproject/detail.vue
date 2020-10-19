@@ -32,7 +32,7 @@
                 <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
               </el-form-item>
               <el-form-item label="项目时间">
-                <div class="div1" >
+                <div class="div1">
                   <i class="el-icon-date" style="margin-left:10px;"></i>
                   <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{projectInfo.projectStartDate}}</span>
                   <span style="margin-left:40px;">至</span>
@@ -247,11 +247,11 @@
           style="float:right;margin-top:30px;margin-bottom:80px;"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
+          :current-page="pageInfo.pageNum"
           :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :total="pageInfo.total">
         </el-pagination>
       </div>
     </div>
@@ -351,8 +351,7 @@
     <el-dialog
       title="关闭项目"
       :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose">
+      width="30%">
       <el-divider></el-divider>
       <el-form>
         <el-form-item>
@@ -386,7 +385,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="handleCloseProject">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -572,7 +571,7 @@
           taskDates: '',
           taskStatus: '',
           page:1,
-          limit:10
+          limit:2
         },
         status: [
           {
@@ -585,6 +584,7 @@
           }
         ],
         taskList: [],
+        pageInfo: {},
         activeIndex: 'project_progress',
 
         value: true,
@@ -649,8 +649,21 @@
       },
 
       add2(){
+        this.resetTaskForm();
         this.header1 = "新建项目任务";
         this.add3=true;
+      },
+      resetTaskForm() {
+        this.taskform = {
+            taskId:undefined,
+            taskName:'',
+            taskNumber:undefined,
+            taskDate: '',
+            taskDesc:'',
+            status:'',
+            userList: [],
+        };
+        this.resetForm("taskform");
       },
       getProject() {
         let _this = this;
@@ -710,6 +723,7 @@
         listTask(queryParams).then(response => {
           if (response.code == 200) {
             _this.taskList = response.data;
+            _this.pageInfo = response.pageInfo;
           }
         });
       },
@@ -889,6 +903,7 @@
           }
         });
       },
+      //项目启用禁用
       changeStatusHandle(value) {
         let _this = this;
         let form = {
@@ -918,6 +933,34 @@
             this.msgError(response.msg);
           }
         });
+      },
+      //关闭项目
+      handleCloseProject() {
+        let _this = this;
+        let form = {
+          projectId:_this.projectId,
+          closeReason:textarea2
+        };
+        closeProject(form).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("关闭成功");
+            this.dialogVisible = false;
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      },
+      handleSizeChange(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.limit = val;
+        this.getTaskList();
+      },
+      handleCurrentChange(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.page = val;
+        this.getTaskList();
       }
     }
 
