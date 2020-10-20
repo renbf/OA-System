@@ -53,7 +53,6 @@
       getLittleNum(){
         this.loading = true;
         approveListLittle().then(response => {
-          debugger
           this.req[0].number = response.total;
           this.loading = false;
         });
