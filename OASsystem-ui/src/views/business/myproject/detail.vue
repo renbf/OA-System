@@ -245,6 +245,13 @@
                 @click.stop="handleCloseTask(scope.row)"
               >关闭</el-button
               >
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit-outline"
+                @click.stop="handleDeleteTask(scope.row)"
+              >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -255,7 +262,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageInfo.pageNum"
-          :page-sizes="[100, 200, 300, 400]"
+          :page-sizes="[10, 20, 30, 40]"
           :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="pageInfo.total">
@@ -539,7 +546,7 @@
   import project_progress from './project_progress';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -624,7 +631,7 @@
           taskDates: '',
           taskStatus: '',
           page:1,
-          limit:2
+          limit:10
         },
         status: [
           {
@@ -951,7 +958,7 @@
             } else {
               addBusiTask(form).then(response => {
                 if (response.code === 200) {
-                  this.msgSuccess("修改成功");
+                  this.msgSuccess("新增成功");
                   this.add3 = false;
                   this.getTaskList();
                 } else {
@@ -1050,8 +1057,21 @@
             closeReason:undefined
         }
         this.resetForm("closeTaskform");
+      },
+      //删除
+      handleDeleteTask(item) {
+        let _this = this;
+        this.$confirm('是否确认删除当前任务吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delBusiTask(item.taskId);
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.getTaskList();
+        }).catch(function() {});
       }
-
     }
 
   }

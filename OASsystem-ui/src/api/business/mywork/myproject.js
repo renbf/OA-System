@@ -110,7 +110,13 @@ export function closeTask(data) {
     data: data
   })
 }
-
+// 删除任务
+export function delBusiTask(taskId) {
+  return request({
+    url: '/api/busiProject/removeTask/' + taskId,
+    method: 'delete'
+  })
+}
 export function project_progress() {
   return {
     code: 200,
