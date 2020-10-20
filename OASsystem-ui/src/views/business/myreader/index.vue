@@ -17,6 +17,9 @@
 
 
 <script>
+  import {approveList as approveListLittle} from "@/api/business/mywork/extrawork";
+  import {approveList as approveListLeave} from "@/api/business/mywork/leave";
+
   export default {
     name: "page-reader",
     data(){
@@ -36,7 +39,33 @@
         ]
       }
     },
+    created() {
+      //获取加班审批数量
+      this.getLittleNum();
+
+      //获取请假审批数量
+      this.getLeaveNum();
+
+
+
+    },
     methods:{
+      getLittleNum(){
+        this.loading = true;
+        approveListLittle().then(response => {
+          debugger
+          this.req[0].number = response.total;
+          this.loading = false;
+        });
+      },
+      getLeaveNum(){
+        this.loading = true;
+        approveListLeave().then(response => {
+          this.req[1].number = response.total;
+          this.loading = false;
+        });
+      },
+
       edit(id){
         if(id===1){
           this.$router.push({ path:'/myreader/little'})
