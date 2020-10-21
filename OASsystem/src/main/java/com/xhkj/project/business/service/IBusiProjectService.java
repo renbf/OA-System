@@ -72,7 +72,7 @@ public interface IBusiProjectService
 
 	public Map<String, Object> changeTaskStatus(BusiTask busiTask);
 
-	public Map<String, Object> removeTask(Long taskId);
+	public Map<String, Object> removeTask(BusiTask busiTask);
 
 	public Map<String, Object> closeProject(BusiProject busiProject);
 

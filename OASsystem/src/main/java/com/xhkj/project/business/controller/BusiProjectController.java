@@ -235,13 +235,13 @@ public class BusiProjectController
 	/**
 	 * 删除任务
 	 */
-	@DeleteMapping( "/removeTask/{taskId}")
+	@PostMapping( "/removeTask")
 	@ResponseBody
-	public Map<String,Object> removeTask(@PathVariable Long taskId)
+	public Map<String,Object> removeTask(@RequestBody BusiTask busiTask)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			resultMap = busiProjectService.removeTask(taskId);
+			resultMap = busiProjectService.removeTask(busiTask);
 		} catch (Exception e) {
 			log.error("删除任务异常",e);
 			resultMap.put("code",-1);

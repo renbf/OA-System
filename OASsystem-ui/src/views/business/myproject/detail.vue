@@ -85,7 +85,7 @@
       <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
       <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
       </el-button>
-      <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
+      <el-button type="danger" @click="handleDeleteTaskBitch"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
     <div v-if="model=='列表'" style="margin-top:20px;">
@@ -645,6 +645,7 @@
         ],
         taskList: [],
         pageInfo: {},
+        taskIds: [],
         activeIndex: 'project_progress',
 
         value: true,
@@ -825,7 +826,13 @@
       },
       handleRowClick() {
       },
-      handleSelectionChange() {
+      handleSelectionChange(val) {
+        let _this = this;
+        let taskIds = [];
+        val.forEach((item) => {
+          taskIds.push(item.taskId);
+        });
+        _this.taskIds = taskIds;
       },
       handleUpdate(item) {
         this.header1 = "编辑项目任务";
@@ -1066,7 +1073,22 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delBusiTask(item.taskId);
+          return delBusiTask({taskIds:[item.taskId]});
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.getTaskList();
+        }).catch(function() {});
+      },
+      //批量删除
+      handleDeleteTaskBitch() {
+        let _this = this;
+        this.$confirm('是否确认批量删除这些任务吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          debugger
+          return delBusiTask({taskIds:_this.taskIds});
         }).then(() => {
           this.msgSuccess("删除成功");
           this.getTaskList();

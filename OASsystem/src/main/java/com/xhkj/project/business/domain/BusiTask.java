@@ -53,6 +53,16 @@ public class BusiTask extends BaseEntity
 
 	private List<Long> userList;
 
+	private List<Long> taskIds;
+
+	public List<Long> getTaskIds() {
+		return taskIds;
+	}
+
+	public void setTaskIds(List<Long> taskIds) {
+		this.taskIds = taskIds;
+	}
+
 	public List<Date> getTaskDate() {
 		return taskDate;
 	}

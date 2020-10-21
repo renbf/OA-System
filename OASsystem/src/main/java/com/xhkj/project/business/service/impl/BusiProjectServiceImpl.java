@@ -400,19 +400,25 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 
 	@Override
 	@Transactional
-	public Map<String, Object> removeTask(Long taskId) {
+	public Map<String, Object> removeTask(BusiTask busiTask) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			BusiTask busiTask = busiTaskMapper.selectBusiTaskById(taskId);
-			String status = busiTask.getStatus();
-			if ("0".equals(status)) {
-				busiTaskMapper.deleteBusiTaskById(taskId);
-				busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
-				resultMap.put("code",200);
-			}else{
-				resultMap.put("code",-1);
-				resultMap.put("msg","在启用中，不能删除");
+			List<Long> taskIds = busiTask.getTaskIds();
+			if (CollectionUtils.isNotEmpty(taskIds)) {
+				for (Long taskId : taskIds) {
+					BusiTask busiTask1 = busiTaskMapper.selectBusiTaskById(taskId);
+					String status = busiTask1.getStatus();
+					if ("0".equals(status)) {
+						busiTaskMapper.deleteBusiTaskById(taskId);
+						busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
+					}else{
+						resultMap.put("code",-1);
+						resultMap.put("msg","在启用中，不能删除");
+						return resultMap;
+					}
+				}
 			}
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
