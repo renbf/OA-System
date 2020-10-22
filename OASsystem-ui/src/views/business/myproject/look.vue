@@ -158,7 +158,7 @@
         v-loading="loading"
         :data="taskList"
         @selection-change="handleSelectionChange"
-        @row-click="lookdetail=true"
+        @row-click="handleTaskLookOpen"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
@@ -548,11 +548,11 @@
 
  <!--项目任务列表弹框-->
     <el-dialog
-      :title="looktitle"
-      :visible.sync="lookdetail"
+      :title="taskLookTitle"
+      :visible.sync="taskLookOpen"
       width="500px"
     >
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="taskLookForm" :model="taskLookForm" label-width="80px">
         <el-form-item label="任务进度"></el-form-item>
         <el-form-item label="时间进度">
           <el-progress :percentage="50"></el-progress>
@@ -667,9 +667,9 @@
     data() {
       return {
         //title文字显示
-        looktitle: "报销数据库设计",
+        taskLookTitle: "报销数据库设计",
         // 是否显示弹出层
-        lookdetail: false,
+        taskLookOpen: false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -749,7 +749,7 @@
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
-        form:{
+        taskLookForm:{
           deptId: '',
           name1:"迈克尔",
           name2:"任宝峰",
@@ -1235,6 +1235,11 @@
       //报送
       handleBaosong() {
 
+      },
+      //任务查看弹框
+      handleTaskLookOpen(){
+        this.taskLookTitle = "查看任务";
+        this.taskLookOpen = true;
       },
     }
 
