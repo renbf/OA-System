@@ -1,6 +1,5 @@
 <template>
   <div class="app-container travel_container projectdetail">
-    <el-collapse v-model="activeNames" @change="handleChange">
       <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
       </div>
       <el-card class="box-card">
@@ -57,7 +56,6 @@
           </div>
         </div>
       </el-card>
-    </el-collapse>
     <!--项目组申请模块-->
     <div style="margin-top:40px;">
       <p class="apply">
@@ -451,10 +449,6 @@
     </el-dialog>
 
     <!--项目任务模块-->
-    <!--项目任务模块-->
-    <!--项目任务模块-->
-
-
 
     <el-dialog :title="header1"
                :visible.sync="add3"
@@ -561,7 +555,7 @@
           <el-progress :percentage="50"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle></el-button>
+          <el-button icon="el-icon-edit-outline" circle @click="openlittle=true"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -649,6 +643,24 @@
 
 
     </el-dialog>
+<!--报销数据库编辑里的小编辑按钮-->
+    <el-dialog
+      title="设置任务进度"
+      :visible.sync="openlittle"
+      width="30%">
+      <el-form ref="form2" :model="form2" label-width="80px">
+          <el-progress :percentage="50" style="width:300px;float:left;"></el-progress>
+          <el-input-number v-model="form2.num" @change="handleChange3" :min="1" :max="10" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>
+         <h6 style="color:#BEBEBE">注：当设置“100%”时 任务及为完成状态，则任务不可在进行修改与编辑</h6>
+
+
+      </el-form>
+      <el-divider></el-divider>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="openlittle = false">取 消</el-button>
+    <el-button type="primary" @click="openlittle = false">确 定</el-button>
+  </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -666,6 +678,7 @@
     },
     data() {
       return {
+
         //title文字显示
         taskLookTitle: "报销数据库设计",
         // 是否显示弹出层
@@ -748,6 +761,7 @@
         addproject: "",
         addopen:false,
         add3: false,
+        openlittle:false,
         projectId:this.$route.query.projectId,
         taskLookForm:{
           deptId: '',
@@ -759,6 +773,9 @@
           fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
 
 
+        },
+        form2:{
+          num:1,
         },
         //新建编辑项目任务table数据
         addform: {
@@ -1000,6 +1017,9 @@
         });
       },
       handleChange() {
+      },
+      handleChange3(){
+
       },
       handleReport() {
       },
@@ -1404,6 +1424,10 @@
 
 
 <style lang="scss" scoped>
+  .box-card{
+    width: 1600px;
+    height:300px ;
+  }
   .sty{
     margin-left: 10px;
   }
