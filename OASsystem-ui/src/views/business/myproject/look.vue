@@ -102,8 +102,8 @@
     <!--项目任务模块-->
 
     <div  style="margin-bottom: 10px;margin-top:45px;" >
-      <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
-      <el-button type="primary" @click="handleBaosongBitch"><i class=" el-icon-plus" style="margin-right:5px;" ></i>报送
+     <h2>项目任务</h2>
+      <el-button type="success" @click="handleBaosongBitch"><i class="el-icon-message" style="margin-right:5px;" ></i>报送
       </el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
@@ -158,7 +158,7 @@
         v-loading="loading"
         :data="taskList"
         @selection-change="handleSelectionChange"
-        @row-click="handleRowClick"
+        @row-click="lookdetail=true"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
@@ -545,6 +545,111 @@
         <el-button type="primary" @click="taskSubmitForm">确定</el-button>
       </div>
     </el-dialog>
+
+ <!--项目任务列表弹框-->
+    <el-dialog
+      :title="looktitle"
+      :visible.sync="lookdetail"
+      width="500px"
+    >
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="任务进度"></el-form-item>
+        <el-form-item label="时间进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item label="任务进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item >
+          <el-button icon="el-icon-edit-outline" circle></el-button>
+        </el-form-item>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+        <el-collapse-item title="任务内容" name="4">
+        </el-collapse-item>
+          </el-collapse>
+
+        <el-form-item label="参与人员">
+          <el-tag type="info" >{{form.name1}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{form.name2}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{form.name3}}</el-tag>
+
+        </el-form-item>
+        <el-form-item label="活动时间">
+          <el-date-picker
+            v-model="form.lookvalue"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
+        </el-form-item>
+
+        <el-form-item label="活动内容">
+          <el-input type="textarea" v-model="form.desc"></el-input>
+        </el-form-item>
+
+
+        <el-form-item label="工作内容">
+          <el-input type="textarea" v-model="form.desc"></el-input>
+        </el-form-item>
+
+        <el-upload
+          class="upload-demo"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          multiple
+          :limit="3"
+          :on-exceed="handleExceed"
+          :file-list="form.fileList">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+          <el-collapse-item title="任务日志" name="4">
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-timeline>
+          <el-timeline-item timestamp="2018/4/12" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/3" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/2" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+
+
+
+
+
+
+      </el-form>
+
+
+
+
+    </el-dialog>
+
   </div>
 </template>
 
@@ -561,6 +666,10 @@
     },
     data() {
       return {
+        //title文字显示
+        looktitle: "报销数据库设计",
+        // 是否显示弹出层
+        lookdetail: false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -640,6 +749,17 @@
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
+        form:{
+          deptId: '',
+          name1:"迈克尔",
+          name2:"任宝峰",
+          name3:"谷歌",
+          desc:"",
+          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+
+
+        },
         //新建编辑项目任务table数据
         addform: {
           projectName: '',
@@ -771,6 +891,19 @@
       },
     },
     methods: {
+      //上传附件
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      beforeRemove(file, fileList) {
+        return this.$confirm(`确定移除 ${ file.name }？`);
+      },
       //全部报送任务
       submission(){
         this.$router.push({ path:'/myproject/submission'})
@@ -882,8 +1015,6 @@
         this.form.dateRange = [];
         this.resetForm("queryForm");
         this.handleQuery();
-      },
-      handleRowClick() {
       },
       handleSelectionChange(val) {
         let _this = this;
