@@ -1018,6 +1018,7 @@
           if (response.code === 200) {
             this.msgSuccess("关闭成功");
             this.dialogVisible = false;
+            this.$router.push({ path:'/myproject/index'});
           } else {
             this.msgError(response.msg);
           }
@@ -1087,7 +1088,6 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          debugger
           return delBusiTask({taskIds:_this.taskIds});
         }).then(() => {
           this.msgSuccess("删除成功");

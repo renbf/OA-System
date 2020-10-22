@@ -103,7 +103,7 @@
 
     <div  style="margin-bottom: 10px;margin-top:45px;" >
       <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
-      <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>报送
+      <el-button type="primary" @click="handleBaosongBitch"><i class=" el-icon-plus" style="margin-right:5px;" ></i>报送
       </el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
@@ -227,18 +227,12 @@
         </el-table-column>
 
         <el-table-column
-          label="任务状态"
+          label="状态"
           :show-overflow-tooltip="true"
         >
-
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.status"
-              active-value="1"
-              inactive-value="0"
-              @change="handlerTaskStatus(scope.row)"
-              active-text="启用">
-            </el-switch>
+            <span v-show="scope.row.baosongNum == 0">未报送</span>
+            <span v-show="scope.row.baosongNum > 0">已报送</span>
           </template>
         </el-table-column>
 
@@ -261,15 +255,8 @@
                 size="mini"
                 type="text"
                 icon="el-icon-edit-outline"
-                @click.stop="handleCloseTask(scope.row)"
-              >关闭</el-button
-              >
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit-outline"
-                @click.stop="handleDeleteTask(scope.row)"
-              >删除</el-button
+                @click.stop="handleBaosong(scope.row)"
+              >报送</el-button
               >
             </div>
           </template>
@@ -1109,6 +1096,14 @@
           this.msgSuccess("删除成功");
           this.getTaskList();
         }).catch(function() {});
+      },
+      //批量报送
+      handleBaosongBitch() {
+
+      },
+      //报送
+      handleBaosong() {
+
       },
     }
 

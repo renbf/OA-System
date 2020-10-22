@@ -52,9 +52,20 @@ public class BusiTaskVo extends BaseEntity
 //以上自动生成的尽量别动
 	//参与人数
 	private Integer memberNums;
+	//报送数
+	private Integer baosongNum;
+
 	private List<Date> taskDate;
 
 	private List<Long> userList;
+
+	public Integer getBaosongNum() {
+		return baosongNum;
+	}
+
+	public void setBaosongNum(Integer baosongNum) {
+		this.baosongNum = baosongNum;
+	}
 
 	public Integer getMemberNums() {
 		return memberNums;

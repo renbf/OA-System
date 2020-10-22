@@ -43,7 +43,7 @@
         <div class="text item">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
-          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
+          <p style="margin:0;font-size: 12px;">完成时间:{{item.updateTime}}(用时：130%)</p>
           <el-progress :percentage="100"  :format="format"></el-progress>
         </div>
       </el-card>
