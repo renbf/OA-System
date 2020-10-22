@@ -852,7 +852,7 @@
         };
         getTaskInfo({taskId:item.taskId}).then(response => {
           if(response.code == 200){
-            let taskMembers = response.data;
+            let taskMembers = response.busiTaskMembers;
             taskMembers.forEach((val) =>{
               _this.taskform.userList.push(val.memberId);
             });

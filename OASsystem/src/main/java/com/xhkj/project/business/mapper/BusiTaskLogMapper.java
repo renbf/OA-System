@@ -1,7 +1,9 @@
 package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiTaskLog;
-import java.util.List;	
+import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
+
+import java.util.List;
 /**
  * 任务日志 数据层
  * 
@@ -66,4 +68,6 @@ public interface BusiTaskLogMapper
 	 */
 	public int insertBusiTaskLogBatch(List<BusiTaskLog> list);
 	//以上自动生成的尽量别动
+
+	public List<BusiTaskLogVo> selectBusiTaskLogVos(BusiTaskLog busiTaskLog);
 }

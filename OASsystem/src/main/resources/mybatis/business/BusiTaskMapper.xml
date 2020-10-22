@@ -195,4 +195,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectBusiTaskByTaskId" parameterType="java.lang.Long" resultMap="BusiTaskVoResult">
+        select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark,
+        round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress
+        from busi_task t
+        where t.task_id = #{taskId}
+    </select>
+
 </mapper>

@@ -549,10 +549,10 @@
       <el-form ref="taskLookForm" :model="taskLookForm" label-width="80px">
         <el-form-item label="任务进度"></el-form-item>
         <el-form-item label="时间进度">
-          <el-progress :percentage="50"></el-progress>
+          <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item label="任务进度">
-          <el-progress :percentage="50"></el-progress>
+          <el-progress :percentage="taskLookForm.timeProgress"></el-progress>
         </el-form-item>
         <el-form-item >
           <el-button icon="el-icon-edit-outline" circle @click="openlittle=true"></el-button>
@@ -564,32 +564,25 @@
           </el-collapse>
 
         <el-form-item label="参与人员">
-          <el-tag type="info" >{{form.name1}}</el-tag>
-          <el-tag type="info" style="margin-left:10px;">{{form.name2}}</el-tag>
-          <el-tag type="info" style="margin-left:10px;">{{form.name3}}</el-tag>
+          <el-tag type="info" v-for="item in taskLookForm.userList">{{item.memberName}}</el-tag>
+          <!--<el-tag type="info" style="margin-left:10px;">{{taskLookForm.name2}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{taskLookForm.name3}}</el-tag>-->
 
         </el-form-item>
-        <el-form-item label="活动时间">
+        <el-form-item label="任务时间">
           <el-date-picker
-            v-model="form.lookvalue"
-            type="datetimerange"
+            v-model="taskLookForm.taskDate"
+            type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
 
         </el-form-item>
-
-        <el-form-item label="活动内容">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+        <el-form-item label="任务内容">
+          <el-input type="textarea" v-model="taskLookForm.taskDesc"></el-input>
         </el-form-item>
-
-
-        <el-form-item label="工作内容">
-          <el-input type="textarea" v-model="form.desc"></el-input>
-        </el-form-item>
-
-        <el-upload
+        <!--<el-upload
           class="upload-demo"
           action="https://jsonplaceholder.typicode.com/posts/"
           :on-preview="handlePreview"
@@ -598,10 +591,10 @@
           multiple
           :limit="3"
           :on-exceed="handleExceed"
-          :file-list="form.fileList">
+          :file-list="taskLookForm.fileList">
           <el-button size="small" type="primary">点击上传</el-button>
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload>
+        </el-upload>-->
 
         <el-collapse v-model="activeNames" @change="handleChange">
           <el-collapse-item title="任务日志" name="4">
@@ -631,17 +624,7 @@
             </el-card>
           </el-timeline-item>
         </el-timeline>
-
-
-
-
-
-
       </el-form>
-
-
-
-
     </el-dialog>
 <!--报销数据库编辑里的小编辑按钮-->
     <el-dialog
@@ -764,11 +747,14 @@
         openlittle:false,
         projectId:this.$route.query.projectId,
         taskLookForm:{
-          deptId: '',
-          name1:"迈克尔",
-          name2:"任宝峰",
-          name3:"谷歌",
-          desc:"",
+          taskId:undefined,
+          taskName:undefined,
+          taskNumber:undefined,
+          taskDate: [],
+          taskDesc:undefined,
+          taskProgress:undefined,
+          timeProgress:undefined,
+          userList: [],
           lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
           fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
 
@@ -1062,7 +1048,7 @@
         };
         getTaskInfo({taskId:item.taskId}).then(response => {
           if(response.code == 200){
-            let taskMembers = response.data;
+            let taskMembers = response.busiTaskMembers;
             taskMembers.forEach((val) =>{
               _this.taskform.userList.push(val.memberId);
             });
@@ -1256,10 +1242,48 @@
       handleBaosong() {
 
       },
+      resetTaskLookForm(){
+        this.taskLookForm = {
+          taskId:undefined,
+          taskName:undefined,
+          taskNumber:undefined,
+          taskDate: [],
+          taskDesc:undefined,
+          taskProgress:undefined,
+          timeProgress:undefined,
+          userList: [],
+        }
+        this.resetForm("taskLookForm");
+      },
       //任务查看弹框
-      handleTaskLookOpen(){
+      handleTaskLookOpen(row, column, event){
+        this.resetTaskLookForm();
         this.taskLookTitle = "查看任务";
         this.taskLookOpen = true;
+        this.updateSetTaskLookValue(row);
+      },
+      updateSetTaskLookValue(item) {
+        let _this = this;
+        getTaskInfo({taskId:item.taskId}).then(response => {
+          if(response.code == 200){
+            let busiTaskVo = response.busiTaskVo;
+            let taskMembers = response.busiTaskMembers;
+            let busiTaskLogVos = response.busiTaskLogVos;
+            _this.taskLookForm = {
+              taskId:item.taskId,
+              taskName:busiTaskVo.taskName,
+              taskNumber:busiTaskVo.taskNumber,
+              taskDate: [busiTaskVo.taskStartDate,busiTaskVo.taskEndDate],
+              taskDesc:busiTaskVo.taskDesc,
+              taskProgress:busiTaskVo.taskProgress,
+              timeProgress:busiTaskVo.timeProgress,
+              userList: [],
+            };
+            taskMembers.forEach((val) =>{
+              _this.taskLookForm.userList.push({memberId:val.memberId,memberName:val.memberName});
+            });
+          }
+        });
       },
     }
 

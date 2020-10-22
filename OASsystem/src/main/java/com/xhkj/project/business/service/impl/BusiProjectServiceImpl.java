@@ -6,14 +6,11 @@ import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.security.service.TokenService;
-import com.xhkj.project.business.domain.BusiProjectMember;
-import com.xhkj.project.business.domain.BusiTask;
-import com.xhkj.project.business.domain.BusiTaskMember;
+import com.xhkj.project.business.domain.*;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
-import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
-import com.xhkj.project.business.mapper.BusiTaskMapper;
-import com.xhkj.project.business.mapper.BusiTaskMemberMapper;
+import com.xhkj.project.business.mapper.*;
 import com.xhkj.project.system.domain.SysUser;
 import com.xhkj.project.system.mapper.SysUserMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -26,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import com.xhkj.project.business.mapper.BusiProjectMapper;
-import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.service.IBusiProjectService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +49,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiTaskMapper busiTaskMapper;
 	@Autowired
 	private BusiTaskMemberMapper busiTaskMemberMapper;
-
+	@Autowired
+	private BusiTaskLogMapper busiTaskLogMapper;
 	/**
      * 查询项目信息
      * 
@@ -370,10 +366,15 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	public Map<String, Object> getTaskInfo(Long taskId) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
+			BusiTaskVo busiTaskVo = busiTaskMapper.selectBusiTaskByTaskId(taskId);
 			List<BusiTaskMember> busiTaskMembers = busiTaskMemberMapper.selectBusiTaskMembers(taskId);
-
+			BusiTaskLog busiTaskLog = new BusiTaskLog();
+			busiTaskLog.setTaskId(taskId);
+			List<BusiTaskLogVo> busiTaskLogVos = busiTaskLogMapper.selectBusiTaskLogVos(busiTaskLog);
 			resultMap.put("code",200);
-			resultMap.put("data",busiTaskMembers);
+			resultMap.put("busiTaskVo",busiTaskVo);
+			resultMap.put("busiTaskMembers",busiTaskMembers);
+			resultMap.put("busiTaskLogVos",busiTaskLogVos);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();

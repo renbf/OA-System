@@ -99,5 +99,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+    <resultMap type="com.xhkj.project.business.domain.vo.BusiTaskLogVo" id="BusiTaskLogVoResult">
+        <result property="taskLogId"    column="task_log_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="dayContent"    column="day_content"    />
+        <result property="attachmentPath"    column="attachment_path"    />
+        <result property="logStatus"    column="log_status"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="nickName"    column="nick_name"    />
+    </resultMap>
+
+    <select id="selectBusiTaskLogVos" parameterType="com.xhkj.project.business.domain.BusiTaskLog" resultMap="BusiTaskLogVoResult">
+        <include refid="selectBusiTaskLogbasicColums"/>
+        ,u.nick_name
+        from busi_task_log tl
+        join sys_user u on tl.create_by = u.user_name
+        <where>
+            <if test="taskLogId != null "> and tl.task_log_id = #{taskLogId}</if>
+            <if test="taskId != null "> and tl.task_id = #{taskId}</if>
+            <if test="dayContent != null  and dayContent != '' "> and tl.day_content = #{dayContent}</if>
+            <if test="attachmentPath != null  and attachmentPath != '' "> and tl.attachment_path = #{attachmentPath}</if>
+            <if test="logStatus != null  and logStatus != '' "> and tl.log_status = #{logStatus}</if>
+            <if test="createDate != null "> and tl.create_date = #{createDate}</if>
+            <if test="createBy != null  and createBy != '' "> and tl.create_by = #{createBy}</if>
+            <if test="createTime != null "> and tl.create_time = #{createTime}</if>
+            <if test="remark != null  and remark != '' "> and tl.remark = #{remark}</if>
+        </where>
+        order by tl.create_time
+    </select>
+
 </mapper>
