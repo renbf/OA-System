@@ -246,7 +246,8 @@
                 size="mini"
                 type="text"
                 icon="el-icon-edit-outline"
-                @click.stop="handleUpdate(scope.row)"
+                @click.stop="lookUpdate(scope.row)"
+                style="color:#6C6C6C"
               >编辑</el-button
               >
               <el-button
@@ -254,8 +255,10 @@
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
+                style="color:#6C6C6C"
               >报送</el-button
               >
+
             </div>
           </template>
         </el-table-column>
@@ -448,97 +451,6 @@
   </span>
     </el-dialog>
 
-    <!--项目任务模块-->
-
-    <el-dialog :title="header1"
-               :visible.sync="add3"
-               width="800px" class="abow_dialog">
-      <el-form  ref="taskform" :model="taskform" :rules="taskrules" label-width="80px">
-        <el-form-item label="名称" prop="taskName">
-          <el-input
-            style="width:520px;"
-            type="text"
-            placeholder="请输入名称"
-            v-model="taskform.taskName"
-            maxlength="10"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <!--参与人员分栏模块-->
-        <el-form-item label="任务编号" prop="taskNumber">
-          <template>
-            <el-input-number v-model="taskform.taskNumber" :min="1" :max="10" label="描述文字" style="width: 520px"></el-input-number>
-          </template>
-        </el-form-item>
-
-        <el-form-item label="参与人员" prop="userList">
-          <el-transfer
-            :titles="['项目成员', '参与成员']"
-            filterable
-            :filter-method="filterMethod"
-            filter-placeholder="项目成员"
-            v-model="taskform.userList"
-            :data="taskMemberList"
-            style="margin-bottom: 2px">
-          </el-transfer>
-
-
-        </el-form-item>
-        <el-form-item label="任务时间" prop="taskDate">
-          <el-date-picker
-            v-model="taskform.taskDate"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
-        </el-form-item>
-        <!--        项目描述-->
-        <el-form-item label="任务描述" prop="taskDesc">
-          <el-input
-            :rows="8"
-            type="textarea"
-            placeholder="请输入内容"
-            v-model="taskform.taskDesc"
-            maxlength="120"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item  label="状态"  prop="status">
-          <el-switch
-            v-model="taskform.status"
-            active-value="1"
-            inactive-value="0"
-            active-text="启用">
-          </el-switch>
-          <span style="font-size: 13px;color:#ccc;margin-left: 20px;">注:状态为启用时参与人才会显示此项目</span>
-        </el-form-item>
-        <el-collapse v-model="matters_needing_attention">
-          <el-collapse-item title="项目注意事项" name="1">
-            <div>
-              1、当项目状态为“禁用”时，可对项目进行“删除”操作。
-            </div>
-            <div>
-              2、当项目任务有人参与并发表过内容时，项目与项目任务则不能被删除。但可“关闭项目”与“项目任务”。
-            </div>
-            <div>3、项目任务状态为“禁用”时，可对任务进行“删除”操作。</div>
-            <div>
-              4、当“关闭项目”或“关闭任务”后“项目”与“任务”将仅能“查看”
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-
-        <el-button @click="taskCancel">取消</el-button>
-        <el-button type="primary" @click="taskSubmitForm">确定</el-button>
-      </div>
-    </el-dialog>
 
  <!--项目任务列表弹框-->
     <el-dialog
@@ -645,6 +557,93 @@
   </span>
     </el-dialog>
 
+
+    <!--table里编辑弹框-->
+    <el-dialog
+               :visible.sync="lookOpen"
+               width="600px" class="abow_dialog">
+      <el-form ref="lookForm" :model="lookForm" label-width="80px">
+      <el-form-item label="参与人员">
+        <el-tag type="info" >{{lookForm.name1}}</el-tag>
+        <el-tag type="info" style="margin-left:10px;">{{lookForm.name2}}</el-tag>
+        <el-tag type="info" style="margin-left:10px;">{{lookForm.name3}}</el-tag>
+
+      </el-form-item>
+      <el-form-item label="活动时间">
+        <el-date-picker
+          v-model="lookForm.lookvalue"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+
+      </el-form-item>
+
+      <el-form-item label="活动内容">
+        <el-input type="textarea" v-model="lookForm.desc"></el-input>
+      </el-form-item>
+
+
+      <el-form-item label="工作内容">
+        <el-input type="textarea" v-model="lookForm.desc"></el-input>
+      </el-form-item>
+
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :before-remove="beforeRemove"
+        multiple
+        :limit="3"
+        :on-exceed="handleExceed"
+        :file-list="form.fileList">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+
+      <el-collapse v-model="activeNames" @change="handleChange">
+        <el-collapse-item title="任务日志" name="4">
+        </el-collapse-item>
+      </el-collapse>
+
+      <el-timeline>
+        <el-timeline-item timestamp="2018/4/12" placement="top">
+          <el-card>
+            <h4>迈克尔06/05 19:39</h4>
+            <p>1.客服解决问题4件</p>
+            <p>1.解决投诉1件</p>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item timestamp="2018/4/3" placement="top">
+          <el-card>
+            <h4>迈克尔06/05 19:39</h4>
+            <p>1.客服解决问题4件</p>
+            <p>1.解决投诉1件</p>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item timestamp="2018/4/2" placement="top">
+          <el-card>
+            <h4>迈克尔06/05 19:39</h4>
+            <p>1.客服解决问题4件</p>
+            <p>1.解决投诉1件</p>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+
+        <el-button @click="lookCancel">取消</el-button>
+        <el-button type="primary" @click="lookSubmitForm">确定</el-button>
+      </div>
+    </el-dialog>
+
+
+
+
+
+
   </div>
 </template>
 
@@ -663,7 +662,7 @@
       return {
 
         //title文字显示
-        taskLookTitle: "报销数据库设计",
+        taskLookTitle: "",
         // 是否显示弹出层
         taskLookOpen: false,
         //当前页数
@@ -743,7 +742,6 @@
         },
         addproject: "",
         addopen:false,
-        add3: false,
         openlittle:false,
         projectId:this.$route.query.projectId,
         taskLookForm:{
@@ -758,6 +756,16 @@
           lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
           fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
 
+
+        },
+        lookForm:{
+          deptId: '',
+          name1:"迈克尔",
+          name2:"任宝峰",
+          name3:"谷歌",
+          desc:"",
+          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
 
         },
         form2:{
@@ -790,7 +798,6 @@
         projectInfo: {},
         //部门成员列表
         deptMemberList: [],
-        header1: '',
         taskform:{
           taskId:undefined,
           taskName:'',
@@ -894,6 +901,7 @@
       },
     },
     methods: {
+
       //上传附件
       handleRemove(file, fileList) {
         console.log(file, fileList);
@@ -1030,9 +1038,8 @@
         });
         _this.taskIds = taskIds;
       },
-      handleUpdate(item) {
-        this.header1 = "编辑项目任务";
-        this.add3=true;
+     lookUpdate(item) {
+        this.lookOpen=true;
         this.updateSetValue(item);
       },
       updateSetValue(item) {
@@ -1091,6 +1098,12 @@
       },
       taskCancel() {
         this.add3 = false;
+      },
+      lookCancel(){
+        this.lookOpen = false;
+      },
+      lookSubmitForm(){
+        this.lookOpen = false;
       },
       //提交项目
       submitForm(){
