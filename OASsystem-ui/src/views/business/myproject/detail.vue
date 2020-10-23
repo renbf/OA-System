@@ -139,7 +139,7 @@
         v-loading="loading"
         :data="taskList"
         @selection-change="handleSelectionChange"
-        @row-click="handleRowClick"
+        @row-click="handleOpen=true"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
@@ -359,7 +359,6 @@
       </div>
     </el-dialog>
 
-
 <!--关闭按钮模块-->
 
     <el-dialog
@@ -445,11 +444,6 @@
     </el-dialog>
 
 <!--项目任务模块-->
-    <!--项目任务模块-->
-    <!--项目任务模块-->
-
-
-
     <el-dialog :title="header1"
                :visible.sync="add3"
                width="800px" class="abow_dialog">
@@ -539,6 +533,82 @@
         <el-button type="primary" @click="taskSubmitForm">确定</el-button>
       </div>
     </el-dialog>
+
+    <!--列表弹框-->
+    <el-dialog
+      title="提示"
+      :visible.sync="handleOpen"
+      width="30%"
+     >
+      <el-form ref="detailForm" :model="detailForm" label-width="80px">
+        <el-form-item label="任务进度"></el-form-item>
+        <el-form-item label="时间进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item label="任务进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item >
+          <el-button icon="el-icon-edit-outline" circle></el-button>
+        </el-form-item>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+          <el-collapse-item title="任务内容" name="4">
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-form-item label="参与人员">
+          <el-tag type="info" >{{detailForm.name1}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{detailForm.name2}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{detailForm.name3}}</el-tag>
+
+        </el-form-item>
+        <el-form-item label="活动时间">
+          <el-date-picker
+            v-model="detailForm.lookvalue"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
+        </el-form-item>
+
+        <el-form-item label="活动内容">
+          <el-input type="textarea" v-model="detailForm.desc"></el-input>
+        </el-form-item>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+          <el-collapse-item title="任务日志" name="4">
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-timeline>
+          <el-timeline-item timestamp="2018/4/12" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/3" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/2" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+      </el-form>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -555,6 +625,7 @@
     },
     data() {
       return {
+        handleOpen:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -572,6 +643,16 @@
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
+        //列表弹框数据
+        detailForm:{
+          deptId: '',
+          name1:"迈克尔",
+          name2:"任宝峰",
+          name3:"谷歌",
+          desc:"",
+          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+        },
         //新建编辑项目任务table数据
         addform: {
           projectName: '',
@@ -823,8 +904,6 @@
         this.form.dateRange = [];
         this.resetForm("queryForm");
         this.handleQuery();
-      },
-      handleRowClick() {
       },
       handleSelectionChange(val) {
         let _this = this;

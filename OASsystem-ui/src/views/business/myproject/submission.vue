@@ -16,7 +16,6 @@
       <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
 
-
     <!--新建申请弹框一层-->
     <!--新建申请弹框一层-->
     <!--新建申请弹框一层-->
@@ -68,10 +67,6 @@
   </span>
     </el-dialog>
 
-
-
-
-
     <!--新建申请弹框二层-->
     <!--新建申请弹框二层-->
     <!--新建申请弹框二层-->
@@ -91,16 +86,16 @@
     <el-button type="primary" @click="dialog2 = false">确 定</el-button>
   </span>
     </el-dialog>
+
 <!--table弹框三层-->
     <!--table弹框三层-->
     <!--table弹框三层-->
 
     <el-dialog
-      style="position: relative"
       title="审批项目申请"
-      :visible.sync="submissionClick"
-      width="45%"
-      :before-close="Close3">
+      :visible.sync="submissionOpen"
+      width="40%"
+    >
       <div style="height: 400px;width:200px;">
         <el-steps direction="vertical" :active="1" finish-status="success">
           <el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
@@ -111,7 +106,7 @@
         </el-steps>
       </div>
       <div style="float:right;top:0;right:0;" class="dialogtext">
-        <el-form>
+        <el-form ref="submissionForm" :model="submissionForm" label-width="80px">
           <el-form-item style="margin-top:90px;font-weight: bold">
             标题
             <el-input
@@ -119,7 +114,7 @@
               type="textarea"
               autosize
               placeholder="请输入内容"
-              v-model="textarea1">
+              v-model="submissionForm.textarea1">
             </el-input>
             <div style="margin: 20px 0;"></div>
 
@@ -128,21 +123,19 @@
             申请内容
             <el-input
               style="width:350px;margin-left: 10px;margin-right:40px;"
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="textarea3">
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="submissionForm.textarea3">
             </el-input>
           </el-form-item>
         </el-form>
       </div>
-
       <span slot="footer" class="dialog-footer">
-    <el-button @click="submissionClick = false">取 消</el-button>
-    <el-button type="primary" @click="submissionClick = false">确 定</el-button>
+    <el-button @click="submissionCancel">取 消</el-button>
+    <el-button type="primary" @click="submissionSubmitForm">确 定</el-button>
   </span>
     </el-dialog>
-
 
     <!-- seach栏-->
 
@@ -176,11 +169,9 @@
     </div>
 
     <el-table
-
-         @row-click="submissionClick=true"
-
       :data="tableData"
-      style="width: 100%;margin-top:20px;">
+      style="width: 100%;margin-top:20px;"
+         @row-click="submissionOpen=true">
       <el-table-column
         type="selection"
         width="55">
@@ -251,19 +242,13 @@
       return{
         textarea1:"项目任务延时申请",
         textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
-
-
         submissionPage4:1,
-        submissionClick:false,
-
-
+        submissionOpen:false,
         // 审批人
         one:'张三',
         two:'张三',
         tree:'张三',
         four:"李四",
-
-
         //新建项目审批注释
         annotation:"注：审批顺序添加顺序依次审批",
         //新建项目申请里标题数据
@@ -271,14 +256,14 @@
         //新建项目申请里申请内容
         textarea2: '',
         //新建任务弹框布尔类型确认谈框
-        //新建任务弹框布尔类型确认谈框
-        //新建任务弹框布尔类型确认谈框
-
         dialogVisible: false,
         dialog2:false,
         //陈述理由数据
         input: '',
-
+        submissionForm: {
+          textarea1:"项目任务延时申请",
+          textarea3:"因功能修改需要重新调整，需增加任务时间，故作此申请",
+        },
         //状态选择数据
         options: [{
           value: '选项1',
@@ -421,20 +406,6 @@
     },
 
     methods:{
-      Close3(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
       lookClose(done){
         this.$confirm('确认关闭？')
           .then(_ => {
@@ -460,13 +431,25 @@
       },
       submission2Change(val) {
         console.log(`当前页: ${val}`);
-      }
+      },
+      submissionCancel(){
+        this.submissionOpen=false
+
+      },
+      submissionSubmitForm(){
+        this.submissionOpen=false
+      },
     }
   }
 
 </script>
 
 <style lang="scss">
+  .submissionright{
+    float:right;
+    top:0;
+    right:0;
+  }
 
   .dialogtext{
     position: absolute;
