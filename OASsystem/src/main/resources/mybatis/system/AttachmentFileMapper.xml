@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.system.mapper.AttachmentFileMapper">
+    
+    <resultMap type="com.xhkj.project.system.domain.AttachmentFile" id="AttachmentFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="enableStatus"    column="enable_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectAttachmentFilebasicColums">
+        select f.file_id, f.file_name, f.file_path, f.file_url, f.file_type, f.enable_status, f.create_by, f.create_time, f.remark
+    </sql>
+	
+    <select id="selectAttachmentFileList" parameterType="com.xhkj.project.system.domain.AttachmentFile" resultMap="AttachmentFileResult">
+        <include refid="selectAttachmentFilebasicColums"/>
+        from attachment_file f
+        <where>  
+            <if test="fileId != null "> and f.file_id = #{fileId}</if>
+             <if test="fileName != null  and fileName != '' "> and f.file_name = #{fileName}</if>
+             <if test="filePath != null  and filePath != '' "> and f.file_path = #{filePath}</if>
+             <if test="fileUrl != null  and fileUrl != '' "> and f.file_url = #{fileUrl}</if>
+             <if test="fileType != null  and fileType != '' "> and f.file_type = #{fileType}</if>
+             <if test="enableStatus != null  and enableStatus != '' "> and f.enable_status = #{enableStatus}</if>
+             <if test="createBy != null  and createBy != '' "> and f.create_by = #{createBy}</if>
+             <if test="createTime != null "> and f.create_time = #{createTime}</if>
+             <if test="remark != null  and remark != '' "> and f.remark = #{remark}</if>
+         </where>
+    </select>
+    
+    <select id="selectAttachmentFileById" parameterType="Long" resultMap="AttachmentFileResult">
+        <include refid="selectAttachmentFilebasicColums"/>
+        from attachment_file f
+        where f.file_id = #{fileId}
+    </select>
+        
+    <insert id="insertAttachmentFile" parameterType="com.xhkj.project.system.domain.AttachmentFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into attachment_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="fileName != null  and fileName != ''  ">file_name,</if>
+			<if test="filePath != null  and filePath != ''  ">file_path,</if>
+			<if test="fileUrl != null  and fileUrl != ''  ">file_url,</if>
+			<if test="fileType != null  and fileType != ''  ">file_type,</if>
+			<if test="enableStatus != null  and enableStatus != ''  ">enable_status,</if>
+			<if test="createBy != null  and createBy != ''  ">create_by,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="fileName != null  and fileName != ''  ">#{fileName},</if>
+			<if test="filePath != null  and filePath != ''  ">#{filePath},</if>
+			<if test="fileUrl != null  and fileUrl != ''  ">#{fileUrl},</if>
+			<if test="fileType != null  and fileType != ''  ">#{fileType},</if>
+			<if test="enableStatus != null  and enableStatus != ''  ">#{enableStatus},</if>
+			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateAttachmentFile" parameterType="com.xhkj.project.system.domain.AttachmentFile">
+        update attachment_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null  and fileName != ''  ">file_name = #{fileName},</if>
+            <if test="filePath != null  and filePath != ''  ">file_path = #{filePath},</if>
+            <if test="fileUrl != null  and fileUrl != ''  ">file_url = #{fileUrl},</if>
+            <if test="fileType != null  and fileType != ''  ">file_type = #{fileType},</if>
+            <if test="enableStatus != null  and enableStatus != ''  ">enable_status = #{enableStatus},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+	<delete id="deleteAttachmentFileById" parameterType="Long">
+        delete from attachment_file where file_id = #{fileId}
+    </delete>
+	
+    <delete id="deleteAttachmentFileByIds" parameterType="String">
+        delete from attachment_file where file_id in 
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+
+    <insert id="insertAttachmentFileBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="fileId">
+        insert into attachment_file ( file_name, file_path, file_url, file_type, enable_status, create_by, create_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.fileName}, #{item.filePath}, #{item.fileUrl}, #{item.fileType}, #{item.enableStatus}, #{item.createBy}, #{item.createTime}, #{item.remark})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    
+</mapper>

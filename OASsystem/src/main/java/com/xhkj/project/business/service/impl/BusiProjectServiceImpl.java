@@ -6,14 +6,12 @@ import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.security.service.TokenService;
-import com.xhkj.project.business.domain.BusiProjectMember;
-import com.xhkj.project.business.domain.BusiTask;
-import com.xhkj.project.business.domain.BusiTaskMember;
+import com.xhkj.project.business.domain.*;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
+import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
-import com.xhkj.project.business.mapper.BusiProjectMemberMapper;
-import com.xhkj.project.business.mapper.BusiTaskMapper;
-import com.xhkj.project.business.mapper.BusiTaskMemberMapper;
+import com.xhkj.project.business.mapper.*;
+import com.xhkj.project.common.UploadFile;
 import com.xhkj.project.system.domain.SysUser;
 import com.xhkj.project.system.mapper.SysUserMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -26,8 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import com.xhkj.project.business.mapper.BusiProjectMapper;
-import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.service.IBusiProjectService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +50,10 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiTaskMapper busiTaskMapper;
 	@Autowired
 	private BusiTaskMemberMapper busiTaskMemberMapper;
-
+	@Autowired
+	private BusiTaskLogMapper busiTaskLogMapper;
+	@Autowired
+	private BusiTaskLogFileMapper busiTaskLogFileMapper;
 	/**
      * 查询项目信息
      * 
@@ -370,10 +369,15 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	public Map<String, Object> getTaskInfo(Long taskId) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
+			BusiTaskVo busiTaskVo = busiTaskMapper.selectBusiTaskByTaskId(taskId);
 			List<BusiTaskMember> busiTaskMembers = busiTaskMemberMapper.selectBusiTaskMembers(taskId);
-
+			BusiTaskLog busiTaskLog = new BusiTaskLog();
+			busiTaskLog.setTaskId(taskId);
+			List<BusiTaskLogVo> busiTaskLogVos = busiTaskLogMapper.selectBusiTaskLogVos(busiTaskLog);
 			resultMap.put("code",200);
-			resultMap.put("data",busiTaskMembers);
+			resultMap.put("busiTaskVo",busiTaskVo);
+			resultMap.put("busiTaskMembers",busiTaskMembers);
+			resultMap.put("busiTaskLogVos",busiTaskLogVos);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
@@ -400,19 +404,25 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 
 	@Override
 	@Transactional
-	public Map<String, Object> removeTask(Long taskId) {
+	public Map<String, Object> removeTask(BusiTask busiTask) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			BusiTask busiTask = busiTaskMapper.selectBusiTaskById(taskId);
-			String status = busiTask.getStatus();
-			if ("0".equals(status)) {
-				busiTaskMapper.deleteBusiTaskById(taskId);
-				busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
-				resultMap.put("code",200);
-			}else{
-				resultMap.put("code",-1);
-				resultMap.put("msg","在启用中，不能删除");
+			List<Long> taskIds = busiTask.getTaskIds();
+			if (CollectionUtils.isNotEmpty(taskIds)) {
+				for (Long taskId : taskIds) {
+					BusiTask busiTask1 = busiTaskMapper.selectBusiTaskById(taskId);
+					String status = busiTask1.getStatus();
+					if ("0".equals(status)) {
+						busiTaskMapper.deleteBusiTaskById(taskId);
+						busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
+					}else{
+						resultMap.put("code",-1);
+						resultMap.put("msg","在启用中，不能删除");
+						return resultMap;
+					}
+				}
 			}
+			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
@@ -429,6 +439,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			String username = SecurityUtils.getUsername();
 			busiProject.setUpdateBy(username);
 			busiProject.setUpdateTime(now);
+			busiProject.setProjectProgress(100);
 			busiProjectMapper.updateBusiProject(busiProject);
 			resultMap.put("code",200);
 		} catch (Exception e) {
@@ -447,6 +458,39 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			busiTask.setUpdateBy(username);
 			busiTask.setUpdateTime(now);
 			busiTaskMapper.updateBusiTask(busiTask);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> insertBusiTaskLog(BusiTaskLog busiTaskLog) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTaskLog.setCreateDate(now);
+			busiTaskLog.setCreateTime(now);
+			busiTaskLog.setCreateBy(username);
+			busiTaskLogMapper.insertBusiTaskLog(busiTaskLog);
+			Long taskLogId = busiTaskLog.getTaskLogId();
+			List<UploadFile> fileList = busiTaskLog.getFileList();
+			if (CollectionUtils.isNotEmpty(fileList)) {
+				List<BusiTaskLogFile> list = new ArrayList<>();
+				BusiTaskLogFile busiTaskLogFile = null;
+				for (UploadFile uploadFile : fileList) {
+					busiTaskLogFile = new BusiTaskLogFile();
+					busiTaskLogFile.setFileName(uploadFile.getName());
+					busiTaskLogFile.setFileUrl(uploadFile.getUrl());
+					busiTaskLogFile.setTaskLogId(taskLogId);
+					list.add(busiTaskLogFile);
+				}
+				busiTaskLogFileMapper.insertBusiTaskLogFileBatch(list);
+			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);

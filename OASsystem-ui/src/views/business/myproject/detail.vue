@@ -85,7 +85,7 @@
       <span style="font-size:18px;font-weight: bold;margin-right:10px; ">项目任务</span>
       <el-button type="primary" @click="add2"><i class=" el-icon-plus" style="margin-right:5px;" ></i>新建任务
       </el-button>
-      <el-button type="danger"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
+      <el-button type="danger" @click="handleDeleteTaskBitch"> <i class="el-icon-delete" style="margin-right:5px;"></i>删除</el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
     <div v-if="model=='列表'" style="margin-top:20px;">
@@ -139,7 +139,7 @@
         v-loading="loading"
         :data="taskList"
         @selection-change="handleSelectionChange"
-        @row-click="handleRowClick"
+        @row-click="handleOpen=true"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
@@ -245,6 +245,13 @@
                 @click.stop="handleCloseTask(scope.row)"
               >关闭</el-button
               >
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit-outline"
+                @click.stop="handleDeleteTask(scope.row)"
+              >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -255,7 +262,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageInfo.pageNum"
-          :page-sizes="[100, 200, 300, 400]"
+          :page-sizes="[10, 20, 30, 40]"
           :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="pageInfo.total">
@@ -352,7 +359,6 @@
       </div>
     </el-dialog>
 
-
 <!--关闭按钮模块-->
 
     <el-dialog
@@ -438,11 +444,6 @@
     </el-dialog>
 
 <!--项目任务模块-->
-    <!--项目任务模块-->
-    <!--项目任务模块-->
-
-
-
     <el-dialog :title="header1"
                :visible.sync="add3"
                width="800px" class="abow_dialog">
@@ -532,6 +533,82 @@
         <el-button type="primary" @click="taskSubmitForm">确定</el-button>
       </div>
     </el-dialog>
+
+    <!--列表弹框-->
+    <el-dialog
+      title="提示"
+      :visible.sync="handleOpen"
+      width="30%"
+     >
+      <el-form ref="detailForm" :model="detailForm" label-width="80px">
+        <el-form-item label="任务进度"></el-form-item>
+        <el-form-item label="时间进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item label="任务进度">
+          <el-progress :percentage="50"></el-progress>
+        </el-form-item>
+        <el-form-item >
+          <el-button icon="el-icon-edit-outline" circle></el-button>
+        </el-form-item>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+          <el-collapse-item title="任务内容" name="4">
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-form-item label="参与人员">
+          <el-tag type="info" >{{detailForm.name1}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{detailForm.name2}}</el-tag>
+          <el-tag type="info" style="margin-left:10px;">{{detailForm.name3}}</el-tag>
+
+        </el-form-item>
+        <el-form-item label="活动时间">
+          <el-date-picker
+            v-model="detailForm.lookvalue"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+
+        </el-form-item>
+
+        <el-form-item label="活动内容">
+          <el-input type="textarea" v-model="detailForm.desc"></el-input>
+        </el-form-item>
+
+        <el-collapse v-model="activeNames" @change="handleChange">
+          <el-collapse-item title="任务日志" name="4">
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-timeline>
+          <el-timeline-item timestamp="2018/4/12" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/3" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2018/4/2" placement="top">
+            <el-card>
+              <h4>迈克尔06/05 19:39</h4>
+              <p>1.客服解决问题4件</p>
+              <p>1.解决投诉1件</p>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+      </el-form>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -539,7 +616,7 @@
   import project_progress from './project_progress';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
 
   export default {
     name: "detail",
@@ -548,6 +625,7 @@
     },
     data() {
       return {
+        handleOpen:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -565,6 +643,16 @@
         addopen:false,
         add3: false,
         projectId:this.$route.query.projectId,
+        //列表弹框数据
+        detailForm:{
+          deptId: '',
+          name1:"迈克尔",
+          name2:"任宝峰",
+          name3:"谷歌",
+          desc:"",
+          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+        },
         //新建编辑项目任务table数据
         addform: {
           projectName: '',
@@ -624,7 +712,7 @@
           taskDates: '',
           taskStatus: '',
           page:1,
-          limit:2
+          limit:10
         },
         status: [
           {
@@ -638,6 +726,7 @@
         ],
         taskList: [],
         pageInfo: {},
+        taskIds: [],
         activeIndex: 'project_progress',
 
         value: true,
@@ -816,9 +905,13 @@
         this.resetForm("queryForm");
         this.handleQuery();
       },
-      handleRowClick() {
-      },
-      handleSelectionChange() {
+      handleSelectionChange(val) {
+        let _this = this;
+        let taskIds = [];
+        val.forEach((item) => {
+          taskIds.push(item.taskId);
+        });
+        _this.taskIds = taskIds;
       },
       handleUpdate(item) {
         this.header1 = "编辑项目任务";
@@ -838,7 +931,7 @@
         };
         getTaskInfo({taskId:item.taskId}).then(response => {
           if(response.code == 200){
-            let taskMembers = response.data;
+            let taskMembers = response.busiTaskMembers;
             taskMembers.forEach((val) =>{
               _this.taskform.userList.push(val.memberId);
             });
@@ -951,7 +1044,7 @@
             } else {
               addBusiTask(form).then(response => {
                 if (response.code === 200) {
-                  this.msgSuccess("修改成功");
+                  this.msgSuccess("新增成功");
                   this.add3 = false;
                   this.getTaskList();
                 } else {
@@ -1004,6 +1097,7 @@
           if (response.code === 200) {
             this.msgSuccess("关闭成功");
             this.dialogVisible = false;
+            this.$router.push({ path:'/myproject/index'});
           } else {
             this.msgError(response.msg);
           }
@@ -1050,8 +1144,35 @@
             closeReason:undefined
         }
         this.resetForm("closeTaskform");
+      },
+      //删除
+      handleDeleteTask(item) {
+        let _this = this;
+        this.$confirm('是否确认删除当前任务吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delBusiTask({taskIds:[item.taskId]});
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.getTaskList();
+        }).catch(function() {});
+      },
+      //批量删除
+      handleDeleteTaskBitch() {
+        let _this = this;
+        this.$confirm('是否确认批量删除这些任务吗?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delBusiTask({taskIds:_this.taskIds});
+        }).then(() => {
+          this.msgSuccess("删除成功");
+          this.getTaskList();
+        }).catch(function() {});
       }
-
     }
 
   }

@@ -110,6 +110,24 @@ export function closeTask(data) {
     data: data
   })
 }
+// 删除任务
+export function delBusiTask(data) {
+  return request({
+    url: '/api/busiProject/removeTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 新增任务日志
+export function addBusiTaskLog(data) {
+  return request({
+    url: '/api/busiProject/addTaskLog',
+    method: 'post',
+    data: data
+  })
+}
+
 
 export function project_progress() {
   return {

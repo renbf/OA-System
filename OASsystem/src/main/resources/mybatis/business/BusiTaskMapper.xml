@@ -164,12 +164,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="memberNums"    column="memberNums"    />
+        <result property="baosongNum"    column="baosongNum"    />
     </resultMap>
 
     <select id="selectBusiTasks" parameterType="com.xhkj.project.business.domain.vo.BusiTaskVo" resultMap="BusiTaskVoResult">
         select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
         ,(select count(1) from busi_task_member tm where tm.task_id = t.task_id) memberNums,
-        round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress
+        round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress,
+        (select count(1) from busi_task_log tl where tl.task_id = t.task_id and tl.create_by = 1 and curdate() = tl.create_date) baosongNum
         from busi_task t
         <where>
             <if test="taskId != null "> and t.task_id = #{taskId}</if>
@@ -191,6 +193,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null "> and t.update_time = #{updateTime}</if>
             <if test="remark != null  and remark != '' "> and t.remark = #{remark}</if>
         </where>
+    </select>
+
+    <select id="selectBusiTaskByTaskId" parameterType="java.lang.Long" resultMap="BusiTaskVoResult">
+        select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark,
+        round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress
+        from busi_task t
+        where t.task_id = #{taskId}
     </select>
 
 </mapper>

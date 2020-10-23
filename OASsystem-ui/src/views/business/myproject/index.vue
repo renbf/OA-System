@@ -17,10 +17,10 @@
     <el-row class="doing" v-for="(item,index) in busiProjectUseList">
 
       <el-card class="box-card lf" :class="statusClass(item)">
-        <div slot="header" class="clearfix">
+        <div slot="header" class="clearfix" @click="projectdetail(item)">
           <span><b>{{item.projectName}}</b></span>
           <el-button icon="el-icon-delete" style="float: right;" circle v-if="item.status == 0" @click="deleteProject(item)"></el-button>
-          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.native="editproject(item)"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.stop="editproject(item)"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail(item)">
@@ -43,7 +43,7 @@
         <div class="text item">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
-          <p style="margin:0;font-size: 12px;">完成时间:2021-01-01(用时：130%)</p>
+          <p style="margin:0;font-size: 12px;">完成时间:{{item.updateTime}}(用时：130%)</p>
           <el-progress :percentage="100"  :format="format"></el-progress>
         </div>
       </el-card>
@@ -301,8 +301,8 @@
           this.$router.push({ path:'/myproject/detail',query:{projectId:projectId}})
         },
         projectdetail(item) {
-
-          this.$router.push({ path:'/myproject/look'})
+          let projectId = item.projectId;
+          this.$router.push({ path:'/myproject/look',query:{projectId:projectId}})
         },
         deleteProject(item) {
           let _this = this;

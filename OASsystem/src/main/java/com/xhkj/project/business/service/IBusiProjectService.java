@@ -2,6 +2,7 @@ package com.xhkj.project.business.service;
 
 import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.domain.BusiTask;
+import com.xhkj.project.business.domain.BusiTaskLog;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
 
@@ -72,10 +73,12 @@ public interface IBusiProjectService
 
 	public Map<String, Object> changeTaskStatus(BusiTask busiTask);
 
-	public Map<String, Object> removeTask(Long taskId);
+	public Map<String, Object> removeTask(BusiTask busiTask);
 
 	public Map<String, Object> closeProject(BusiProject busiProject);
 
 	public Map<String, Object> closeTask(BusiTask busiTask);
+
+	public Map<String, Object> insertBusiTaskLog(BusiTaskLog busiTaskLog);
 
 }
