@@ -230,7 +230,7 @@
         >
           <template slot-scope="scope">
             <span v-show="scope.row.baosongNum == 0">未报送</span>
-            <span v-show="scope.row.baosongNum > 0">已报送</span>
+            <span v-show="scope.row.baosongNum == 1">已报送</span>
           </template>
         </el-table-column>
 
@@ -461,13 +461,13 @@
       <el-form ref="taskLookForm" :model="taskLookForm" label-width="80px">
         <el-form-item label="任务进度"></el-form-item>
         <el-form-item label="时间进度">
-          <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
-        </el-form-item>
-        <el-form-item label="任务进度">
           <el-progress :percentage="taskLookForm.timeProgress"></el-progress>
         </el-form-item>
+        <el-form-item label="任务进度">
+          <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
+        </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle @click="openlittle=true"></el-button>
+          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -528,7 +528,7 @@
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
           <el-progress :percentage="50" style="width:300px;float:left;"></el-progress>
-          <el-input-number v-model="form2.num" @change="handleChange3" :min="1" :max="10" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>
+          <el-input-number v-model="form2.taskProgress" @change="handleChange3" :min="1" :max="100" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>
          <h6 style="color:#BEBEBE">注：当设置“100%”时 任务及为完成状态，则任务不可在进行修改与编辑</h6>
 
 
@@ -536,7 +536,7 @@
       <el-divider></el-divider>
         <span slot="footer" class="dialog-footer">
     <el-button @click="openlittle = false">取 消</el-button>
-    <el-button type="primary" @click="openlittle = false">确 定</el-button>
+    <el-button type="primary" @click="form2SubmitForm">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -586,47 +586,13 @@
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
-
-      <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item title="任务日志" name="4">
-        </el-collapse-item>
-      </el-collapse>
-
-      <el-timeline>
-        <el-timeline-item timestamp="2018/4/12" placement="top">
-          <el-card>
-            <h4>迈克尔06/05 19:39</h4>
-            <p>1.客服解决问题4件</p>
-            <p>1.解决投诉1件</p>
-          </el-card>
-        </el-timeline-item>
-        <el-timeline-item timestamp="2018/4/3" placement="top">
-          <el-card>
-            <h4>迈克尔06/05 19:39</h4>
-            <p>1.客服解决问题4件</p>
-            <p>1.解决投诉1件</p>
-          </el-card>
-        </el-timeline-item>
-        <el-timeline-item timestamp="2018/4/2" placement="top">
-          <el-card>
-            <h4>迈克尔06/05 19:39</h4>
-            <p>1.客服解决问题4件</p>
-            <p>1.解决投诉1件</p>
-          </el-card>
-        </el-timeline-item>
-      </el-timeline>
       </el-form>
       <div slot="footer" class="dialog-footer">
 
-        <el-button @click="lookCancel">取消</el-button>
-        <el-button type="primary" @click="lookSubmitForm">确定</el-button>
+        <el-button @click="lookSubmitForm(0)">保存</el-button>
+        <el-button type="primary" @click="lookSubmitForm(1)">确定</el-button>
       </div>
     </el-dialog>
-
-
-
-
-
 
   </div>
 </template>
@@ -636,7 +602,7 @@
   import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
 
   export default {
@@ -730,6 +696,10 @@
         addproject: "",
         addopen:false,
         openlittle:false,
+        form2:{
+          taskId:undefined,
+          taskProgress:1,
+        },
         projectId:this.$route.query.projectId,
         taskLookForm:{
           taskId:undefined,
@@ -752,9 +722,6 @@
           dayContent:undefined,
           logStatus:undefined,
           fileList: []
-        },
-        form2:{
-          num:1,
         },
         //新建编辑项目任务table数据
         addform: {
@@ -828,9 +795,8 @@
         ],
         taskList: [],
         pageInfo: {},
-        taskIds: [],
+        taskLogIds: [],
         activeIndex: 'project_progress',
-
         value: true,
         //文件上传url
         uploadImgUrl:process.env.VUE_APP_BASE_API + "/api/attachmentFile/upload",
@@ -840,8 +806,6 @@
       }
     },
     created() {
-
-
       // 状态
       this.getDicts("task_status").then(response => {
         this.statusOptions = response.data;
@@ -1039,11 +1003,11 @@
       },
       handleSelectionChange(val) {
         let _this = this;
-        let taskIds = [];
+        let taskLogIds = [];
         val.forEach((item) => {
-          taskIds.push(item.taskId);
+          taskLogIds.push(item.taskLogId);
         });
-        _this.taskIds = taskIds;
+        _this.taskLogIds = taskLogIds;
       },
      lookUpdate(item) {
         this.lookOpen=true;
@@ -1113,7 +1077,7 @@
       lookCancel(){
         this.lookOpen = false;
       },
-      lookSubmitForm(){
+      lookSubmitForm(logStatus){
         let _this = this;
         _this.$refs.lookForm.validate(valid => {
           if (valid) {
@@ -1121,14 +1085,14 @@
             let form = {
               taskId:lookForm.taskId,
               dayContent:lookForm.dayContent,
-              logStatus:"1",
+              logStatus:logStatus,
               fileList:lookForm.fileList
             }
             addBusiTaskLog(form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
                 this.lookOpen = false;
-                //this.getTaskList();
+                this.getTaskList();
               } else {
                 this.msgError(response.msg);
               }
@@ -1264,27 +1228,26 @@
         }
         this.resetForm("closeTaskform");
       },
-      //删除
-      handleDeleteTask(item) {
-        let _this = this;
-        this.$confirm('是否确认删除当前任务吗?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delBusiTask({taskIds:[item.taskId]});
-        }).then(() => {
-          this.msgSuccess("删除成功");
-          this.getTaskList();
-        }).catch(function() {});
-      },
       //批量报送
       handleBaosongBitch() {
-
+        let _this = this;
+        taskLogBaosong({taskLogIds:_this.taskLogIds}).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("报送成功");
+          } else {
+            this.msgError(response.msg);
+          }
+        });
       },
       //报送
-      handleBaosong() {
-
+      handleBaosong(item) {
+        taskLogBaosong({taskLogIds:[item.taskLogId]}).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("报送成功");
+          } else {
+            this.msgError(response.msg);
+          }
+        });
       },
       resetTaskLookForm(){
         this.taskLookForm = {
@@ -1314,7 +1277,6 @@
             let busiTaskVo = response.busiTaskVo;
             let taskMembers = response.busiTaskMembers;
             let busiTaskLogVos = response.busiTaskLogVos;
-            debugger
             _this.taskLookForm = {
               taskId:item.taskId,
               taskName:busiTaskVo.taskName,
@@ -1326,12 +1288,40 @@
               userList: [],
               taskLogList: busiTaskLogVos
             };
+            if (_this.taskLookForm.timeProgress < 0) {
+              _this.taskLookForm.timeProgress = 0;
+            }
             taskMembers.forEach((val) =>{
               _this.taskLookForm.userList.push({memberId:val.memberId,memberName:val.memberName});
             });
           }
         });
       },
+      //任务进度编辑弹框
+      handleUpdateForm2(item) {
+        this.openlittle=true;
+        this.updateSetForm2Value(item);
+      },
+      updateSetForm2Value(item) {
+        let _this = this;
+        _this.form2 = {
+            taskId:item.taskId,
+            taskProgress:item.taskProgress,
+        };
+      },
+      form2SubmitForm() {
+        let _this = this;
+        let form2 = _this.form2;
+        updateTaskProgress(form2).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("修改任务进度成功");
+            this.openlittle = false;
+            this.getTaskList();
+          } else {
+            this.msgError(response.msg);
+          }
+        });
+      }
     }
 
   }

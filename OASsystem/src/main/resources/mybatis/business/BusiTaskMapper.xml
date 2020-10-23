@@ -171,7 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select t.task_id, t.task_number, t.task_name, t.project_id, t.task_start_date, t.task_end_date, t.task_desc, t.status, t.task_progress, t.task_status, t.close_reason, t.sort_order, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
         ,(select count(1) from busi_task_member tm where tm.task_id = t.task_id) memberNums,
         round(DATEDIFF(now(),task_start_date)/DATEDIFF(task_end_date,task_start_date) *100) time_progress,
-        (select count(1) from busi_task_log tl where tl.task_id = t.task_id and tl.create_by = 1 and curdate() = tl.create_date) baosongNum
+        ifnull((select max(tl.log_status) from busi_task_log tl where tl.task_id = t.task_id and tl.create_by = #{createBy} and curdate() = tl.create_date),0) baosongNum
         from busi_task t
         <where>
             <if test="taskId != null "> and t.task_id = #{taskId}</if>
@@ -187,10 +187,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskStatus != null  and taskStatus != '' "> and t.task_status = #{taskStatus}</if>
             <if test="closeReason != null  and closeReason != '' "> and t.close_reason = #{closeReason}</if>
             <if test="sortOrder != null "> and t.sort_order = #{sortOrder}</if>
-            <if test="createBy != null  and createBy != '' "> and t.create_by = #{createBy}</if>
-            <if test="createTime != null "> and t.create_time = #{createTime}</if>
-            <if test="updateBy != null  and updateBy != '' "> and t.update_by = #{updateBy}</if>
-            <if test="updateTime != null "> and t.update_time = #{updateTime}</if>
             <if test="remark != null  and remark != '' "> and t.remark = #{remark}</if>
         </where>
     </select>

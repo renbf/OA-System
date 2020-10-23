@@ -128,7 +128,22 @@ export function addBusiTaskLog(data) {
   })
 }
 
-
+// 报送任务
+export function taskLogBaosong(data) {
+  return request({
+    url: '/api/busiProject/taskLogBaosong',
+    method: 'post',
+    data: data
+  })
+}
+// 修改任务进度
+export function updateTaskProgress(data) {
+  return request({
+    url: '/api/busiProject/updateTaskProgress',
+    method: 'post',
+    data: data
+  })
+}
 export function project_progress() {
   return {
     code: 200,
