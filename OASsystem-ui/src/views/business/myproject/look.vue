@@ -527,8 +527,18 @@
       :visible.sync="openlittle"
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
-          <el-progress :percentage="50" style="width:300px;float:left;"></el-progress>
-          <el-input-number v-model="form2.num" @change="handleChange3" :min="1" :max="10" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>
+          <!--<el-progress :percentage="50" style="width:300px;float:left;"></el-progress>-->
+          <!--<el-input-number v-model="form2.num" @change="handleChange3" :min="1" :max="10" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>-->
+       <!---->
+        <template>
+          <div class="block">
+            <el-slider
+              v-model="form2.value"
+              show-input
+              >
+            </el-slider>
+          </div>
+        </template>
          <h6 style="color:#BEBEBE">注：当设置“100%”时 任务及为完成状态，则任务不可在进行修改与编辑</h6>
 
 
@@ -755,6 +765,7 @@
         },
         form2:{
           num:1,
+          value:0,
         },
         //新建编辑项目任务table数据
         addform: {
