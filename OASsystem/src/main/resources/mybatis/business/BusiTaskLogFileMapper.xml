@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiTaskLogFileMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiTaskLogFile" id="BusiTaskLogFileResult">
+        <result property="taskLogFileId"    column="task_log_file_id"    />
+        <result property="taskLogId"    column="task_log_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectBusiTaskLogFilebasicColums">
+        select tlf.task_log_file_id, tlf.task_log_id, tlf.file_name, tlf.file_url, tlf.remark
+    </sql>
+	
+    <select id="selectBusiTaskLogFileList" parameterType="com.xhkj.project.business.domain.BusiTaskLogFile" resultMap="BusiTaskLogFileResult">
+        <include refid="selectBusiTaskLogFilebasicColums"/>
+        from busi_task_log_file tlf
+        <where>  
+            <if test="taskLogFileId != null "> and tlf.task_log_file_id = #{taskLogFileId}</if>
+             <if test="taskLogId != null "> and tlf.task_log_id = #{taskLogId}</if>
+             <if test="fileName != null  and fileName != '' "> and tlf.file_name = #{fileName}</if>
+             <if test="fileUrl != null  and fileUrl != '' "> and tlf.file_url = #{fileUrl}</if>
+             <if test="remark != null  and remark != '' "> and tlf.remark = #{remark}</if>
+         </where>
+    </select>
+    
+    <select id="selectBusiTaskLogFileById" parameterType="Long" resultMap="BusiTaskLogFileResult">
+        <include refid="selectBusiTaskLogFilebasicColums"/>
+        from busi_task_log_file tlf
+        where tlf.task_log_file_id = #{taskLogFileId}
+    </select>
+        
+    <insert id="insertBusiTaskLogFile" parameterType="com.xhkj.project.business.domain.BusiTaskLogFile" useGeneratedKeys="true" keyProperty="taskLogFileId">
+        insert into busi_task_log_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="taskLogId != null  ">task_log_id,</if>
+			<if test="fileName != null  and fileName != ''  ">file_name,</if>
+			<if test="fileUrl != null  and fileUrl != ''  ">file_url,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="taskLogId != null  ">#{taskLogId},</if>
+			<if test="fileName != null  and fileName != ''  ">#{fileName},</if>
+			<if test="fileUrl != null  and fileUrl != ''  ">#{fileUrl},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateBusiTaskLogFile" parameterType="com.xhkj.project.business.domain.BusiTaskLogFile">
+        update busi_task_log_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskLogId != null  ">task_log_id = #{taskLogId},</if>
+            <if test="fileName != null  and fileName != ''  ">file_name = #{fileName},</if>
+            <if test="fileUrl != null  and fileUrl != ''  ">file_url = #{fileUrl},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where task_log_file_id = #{taskLogFileId}
+    </update>
+
+	<delete id="deleteBusiTaskLogFileById" parameterType="Long">
+        delete from busi_task_log_file where task_log_file_id = #{taskLogFileId}
+    </delete>
+	
+    <delete id="deleteBusiTaskLogFileByIds" parameterType="String">
+        delete from busi_task_log_file where task_log_file_id in 
+        <foreach item="taskLogFileId" collection="array" open="(" separator="," close=")">
+            #{taskLogFileId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiTaskLogFileBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="taskLogFileId">
+        insert into busi_task_log_file ( task_log_id, file_name, file_url, remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.taskLogId}, #{item.fileName}, #{item.fileUrl}, #{item.remark})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    <select id="selectBusiTaskLogFiles" parameterType="java.lang.Long" resultMap="BusiTaskLogFileResult">
+        <include refid="selectBusiTaskLogFilebasicColums"/>
+        from busi_task_log_file tlf
+        where tlf.task_log_id = #{taskLogId}
+    </select>
+</mapper>

@@ -100,6 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/profile/**").anonymous()
                 .antMatchers("/common/download**").anonymous()
                 .antMatchers("/common/download/resource**").anonymous()
+                .antMatchers("/api/attachmentFile/download/**").anonymous()
                 .antMatchers("/swagger-ui.html").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()
                 .antMatchers("/webjars/**").anonymous()

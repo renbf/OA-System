@@ -11,6 +11,7 @@ import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import com.xhkj.project.business.mapper.*;
+import com.xhkj.project.common.UploadFile;
 import com.xhkj.project.system.domain.SysUser;
 import com.xhkj.project.system.mapper.SysUserMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -51,6 +52,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiTaskMemberMapper busiTaskMemberMapper;
 	@Autowired
 	private BusiTaskLogMapper busiTaskLogMapper;
+	@Autowired
+	private BusiTaskLogFileMapper busiTaskLogFileMapper;
 	/**
      * 查询项目信息
      * 
@@ -455,6 +458,39 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			busiTask.setUpdateBy(username);
 			busiTask.setUpdateTime(now);
 			busiTaskMapper.updateBusiTask(busiTask);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> insertBusiTaskLog(BusiTaskLog busiTaskLog) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTaskLog.setCreateDate(now);
+			busiTaskLog.setCreateTime(now);
+			busiTaskLog.setCreateBy(username);
+			busiTaskLogMapper.insertBusiTaskLog(busiTaskLog);
+			Long taskLogId = busiTaskLog.getTaskLogId();
+			List<UploadFile> fileList = busiTaskLog.getFileList();
+			if (CollectionUtils.isNotEmpty(fileList)) {
+				List<BusiTaskLogFile> list = new ArrayList<>();
+				BusiTaskLogFile busiTaskLogFile = null;
+				for (UploadFile uploadFile : fileList) {
+					busiTaskLogFile = new BusiTaskLogFile();
+					busiTaskLogFile.setFileName(uploadFile.getName());
+					busiTaskLogFile.setFileUrl(uploadFile.getUrl());
+					busiTaskLogFile.setTaskLogId(taskLogId);
+					list.add(busiTaskLogFile);
+				}
+				busiTaskLogFileMapper.insertBusiTaskLogFileBatch(list);
+			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);

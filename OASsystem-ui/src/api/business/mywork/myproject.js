@@ -118,6 +118,17 @@ export function delBusiTask(data) {
     data: data
   })
 }
+
+// 新增任务日志
+export function addBusiTaskLog(data) {
+  return request({
+    url: '/api/busiProject/addTaskLog',
+    method: 'post',
+    data: data
+  })
+}
+
+
 export function project_progress() {
   return {
     code: 200,

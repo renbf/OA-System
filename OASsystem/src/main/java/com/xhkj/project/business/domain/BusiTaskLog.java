@@ -1,12 +1,14 @@
 package com.xhkj.project.business.domain;
 
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.common.UploadFile;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 任务日志表 busi_task_log
@@ -17,21 +19,30 @@ import java.util.Date;
 public class BusiTaskLog extends BaseEntity
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	/** 日志ID */
 	private Long taskLogId;
 	/** 任务ID */
 	private Long taskId;
 	/** 工作内容 */
 	private String dayContent;
-	/** 上传的附件访问路径 */
-	private String attachmentPath;
 	/** 报送状态（0未报送 1已报送） */
 	private String logStatus;
 	/** 创建日期 */
 	private Date createDate;
 //以上自动生成的尽量别动
-	public void setTaskLogId(Long taskLogId) 
+
+	private List<UploadFile> fileList;
+
+	public List<UploadFile> getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(List<UploadFile> fileList) {
+		this.fileList = fileList;
+	}
+
+	public void setTaskLogId(Long taskLogId)
 	{
 		this.taskLogId = taskLogId;
 	}
@@ -58,16 +69,7 @@ public class BusiTaskLog extends BaseEntity
 	{
 		return dayContent;
 	}
-	public void setAttachmentPath(String attachmentPath) 
-	{
-		this.attachmentPath = attachmentPath;
-	}
-
-	public String getAttachmentPath() 
-	{
-		return attachmentPath;
-	}
-	public void setLogStatus(String logStatus) 
+	public void setLogStatus(String logStatus)
 	{
 		this.logStatus = logStatus;
 	}
@@ -91,7 +93,6 @@ public class BusiTaskLog extends BaseEntity
             .append("taskLogId", getTaskLogId())
             .append("taskId", getTaskId())
             .append("dayContent", getDayContent())
-            .append("attachmentPath", getAttachmentPath())
             .append("logStatus", getLogStatus())
             .append("createDate", getCreateDate())
             .append("createBy", getCreateBy())

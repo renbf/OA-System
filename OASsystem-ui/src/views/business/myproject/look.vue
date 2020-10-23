@@ -476,10 +476,7 @@
           </el-collapse>
 
         <el-form-item label="参与人员">
-          <el-tag type="info" v-for="item in taskLookForm.userList">{{item.memberName}}</el-tag>
-          <!--<el-tag type="info" style="margin-left:10px;">{{taskLookForm.name2}}</el-tag>
-          <el-tag type="info" style="margin-left:10px;">{{taskLookForm.name3}}</el-tag>-->
-
+          <el-tag type="info" style="margin-left:10px;" v-for="item in taskLookForm.userList">{{item.memberName}}</el-tag>
         </el-form-item>
         <el-form-item label="任务时间">
           <el-date-picker
@@ -514,25 +511,11 @@
         </el-collapse>
 
         <el-timeline>
-          <el-timeline-item timestamp="2018/4/12" placement="top">
+          <el-timeline-item :timestamp="item.createDate" placement="top" v-for="item in taskLookForm.taskLogList">
             <el-card>
-              <h4>迈克尔06/05 19:39</h4>
-              <p>1.客服解决问题4件</p>
-              <p>1.解决投诉1件</p>
-            </el-card>
-          </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/3" placement="top">
-            <el-card>
-              <h4>迈克尔06/05 19:39</h4>
-              <p>1.客服解决问题4件</p>
-              <p>1.解决投诉1件</p>
-            </el-card>
-          </el-timeline-item>
-          <el-timeline-item timestamp="2018/4/2" placement="top">
-            <el-card>
-              <h4>迈克尔06/05 19:39</h4>
-              <p>1.客服解决问题4件</p>
-              <p>1.解决投诉1件</p>
+              <h4>{{item.nickName}}{{item.createTime}}</h4>
+              <p>{{item.dayContent}}</p>
+              <p v-for="item1 in item.busiTaskLogFiles"><a href="#" @click="downloadFile(item1)">{{item1.fileName}}</a></p>
             </el-card>
           </el-timeline-item>
         </el-timeline>
@@ -564,15 +547,12 @@
                width="600px" class="abow_dialog">
       <el-form ref="lookForm" :model="lookForm" label-width="80px">
       <el-form-item label="参与人员">
-        <el-tag type="info" >{{lookForm.name1}}</el-tag>
-        <el-tag type="info" style="margin-left:10px;">{{lookForm.name2}}</el-tag>
-        <el-tag type="info" style="margin-left:10px;">{{lookForm.name3}}</el-tag>
-
+        <el-tag type="info" style="margin-left:10px;" v-for="item in lookForm.userList">{{item.memberName}}</el-tag>
       </el-form-item>
-      <el-form-item label="活动时间">
+      <el-form-item label="任务时间">
         <el-date-picker
-          v-model="lookForm.lookvalue"
-          type="datetimerange"
+          v-model="lookForm.taskDate"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
@@ -580,25 +560,29 @@
 
       </el-form-item>
 
-      <el-form-item label="活动内容">
-        <el-input type="textarea" v-model="lookForm.desc"></el-input>
+      <el-form-item label="任务内容">
+        <el-input type="textarea" v-model="lookForm.taskDesc"></el-input>
       </el-form-item>
 
 
       <el-form-item label="工作内容">
-        <el-input type="textarea" v-model="lookForm.desc"></el-input>
+        <el-input type="textarea" v-model="lookForm.dayContent"></el-input>
       </el-form-item>
 
       <el-upload
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        :action="uploadImgUrl"
+        name="file"
+        :headers="headers"
+        :auto-upload="true"
+        :multiple="false"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
-        multiple
         :limit="3"
         :on-exceed="handleExceed"
-        :file-list="form.fileList">
+        :on-success="handleSuccess"
+        :file-list="lookForm.fileList">
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
@@ -649,9 +633,11 @@
 
 <script>
   import project_progress from './project_progress';
+  import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog } from "@/api/business/mywork/myproject";
+  import {downloadUrl,deleteFile} from "../../../utils/common";
 
   export default {
     name: "detail",
@@ -665,6 +651,7 @@
         taskLookTitle: "",
         // 是否显示弹出层
         taskLookOpen: false,
+        lookOpen:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -753,20 +740,18 @@
           taskProgress:undefined,
           timeProgress:undefined,
           userList: [],
-          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
-
-
+          taskLogList: []
         },
         lookForm:{
-          deptId: '',
-          name1:"迈克尔",
-          name2:"任宝峰",
-          name3:"谷歌",
-          desc:"",
-          lookvalue: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-          fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
-
+          taskId:undefined,
+          taskName:undefined,
+          taskNumber:undefined,
+          taskDate: [],
+          taskDesc:undefined,
+          userList: [],
+          dayContent:undefined,
+          logStatus:undefined,
+          fileList: []
         },
         form2:{
           num:1,
@@ -847,6 +832,11 @@
         activeIndex: 'project_progress',
 
         value: true,
+        //文件上传url
+        uploadImgUrl:process.env.VUE_APP_BASE_API + "/api/attachmentFile/upload",
+        headers: {
+          Authorization: 'Bearer ' + getToken()
+        }
       }
     },
     created() {
@@ -901,10 +891,18 @@
       },
     },
     methods: {
-
+      downloadFile(item) {
+        downloadUrl(item.fileUrl);
+      },
       //上传附件
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        deleteFile(file.fileId).then(response => {
+          if (response.code === 200) {
+            this.msgSuccess("删除成功");
+          } else {
+            this.msgError(response.msg);
+          }
+        });
       },
       handlePreview(file) {
         console.log(file);
@@ -914,6 +912,15 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      handleSuccess(response, file, fileList) {
+        let _this = this;
+        if(response.code == 200){
+          let fileId = response.fileId;
+          let fileUrl = response.url;
+          let fileName = response.fileName;
+          _this.lookForm.fileList.push({url:fileUrl,name:fileName,fileId:fileId})
+        }
       },
       //全部报送任务
       submission(){
@@ -1044,20 +1051,24 @@
       },
       updateSetValue(item) {
         let _this = this;
-        _this.taskform = {
-          taskId:item.taskId,
-          taskName:item.taskName,
-          taskNumber:item.taskNumber,
-          taskDate: [item.taskStartDate,item.taskEndDate],
-          taskDesc:item.taskDesc,
-          status:item.status,
-          userList: [],
-        };
         getTaskInfo({taskId:item.taskId}).then(response => {
           if(response.code == 200){
+            let busiTaskVo = response.busiTaskVo;
             let taskMembers = response.busiTaskMembers;
+            let busiTaskLogVos = response.busiTaskLogVos;
+            _this.lookForm = {
+              taskId:item.taskId,
+              taskName:busiTaskVo.taskName,
+              taskNumber:busiTaskVo.taskNumber,
+              taskDate: [busiTaskVo.taskStartDate,busiTaskVo.taskEndDate],
+              taskDesc:busiTaskVo.taskDesc,
+              dayContent:undefined,
+              logStatus:undefined,
+              userList: [],
+              fileList:[]
+            };
             taskMembers.forEach((val) =>{
-              _this.taskform.userList.push(val.memberId);
+              _this.lookForm.userList.push({memberId:val.memberId,memberName:val.memberName});
             });
           }
         });
@@ -1103,7 +1114,27 @@
         this.lookOpen = false;
       },
       lookSubmitForm(){
-        this.lookOpen = false;
+        let _this = this;
+        _this.$refs.lookForm.validate(valid => {
+          if (valid) {
+            let lookForm = _this.lookForm;
+            let form = {
+              taskId:lookForm.taskId,
+              dayContent:lookForm.dayContent,
+              logStatus:"1",
+              fileList:lookForm.fileList
+            }
+            addBusiTaskLog(form).then(response => {
+              if (response.code === 200) {
+                this.msgSuccess("新增成功");
+                this.lookOpen = false;
+                //this.getTaskList();
+              } else {
+                this.msgError(response.msg);
+              }
+            });
+          }
+        });
       },
       //提交项目
       submitForm(){
@@ -1265,6 +1296,7 @@
           taskProgress:undefined,
           timeProgress:undefined,
           userList: [],
+          taskLogList: []
         }
         this.resetForm("taskLookForm");
       },
@@ -1282,6 +1314,7 @@
             let busiTaskVo = response.busiTaskVo;
             let taskMembers = response.busiTaskMembers;
             let busiTaskLogVos = response.busiTaskLogVos;
+            debugger
             _this.taskLookForm = {
               taskId:item.taskId,
               taskName:busiTaskVo.taskName,
@@ -1291,6 +1324,7 @@
               taskProgress:busiTaskVo.taskProgress,
               timeProgress:busiTaskVo.timeProgress,
               userList: [],
+              taskLogList: busiTaskLogVos
             };
             taskMembers.forEach((val) =>{
               _this.taskLookForm.userList.push({memberId:val.memberId,memberName:val.memberName});

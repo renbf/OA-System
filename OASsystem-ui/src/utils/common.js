@@ -120,6 +120,18 @@ export function download(fileName) {
 	window.location.href = baseURL + "/common/download?fileName=" + encodeURI(fileName) + "&delete=" + true;
 }
 
+// 通用下载方法
+export function downloadUrl(url) {
+  window.location.href = baseURL + url;
+}
+//删除文件
+export function deleteFile(fileId) {
+  return request({
+    url: '/api/attachmentFile/remove',
+    method: 'post',
+    params: {fileId:fileId}
+  })
+}
 // 字符串格式化(%s )
 export function sprintf(str) {
 	var args = arguments, flag = true, i = 1;

@@ -1,6 +1,7 @@
 package com.xhkj.project.business.controller;
 
 import com.xhkj.project.business.domain.BusiTask;
+import com.xhkj.project.business.domain.BusiTaskLog;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import org.slf4j.Logger;
@@ -286,4 +287,21 @@ public class BusiProjectController
 		return resultMap;
 	}
 
+	/**
+	 * 新增任务日志
+	 */
+	@PostMapping("/addTaskLog")
+	@ResponseBody
+	public Map<String,Object> addTaskLog(@RequestBody BusiTaskLog busiTaskLog)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.insertBusiTaskLog(busiTaskLog);
+		} catch (Exception e) {
+			log.error("新增任务日志异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","新增任务日志异常");
+		}
+		return resultMap;
+	}
 }
