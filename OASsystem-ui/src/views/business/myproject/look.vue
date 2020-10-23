@@ -527,8 +527,8 @@
       :visible.sync="openlittle"
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
-          <el-progress :percentage="form2.taskProgress" style="width:300px;float:left;"></el-progress>
-          <el-input-number v-model="form2.taskProgress" @change="handleChange3" :min="1" :max="100" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>
+          <!--<el-progress :percentage="form2.taskProgress" style="width:300px;float:left;"></el-progress>
+          <el-input-number v-model="form2.taskProgress" @change="handleChange3" :min="1" :max="100" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>-->
         <template>
           <div class="block">
             <el-slider
