@@ -36,6 +36,10 @@ const EXTRA_WORKFLOWID = 1;
 const LEAVE_WORKFLOWID = 2;
 //流程定义常量
 
+// 上传文件服务器地址
+const UPLOADFILE_URL = process.env.VUE_APP_BASE_API + "/system/attachment/files";
+
+
 export default {
   //数据字典定义常量   开始
   SYS_USER_SEX,
@@ -56,6 +60,10 @@ export default {
 
   //流程定义常量   开始
   LEAVE_WORKFLOWID,
-  EXTRA_WORKFLOWID
+  EXTRA_WORKFLOWID,
   //流程定义常量   结束
+
+  UPLOADFILE_URL,
+
+
 }

@@ -1,6 +1,9 @@
 package com.xhkj.project.system.controller;
 
+import com.xhkj.common.constant.Constants;
+import com.xhkj.common.utils.StringUtils;
 import com.xhkj.common.utils.file.FileUploadSonUtils;
+import com.xhkj.framework.config.MainConfig;
 import com.xhkj.framework.web.controller.BaseController;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.framework.web.page.TableDataInfo;
@@ -88,6 +91,11 @@ public class FildUploadDownloadController extends BaseController {
               Attachment attachment = new Attachment();
               ///文件路径
               String fileUrl = FileUploadSonUtils.upload(file);
+
+              int dirLastIndex = MainConfig.getProfile().length() + 1;
+              String currentDir = StringUtils.substring(fileUrl, dirLastIndex);
+              String previewPath = Constants.RESOURCE_PREFIX + "/" + currentDir;
+
               //
               String fileName =file.getOriginalFilename();
               //真是名字
@@ -97,7 +105,10 @@ public class FildUploadDownloadController extends BaseController {
               attachment.setFileNameReal(fileName);
               attachment.setFilePath(fileUrl);
               attachment.setFileSize(size);
+              attachment.setPreviewPath(previewPath);
               iAttachmentService.insertAttachment(attachment);
+
+              ajaxResult.put("fileId",attachment.getId());
               ajaxResult.put("code",200);
               ajaxResult.put("msg","操作成功");
           }catch (Exception e){
@@ -121,7 +132,16 @@ public class FildUploadDownloadController extends BaseController {
             Attachment attachment = iAttachmentService.selectAttachmentById(Long.parseLong(id));
             //删除数据文件
             String path = attachment.getFilePath();
-            iAttachmentService.deleteAttachmentByIds(id);
+            File file = new File(path);
+            try{
+                boolean delete = file.delete();
+                if(delete){
+                    iAttachmentService.deleteAttachmentByIds(id);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             ajaxResult.put("path",path);
             ajaxResult.put("code",200);
             ajaxResult.put("msg","刪除成功");
