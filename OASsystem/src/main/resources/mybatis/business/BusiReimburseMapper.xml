@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiReimburseMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiReimburse" id="BusiReimburseResult">
+        <result property="reimburseId"    column="reimburse_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="inPrjFlag"    column="in_prj_flag"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="reimburseReason"    column="reimburse_reason"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiReimburseVo">
+        select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <select id="selectBusiReimburseList" parameterType="com.xhkj.project.business.domain.BusiReimburse" resultMap="BusiReimburseResult">
+        <include refid="selectBusiReimburseVo"/>
+        from busi_reimburse
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="inPrjFlag != null "> and in_prj_flag = #{inPrjFlag}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="reimburseReason != null  and reimburseReason != ''"> and reimburse_reason = #{reimburseReason}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiReimburseById" parameterType="Long" resultMap="BusiReimburseResult">
+        <include refid="selectBusiReimburseVo"/>
+        from busi_reimburse
+        where reimburse_id = #{reimburseId}
+    </select>
+        
+    <insert id="insertBusiReimburse" parameterType="com.xhkj.project.business.domain.BusiReimburse" useGeneratedKeys="true" keyProperty="reimburseId">
+        insert into busi_reimburse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="inPrjFlag != null ">in_prj_flag,</if>
+            <if test="projectId != null ">project_id,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">reimburse_reason,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="inPrjFlag != null ">#{inPrjFlag},</if>
+            <if test="projectId != null ">#{projectId},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">#{reimburseReason},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiReimburse" parameterType="com.xhkj.project.business.domain.BusiReimburse">
+        update busi_reimburse
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+            <if test="inPrjFlag != null ">in_prj_flag = #{inPrjFlag},</if>
+            <if test="projectId != null ">project_id = #{projectId},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">reimburse_reason = #{reimburseReason},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where reimburse_id = #{reimburseId}
+    </update>
+
+    <delete id="deleteBusiReimburseById" parameterType="Long">
+        delete from busi_reimburse where reimburse_id = #{reimburseId}
+    </delete>
+
+    <delete id="deleteBusiReimburseByIds" parameterType="String">
+        delete from busi_reimburse where reimburse_id in 
+        <foreach item="reimburseId" collection="array" open="(" separator="," close=")">
+            #{reimburseId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiReimburseBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="reimburseId">
+        insert into busi_reimburse (  user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

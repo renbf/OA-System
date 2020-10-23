@@ -61,5 +61,8 @@ public interface AttachmentMapper
      * @return 结果
      */
 	public int deleteAttachmentByIds(String[] ids);
-	
+
+
+	public List<Attachment> selectFileList(String[] ids);
+
 }

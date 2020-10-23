@@ -33,6 +33,17 @@ public class Attachment extends BaseEntity
 	/** 创建时间 */
 	private Date createTime;
 
+	/** 预览文件路径 */
+	private String previewPath;
+
+	public String getPreviewPath() {
+		return previewPath;
+	}
+
+	public void setPreviewPath(String previewPath) {
+		this.previewPath = previewPath;
+	}
+
 	public void setId(Long id)
 	{
 		this.id = id;

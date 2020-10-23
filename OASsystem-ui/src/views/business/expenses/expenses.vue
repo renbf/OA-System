@@ -64,7 +64,7 @@
       <el-form-item label="部门">
         <el-select v-model="queryParams.deptId" placeholder="请选择部门">
           <el-option
-            v-for="dict in bumenOptions"
+            v-for="dict in departmentOption"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -428,7 +428,7 @@
           return{
             loading:true,
             queryParams:{},
-            bumenOptions:[],
+            departmentOption:[],
             statusOptions:[],
             costList:[],
             costtitle:"",
@@ -573,7 +573,7 @@
           // 部门
           //获取部门列表
           listDept({parentId:'100'}).then(response => {
-            response.data.forEach((val)=> this.bumenOptions.push({'dictValue': val.deptId,'dictLabel': val.deptName})
+            response.data.forEach((val)=> this.departmentOption.push({'dictValue': val.deptId,'dictLabel': val.deptName})
             )
           });
 

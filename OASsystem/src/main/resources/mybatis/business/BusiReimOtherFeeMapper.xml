@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiReimOtherFeeMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiReimOtherFee" id="BusiReimOtherFeeResult">
+        <result property="otherId"    column="other_id"    />
+        <result property="reimburseId"    column="reimburse_id"    />
+        <result property="otherFeeName"    column="other_fee_name"    />
+        <result property="amount"    column="amount"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiReimOtherFeeVo">
+        select other_id, reimburse_id, other_fee_name, amount, create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <select id="selectBusiReimOtherFeeList" parameterType="com.xhkj.project.business.domain.BusiReimOtherFee" resultMap="BusiReimOtherFeeResult">
+        <include refid="selectBusiReimOtherFeeVo"/>
+        from busi_reim_other_fee
+        <where>
+            <if test="reimburseId != null "> and reimburse_id = #{reimburseId}</if>
+            <if test="otherFeeName != null  and otherFeeName != ''"> and other_fee_name like concat('%', #{otherFeeName}, '%')</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiReimOtherFeeById" parameterType="Long" resultMap="BusiReimOtherFeeResult">
+        <include refid="selectBusiReimOtherFeeVo"/>
+        from busi_reim_other_fee
+        where other_id = #{otherId}
+    </select>
+
+
+    <insert id="insertBusiReimOtherFee" parameterType="com.xhkj.project.business.domain.BusiReimOtherFee" useGeneratedKeys="true" keyProperty="otherId">
+        insert into busi_reim_other_fee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id,</if>
+            <if test="otherFeeName != null  and otherFeeName != ''">other_fee_name,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">#{reimburseId},</if>
+            <if test="otherFeeName != null  and otherFeeName != ''">#{otherFeeName},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiReimOtherFee" parameterType="com.xhkj.project.business.domain.BusiReimOtherFee">
+        update busi_reim_other_fee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id = #{reimburseId},</if>
+            <if test="otherFeeName != null  and otherFeeName != ''">other_fee_name = #{otherFeeName},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where other_id = #{otherId}
+    </update>
+
+    <delete id="deleteBusiReimOtherFeeById" parameterType="Long">
+        delete from busi_reim_other_fee where other_id = #{otherId}
+    </delete>
+
+    <delete id="deleteBusiReimOtherFeeByIds" parameterType="String">
+        delete from busi_reim_other_fee where other_id in 
+        <foreach item="otherId" collection="array" open="(" separator="," close=")">
+            #{otherId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiReimOtherFeeBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="otherId">
+        insert into busi_reim_other_fee (  reimburse_id, other_fee_name, amount, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiReimTravelSubsidyMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiReimTravelSubsidy" id="BusiReimTravelSubsidyResult">
+        <result property="travelId"    column="travel_id"    />
+        <result property="reimburseId"    column="reimburse_id"    />
+        <result property="traSubName"    column="tra_sub_name"    />
+        <result property="peopleNum"    column="people_num"    />
+        <result property="days"    column="days"    />
+        <result property="subsidyStandard"    column="subsidy_standard"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiReimTravelSubsidyVo">
+        select travel_id, reimburse_id, tra_sub_name, people_num, days, subsidy_standard, create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <select id="selectBusiReimTravelSubsidyList" parameterType="com.xhkj.project.business.domain.BusiReimTravelSubsidy" resultMap="BusiReimTravelSubsidyResult">
+        <include refid="selectBusiReimTravelSubsidyVo"/>
+        from busi_reim_travel_subsidy
+        <where>
+            <if test="reimburseId != null "> and reimburse_id = #{reimburseId}</if>
+            <if test="traSubName != null  and traSubName != ''"> and tra_sub_name like concat('%', #{traSubName}, '%')</if>
+            <if test="peopleNum != null "> and people_num = #{peopleNum}</if>
+            <if test="days != null "> and days = #{days}</if>
+            <if test="subsidyStandard != null "> and subsidy_standard = #{subsidyStandard}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiReimTravelSubsidyById" parameterType="Long" resultMap="BusiReimTravelSubsidyResult">
+        <include refid="selectBusiReimTravelSubsidyVo"/>
+        from busi_reim_travel_subsidy
+        where travel_id = #{travelId}
+    </select>
+
+
+    <insert id="insertBusiReimTravelSubsidy" parameterType="com.xhkj.project.business.domain.BusiReimTravelSubsidy" useGeneratedKeys="true" keyProperty="travelId">
+        insert into busi_reim_travel_subsidy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id,</if>
+            <if test="traSubName != null  and traSubName != ''">tra_sub_name,</if>
+            <if test="peopleNum != null ">people_num,</if>
+            <if test="days != null ">days,</if>
+            <if test="subsidyStandard != null ">subsidy_standard,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">#{reimburseId},</if>
+            <if test="traSubName != null  and traSubName != ''">#{traSubName},</if>
+            <if test="peopleNum != null ">#{peopleNum},</if>
+            <if test="days != null ">#{days},</if>
+            <if test="subsidyStandard != null ">#{subsidyStandard},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiReimTravelSubsidy" parameterType="com.xhkj.project.business.domain.BusiReimTravelSubsidy">
+        update busi_reim_travel_subsidy
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id = #{reimburseId},</if>
+            <if test="traSubName != null  and traSubName != ''">tra_sub_name = #{traSubName},</if>
+            <if test="peopleNum != null ">people_num = #{peopleNum},</if>
+            <if test="days != null ">days = #{days},</if>
+            <if test="subsidyStandard != null ">subsidy_standard = #{subsidyStandard},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where travel_id = #{travelId}
+    </update>
+
+    <delete id="deleteBusiReimTravelSubsidyById" parameterType="Long">
+        delete from busi_reim_travel_subsidy where travel_id = #{travelId}
+    </delete>
+
+    <delete id="deleteBusiReimTravelSubsidyByIds" parameterType="String">
+        delete from busi_reim_travel_subsidy where travel_id in 
+        <foreach item="travelId" collection="array" open="(" separator="," close=")">
+            #{travelId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiReimTravelSubsidyBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="travelId">
+        insert into busi_reim_travel_subsidy (  reimburse_id, tra_sub_name, people_num, days, subsidy_standard, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

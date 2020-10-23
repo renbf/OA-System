@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiReimTrafficFeeMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiReimTrafficFee" id="BusiReimTrafficFeeResult">
+        <result property="trafficId"    column="traffic_id"    />
+        <result property="reimburseId"    column="reimburse_id"    />
+        <result property="trafficType"    column="traffic_type"    />
+        <result property="trafficStartDate"    column="traffic_start_date"    />
+        <result property="trafficEndDate"    column="traffic_end_date"    />
+        <result property="departureStation"    column="departure_station"    />
+        <result property="terminalStation"    column="terminal_station"    />
+        <result property="amount"    column="amount"    />
+        <result property="billsNum"    column="bills_num"    />
+        <result property="amountTotal"    column="amount_total"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="fileIds"    column="file_Ids"    />
+    </resultMap>
+
+    <sql id="selectBusiReimTrafficFeeVo">
+        select traffic_id, reimburse_id, traffic_type, traffic_start_date,traffic_end_date, departure_station, terminal_station, amount, bills_num,amount_total, create_by, create_time, update_by, update_time, remark,file_Ids
+    </sql>
+
+    <select id="selectBusiReimTrafficFeeList" parameterType="com.xhkj.project.business.domain.BusiReimTrafficFee" resultMap="BusiReimTrafficFeeResult">
+        <include refid="selectBusiReimTrafficFeeVo"/>
+        from busi_reim_traffic_fee
+        <where>
+            <if test="reimburseId != null "> and reimburse_id = #{reimburseId}</if>
+            <if test="trafficType != null  and trafficType != ''"> and traffic_type = #{trafficType}</if>
+            <if test="trafficStartDate != null"> and traffic_start_date = #{trafficStartDate}</if>
+            <if test="trafficEndDate != null"> and traffic_end_date = #{trafficEndDate}</if>
+            <if test="departureStation != null  and departureStation != ''"> and departure_station = #{departureStation}</if>
+            <if test="terminalStation != null  and terminalStation != ''"> and terminal_station = #{terminalStation}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="billsNum != null "> and bills_num = #{billsNum}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiReimTrafficFeeById" parameterType="Long" resultMap="BusiReimTrafficFeeResult">
+        <include refid="selectBusiReimTrafficFeeVo"/>
+        from busi_reim_traffic_fee
+        where traffic_id = #{trafficId}
+    </select>
+
+    <insert id="insertBusiReimTrafficFee" parameterType="com.xhkj.project.business.domain.BusiReimTrafficFee" useGeneratedKeys="true" keyProperty="trafficId">
+        insert into busi_reim_traffic_fee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id,</if>
+            <if test="trafficType != null  and trafficType != ''">traffic_type,</if>
+            <if test="trafficStartDate != null">traffic_start_date,</if>
+            <if test="trafficEndDate != null">traffic_end_date,</if>
+            <if test="departureStation != null  and departureStation != ''">departure_station,</if>
+            <if test="terminalStation != null  and terminalStation != ''">terminal_station,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="billsNum != null ">bills_num,</if>
+            <if test="amountTotal != null ">amount_total,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">#{reimburseId},</if>
+            <if test="trafficType != null  and trafficType != ''">#{trafficType},</if>
+            <if test="trafficStartDate != null">#{trafficStartDate},</if>
+            <if test="trafficEndDate != null">#{trafficEndDate},</if>
+            <if test="departureStation != null  and departureStation != ''">#{departureStation},</if>
+            <if test="terminalStation != null  and terminalStation != ''">#{terminalStation},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="billsNum != null ">#{billsNum},</if>
+            <if test="amountTotal != null ">#{amountTotal},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="fileIds != null  and fileIds != ''">#{fileIds},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiReimTrafficFee" parameterType="com.xhkj.project.business.domain.BusiReimTrafficFee">
+        update busi_reim_traffic_fee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id = #{reimburseId},</if>
+            <if test="trafficType != null  and trafficType != ''">traffic_type = #{trafficType},</if>
+            <if test="trafficStartDate != null">traffic_start_date = #{trafficStartDate},</if>
+            <if test="trafficEndDate != null">traffic_end_date = #{trafficEndDate},</if>
+            <if test="departureStation != null  and departureStation != ''">departure_station = #{departureStation},</if>
+            <if test="terminalStation != null  and terminalStation != ''">terminal_station = #{terminalStation},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="billsNum != null ">bills_num = #{billsNum},</if>
+            <if test="amountTotal != null ">amount_total = #{amountTotal},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids = #{fileIds},</if>
+        </trim>
+        where traffic_id = #{trafficId}
+    </update>
+
+    <delete id="deleteBusiReimTrafficFeeById" parameterType="Long">
+        delete from busi_reim_traffic_fee where traffic_id = #{trafficId}
+    </delete>
+
+    <delete id="deleteBusiReimTrafficFeeByIds" parameterType="String">
+        delete from busi_reim_traffic_fee where traffic_id in 
+        <foreach item="trafficId" collection="array" open="(" separator="," close=")">
+            #{trafficId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiReimTrafficFeeBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="trafficId">
+        insert into busi_reim_traffic_fee (  reimburse_id, traffic_type, traffic_start_date, traffic_end_date, departure_station, terminal_station, amount, bills_num, amount_total, create_by, create_time, update_by, update_time, remark,file_ids) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.reimburseId}, #{item.trafficType}, #{item.trafficStartDate}, #{item.trafficEndDate}, #{item.departureStation}, #{item.terminalStation}, #{item.amount}, #{item.billsNum}, #{item.amountTotal}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark}, #{item.fileIds})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

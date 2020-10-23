@@ -64,7 +64,7 @@
       <el-form-item label="部门">
         <el-select v-model="queryParams.deptId" placeholder="请选择部门">
           <el-option
-            v-for="dict in bumenOptions"
+            v-for="dict in departmentOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -84,63 +84,55 @@
       @row-click="handleRowClick"
     >
       <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="报销时间" align="center" prop="createTime" >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        label="报销时间"
-        prop="expenses_time"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
+        align="center"
         label="项目"
-        prop="expenses_name"
+        prop="projectName"
         :show-overflow-tooltip="true"
         width="200"
       />
+      <el-table-column label="部门" align="center" width="150">
+        <template slot-scope="scope">
+          <span>{{ selectDictLabel(departmentOptions, scope.row.deptId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        label="部门"
-        prop="expenses_department"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="预制旅费"
-        prop="expenses_yuzhi"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="退回金额"
-        prop="expenses_returnmoney"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="补领金额"
-        prop="expenses_buling"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
+        align="center"
         label="交通费"
         prop="expenses_travel"
         :show-overflow-tooltip="true"
       />
       <el-table-column
+        align="center"
         label="出差补贴"
         prop="expenses_chuchai"
         :show-overflow-tooltip="true"
       />
       <el-table-column
+        align="center"
         label="其他费用"
         prop="expenses_othermoney"
         :show-overflow-tooltip="true"
       />
       <el-table-column
+        align="center"
         label="总金额"
         prop="expenses_allmoney"
         :show-overflow-tooltip="true"
       />
       <el-table-column
+        align="center"
         label="状态"
         prop="expenses_status"
         :show-overflow-tooltip="true"
       />
       <el-table-column
+        align="center"
         label="当前审批人"
         prop="expenses_exmain"
         :show-overflow-tooltip="true"
@@ -178,7 +170,7 @@
         </template>
       </el-table-column>
     </el-table>
-<!--    添加差旅费-->
+<!--    添加报销-->
     <el-dialog
       :title="title"
       :visible.sync="dialogVisible"
@@ -187,48 +179,51 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-row>
           <el-col>
-            <el-form-item label="部门" prop="bumen_department">
-              <el-radio-group v-model="form.bumen_department">
-                <el-radio
-                  v-for="dict in department"
-                  :key="dict.dictValue"
-                  :label="dict.dictValue"
-                  border
-                >{{ dict.dictLabel }}
-                </el-radio
+            <el-form-item label="部门" prop="deptId">
+              <el-col :span="7">
+                <el-select
+                  v-model="form.deptId"
+                  placeholder="请选择"
+                  clearable
                 >
-              </el-radio-group>
+                  <el-option
+                    v-for="(item, index) in departmentOptions"
+                    :key="index"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  ></el-option>
+                </el-select>
+              </el-col>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="在项目中" prop="inProject">
-            <el-radio-group v-model="form.inProject" @change="changeHandler">
-              <el-radio
-                v-for="dict in profect"
-                :key="dict.dictValue"
-                :label="dict.dictValue"
-                border
-              >{{ dict.dictLabel }}
-              </el-radio
-              >
-            </el-radio-group>
+            <el-form-item label="在项目中" prop="inPrjFlag">
+              <el-radio-group v-model="form.inPrjFlag"  @change="changeHandler">
+                <el-radio
+                  v-for="(dict,index) in yesOrNo"
+                  :key="index"
+                  :label="dict.dictValue"
+                  :value="dict.dictValue"
+                >{{ dict.dictLabel }}</el-radio
+                >
+              </el-radio-group>
           </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="报销项目" prop="baoxiao">
+            <el-form-item label="报销项目" prop="projectName">
               <el-select
-                v-model="form.baoxiao"
+                v-model="form.projectId"
                 placeholder="选择报销项目"
                 clearable
                 size="small"
                 style="width: 240px"
               >
                 <el-option
-                  v-for="dict in statusOptions"
+                  v-for="dict in projectOptions"
                   :key="dict.dictValue"
                   :label="dict.dictLabel"
                   :value="dict.dictValue"
@@ -239,11 +234,18 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="报销事由" prop="reason">
-            <el-input v-model="form.reason" type="textarea" placeholder="请输入内容"></el-input>
+            <el-form-item label="报销事由" prop="reimburseReason">
+            <el-input v-model="form.reimburseReason" type="textarea" placeholder="请输入内容"></el-input>
           </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col>
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="reimburseSave">保存</el-button>
+          </el-col>
+        </el-row>
+
         <el-row>
           <el-col>
             <el-form-item label="交通费">
@@ -251,31 +253,31 @@
             </el-form-item>
           </el-col>
         </el-row>
-<!--        交通费-->
         <el-row>
-
           <el-col :span="24">
             <template v-if="travel">
               <el-carousel  arrow="always" type="card" :autoplay="false" height="200px">
-                <el-carousel-item v-for="item in cardList">
-                  <el-card class="box-card">
+                <el-carousel-item v-for="item in transportList" >
+                  <el-card class="box-card" @click.native="editTransport(item)">
                     <div slot="header" class="clearfix">
-                      <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>{{item.title}}</b></span>
+                      <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>
+                        {{ selectDictLabelByType(GLOBAL.TRANSPORT_TYPE, item.trafficType) }}
+                      </b></span>
                       <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteticket"></el-button>
                     </div>
                     <div class="text item train">
                       <div>
-                        <p><b>{{item.begin}}</b></p>
-                        <p>{{item.begintime}}</p>
+                        <p><b>{{item.departureStation}}</b></p>
+                        <p>{{item.trafficStartDate}}</p>
                         <p>附件 {{item.fujian}}张</p>
                       </div>
                       <div>
                         <p>至</p>
                       </div>
                       <div>
-                        <p><b>{{item.end}}</b></p>
-                        <p>{{item.endtime}}</p>
-                        <p>￥<b>{{item.money}}</b></p>
+                        <p><b>{{item.terminalStation}}</b></p>
+                        <p>{{item.trafficEndDate}}</p>
+                        <p>￥<b>{{item.amountTotal}}</b></p>
                       </div>
                     </div>
                   </el-card>
@@ -402,24 +404,21 @@
         </el-col>
       </el-form>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">保存</el-button>
-      </span>
+
     </el-dialog>
 
 
-<!--    新建差旅费报销-->
+<!--新建交通费用-->
     <el-dialog
       :title="transporttitle"
       :visible.sync="transport"
       width="600px" class="abow_dialog">
 
       <el-form ref="form" :model="transportform" :rules="transportrules" label-width="80px">
-        <el-form-item label="交通类型" prop="type">
-          <el-select v-model="transportform.type" size="small">
+        <el-form-item label="交通类型" prop="trafficType">
+          <el-select v-model="transportform.trafficType" size="small">
             <el-option
-              v-for="item in typeOptions"
+              v-for="item in trafficTypeOptions"
               :key="item.dictId"
               :label="item.dictLabel"
               :value="item.dictValue"
@@ -427,9 +426,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="时间" prop="time">
+        <el-form-item label="时间" prop="trafficDate">
           <el-date-picker
-            v-model="transportform.time"
+            v-model="transportform.trafficDate"
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -437,45 +436,49 @@
           </el-date-picker>
         </el-form-item>
 <!--起始位置-->
-        <el-form-item label="起始位置" prop="beginaddress">
+        <el-form-item label="起始位置" prop="departureStation">
           <el-autocomplete
             class="inline-input"
-            v-model="transportform.beginaddress"
+            v-model="transportform.departureStation"
             :fetch-suggestions="querySearch"
-            placeholder="请输入内容"
-            :trigger-on-focus="false"
+            placeholder="请输入始发站"
+            :trigger-on-focus="true"
             @select="handleSelect"
           ></el-autocomplete>
         </el-form-item>
 <!--        终点位置-->
-        <el-form-item label="终点位置" prop="endaddress">
+        <el-form-item label="终点位置" prop="terminalStation">
           <el-autocomplete
             class="inline-input"
-            v-model="transportform.endaddress"
+            v-model="transportform.terminalStation"
             :fetch-suggestions="querySearch"
-            placeholder="请输入内容"
-            :trigger-on-focus="false"
+            placeholder="请输入终点站"
+            :trigger-on-focus="true"
             @select="handleSelect"
           ></el-autocomplete>
         </el-form-item>
         <el-row>
           <el-col :span="10">
-            <el-form-item label="金额" prop="money">
-              <el-input  v-model="transportform.money" @change="transpormoneychange"></el-input>
+            <el-form-item label="金额" prop="amount">
+              <el-input  v-model="transportform.amount" @change="transpormoneychange"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="14">
-            <el-form-item label="票据数量" prop="number">
-              <el-input-number v-model="transportform.ticketsnum" @change="handleChange" :min="0" label="描述文字"></el-input-number>
+            <el-form-item label="票据数量" prop="billsNum">
+              <el-input-number v-model="transportform.billsNum" @change="handleChange" :min="0" label="描述文字"></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="上传附件" prop="fujian">
           <el-upload
+            ref="upload"
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :headers="headers"
+            :action= "GLOBAL.UPLOADFILE_URL"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
+            :on-success="handleSuccess"
+            :auto-upload="true"
             :file-list="transportform.fileList"
             list-type="picture">
             <el-button size="small" type="primary">点击上传</el-button>
@@ -486,8 +489,8 @@
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <span class="lf"><b style="font-size: 18px;">￥{{transportTotal}}</b></span>
-        <el-button @click="canceltransport">取消</el-button>
+        <span class="lf"><b style="font-size: 18px;">￥{{transportform.amountTotal}}</b></span>
+        <el-button @click="transport=false">取消</el-button>
         <el-button type="primary" @click="savetransport">保存</el-button>
       </div>
     </el-dialog>
@@ -519,16 +522,22 @@
               <el-input disabled v-model="detailform.department"></el-input>
             </el-form-item>
             <el-form-item label="在项目中">
-              <el-radio-group v-model="detailform.inproject" disabled>
-                <el-radio label="是"></el-radio>
-                <el-radio label="否"></el-radio>
+              <el-radio-group v-model="detailform.inPrjFlag"  >
+                <el-radio
+                  v-for="(dict,index) in yesOrNo"
+                  :key="index"
+                  :label="dict.dictValue"
+                  :value="dict.dictValue"
+                >{{ dict.dictLabel }}</el-radio
+                >
               </el-radio-group>
+
             </el-form-item>
             <el-form-item label="报销项目">
               <el-input type="textarea" v-model="detailform.project" disabled></el-input>
             </el-form-item>
             <el-form-item label="报销事由">
-              <el-input type="textarea" v-model="detailform.reason" disabled></el-input>
+              <el-input type="textarea" v-model="detailform.reimburseReason" disabled></el-input>
             </el-form-item>
             <!--        交通费-->
             <el-row>
@@ -542,24 +551,24 @@
               <el-col :span="24">
                 <template v-if="travel">
                   <el-carousel  arrow="always" type="card" :autoplay="false" height="200px">
-                    <el-carousel-item v-for="item in cardList">
+                    <el-carousel-item v-for="item in transportList">
                       <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                          <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>{{item.title}}</b></span>
+                          <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>{{item.trafficType}}</b></span>
                         </div>
                         <div class="text item train">
                           <div>
-                            <p><b>{{item.begin}}</b></p>
-                            <p>{{item.begintime}}</p>
+                            <p><b>{{item.departureStation}}</b></p>
+                            <p>{{item.trafficStartDate}}</p>
                             <p>附件 {{item.fujian}}张</p>
                           </div>
                           <div>
                             <p>至</p>
                           </div>
                           <div>
-                            <p><b>{{item.end}}</b></p>
-                            <p>{{item.endtime}}</p>
-                            <p>￥<b>{{item.money}}</b></p>
+                            <p><b>{{item.terminalStation}}</b></p>
+                            <p>{{item.trafficEndDate}}</p>
+                            <p>￥<b>{{item.amountTotal}}</b></p>
                           </div>
                         </div>
                       </el-card>
@@ -696,9 +705,7 @@
       </span>
     </el-dialog>
 
-
-<!--    新建编辑出差补助-->
-
+<!--新建编辑出差补助-->
     <el-dialog :title="beawaytitle"
                :visible.sync="beaway"
                width="600px" class="abow_dialog">
@@ -741,9 +748,7 @@
         <el-button type="primary" @click="savetransport">保存</el-button>
       </div>
     </el-dialog>
-
-
-<!--    新增编辑其他费用-->
+<!--新增编辑其他费用-->
     <el-dialog :title="othertitle"
                :visible.sync="otheropen"
                width="600px" class="abow_dialog">
@@ -762,7 +767,6 @@
               :on-remove="handleRemove"
               :file-list="otherform.fileList"
               list-type="picture">
-              <el-button size="small" type="primary">点击上传</el-button>
               <span>共{{otherform.fujiannum}}张</span>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
@@ -774,24 +778,34 @@
           <el-button type="primary" @click="savetransport">保存</el-button>
         </div>
     </el-dialog>
+
+
   </div>
 </template>
 
 <script>
   import { listDept } from "@/api/system/dept";
   import {expensesList,loadAll} from "@/api/business/mywork/expenses"
+  import { listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
+  import { listTrafficFee, getTrafficFee, delTrafficFee, addTrafficFee, updateTrafficFee, exportTrafficFee } from "@/api/business/mywork/trafficfee";
+  import { getToken } from '@/utils/auth'
+  import {uploadFile,delFile} from '@/api/system/file'
+  import {isNotEmpty} from "../../../utils/common";
+
   export default {
         name: "travel",
         data(){
           return{
+            headers: { 'Authorization': 'Bearer ' + getToken() },
             queryParams:{
               deptId:undefined,
               time:[]
             },
             expensesList:[],
-            bumenOptions:[],
+            dateRange: [],
+            departmentOptions:[],
             statusOptions:[],
-            typeOptions:[],
+            trafficTypeOptions:[],
           // 遮罩层
             loading: true,
             dialogVisible: false,
@@ -806,29 +820,40 @@
             fujian:true,
             transportdetail:false,
             fujiannum:0,
-            transportTotal:0,
             transportmoney:0,
             transportnum:0,
             beawayTotal:0,
             otherTotal:0,
+            yesOrNo: [],
+            fileList: [],
+            uploadForm: new FormData(),
             form:{
-              name:'',
-              money:'',
-              Replenishment:'',
-              desc:'',
-              transport:'',
-              begin:'',
-              end:'',
-              belongto:'',
-              fileList:[],
-              baoxiao:''
+              reimburseId:'',
+              deptId: '',
+              inPrjFlag: true,
+              projectId:'',
+              projectName:'',
+              reimburseReason: '',
             },
+            projectOptions: [
+              {
+                dictValue: "0",
+                dictLabel: "小额贷款项目"
+              },
+              {
+                dictValue: "1",
+                dictLabel: "网信办项目"
+              }
+            ],
             transportform:{
-              time: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-              beginaddress:'',
-              endaddress:'',
-              money:'',
-              ticketsnum:0,
+              reimburseId: '',
+              trafficType: '',
+              trafficDate: [],
+              departureStation:'',
+              terminalStation:'',
+              amount:0,
+              billsNum:0,
+              amountTotal:0,
               fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
             },
             beawayform:{
@@ -845,21 +870,22 @@
               fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
             },
             detailform:{
-              inproject:'是',
+              inPrjFlag:true,
               project:'马克尔\n' +
                       '河北省小贷管理系统开发项目\n' +
                       'XCV23456',
-              reason:'唐山项目出差费用',
+              reimburseReason:'唐山项目出差费用',
               remark:''
             },
             title:"",
             transporttitle:"",
             beawaytitle:"",
             othertitle:"",
+            trafficFileIds: [],
             transportdetailtitle:"",
-            cardList:[
-              {title:'火车票',begin:'石家庄',end:'北京',begintime:'2020/05/03 17:30',endtime:'2020/05/04 17:20',fujian:1,money:'199.05'},
-              {title:'火车票',begin:'郑州',end:'上海',begintime:'2020/05/03 17:30',endtime:'2020/05/04 17:20',fujian:1,money:'199.05'},
+            transportList:[
+              {trafficType:'火车票',departureStation:'石家庄',terminalStation:'北京',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
+              {trafficType:'火车票',departureStation:'郑州',terminalStation:'上海',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
               // {title:'火车票',begin:'南昌',end:'上海',begintime:'2020/05/03 17:30',endtime:'2020/05/04 17:20',fujian:1,money:'199.05'},
             ],
             butieList:[
@@ -886,16 +912,6 @@
               {
                 dictValue: "2",
                 dictLabel: "软件部"
-              }
-            ],
-            profect: [
-              {
-                dictValue: "0",
-                dictLabel: "否"
-              },
-              {
-                dictValue: "1",
-                dictLabel: "是"
               }
             ],
             activities: [
@@ -950,22 +966,22 @@
               }
             ],
             transportrules:{
-              type: [
+              trafficType: [
                 { required: true, message: "交通类型不能为空", trigger: "blur" }
               ],
-              time:[
+              trafficDate:[
                 { required: true, message: "时间不能为空", trigger: "blur" }
               ],
-              beginaddress:[
+              departureStation:[
                 { required: true, message: "起始位置", trigger: "blur" }
               ],
-              endaddress:[
+              terminalStation:[
                 { required: true, message: "结束位置", trigger: "blur" }
               ],
-              money:[
+              amount:[
                 { required: true, message: "金额", trigger: "blur" }
               ],
-              number:[
+              billsNum:[
                 { required: true, message: "票据数量", trigger: "blur" }
               ],
               fujian:[
@@ -1000,32 +1016,80 @@
           }
         },
         created() {
-          var data=expensesList();
-          this.expensesList=data.data;
-          this.loading = false;
+          this.getList();
           // 状态
           this.getDicts("sys_check_status").then(response => {
             this.statusOptions = response.data;
           });
-          // 部门
-          //获取部门列表
-          listDept({parentId:'100'}).then(response => {
-            response.data.forEach((val)=> this.bumenOptions.push({'dictValue': val.deptId,'dictLabel': val.deptName})
-            )
+          //系统是否
+          this.getDicts("sys_yes_no").then(response => {
+            response.data.forEach( (val) => this.yesOrNo.push({'dictValue': eval(val.dictValue),'dictLabel': val.dictLabel}))
           });
-
+          //获取部门列表
+          this.getDeptList({parentId:'100'}).then(response => {
+            response.data.forEach((val)=> this.departmentOptions.push({'dictValue': val.deptId,'dictLabel': val.deptName}))
+          });
           // 交通类型
           this.getDicts("transport_type").then(response => {
-            this.typeOptions = response.data;
+            this.trafficTypeOptions = response.data;
           });
 
 
         },
         methods:{
+            getList(){
+              this.loading = true;
+              listReimburse(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+                this.expensesList = response.rows;
+                this.total = response.total;
+                this.loading = false;
+              });
+            },
             // 新建
             handleAdd(){
               this.dialogVisible=true;
             },
+
+            reimburseSave(){
+              this.projectOptions.forEach(e=>{
+                if(Object.is(e.dictValue,this.form.projectId)){
+                  this.form.projectName = e.dictLabel;
+                }
+              })
+              addReimburse(this.form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("保存成功");
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+
+            },
+
+            savetransport(){
+
+              if(this.form.reimburseId){
+                this.transportform.fileIds = JSON.stringify(this.trafficFileIds);
+                if(isNotEmpty(this.transportform.fileIds)){
+                  let fileIds = this.transportform.fileIds;
+                  this.transportform.fileIds = fileIds.replace("[","").replace("]","")
+                }
+
+                this.transportform.reimburseId = this.form.reimburseId;
+                this.transportform.trafficDate = JSON.stringify(this.transportform.trafficDate);
+                addTrafficFee(this.transportform).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("保存成功");
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
+              }else{
+                this.msgWarning('请先保存报销基础信息！');
+              }
+
+            },
+
             // 删除
             handleDelete(){},
             // 报送
@@ -1033,8 +1097,15 @@
             // 导出
             handleExport(){},
           // 编辑
-            handleUpdate(){
+            handleUpdate(row){
+              this.form = row;
+              this.dialogVisible=true;
 
+              getRemburseDetail(row.reimburseId).then(response => {
+                this.transportList = response.data.busiReimTrafficFeeList;
+                // this.butieList = response.data.busiReimTravelSubsidyList
+                // this.otherList = response.data.busiReimOtherFeeList
+              });
             },
           // 行点击
             handleRowClick(row){
@@ -1048,7 +1119,11 @@
             resetQuery(){},
             // 上传文件
           handleRemove(file, fileList) {
-            console.log(file, fileList);
+            let fileId = file.response.fileId;
+            delFile(fileId)
+          },
+          handleSuccess(response, file, fileList){
+            this.trafficFileIds.push(response.fileId)
           },
           changeHandler(){},
           // 删除车票
@@ -1059,9 +1134,25 @@
               this.transport=true
               this.transporttitle='新增'
           },
+
+          editTransport(data){
+            const {trafficStartDate,trafficEndDate } = data;
+            this.transportform = data;
+            this.transportform.trafficDate = new Array();
+            this.transportform.trafficDate.push(trafficStartDate);
+            this.transportform.trafficDate.push(trafficEndDate);
+
+            let fileList = this.transportform.fileList;
+            this.transportform.fileList.forEach(e=>{
+              e.name = e.fileNameReal
+              e.url =process.env.VUE_APP_BASE_API + e.previewPath;
+            })
+            this.transport=true
+          },
+
           // 搜索建议
           querySearch(queryString, cb) {
-            var restaurants=loadAll();
+            var restaurants = loadAll();
             var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
             // 调用 callback 返回建议列表的数据
             cb(results);
@@ -1078,16 +1169,15 @@
           handleChange(value){
             this.fujiannum=value;
             this.transportnum=value;
-            this.transportTotal=this.transportmoney*this.transportnum;
+            this.transportform.amountTotal=this.transportmoney*this.transportnum;
           },
           transpormoneychange(value){
             this.transportmoney=value;
-            this.transportTotal=this.transportmoney*this.transportnum;
+            this.transportform.amountTotal=this.transportmoney*this.transportnum;
           },
           handlePreview(file) {
             console.log(file);
           },
-          savetransport(){},
           canceltransport(){},
           goaway(){
               this.beaway=true;

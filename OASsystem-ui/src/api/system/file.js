@@ -23,12 +23,12 @@ export function filePreview(fileId) {
     headers: { 'Authorization': 'Bearer ' + getToken() }
   });
 }
-// 删除文件
-export function delFile(roleId) {
+// 删除文件 并删除磁盘文件
+export function delFile(fileId) {
   return request({
     url: '/system/attachment/deleteFile',
     method: 'post',
-    params: {id:roleId}
+    params: {id:fileId}
   })
 }
 //删除磁盘数据
@@ -39,5 +39,4 @@ export function delDiskFile(path) {
     params:{path:path}
   })
 }
-
 
