@@ -34,6 +34,16 @@ public class BusiTaskLog extends BaseEntity
 
 	private List<UploadFile> fileList;
 
+	private List<Long> taskLogIds;
+
+	public List<Long> getTaskLogIds() {
+		return taskLogIds;
+	}
+
+	public void setTaskLogIds(List<Long> taskLogIds) {
+		this.taskLogIds = taskLogIds;
+	}
+
 	public List<UploadFile> getFileList() {
 		return fileList;
 	}

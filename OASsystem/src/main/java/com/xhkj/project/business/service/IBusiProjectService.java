@@ -67,6 +67,8 @@ public interface IBusiProjectService
 
 	public Map<String, Object> updateBusiTask(BusiTask busiTask);
 
+	public Map<String, Object> updateTaskProgress(BusiTask busiTask);
+
 	public Map<String, Object> selectListTask(BusiTaskVo busiTaskVo);
 
 	public Map<String, Object> getTaskInfo(Long taskId);
@@ -80,5 +82,7 @@ public interface IBusiProjectService
 	public Map<String, Object> closeTask(BusiTask busiTask);
 
 	public Map<String, Object> insertBusiTaskLog(BusiTaskLog busiTaskLog);
+
+	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog);
 
 }

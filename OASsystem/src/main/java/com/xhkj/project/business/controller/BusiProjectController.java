@@ -304,4 +304,41 @@ public class BusiProjectController
 		}
 		return resultMap;
 	}
+
+	/**
+	 * 报送任务
+	 */
+	@PostMapping("/taskLogBaosong")
+	@ResponseBody
+	public Map<String,Object> taskLogBaosong(@RequestBody BusiTaskLog busiTaskLog)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.taskLogBaosong(busiTaskLog);
+		} catch (Exception e) {
+			log.error("报送任务异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","报送任务异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 修改任务进度
+	 */
+	@PostMapping("/updateTaskProgress")
+	@ResponseBody
+	public Map<String,Object> updateTaskProgress(@RequestBody BusiTask busiTask)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.updateTaskProgress(busiTask);
+		} catch (Exception e) {
+			log.error("修改任务进度异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","修改任务进度异常");
+		}
+		return resultMap;
+	}
+
 }

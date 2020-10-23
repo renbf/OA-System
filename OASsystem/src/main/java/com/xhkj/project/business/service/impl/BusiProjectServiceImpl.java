@@ -347,12 +347,32 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	}
 
 	@Override
+	public Map<String, Object> updateTaskProgress(BusiTask busiTask) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTask.setUpdateBy(username);
+			busiTask.setUpdateTime(now);
+			busiTaskMapper.updateBusiTask(busiTask);
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
 	public Map<String, Object> selectListTask(BusiTaskVo busiTaskVo) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
 			if (Objects.nonNull(busiTaskVo.getPage()) && Objects.nonNull(busiTaskVo.getLimit())) {
 				PageHelper.startPage(busiTaskVo.getPage(), busiTaskVo.getLimit());
 			}
+			busiTaskVo.setCreateBy(username);
 			List<BusiTaskVo> list = busiTaskMapper.selectBusiTasks(busiTaskVo);
 			PageInfo<BusiTaskVo> pageInfo = new PageInfo<BusiTaskVo>(list);
 			resultMap.put("code",200);
@@ -490,6 +510,29 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 					list.add(busiTaskLogFile);
 				}
 				busiTaskLogFileMapper.insertBusiTaskLogFileBatch(list);
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			List<Long> taskLogIds = busiTaskLog.getTaskLogIds();
+			if (CollectionUtils.isNotEmpty(taskLogIds)) {
+				BusiTaskLog busiTaskLogUp = null;
+				for (Long taskLogId : taskLogIds) {
+					busiTaskLogUp = new BusiTaskLog();
+					busiTaskLogUp.setTaskLogId(taskLogId);
+					busiTaskLogUp.setLogStatus("1");
+					busiTaskLogMapper.updateBusiTaskLog(busiTaskLogUp);
+				}
 			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
