@@ -527,15 +527,13 @@
       :visible.sync="openlittle"
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
-          <!--<el-progress :percentage="50" style="width:300px;float:left;"></el-progress>-->
-          <!--<el-input-number v-model="form2.num" @change="handleChange3" :min="1" :max="10" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>-->
-       <!---->
         <template>
           <div class="block">
             <el-slider
               v-model="form2.value"
               show-input
-              >
+              :format-tooltip="form2.update"
+            >
             </el-slider>
           </div>
         </template>
@@ -766,6 +764,10 @@
         form2:{
           num:1,
           value:0,
+          update(val) {
+            return val+ '%'
+          }
+
         },
         //新建编辑项目任务table数据
         addform: {
