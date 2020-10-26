@@ -1,5 +1,6 @@
 package com.xhkj.project.business.controller;
 
+import com.xhkj.project.business.domain.BusiProjectApply;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.BusiTaskLog;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
@@ -337,6 +338,24 @@ public class BusiProjectController
 			log.error("修改任务进度异常",e);
 			resultMap.put("code",-1);
 			resultMap.put("msg","修改任务进度异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 新增项目申请
+	 */
+	@PostMapping("/addProjectApply")
+	@ResponseBody
+	public Map<String,Object> addProjectApply(@RequestBody BusiProjectApply busiProjectApply)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.insertProjectApply(busiProjectApply);
+		} catch (Exception e) {
+			log.error("新增项目申请异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","新增项目申请异常");
 		}
 		return resultMap;
 	}
