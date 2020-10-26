@@ -241,10 +241,12 @@
         >
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
-            <div>
+
+            <div >
               <el-button
                 size="mini"
                 type="text"
+                v-show="isVisableConfig==='0'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -252,10 +254,12 @@
               >
               <el-button
                 size="mini"
+                v-show="isVisableConfig==='0'"
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
                 style="color:#6C6C6C"
+
               >报送</el-button
               >
 
@@ -612,7 +616,7 @@
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
-
+  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -620,7 +624,8 @@
     },
     data() {
       return {
-
+        // 是否显示操作区域
+        isVisableConfig:'',
         //title文字显示
         taskLookTitle: "",
         // 是否显示弹出层
@@ -735,6 +740,7 @@
           fileList: []
         },
         //新建编辑项目任务table数据
+
         addform: {
           projectName: '',
           leaderId:undefined,
@@ -830,6 +836,10 @@
       });
       this.getUserDeptUsers();
       this.getTaskList();
+      this.getIsVisbleData()
+      this.getDataFromSession()
+
+
     },
     computed: {
       atEndOfList() {
@@ -865,7 +875,35 @@
         }
       },
     },
+    // watch: {
+    //   isVisableConfig: {
+    //     handler: function (o, n) {
+    //       console.log(o, n,'监听')
+    //     },
+    //     immediate: true
+    //   }
+    // },
     methods: {
+      // 本地获取isVisableData
+
+      getDataFromSession(){
+
+        if(this.isVisableConfig===''){
+           this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
+
+        }
+      },
+
+      // 获取控制显隐字段
+      getIsVisbleData(){
+        console.log(111)
+        eventBus.$on('isVisableData',data=>{
+          console.log(data,'jiushou')
+          this.isVisableConfig=data
+          window.sessionStorage.setItem('isVisableData',data)
+        })
+      },
+
       downloadFile(item) {
         downloadUrl(item.fileUrl);
       },

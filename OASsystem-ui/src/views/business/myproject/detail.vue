@@ -617,7 +617,7 @@
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
-
+  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -1065,6 +1065,8 @@
         changeStatus(form).then(response => {
           if (response.code === 200) {
             this.msgSuccess("修改成功");
+            console.log(response,value,1)
+            eventBus.$emit('isVisableData',value)
             this.getTaskList();
           } else {
             this.msgError(response.msg);
