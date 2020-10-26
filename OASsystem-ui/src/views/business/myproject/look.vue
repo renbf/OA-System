@@ -246,7 +246,7 @@
               <el-button
                 size="mini"
                 type="text"
-                v-if="isVisableConfig==='0'"
+                v-show="isVisableConfig==='0'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -254,10 +254,12 @@
               >
               <el-button
                 size="mini"
+                v-show="isVisableConfig==='0'"
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
                 style="color:#6C6C6C"
+
               >报送</el-button
               >
 
@@ -835,6 +837,9 @@
       this.getUserDeptUsers();
       this.getTaskList();
       this.getIsVisbleData()
+      this.getDataFromSession()
+
+
     },
     computed: {
       atEndOfList() {
@@ -870,13 +875,32 @@
         }
       },
     },
+    // watch: {
+    //   isVisableConfig: {
+    //     handler: function (o, n) {
+    //       console.log(o, n,'监听')
+    //     },
+    //     immediate: true
+    //   }
+    // },
     methods: {
+      // 本地获取isVisableData
+
+      getDataFromSession(){
+
+        if(this.isVisableConfig===''){
+           this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
+
+        }
+      },
+
       // 获取控制显隐字段
       getIsVisbleData(){
         console.log(111)
         eventBus.$on('isVisableData',data=>{
           console.log(data,'jiushou')
           this.isVisableConfig=data
+          window.sessionStorage.setItem('isVisableData',data)
         })
       },
 
