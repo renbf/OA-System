@@ -241,10 +241,12 @@
         >
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
-            <div>
+
+            <div >
               <el-button
                 size="mini"
                 type="text"
+                v-if="isVisableConfig==='0'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -527,11 +529,6 @@
       :visible.sync="openlittle"
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
-<<<<<<< HEAD
-=======
-          <!--<el-progress :percentage="form2.taskProgress" style="width:300px;float:left;"></el-progress>
-          <el-input-number v-model="form2.taskProgress" @change="handleChange3" :min="1" :max="100" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>-->
->>>>>>> dev
         <template>
           <div class="block">
             <el-slider
@@ -617,7 +614,7 @@
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
-
+  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -625,7 +622,8 @@
     },
     data() {
       return {
-
+        // 是否显示操作区域
+        isVisableConfig:'',
         //title文字显示
         taskLookTitle: "",
         // 是否显示弹出层
@@ -712,6 +710,9 @@
         form2:{
           taskId:undefined,
           taskProgress:1,
+          update(val) {
+            return val+ '%'
+          }
         },
         projectId:this.$route.query.projectId,
         taskLookForm:{
@@ -736,18 +737,8 @@
           logStatus:undefined,
           fileList: []
         },
-<<<<<<< HEAD
-        form2:{
-          num:1,
-          value:0,
-          update(val) {
-            return val+ '%'
-          }
-
-        },
-=======
->>>>>>> dev
         //新建编辑项目任务table数据
+
         addform: {
           projectName: '',
           leaderId:undefined,
@@ -843,6 +834,7 @@
       });
       this.getUserDeptUsers();
       this.getTaskList();
+      this.getIsVisbleData()
     },
     computed: {
       atEndOfList() {
@@ -879,6 +871,15 @@
       },
     },
     methods: {
+      // 获取控制显隐字段
+      getIsVisbleData(){
+        console.log(111)
+        eventBus.$on('isVisableData',data=>{
+          console.log(data,'jiushou')
+          this.isVisableConfig=data
+        })
+      },
+
       downloadFile(item) {
         downloadUrl(item.fileUrl);
       },
