@@ -527,11 +527,6 @@
       :visible.sync="openlittle"
       width="30%">
       <el-form ref="form2" :model="form2" label-width="80px">
-<<<<<<< HEAD
-=======
-          <!--<el-progress :percentage="form2.taskProgress" style="width:300px;float:left;"></el-progress>
-          <el-input-number v-model="form2.taskProgress" @change="handleChange3" :min="1" :max="100" label="描述文字" style="width:150px;margin-top:-10px"></el-input-number>-->
->>>>>>> dev
         <template>
           <div class="block">
             <el-slider
@@ -712,6 +707,9 @@
         form2:{
           taskId:undefined,
           taskProgress:1,
+          update(val) {
+            return val+ '%'
+          }
         },
         projectId:this.$route.query.projectId,
         taskLookForm:{
@@ -736,17 +734,6 @@
           logStatus:undefined,
           fileList: []
         },
-<<<<<<< HEAD
-        form2:{
-          num:1,
-          value:0,
-          update(val) {
-            return val+ '%'
-          }
-
-        },
-=======
->>>>>>> dev
         //新建编辑项目任务table数据
         addform: {
           projectName: '',
