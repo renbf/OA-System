@@ -845,6 +845,7 @@
                 dictLabel: "网信办项目"
               }
             ],
+            delfileIds:[],
             transportform:{
               reimburseId: '',
               trafficType: '',
@@ -854,6 +855,7 @@
               amount:0,
               billsNum:0,
               amountTotal:0,
+              fileIds:[],
               fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
             },
             beawayform:{
@@ -881,7 +883,6 @@
             transporttitle:"",
             beawaytitle:"",
             othertitle:"",
-            trafficFileIds: [],
             transportdetailtitle:"",
             transportList:[
               {trafficType:'火车票',departureStation:'石家庄',terminalStation:'北京',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
@@ -1066,64 +1067,79 @@
 
             },
 
-            savetransport(){
+          cancelFun(){
 
-              if(this.form.reimburseId){
-                this.transportform.fileIds = JSON.stringify(this.trafficFileIds);
-                if(isNotEmpty(this.transportform.fileIds)){
-                  let fileIds = this.transportform.fileIds;
-                  this.transportform.fileIds = fileIds.replace("[","").replace("]","")
-                }
+          },
 
-                this.transportform.reimburseId = this.form.reimburseId;
-                this.transportform.trafficDate = JSON.stringify(this.transportform.trafficDate);
-                addTrafficFee(this.transportform).then(response => {
-                  if (response.code === 200) {
-                    this.msgSuccess("保存成功");
-                  } else {
-                    this.msgError(response.msg);
-                  }
-                });
-              }else{
-                this.msgWarning('请先保存报销基础信息！');
+          savetransport(){
+            if(this.form.reimburseId){
+              this.transportform.fileIds = JSON.stringify(this.transportform.fileIds);
+              if(isNotEmpty(this.transportform.fileIds)){
+                let fileIds = this.transportform.fileIds;
+                this.transportform.fileIds = fileIds.replace("[","").replace("]","")
               }
 
-            },
+              this.transportform.reimburseId = this.form.reimburseId;
+              this.transportform.trafficDate = JSON.stringify(this.transportform.trafficDate);
 
-            // 删除
-            handleDelete(){},
-            // 报送
-            handleReport(){},
-            // 导出
-            handleExport(){},
-          // 编辑
-            handleUpdate(row){
-              this.form = row;
-              this.dialogVisible=true;
+              addTrafficFee(this.transportform).then(response => {
+                if (response .code === 200) {
+                  this.msgSuccess("保存成功");
+                  this.delFiles()
 
-              getRemburseDetail(row.reimburseId).then(response => {
-                this.transportList = response.data.busiReimTrafficFeeList;
-                // this.butieList = response.data.busiReimTravelSubsidyList
-                // this.otherList = response.data.busiReimOtherFeeList
+                } else {
+                  this.msgError(response.msg);
+                }
               });
-            },
+            }else{
+              this.msgWarning('请先保存报销基础信息！');
+            }
+
+          },
+
+          delFiles(){
+            this.delfileIds.forEach(e=>{
+              delFile(e)
+            })
+          },
+
+          // 删除
+          handleDelete(){},
+          // 报送
+          handleReport(){},
+          // 导出
+          handleExport(){},
+          // 编辑
+          handleUpdate(row){
+            this.form = row;
+            this.dialogVisible=true;
+
+            getRemburseDetail(row.reimburseId).then(response => {
+              this.transportList = response.data.busiReimTrafficFeeList;
+              // this.butieList = response.data.busiReimTravelSubsidyList
+              // this.otherList = response.data.busiReimOtherFeeList
+            });
+          },
           // 行点击
-            handleRowClick(row){
-              this.transportdetail=true;
-              this.transportdetailtitle='查看'
-            },
-            handleSelectionChange(){},
+          handleRowClick(row){
+            this.transportdetail=true;
+            this.transportdetailtitle='查看'
+          },
+          handleSelectionChange(){},
           // 搜索
-            handleQuery(){},
+          handleQuery(){},
           // 重置
-            resetQuery(){},
-            // 上传文件
+          resetQuery(){},
+          // 删除文件
           handleRemove(file, fileList) {
-            let fileId = file.response.fileId;
-            delFile(fileId)
+            this.delfileIds.push(file.id)
+            this.fujiannum -= 1;
+            let fileIndex = this.transportform.fileIds.indexOf(file.id);
+            this.transportform.fileIds.splice(fileIndex, 1);
           },
           handleSuccess(response, file, fileList){
-            this.trafficFileIds.push(response.fileId)
+            this.fujiannum += 1;
+            this.transportform.fileIds.push(response.fileId)
           },
           changeHandler(){},
           // 删除车票
@@ -1136,11 +1152,21 @@
           },
 
           editTransport(data){
-            const {trafficStartDate,trafficEndDate } = data;
+            let {trafficStartDate,trafficEndDate,fileIds } = data;
             this.transportform = data;
             this.transportform.trafficDate = new Array();
             this.transportform.trafficDate.push(trafficStartDate);
             this.transportform.trafficDate.push(trafficEndDate);
+
+            if(isNotEmpty(fileIds)){
+              if(fileIds instanceof Array){
+                fileIds = JSON.stringify(fileIds).replace("[","").replace("]","")
+              }
+
+              let fileIdStr = fileIds.split(',');
+              this.transportform.fileIds =  fileIdStr.map(Number);
+              this.fujiannum = this.transportform.fileIds.length;
+            }
 
             let fileList = this.transportform.fileList;
             this.transportform.fileList.forEach(e=>{
@@ -1167,7 +1193,6 @@
             console.log(item);
           },
           handleChange(value){
-            this.fujiannum=value;
             this.transportnum=value;
             this.transportform.amountTotal=this.transportmoney*this.transportnum;
           },
@@ -1184,7 +1209,7 @@
               this.beawaytitle='新增'
           },
           peoplenumchange(value){
-              this.beawayform.peoplenum=value
+            this.beawayform.peoplenum=value
             this.beawayTotal=this.beawayform.peoplenum*this.beawayform.daynum*this.beawayform.money
           },
           daynumchange(value){
