@@ -75,9 +75,20 @@ public class BusiReimTrafficFee extends BaseEntity
 
     private List<Attachment> fileList;
 
+    /** 附件数量 */
+    private Integer fileNum;
+
 //以上自动生成的尽量别动
     public Long getTrafficId() { return trafficId; }
     public void setTrafficId(Long trafficId) { this.trafficId = trafficId; }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
 
     public List<Attachment> getFileList() {
         return fileList;

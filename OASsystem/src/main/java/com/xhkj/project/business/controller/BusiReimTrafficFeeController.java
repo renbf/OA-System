@@ -100,4 +100,15 @@ public class BusiReimTrafficFeeController extends BaseController
     {
         return toAjax(busiReimTrafficFeeService.deleteBusiReimTrafficFeeByIds(trafficIds));
     }
+
+    /**
+     * 删除交通费用
+     */
+    @PreAuthorize("@ss.hasPermi('business:fee:remove')")
+    @Log(title = "交通费用", businessType = BusinessType.DELETE)
+    @DeleteMapping("/remove/{trafficId}")
+    public AjaxResult remove(@PathVariable Long trafficId)
+    {
+        return toAjax(busiReimTrafficFeeService.deleteBusiReimTrafficFeeById(trafficId));
+    }
 }

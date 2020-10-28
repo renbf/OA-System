@@ -2,12 +2,18 @@ package com.xhkj.project.system.service.impl;
 
 
 import com.xhkj.common.core.text.Convert;
+import com.xhkj.common.utils.StringUtils;
+import com.xhkj.project.business.service.impl.BusiReimTrafficFeeServiceImpl;
 import com.xhkj.project.system.domain.Attachment;
 import com.xhkj.project.system.mapper.AttachmentMapper;
 import com.xhkj.project.system.service.IAttachmentService;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -21,6 +27,10 @@ public class AttachmentServiceImpl implements IAttachmentService
 {
 	@Autowired
 	private AttachmentMapper attachmentMapper;
+
+	protected final Logger logger = LoggerFactory.getLogger(BusiReimTrafficFeeServiceImpl.class);
+
+
 
 	/**
      * 查询附件信息
@@ -80,6 +90,34 @@ public class AttachmentServiceImpl implements IAttachmentService
 	public int deleteAttachmentByIds(String ids)
 	{
 		return attachmentMapper.deleteAttachmentByIds(Convert.toStrArray(ids));
+	}
+
+
+	@Override
+	public boolean deleteFileList(List<Attachment> fileList){
+
+		boolean isDelete = true;
+
+		if(CollectionUtils.isNotEmpty(fileList)){
+			//删除文件
+			for (Attachment attachment : fileList) {
+				Long id = attachment.getId();
+				String filePath = attachment.getFilePath();
+				File file = new File(filePath);
+				try{
+					if(file.exists()){
+						isDelete = file.delete();
+						if(isDelete){
+							this.deleteAttachmentByIds(String.valueOf(id));
+						}
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+					logger.info("文件删除失败");
+				}
+			}
+		}
+		return isDelete;
 	}
 	
 }

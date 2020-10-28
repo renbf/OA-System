@@ -1,13 +1,19 @@
 package com.xhkj.project.business.service.impl;
 
+import java.io.File;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.xhkj.common.utils.DateUtils;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.StringUtils;
+import com.xhkj.framework.web.controller.BaseController;
 import com.xhkj.project.system.domain.Attachment;
 import com.xhkj.project.system.mapper.AttachmentMapper;
+import com.xhkj.project.system.service.IAttachmentService;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiReimTrafficFeeMapper;
@@ -23,10 +29,13 @@ import com.xhkj.project.business.service.IBusiReimTrafficFeeService;
 @Service
 public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService 
 {
+    protected final Logger logger = LoggerFactory.getLogger(BusiReimTrafficFeeServiceImpl.class);
     @Autowired
     private BusiReimTrafficFeeMapper busiReimTrafficFeeMapper;
     @Autowired
     private AttachmentMapper attachmentMapper;
+    @Autowired
+    private IAttachmentService iAttachmentService;
 
     /**
      * 查询交通费用
@@ -42,6 +51,7 @@ public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService
         if(StringUtils.isNoneBlank(fileIds)){
             String[] ids = fileIds.split(",");
             List<Attachment> attachments = attachmentMapper.selectFileList(ids);
+            busiReimTrafficFee.setFileList(attachments);
         }
 
         return busiReimTrafficFee;
@@ -79,6 +89,12 @@ public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService
     @Override
     public int insertBusiReimTrafficFee(BusiReimTrafficFee busiReimTrafficFee)
     {
+
+        String fileIds = busiReimTrafficFee.getFileIds();
+        if(StringUtils.isNoneBlank(fileIds)){
+            int length = fileIds.split(",").length;
+            busiReimTrafficFee.setFileNum(length);
+        }
 
         int i = 0;
         Long trafficId = busiReimTrafficFee.getTrafficId();
@@ -129,6 +145,17 @@ public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService
     @Override
     public int deleteBusiReimTrafficFeeById(Long trafficId)
     {
-        return busiReimTrafficFeeMapper.deleteBusiReimTrafficFeeById(trafficId);
+        int i = 0;
+
+        BusiReimTrafficFee busiReimTrafficFee = this.selectBusiReimTrafficFeeById(trafficId);
+        List<Attachment> fileList = busiReimTrafficFee.getFileList();
+
+        boolean isDelete = iAttachmentService.deleteFileList(fileList);
+
+        if(isDelete){
+            i = busiReimTrafficFeeMapper.deleteBusiReimTrafficFeeById(trafficId);
+        }
+
+        return i;
     }
 }
