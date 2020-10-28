@@ -21,7 +21,7 @@ import com.xhkj.common.utils.poi.ExcelUtil;
 import com.xhkj.framework.web.page.TableDataInfo;
 
 /**
- * 交通费用Controller
+ * 出差补贴费用Controller
  * 
  * @author xhkj
  * @date 2020-10-21
@@ -34,7 +34,7 @@ public class BusiReimTravelSubsidyController extends BaseController
     private IBusiReimTravelSubsidyService busiReimTravelSubsidyService;
 
     /**
-     * 查询交通费用列表
+     * 查询出差补贴列表
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:list')")
     @GetMapping("/list")
@@ -46,10 +46,10 @@ public class BusiReimTravelSubsidyController extends BaseController
     }
 
     /**
-     * 导出交通费用列表
+     * 导出出差补贴列表
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:export')")
-    @Log(title = "交通费用", businessType = BusinessType.EXPORT)
+    @Log(title = "出差补贴", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(BusiReimTravelSubsidy busiReimTravelSubsidy)
     {
@@ -59,7 +59,7 @@ public class BusiReimTravelSubsidyController extends BaseController
     }
 
     /**
-     * 获取交通费用详细信息
+     * 获取出差补贴详细信息
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:query')")
     @GetMapping(value = "/{travelId}")
@@ -69,10 +69,10 @@ public class BusiReimTravelSubsidyController extends BaseController
     }
 
     /**
-     * 新增交通费用
+     * 新增出差补贴
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:add')")
-    @Log(title = "交通费用", businessType = BusinessType.INSERT)
+    @Log(title = "出差补贴", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody BusiReimTravelSubsidy busiReimTravelSubsidy)
     {
@@ -80,10 +80,10 @@ public class BusiReimTravelSubsidyController extends BaseController
     }
 
     /**
-     * 修改交通费用
+     * 修改出差补贴
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:edit')")
-    @Log(title = "交通费用", businessType = BusinessType.UPDATE)
+    @Log(title = "出差补贴", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BusiReimTravelSubsidy busiReimTravelSubsidy)
     {
@@ -91,13 +91,23 @@ public class BusiReimTravelSubsidyController extends BaseController
     }
 
     /**
-     * 删除交通费用
+     * 删除出差补贴
      */
 //    @PreAuthorize("@ss.hasPermi('business:subsidy:remove')")
-    @Log(title = "交通费用", businessType = BusinessType.DELETE)
+    @Log(title = "出差补贴", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{travelIds}")
     public AjaxResult remove(@PathVariable Long[] travelIds)
     {
         return toAjax(busiReimTravelSubsidyService.deleteBusiReimTravelSubsidyByIds(travelIds));
     }
+
+    
+    @Log(title = "出差补贴", businessType = BusinessType.DELETE)
+    @DeleteMapping("/remove/{travelId}")
+    public AjaxResult remove(@PathVariable Long travelId)
+    {
+        return toAjax(busiReimTravelSubsidyService.deleteBusiReimTravelSubsidyById(travelId));
+    }
+    
+    
 }

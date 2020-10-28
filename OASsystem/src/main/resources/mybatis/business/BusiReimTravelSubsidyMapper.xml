@@ -10,16 +10,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="traSubName"    column="tra_sub_name"    />
         <result property="peopleNum"    column="people_num"    />
         <result property="days"    column="days"    />
-        <result property="subsidyStandard"    column="subsidy_standard"    />
+        <result property="subsidyAmount"    column="subsidy_amount"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+
+        <result property="amountTotal"    column="amount_total"    />
+        <result property="fileIds"    column="file_ids"    />
+        <result property="fileNum"    column="file_num"    />
     </resultMap>
 
     <sql id="selectBusiReimTravelSubsidyVo">
-        select travel_id, reimburse_id, tra_sub_name, people_num, days, subsidy_standard, create_by, create_time, update_by, update_time, remark
+        select travel_id, reimburse_id, tra_sub_name, people_num, days, subsidy_amount, create_by, create_time, update_by, update_time, remark,amount_total,file_ids,file_num
     </sql>
 
     <select id="selectBusiReimTravelSubsidyList" parameterType="com.xhkj.project.business.domain.BusiReimTravelSubsidy" resultMap="BusiReimTravelSubsidyResult">
@@ -30,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="traSubName != null  and traSubName != ''"> and tra_sub_name like concat('%', #{traSubName}, '%')</if>
             <if test="peopleNum != null "> and people_num = #{peopleNum}</if>
             <if test="days != null "> and days = #{days}</if>
-            <if test="subsidyStandard != null "> and subsidy_standard = #{subsidyStandard}</if>
+            <if test="subsidyAmount != null "> and subsidy_amount = #{subsidyAmount}</if>
         </where>
     </select>
 
@@ -48,24 +52,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="traSubName != null  and traSubName != ''">tra_sub_name,</if>
             <if test="peopleNum != null ">people_num,</if>
             <if test="days != null ">days,</if>
-            <if test="subsidyStandard != null ">subsidy_standard,</if>
+            <if test="subsidyAmount != null ">subsidy_amount,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="createTime != null ">create_time,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+
+            <if test="amountTotal != null ">amount_total,</if>
+            <if test="fileIds != null ">file_ids,</if>
+            <if test="fileNum != null ">file_num,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="reimburseId != null ">#{reimburseId},</if>
             <if test="traSubName != null  and traSubName != ''">#{traSubName},</if>
             <if test="peopleNum != null ">#{peopleNum},</if>
             <if test="days != null ">#{days},</if>
-            <if test="subsidyStandard != null ">#{subsidyStandard},</if>
+            <if test="subsidyAmount != null ">#{subsidyAmount},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="createTime != null ">#{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+
+            <if test="amountTotal != null ">#{amountTotal},</if>
+            <if test="fileIds != null ">#{fileIds},</if>
+            <if test="fileNum != null ">#{fileNum},</if>
          </trim>
     </insert>
 
@@ -76,12 +88,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="traSubName != null  and traSubName != ''">tra_sub_name = #{traSubName},</if>
             <if test="peopleNum != null ">people_num = #{peopleNum},</if>
             <if test="days != null ">days = #{days},</if>
-            <if test="subsidyStandard != null ">subsidy_standard = #{subsidyStandard},</if>
+            <if test="subsidyAmount != null ">subsidy_amount = #{subsidyAmount},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+
+            <if test="amountTotal != null ">amount_total = #{amountTotal},</if>
+            <if test="fileIds != null ">file_ids = #{fileIds},</if>
+            <if test="fileNum != null ">file_num = #{fileNum},</if>
         </trim>
         where travel_id = #{travelId}
     </update>
@@ -98,7 +114,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="insertBusiReimTravelSubsidyBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="travelId">
-        insert into busi_reim_travel_subsidy (  reimburse_id, tra_sub_name, people_num, days, subsidy_standard, create_by, create_time, update_by, update_time, remark) values
+        insert into busi_reim_travel_subsidy (  reimburse_id, tra_sub_name, people_num, days, subsidy_amount, create_by, create_time, update_by, update_time, remark) values
         <foreach item="item" collection="list" separator=",">
             (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
         </foreach>

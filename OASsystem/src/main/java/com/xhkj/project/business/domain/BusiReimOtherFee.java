@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 交通费用对象 busi_reim_other_fee
+ * 其他费用对象 busi_reim_other_fee
  * 
  * @author xhkj
  * @date 2020-10-21

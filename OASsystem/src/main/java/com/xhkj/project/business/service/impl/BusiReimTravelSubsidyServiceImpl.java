@@ -3,6 +3,11 @@ package com.xhkj.project.business.service.impl;
 import java.util.List;
 import com.xhkj.common.utils.DateUtils;
 import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.common.utils.StringUtils;
+import com.xhkj.project.business.domain.BusiReimTrafficFee;
+import com.xhkj.project.system.domain.Attachment;
+import com.xhkj.project.system.mapper.AttachmentMapper;
+import com.xhkj.project.system.service.IAttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiReimTravelSubsidyMapper;
@@ -20,6 +25,12 @@ public class BusiReimTravelSubsidyServiceImpl implements IBusiReimTravelSubsidyS
 {
     @Autowired
     private BusiReimTravelSubsidyMapper busiReimTravelSubsidyMapper;
+    @Autowired
+    private IAttachmentService iAttachmentService;
+    @Autowired
+    private AttachmentMapper attachmentMapper;
+
+
 
     /**
      * 查询交通费用
@@ -30,7 +41,16 @@ public class BusiReimTravelSubsidyServiceImpl implements IBusiReimTravelSubsidyS
     @Override
     public BusiReimTravelSubsidy selectBusiReimTravelSubsidyById(Long travelId)
     {
-        return busiReimTravelSubsidyMapper.selectBusiReimTravelSubsidyById(travelId);
+        BusiReimTravelSubsidy busiReimTravelSubsidy = busiReimTravelSubsidyMapper.selectBusiReimTravelSubsidyById(travelId);
+        String fileIds = busiReimTravelSubsidy.getFileIds();
+        if(StringUtils.isNoneBlank(fileIds)){
+            String[] ids = fileIds.split(",");
+            List<Attachment> attachments = attachmentMapper.selectFileList(ids);
+            busiReimTravelSubsidy.setFileList(attachments);
+        }
+
+        return busiReimTravelSubsidy;
+
     }
 
     /**
@@ -42,7 +62,20 @@ public class BusiReimTravelSubsidyServiceImpl implements IBusiReimTravelSubsidyS
     @Override
     public List<BusiReimTravelSubsidy> selectBusiReimTravelSubsidyList(BusiReimTravelSubsidy busiReimTravelSubsidy)
     {
-        return busiReimTravelSubsidyMapper.selectBusiReimTravelSubsidyList(busiReimTravelSubsidy);
+
+        List<BusiReimTravelSubsidy> busiReimTravelSubsidies = busiReimTravelSubsidyMapper.selectBusiReimTravelSubsidyList(busiReimTravelSubsidy);
+
+        busiReimTravelSubsidies.stream().forEach(e->{
+            String fileIds = e.getFileIds();
+            if(StringUtils.isNoneBlank(fileIds)){
+                String[] ids = fileIds.split(",");
+                List<Attachment> attachments = attachmentMapper.selectFileList(ids);
+                e.setFileList(attachments);
+            }
+        });
+
+        return busiReimTravelSubsidies;
+
     }
 
     /**
@@ -54,9 +87,20 @@ public class BusiReimTravelSubsidyServiceImpl implements IBusiReimTravelSubsidyS
     @Override
     public int insertBusiReimTravelSubsidy(BusiReimTravelSubsidy busiReimTravelSubsidy)
     {
-        busiReimTravelSubsidy.setCreateTime(DateUtils.getNowDate());
-        busiReimTravelSubsidy.setCreateBy(SecurityUtils.getUserId());
-        return busiReimTravelSubsidyMapper.insertBusiReimTravelSubsidy(busiReimTravelSubsidy);
+        int i = 0;
+        Long trafficId = busiReimTravelSubsidy.getTravelId();
+        if(trafficId!=null){
+            busiReimTravelSubsidy.setUpdateBy(SecurityUtils.getUserId());
+            busiReimTravelSubsidy.setUpdateTime(DateUtils.getNowDate());
+            i = busiReimTravelSubsidyMapper.updateBusiReimTravelSubsidy(busiReimTravelSubsidy);
+        }else{
+            busiReimTravelSubsidy.setCreateBy(SecurityUtils.getUserId());
+            busiReimTravelSubsidy.setCreateTime(DateUtils.getNowDate());
+            i = busiReimTravelSubsidyMapper.insertBusiReimTravelSubsidy(busiReimTravelSubsidy);
+        }
+
+        return i;
+
     }
 
     /**
@@ -93,6 +137,19 @@ public class BusiReimTravelSubsidyServiceImpl implements IBusiReimTravelSubsidyS
     @Override
     public int deleteBusiReimTravelSubsidyById(Long travelId)
     {
-        return busiReimTravelSubsidyMapper.deleteBusiReimTravelSubsidyById(travelId);
+
+        int i = 0;
+
+        BusiReimTravelSubsidy busiReimTravelSubsidy = this.selectBusiReimTravelSubsidyById(travelId);
+        List<Attachment> fileList = busiReimTravelSubsidy.getFileList();
+
+        boolean isDelete = iAttachmentService.deleteFileList(fileList);
+
+        if(isDelete){
+            i = busiReimTravelSubsidyMapper.deleteBusiReimTravelSubsidyById(travelId);
+        }
+
+        return i;
+
     }
 }

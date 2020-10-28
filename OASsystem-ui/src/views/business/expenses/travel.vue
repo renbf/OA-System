@@ -324,26 +324,26 @@
           <el-col :span="24">
             <template v-if="butie">
               <el-carousel  arrow="always" type="card" :autoplay="false" height="200px">
-                <el-carousel-item v-for="item in butieList">
+                <el-carousel-item v-for="item in reunTravcelList">
                   <el-card class="box-card">
                     <div slot="header" class="clearfix">
-                      <span  style="font-size: 16px;line-height: 35px;"><b>{{item.title}}</b></span>
-                      <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteticket"></el-button>
+                      <span  style="font-size: 16px;line-height: 35px;"><b>{{item.traSubName}}</b></span>
+                      <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteReimTravel(item)"></el-button>
                     </div>
-                    <div class="text item train">
+                    <div class="text item train"  @click="editReimTravel(item)">
                       <div>
                         <p>人数</p>
-                        <p><b>{{item.people}}人</b></p>
-                        <p>附件 {{item.fujian}}张</p>
+                        <p><b>{{item.peopleNum}}人</b></p>
+                        <p>附件 {{item.fileNum}}张</p>
                       </div>
                       <div>
                         <p>天数</p>
-                        <p><b>{{item.day}}天</b></p>
+                        <p><b>{{item.days}}天</b></p>
                       </div>
                       <div>
                         <p>补贴标准</p>
-                        <p>￥<b>{{item.money}}</b></p>
-                        <p>￥<b>{{item.allmoney}}</b></p>
+                        <p>￥<b>{{item.subsidyAmount}}</b></p>
+                        <p>￥<b>{{item.amountTotal}}</b></p>
                       </div>
                     </div>
                   </el-card>
@@ -627,25 +627,25 @@
               <el-col :span="24">
                 <template v-if="butie">
                   <el-carousel  arrow="always" type="card" :autoplay="false" height="200px">
-                    <el-carousel-item v-for="item in butieList">
+                    <el-carousel-item v-for="item in reunTravcelList">
                       <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                          <span  style="font-size: 16px;line-height: 35px;"><b>{{item.title}}</b></span>
+                          <span  style="font-size: 16px;line-height: 35px;"><b>{{item.traSubName}}</b></span>
                         </div>
                         <div class="text item train">
                           <div>
                             <p>人数</p>
-                            <p><b>{{item.people}}人</b></p>
-                            <p>附件 {{item.fujian}}张</p>
+                            <p><b>{{item.peopleNum}}人</b></p>
+                            <p>附件 {{item.fileNum}}张</p>
                           </div>
                           <div>
                             <p>天数</p>
-                            <p><b>{{item.day}}天</b></p>
+                            <p><b>{{item.days}}天</b></p>
                           </div>
                           <div>
                             <p>补贴标准</p>
-                            <p>￥<b>{{item.money}}</b></p>
-                            <p>￥<b>{{item.allmoney}}</b></p>
+                            <p>￥<b>{{item.subsidyAmount}}</b></p>
+                            <p>￥<b>{{item.amountTotal}}</b></p>
                           </div>
                         </div>
                       </el-card>
@@ -742,43 +742,47 @@
     <el-dialog :title="beawaytitle"
                :visible.sync="beaway"
                width="600px" class="abow_dialog">
-      <el-form ref="form" :model="beawayform" :rules="beawayrules" label-width="80px">
+      <el-form ref="form" :model="reimTravcelForm" :rules="beawayrules" label-width="80px">
         <el-form-item label="项目名称" prop="name">
-            <el-input v-model="beawayform.name"></el-input>
+            <el-input v-model="reimTravcelForm.traSubName"></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="人数" prop="peoplenum">
-              <el-input-number v-model="beawayform.peoplenum"  :min="0" @change="peoplenumchange"></el-input-number>
+            <el-form-item label="人数" prop="peopleNum">
+              <el-input-number v-model="reimTravcelForm.peopleNum"  :min="0" @input="peoplenumchange"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="天数" prop="daynum">
-              <el-input-number v-model="beawayform.daynum"  :min="0" @change="daynumchange"></el-input-number>
+            <el-form-item label="天数" prop="days">
+              <el-input-number v-model="reimTravcelForm.days"  :min="0" @input="daynumchange"></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="补贴标准" prop="money">
-          <el-input v-model="beawayform.money"  @change="moneychange"></el-input>
+        <el-form-item label="补贴标准" prop="subsidyAmount">
+          <el-input v-model="reimTravcelForm.subsidyAmount"  @input="moneychange"></el-input>
         </el-form-item>
         <el-form-item label="上传附件" prop="fujian">
           <el-upload
+            ref="upload"
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :headers="headers"
+            :action= "GLOBAL.UPLOADFILE_URL"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :file-list="beawayform.fileList"
+            :on-success="handleSuccess"
+            :auto-upload="true"
+            :file-list="reimTravcelForm.fileList"
             list-type="picture">
             <el-button size="small" type="primary">点击上传</el-button>
-            <span>共{{beawayform.fujiannum}}张</span>
+            <span>共{{fujiannum}}张</span>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <span class="lf"><b style="font-size: 18px;">￥{{beawayTotal}}</b></span>
-        <el-button @click="canceltransport">取消</el-button>
-        <el-button type="primary" @click="savetransport">保存</el-button>
+        <span class="lf"><b style="font-size: 18px;">￥{{reimTravcelForm.amountTotal}}</b></span>
+        <el-button @click="this.beaway=false">取消</el-button>
+        <el-button type="primary" @click="saveReimTranvel">保存</el-button>
       </div>
     </el-dialog>
 <!--新增编辑其他费用-->
@@ -807,8 +811,8 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <span class="lf"><b style="font-size: 18px;">￥{{otherTotal}}</b></span>
-          <el-button @click="canceltransport">取消</el-button>
-          <el-button type="primary" @click="savetransport">保存</el-button>
+          <el-button @click="this.otheropen=false">取消</el-button>
+          <el-button type="primary" @click="saveOtherFee">保存</el-button>
         </div>
     </el-dialog>
 
@@ -821,6 +825,8 @@
   import {expensesList,loadAll} from "@/api/business/mywork/expenses"
   import { listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
   import { listTrafficFee, getTrafficFee, delTrafficFee, addTrafficFee, updateTrafficFee, exportTrafficFee } from "@/api/business/mywork/trafficfee";
+  import { listSubsidy, getSubsidy, delSubsidy, addSubsidy, updateSubsidy, exportSubsidy } from "@/api/business/mywork/subsidy";
+  import { listFee, getFee, delFee, addFee, updateFee, exportFee } from "@/api/business/mywork/otherfee";
   import { getToken } from '@/utils/auth'
   import {uploadFile,delFile} from '@/api/system/file'
   import {isNotEmpty} from "../../../utils/common";
@@ -860,6 +866,7 @@
             otherTotal:0,
             yesOrNo: [],
             fileList: [],
+            fileIds:[],
             uploadForm: new FormData(),
             form:{
               workflowId:'',
@@ -894,12 +901,14 @@
               fileIds:[],
               fileList: []
             },
-            beawayform:{
-              name:"",
-              peoplenum:"",
-              daynum:"",
-              money:"",
-              fujiannum:"",
+            reimTravcelForm:{
+              reimburseId: '',
+              traSubName:"",
+              peopleNum:"",
+              days:"",
+              subsidyAmount:"",
+              amountTotal:0,
+              fileNum:0,
               fileList: []
             },
             otherform:{
@@ -925,15 +934,15 @@
               // {trafficType:'火车票',departureStation:'郑州',terminalStation:'上海',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
               // {title:'火车票',begin:'南昌',end:'上海',begintime:'2020/05/03 17:30',endtime:'2020/05/04 17:20',fujian:1,money:'199.05'},
             ],
-            butieList:[
-              {title:'出差补贴',people:2,day:7,money:'80.00',fujian:1,allmoney:'199.05'},
-              {title:'出差补贴',people:5,day:9,money:'30.00',fujian:1,allmoney:'500.05'},
+            reunTravcelList:[
+              // {traSubName:'出差补贴',peopleNum:2,days:7,subsidyAmount:'80.00',fileNum:1,amountTotal:'199.05'},
+              // {traSubName:'出差补贴',peopleNum:5,days:9,subsidyAmount:'30.00',fileNum:1,amountTotal:'500.05'},
             ],
 
             // 其他费用
             otherList:[
-              {title:'住宿停车费',fujian:'1',allmoney:'199.05'},
-              {title:'住宿停车费',fujian:'2',allmoney:'200.05'},
+              // {title:'住宿停车费',fujian:'1',allmoney:'199.05'},
+              // {title:'住宿停车费',fujian:'2',allmoney:'200.05'},
             ],
             // 附件
 
@@ -1021,23 +1030,26 @@
               billsNum:[
                 { required: true, message: "票据数量", trigger: "blur" }
               ],
-              fujian:[
+              fileNum:[
                 { required: true, message: "附件", trigger: "blur" }
               ]
             },
             beawayrules:{
-              name:[
+              traSubName:[
                 { required: true, message: "项目名称", trigger: "blur" }
               ],
-              peoplenum:[
+              peopleNum:[
                 { required: true, message: "人数", trigger: "blur" }
               ],
-              daynum:[
+              days:[
                 { required: true, message: "天数", trigger: "blur" }
               ],
-              money:[
+              subsidyAmount:[
                 { required: true, message: "补贴标准", trigger: "blur" }
               ],
+              fileNum:[
+                { required: true, message: "附件", trigger: "blur" }
+              ]
             },
             otherrules:{
               name:[
@@ -1046,7 +1058,7 @@
               money:[
                 { required: true, message: "金额", trigger: "blur" }
               ],
-              fujian:[
+              fileNum:[
                 { required: true, message: "附件", trigger: "blur" }
               ]
             }
@@ -1114,10 +1126,9 @@
 
           savetransport(){
             if(this.form.reimburseId){
-              this.transportform.fileIds = JSON.stringify(this.transportform.fileIds);
-              if(isNotEmpty(this.transportform.fileIds)){
-                let fileIds = this.transportform.fileIds;
-                this.transportform.fileIds = fileIds.replace("[","").replace("]","")
+              this.fileIds = JSON.stringify(this.fileIds);
+              if(isNotEmpty(this.fileIds)){
+                this.transportform.fileIds = this.fileIds.replace("[","").replace("]","")
               }
 
               this.transportform.reimburseId = this.form.reimburseId;
@@ -1125,6 +1136,8 @@
                 this.transportform.trafficStartDate = this.transportform.trafficDate[0];
                 this.transportform.trafficEndDate = this.transportform.trafficDate[1];
               }
+
+              this.transportform.fileNum = this.fujiannum
 
               addTrafficFee(this.transportform).then(response => {
                 if (response.code === 200) {
@@ -1143,16 +1156,55 @@
 
           },
 
+          saveReimTranvel(){
+            if(this.form.reimburseId){
+
+              this.fileIds = JSON.stringify(this.fileIds);
+              if(isNotEmpty(this.fileIds)){
+                this.reimTravcelForm.fileIds = this.fileIds.replace("[","").replace("]","")
+              }
+
+              this.reimTravcelForm.fileNum = this.fujiannum
+              this.reimTravcelForm.reimburseId = this.form.reimburseId;
+
+              addSubsidy(this.reimTravcelForm).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("保存成功");
+                  this.delFiles()
+                  this.getListReimTranvel(this.reimTravcelForm.tranvelId);
+                  this.beaway = false;
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }else{
+              this.msgWarning('请先保存报销基础信息！');
+            }
+          },
+          saveOtherFee(){
+
+          },
+
           getListTrafficFee(reimburseId){
             listTrafficFee(reimburseId).then(response => {
               this.transportList = response.rows;
             });
           },
 
+
+          getListReimTranvel(tranvelId){
+            listSubsidy(tranvelId).then(response => {
+              this.reunTravcelList = response.rows;
+            });
+          },
+
+
           delFiles(){
-            this.delfileIds.forEach(e=>{
-              delFile(e)
-            })
+              if(isNotEmpty(this.delfileIds)){
+                this.delfileIds.forEach(e=>{
+                  delFile(e)
+                })
+              }
           },
 
           // 删除
@@ -1168,7 +1220,7 @@
 
             getRemburseDetail(row.reimburseId).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
-              // this.butieList = response.data.busiReimTravelSubsidyList
+              this.reunTravcelList = response.data.busiReimTravelSubsidyList
               // this.otherList = response.data.busiReimOtherFeeList
             });
           },
@@ -1179,7 +1231,7 @@
             this.form = row;
             getRemburseDetail(row.reimburseId).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
-              // this.butieList = response.data.busiReimTravelSubsidyList
+              this.reunTravcelList = response.data.busiReimTravelSubsidyList
               // this.otherList = response.data.busiReimOtherFeeList
             });
           },
@@ -1192,12 +1244,12 @@
           handleRemove(file, fileList) {
             this.delfileIds.push(file.id)
             this.fujiannum -= 1;
-            let fileIndex = this.transportform.fileIds.indexOf(file.id);
-            this.transportform.fileIds.splice(fileIndex, 1);
+            let fileIndex = this.fileIds.indexOf(file.id);
+            this.fileIds.splice(fileIndex, 1);
           },
           handleSuccess(response, file, fileList){
             this.fujiannum += 1;
-            this.transportform.fileIds.push(response.fileId)
+            this.fileIds.push(response.fileId)
           },
           changeHandler(){},
 
@@ -1214,8 +1266,8 @@
               }
 
               let fileIdStr = fileIds.split(',');
-              this.transportform.fileIds =  fileIdStr.map(Number);
-              this.fujiannum = this.transportform.fileIds.length;
+              this.fileIds =  fileIdStr.map(Number);
+              this.fujiannum = this.fileIds.length;
             }
 
             let fileList = this.transportform.fileList;
@@ -1225,7 +1277,32 @@
             })
             this.transport=true
           },
-          // 删除车票
+
+          editReimTravel(data){
+            let {fileIds } = data;
+            this.reimTravcelForm = data;
+
+            if(isNotEmpty(fileIds)){
+              if(fileIds instanceof Array){
+                fileIds = JSON.stringify(fileIds).replace("[","").replace("]","")
+              }
+
+              let fileIdStr = fileIds.split(',');
+              this.fileIds =  fileIdStr.map(Number);
+              this.fujiannum = this.fileIds.length;
+            }
+
+            let fileList = this.reimTravcelForm.fileList;
+            this.reimTravcelForm.fileList.forEach(e=>{
+              e.name = e.fileNameReal
+              e.url =process.env.VUE_APP_BASE_API + e.previewPath;
+            })
+            this.beaway=true
+
+          },
+
+
+          // 删除交通费
           deleteticket(data){
             this.$confirm(
               "请确认是否删除",
@@ -1247,16 +1324,53 @@
                 this.getListTrafficFee(data.reimburseId);
               });
           },
+          // 删除出差补助
+          deleteReimTravel(data){
+            this.$confirm(
+              "请确认是否删除",
+              {
+                dangerouslyUseHTMLString: true,
+                distinguishCancelAndClose: true,
+                confirmButtonText: "删除",
+                cancelButtonText: "返回",
+                type: "warning"
+              }
+            ).then(() => {
+              delSubsidy(data.travelId).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("删除成功");
+                  this.getListReimTranvel(data.reimburseId);
+                }
+              });
+            }).catch(() => {
+              this.getListReimTranvel(data.reimburseId);
+            });
+          },
           addtransport(){
             this.transport=true
             this.transporttitle='新增'
+            this.fujiannum = 0;
+            this.fileIds = []
+
             this.resetTransport();
           },
 
-          resetTransport(){
-            if (this.$refs.menu != undefined) {
-              this.$refs.menu.setCheckedKeys([]);
+
+
+          resetReimTravcel(){
+            this.reimTravcelForm={
+              reimburseId: '',
+                traSubName:"",
+                peopleNum:"",
+                days:"",
+                subsidyAmount:"",
+                amountTotal:0,
+                fileNum:0,
+                fileList: []
             }
+          },
+
+          resetTransport(){
             this.transportform={
                 fileNum:0,
                 reimburseId: '',
@@ -1269,17 +1383,13 @@
                 amountTotal:0,
                 fileIds:[],
                 fileList: []
-            },
-            this.resetForm("transportform");
+            }
           },
 
           reset() {
-            if (this.$refs.menu != undefined) {
-              this.$refs.menu.setCheckedKeys([]);
-            }
             this.transportList = []
             this.otherList = []
-            this.butieList = []
+            this.reunTravcelList = []
             this.fujianList = []
             this.form={
               workflowId:'',
@@ -1290,8 +1400,6 @@
               projectName:'',
               reimburseReason: '',
             }
-            this.resetForm("form");
-
           },
 
           // 搜索建议
@@ -1325,18 +1433,21 @@
           goaway(){
               this.beaway=true;
               this.beawaytitle='新增'
+              this.resetReimTravcel();
+              this.fujiannum = 0;
+              this.fileIds = []
           },
           peoplenumchange(value){
-            this.beawayform.peoplenum=value
-            this.beawayTotal=this.beawayform.peoplenum*this.beawayform.daynum*this.beawayform.money
+            this.reimTravcelForm.peopleNum=value
+            this.reimTravcelForm.amountTotal=this.reimTravcelForm.peopleNum*this.reimTravcelForm.days*this.reimTravcelForm.subsidyAmount
           },
           daynumchange(value){
-            this.beawayform.daynum=value
-            this.beawayTotal=this.beawayform.peoplenum*this.beawayform.daynum*this.beawayform.money
+            this.reimTravcelForm.days=value
+            this.reimTravcelForm.amountTotal=this.reimTravcelForm.peopleNum*this.reimTravcelForm.days*this.reimTravcelForm.subsidyAmount
           },
           moneychange(value){
-            this.beawayform.money=value
-            this.beawayTotal=this.beawayform.peoplenum*this.beawayform.daynum*this.beawayform.money
+            this.reimTravcelForm.subsidyAmount=value
+            this.reimTravcelForm.amountTotal=this.reimTravcelForm.peopleNum*this.reimTravcelForm.days*this.reimTravcelForm.subsidyAmount
           },
           othermoney(value){
               this.otherform.money=value

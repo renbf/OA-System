@@ -90,12 +90,6 @@ public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService
     public int insertBusiReimTrafficFee(BusiReimTrafficFee busiReimTrafficFee)
     {
 
-        String fileIds = busiReimTrafficFee.getFileIds();
-        if(StringUtils.isNoneBlank(fileIds)){
-            int length = fileIds.split(",").length;
-            busiReimTrafficFee.setFileNum(length);
-        }
-
         int i = 0;
         Long trafficId = busiReimTrafficFee.getTrafficId();
         if(trafficId!=null){
@@ -158,4 +152,7 @@ public class BusiReimTrafficFeeServiceImpl implements IBusiReimTrafficFeeService
 
         return i;
     }
+
+
+
 }

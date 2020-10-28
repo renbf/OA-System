@@ -38,7 +38,7 @@ export function updateSubsidy(data) {
 // 删除交通费用
 export function delSubsidy(travelId) {
   return request({
-    url: '/business/subsidy/' + travelId,
+    url: '/business/subsidy/remove/' + travelId,
     method: 'delete'
   })
 }

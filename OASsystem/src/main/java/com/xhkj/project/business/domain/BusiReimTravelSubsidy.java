@@ -2,13 +2,15 @@ package com.xhkj.project.business.domain;
 
 import com.xhkj.framework.aspectj.lang.annotation.Excel;
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.system.domain.Attachment;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
- * 交通费用对象 busi_reim_travel_subsidy
+ * 出差补贴费用对象 busi_reim_travel_subsidy
  * 
  * @author xhkj
  * @date 2020-10-21
@@ -45,9 +47,52 @@ public class BusiReimTravelSubsidy extends BaseEntity
 
     /** 补贴标准 */
     @Excel(name = "补贴标准")
-    private Double subsidyStandard;
+    private Double subsidyAmount;
 
 //以上自动生成的尽量别动
+
+    /** 总金额 */
+    private Double amountTotal;
+    /** 附件id */
+    private String fileIds;
+    /** 附件数量 */
+    private Integer fileNum;
+
+    private List<Attachment> fileList;
+
+
+    public Double getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(Double amountTotal) {
+        this.amountTotal = amountTotal;
+    }
+
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
+    }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
+
+    public List<Attachment> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(List<Attachment> fileList) {
+        this.fileList = fileList;
+    }
+
     public Long getTravelId() { return travelId; }
     public void setTravelId(Long travelId) { this.travelId = travelId; }
 
@@ -64,8 +109,8 @@ public class BusiReimTravelSubsidy extends BaseEntity
     public Integer getDays() { return days; }
     public void setDays(Integer days) { this.days = days; }
 
-    public Double getSubsidyStandard() { return subsidyStandard; }
-    public void setSubsidyStandard(Double subsidyStandard) { this.subsidyStandard = subsidyStandard; }
+    public Double getSubsidyAmount() { return subsidyAmount; }
+    public void setSubsidyAmount(Double subsidyAmount) { this.subsidyAmount = subsidyAmount; }
 
 
     @Override
@@ -76,7 +121,7 @@ public class BusiReimTravelSubsidy extends BaseEntity
             .append("traSubName", getTraSubName())
             .append("peopleNum", getPeopleNum())
             .append("days", getDays())
-            .append("subsidyStandard", getSubsidyStandard())
+            .append("subsidyAmount", getSubsidyAmount())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
