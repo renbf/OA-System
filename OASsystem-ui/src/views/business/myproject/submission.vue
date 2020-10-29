@@ -51,18 +51,12 @@
         </el-form-item>
         <el-form-item style="padding:0 70px" >
           <el-tag style="width:70px;margin-right:5px;" type="info" v-for="item in projectApplyForm.shenpiUserList">{{item.shenpiUserName}}</el-tag><i class="el-icon-arrow-right"></i>
-          <!--<el-tag style="width:70px;margin-right:5px;" type="info">{{two}}</el-tag><i class="el-icon-arrow-right"></i>
-          <el-tag style="width:70px;margin-right:5px;" type="info">{{tree}}</el-tag><i class="el-icon-arrow-right"></i>
-          <el-tag style="width:70px;margin-right:5px;" type="info">{{four}}</el-tag><i class="el-icon-arrow-right"></i>-->
-
-
-
         </el-form-item>
 
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-    <el-button @click="projectApplyOpen = false">保存</el-button>
+    <el-button @click="projectApplySubmitForm(0)">保存</el-button>
     <el-button type="primary" @click="projectApplySubmitForm(1)">提交</el-button>
   </span>
     </el-dialog>
@@ -321,84 +315,7 @@
           bumen:'技术部',
           zhuangtai:'待审核',
           caozuo:'审批'
-        },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-
-
-
-
+        }
         ],
         value: '',
         value1: '',

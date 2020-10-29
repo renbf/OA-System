@@ -360,4 +360,21 @@ public class BusiProjectController
 		return resultMap;
 	}
 
+	/**
+	 * 项目申请列表
+	 */
+	@PostMapping("/listProjectApply")
+	@ResponseBody
+	public Map<String,Object> listProjectApply(BusiProjectApply busiProjectApply)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.insertProjectApply(busiProjectApply);
+		} catch (Exception e) {
+			log.error("新增项目申请异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","新增项目申请异常");
+		}
+		return resultMap;
+	}
 }
