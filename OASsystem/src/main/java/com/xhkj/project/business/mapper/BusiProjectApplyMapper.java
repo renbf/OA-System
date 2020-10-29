@@ -1,7 +1,9 @@
 package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiProjectApply;
-import java.util.List;	
+import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
+
+import java.util.List;
 /**
  * 项目申请 数据层
  * 
@@ -66,4 +68,6 @@ public interface BusiProjectApplyMapper
 	 */
 	public int insertBusiProjectApplyBatch(List<BusiProjectApply> list);
 	//以上自动生成的尽量别动
+
+	public List<BusiProjectApplyVo> selectBusiProjectApplyVos(BusiProjectApplyVo busiProjectApplyVo);
 }

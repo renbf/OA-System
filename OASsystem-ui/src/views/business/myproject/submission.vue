@@ -11,7 +11,7 @@
 
     <div class="btn">
       <el-button type="primary text" @click="handleProjectApplyOpen" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
-      <el-button type="danger"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
+      <el-button type="danger" @click="handleProjectApplyDel"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
       <el-button type="success"> <span class="el-icon-message" style="margin-right:3px;"></span>报送</el-button>
       <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
@@ -50,10 +50,10 @@
         <el-form-item style="padding:0 70px" >
           <el-tag
             :key="item.shenpiUserId"
-            v-for="item in projectApplyForm.shenpiUserList"
+            v-for="(item,index) in projectApplyForm.shenpiUserList"
             closable
             :disable-transitions="false"
-            @close="handleClose(item.shenpiUserId)">
+            @close="handleClose(index)">
             {{item.shenpiUserName}}
           </el-tag>
         </el-form-item>
@@ -213,14 +213,15 @@
       <span style="margin-left:20px;" >申请时间</span>
       <el-date-picker
         style="margin-left:20px;"
-        v-model="value1"
+        v-model="queryParams.searchDate"
         type="daterange"
+        format="yyyy-MM-dd"
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期">
       </el-date-picker>
       <span style="margin-left:20px;">状态</span>
-      <el-select v-model="value" placeholder="请选择状态" style="margin-left:20px;">
+      <el-select v-model="queryParams.status" placeholder="请选择状态" style="margin-left:20px;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -229,11 +230,8 @@
         </el-option>
       </el-select>
       <span style="margin-left:20px;">陈述</span>
-      <el-input v-model="input" placeholder="请输入陈述理由" style="width:200px;margin-left:10px;"></el-input>
-
-
-
-      <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
+      <el-input v-model="queryParams.content" placeholder="请输入陈述理由" style="width:200px;margin-left:10px;"></el-input>
+      <el-button type="primary" style="margin-left:20px;" @click="searchButton"> <span class="el-icon-search"></span>搜索</el-button>
       <el-button style="margin-left:20px;"> <span class="el-icon-refresh-right"></span>重置</el-button>
 
     </div>
@@ -241,37 +239,43 @@
     <el-table
       :data="tableData"
       style="width: 100%;margin-top:20px;"
+      @selection-change="handleSelectionChange"
       @row-click="submissionOpen2=true">
       <el-table-column
         type="selection"
         width="55">
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="createTime"
         label="申请时间"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="projectApplyTitle"
         label="标题"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="content"
         label="申请内容">
       </el-table-column>
       <el-table-column
-        prop="app"
+        prop="shenpiUserNames"
         label="审批人"
       >
       </el-table-column>
       <el-table-column
-        prop="time"
         label="状态"
         width="130">
+        <template slot-scope="scope">
+          <span v-show="scope.row.status == 0">未报送</span>
+          <span v-show="scope.row.status == 1">审批中</span>
+          <span v-show="scope.row.status == 2">通过</span>
+          <span v-show="scope.row.status == 3">拒绝</span>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="timetwo"
+        prop="currentShenpiUserName"
         label="当前审批人">
       </el-table-column>
       <el-table-column
@@ -279,9 +283,10 @@
       label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
-          <span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>
-          <span class="el-icon-delete" @click.stop="delsubmission">删除</span>
-          <span class="el-icon-message" style="margin-left:5px;" @click.stop="submissionReport" >报送</span>
+          <!--<span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>-->
+          <span class="el-icon-edit-outline" v-show="scope.row.status == 0" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
+          <span class="el-icon-delete" v-show="scope.row.status == 0" @click.stop="delsubmission(scope.row)">删除</span>
+          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport" >报送</span>
 
         </template>
 
@@ -293,20 +298,18 @@
       style="margin-top:15px"
       @size-change="submission1Change"
       @current-change="submission2Change"
-      :current-page="submissionPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="pageInfo.pageNum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pageInfo.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="pageInfo.total">
     </el-pagination>
-
-
   </div>
 </template>
 
 
 <script>
-  import { getProjectInfo,addProjectApply } from "@/api/business/mywork/myproject";
+  import { getProjectInfo,addProjectApply,updateProjectApply,removeProjectApply,listProjectApply,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
   export default {
     name: "page-little",
     data(){
@@ -315,7 +318,6 @@
         busiProjectMembers:[],
         textarea1:"项目任务延时申请",
         textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
-        submissionPage4:1,
         inputVisible: false,
         submissionOpen:false,
         submissionOpen1:false,
@@ -400,18 +402,18 @@
 
         //状态选择数据
         options: [{
-          value: '选项1',
-          label: '待审批'
+          value: '0',
+          label: '未报送'
         }, {
-          value: '选项2',
+          value: '1',
+          label: '审批中'
+        }, {
+          value: '2',
           label: '通过'
         }, {
-          value: '选项3',
+          value: '3',
           label: '拒绝'
-        }, {
-          value: '选项4',
-          label: '全部'
-        }, ],
+        }],
         value: '',
         //部门选择数据
         res: [{
@@ -428,25 +430,22 @@
           label: '开发部'
         }, ],
         //表格数据
-        tableData: [{
-          date: '2016-05-02',
-          name: '迈克尔',
-          address: '小贷报表处理',
-          app:'马克尔/河北省小贷管理系统',
-          time:'0.5天',
-          timetwo:'2020-05-16 17:30 至 20:30',
-          bumen:'技术部',
-          zhuangtai:'待审核',
-          caozuo:'审批'
-        }
-        ],
-        value: '',
-        value1: '',
+        tableData: [],
+        queryParams:{
+          searchDate: [],
+          content: undefined,
+          status: undefined,
+          page:1,
+          limit:10
+        },
+        pageInfo: {},
+        projectApplyIds: []
       }
 
     },
     created() {
       this.getProject();
+      this.getApplyList();
     },
     methods:{
       //删除
@@ -496,23 +495,22 @@
       //
       // },
       //tag标签删除
-      handleClose(tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      handleClose(index) {
+        let _this = this;
+        _this.projectApplyForm.shenpiUserList.splice(index, 1);
       },
-      handleClose2(tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-      },
-
       // 删除
-     delsubmission() {
+     delsubmission(item) {
         this.$confirm('确认是否删除?', '确认删除', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          removeProjectApply({projectApplyIds:[item.projectApplyId]}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("删除成功");
+            }
           });
         }).catch(() => {
           this.$message({
@@ -546,12 +544,6 @@
       goBack(){
 
         this.$router.push({ path:'/myreader/index'})
-      },
-      submission1Change(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      submission2Change(val) {
-        console.log(`当前页: ${val}`);
       },
       //新建保存提交
      OpenSave(){
@@ -597,7 +589,7 @@
         }
         this.resetForm("projectApplyForm");
       },
-      //bean编辑弹框
+      //项目申请编辑弹框
       handleUpdateProjectApply(item) {
         this.resetProjectApplyForm();
         this.projectApplyTitle = "编辑项目申请";
@@ -607,12 +599,17 @@
       updateSetProjectApplyValue(item) {
         let _this = this;
         _this.projectApplyForm = {
-          projectApplyId:undefined,
+          projectApplyId:item.projectApplyId,
           projectId:this.projectId,
-          projectApplyTitle:undefined,
-          content:undefined,
+          projectApplyTitle:item.projectApplyTitle,
+          content:item.content,
           shenpiUserList:[]
         };
+        listProjectApplyShenpi({projectApplyId:item.projectApplyId}).then(response => {
+          if(response.code == 200){
+            _this.projectApplyForm.shenpiUserList = response.data;
+          }
+        });
       },
       projectApplySubmitForm(status) {
         let _this = this;
@@ -620,12 +617,21 @@
           if (valid) {
             let form = _this.projectApplyForm;
             form.status = status;
+            let length = form.shenpiUserList.length;
+            if (length <= 0) {
+              this.msgError("审批人不能为空");
+              return false;
+            }else{
+              form.shenpiUserList.forEach((item, index) => {
+                item.sortOrder = index;
+              });
+            }
             if (form.projectApplyId != undefined) {
-              updateBusiTask(form).then(response => {
+              updateProjectApply(form).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("修改成功");
-                  this.beanOpen = false;
-                  //this.getTaskList();
+                  this.projectApplyOpen = false;
+                  this.getApplyList();
                 } else {
                   this.msgError(response.msg);
                 }
@@ -635,7 +641,7 @@
                 if (response.code === 200) {
                   this.msgSuccess("新增成功");
                   this.projectApplyOpen = false;
-                  //this.getTaskList();
+                  this.getApplyList();
                 } else {
                   this.msgError(response.msg);
                 }
@@ -651,8 +657,7 @@
         let length = _this.projectApplyForm.shenpiUserList.length;
         let shenpiUser = {
           shenpiUserId:_this.shenpiUser.shenpiUserId,
-          shenpiUserName:shenpiren,
-          sortOrder:length
+          shenpiUserName:shenpiren
         };
         _this.projectApplyForm.shenpiUserList.push(shenpiUser);
         _this.dialog2 = false;
@@ -661,11 +666,69 @@
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
           if(response.code == 200){
-            _this.projectInfo = response.data;
-            _this.busiProjectMembers= _this.projectInfo.busiProjectMembers;
+            let projectInfo = response.data;
+            _this.busiProjectMembers= projectInfo.busiProjectMembers;
           }
         });
       },
+      getApplyList() {
+        let _this = this;
+        listProjectApply(_this.queryParams).then(response => {
+          if(response.code == 200){
+            _this.tableData= response.data;
+            _this.pageInfo = response.pageInfo;
+          }
+        });
+      },
+      searchButton() {
+        let _this = this;
+        _this.queryParams.page = 1;
+        this.getApplyList();
+      },
+      //每页多少条
+      submission1Change(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.limit = val;
+        this.getApplyList();
+      },
+      //第几页
+      submission2Change(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.page = val;
+        this.getApplyList();
+      },
+      //多选
+      handleSelectionChange(val) {
+        let _this = this;
+        let projectApplyIds = [];
+        val.forEach((item) => {
+          projectApplyIds.push(item.projectApplyId);
+        });
+        _this.projectApplyIds = projectApplyIds;
+      },
+      //批量删除
+      handleProjectApplyDel() {
+        let _this = this;
+        this.$confirm('确认是否删除?', '确认删除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          removeProjectApply({projectApplyIds:_this.projectApplyIds}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("删除成功");
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      }
     }
   }
 

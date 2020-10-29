@@ -114,5 +114,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+
+    <resultMap type="com.xhkj.project.business.domain.vo.BusiProjectApplyVo" id="BusiProjectApplyVoResult">
+        <result property="projectApplyId"    column="project_apply_id"    />
+        <result property="projectApplyTitle"    column="project_apply_title"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="content"    column="content"    />
+        <result property="status"    column="status"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="shenpiUserNames"    column="shenpiUserNames"    />
+        <result property="currentShenpiUserName"    column="current_shenpi_user_name"    />
+    </resultMap>
+
+    <select id="selectBusiProjectApplyVos" parameterType="com.xhkj.project.business.domain.vo.BusiProjectApplyVo" resultMap="BusiProjectApplyVoResult">
+        <include refid="selectBusiProjectApplybasicColums"/>
+        ,(select GROUP_CONCAT(pas.shenpi_user_name ORDER BY pas.sort_order SEPARATOR ',') from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id) shenpiUserNames,
+        (select pas.shenpi_user_name from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id and pas.check_status = '-1' and pas.is_current = '1' ) current_shenpi_user_name
+        from busi_project_apply pa
+        <where>
+            <if test="searchDate != null and searchDate.size > 0">
+             and pa.create_time >= #{searchDate[0]}
+             and pa.create_time <![CDATA[ <= ]]> #{searchDate[1]}
+             </if>
+            <if test="content != null  and content != '' "> and pa.content like concat('%',#{content},'') </if>
+            <if test="status != null  and status != '' "> and pa.status = #{status}</if>
+        </where>
+    </select>
+
 </mapper>

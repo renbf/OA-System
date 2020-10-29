@@ -4,6 +4,7 @@ import com.xhkj.framework.web.domain.BaseEntity;
 import com.xhkj.project.business.domain.BusiProjectApplyShenpi;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -46,10 +47,47 @@ public class BusiProjectApplyVo extends BaseEntity {
 	 */
 	private Integer sortOrder;
 //以上自动生成的尽量别动
-
 	private List<Date> searchDate;
+	/** 审批人s名称 */
+	private String shenpiUserNames;
+	/** 当前审批人名称 */
+	private String currentShenpiUserName;
+	/** 批量删除的id*/
+	private List<Long> projectApplyIds;
 
-	private List<BusiProjectApplyShenpi> shenpiUserList;
+	public List<Long> getProjectApplyIds() {
+		return projectApplyIds;
+	}
+
+	public void setProjectApplyIds(List<Long> projectApplyIds) {
+		this.projectApplyIds = projectApplyIds;
+	}
+
+	public String getCurrentShenpiUserName() {
+		return currentShenpiUserName;
+	}
+
+	public void setCurrentShenpiUserName(String currentShenpiUserName) {
+		this.currentShenpiUserName = currentShenpiUserName;
+	}
+
+	public String getShenpiUserNames() {
+		return shenpiUserNames;
+	}
+
+	public void setShenpiUserNames(String shenpiUserNames) {
+		this.shenpiUserNames = shenpiUserNames;
+	}
+
+	public List<Date> getSearchDate() {
+        return searchDate;
+    }
+
+    public void setSearchDate(List<Date> searchDate) {
+        this.searchDate = searchDate;
+    }
+
+    private List<BusiProjectApplyShenpi> shenpiUserList;
 
 	public List<BusiProjectApplyShenpi> getShenpiUserList() {
 		return shenpiUserList;

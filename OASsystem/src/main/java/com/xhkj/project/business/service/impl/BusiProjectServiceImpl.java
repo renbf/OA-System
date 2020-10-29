@@ -7,6 +7,7 @@ import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
 import com.xhkj.framework.security.service.TokenService;
 import com.xhkj.project.business.domain.*;
+import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
@@ -563,6 +564,12 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			List<BusiProjectApplyShenpi> shenpiUserList = busiProjectApply.getShenpiUserList();
 			if (CollectionUtils.isNotEmpty(shenpiUserList)) {
 				for (BusiProjectApplyShenpi busiProjectApplyShenpi : shenpiUserList) {
+					Integer sortOrder = busiProjectApplyShenpi.getSortOrder();
+					if (sortOrder == 0) {
+						busiProjectApplyShenpi.setIsCurrent("1");
+					}else{
+						busiProjectApplyShenpi.setIsCurrent("0");
+					}
 					busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
 					busiProjectApplyShenpi.setCheckStatus("-1");
 					busiProjectApplyShenpi.setCreateBy(username);
@@ -572,6 +579,109 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 				busiProjectApplyShenpiMapper.insertBusiProjectApplyShenpiBatch(shenpiUserList);
 			}
 			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> updateProjectApply(BusiProjectApply busiProjectApply) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiProjectApply.setUpdateBy(username);
+			busiProjectApply.setUpdateTime(now);
+			busiProjectApply.setDeleteFlag("0");
+			busiProjectApplyMapper.updateBusiProjectApply(busiProjectApply);
+			Long projectApplyId = busiProjectApply.getProjectApplyId();
+			List<BusiProjectApplyShenpi> shenpiUserList = busiProjectApply.getShenpiUserList();
+			if (CollectionUtils.isNotEmpty(shenpiUserList)) {
+				busiProjectApplyShenpiMapper.deleteBusiProjectApplyShenpiByProjectApplyId(projectApplyId);
+				for (BusiProjectApplyShenpi busiProjectApplyShenpi : shenpiUserList) {
+					Integer sortOrder = busiProjectApplyShenpi.getSortOrder();
+					if (sortOrder == 0) {
+						busiProjectApplyShenpi.setIsCurrent("1");
+					}else{
+						busiProjectApplyShenpi.setIsCurrent("0");
+					}
+					busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
+					busiProjectApplyShenpi.setCheckStatus("-1");
+					busiProjectApplyShenpi.setCreateBy(username);
+					busiProjectApplyShenpi.setCreateTime(now);
+					busiProjectApplyShenpi.setUpdateTime(now);
+				}
+				busiProjectApplyShenpiMapper.insertBusiProjectApplyShenpiBatch(shenpiUserList);
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> removeProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			List<Long> projectApplyIds = busiProjectApplyVo.getProjectApplyIds();
+			if (CollectionUtils.isNotEmpty(projectApplyIds)) {
+				for (Long projectApplyId : projectApplyIds) {
+					BusiProjectApply busiProjectApply = busiProjectApplyMapper.selectBusiProjectApplyById(projectApplyId);
+					String status = busiProjectApply.getStatus();
+					if ("0".equals(status)) {
+						busiProjectApplyMapper.deleteBusiProjectApplyById(projectApplyId);
+						busiProjectApplyShenpiMapper.deleteBusiProjectApplyShenpiByProjectApplyId(projectApplyId);
+					}else{
+						resultMap.put("code",-1);
+						resultMap.put("msg","在启用中，不能删除");
+						return resultMap;
+					}
+				}
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+    public Map<String, Object> listProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			if (Objects.nonNull(busiProjectApplyVo.getPage()) && Objects.nonNull(busiProjectApplyVo.getLimit())) {
+				PageHelper.startPage(busiProjectApplyVo.getPage(), busiProjectApplyVo.getLimit());
+			}
+			List<BusiProjectApplyVo> busiProjectApplyVos = busiProjectApplyMapper.selectBusiProjectApplyVos(busiProjectApplyVo);
+			PageInfo<BusiProjectApplyVo> pageInfo = new PageInfo<BusiProjectApplyVo>(busiProjectApplyVos);
+			resultMap.put("code",200);
+			resultMap.put("data",busiProjectApplyVos);
+			resultMap.put("pageInfo",pageInfo);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+    }
+
+	@Override
+	public Map<String, Object> listProjectApplyShenpi(Long projectApplyId) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			BusiProjectApplyShenpi busiProjectApplyShenpi = new BusiProjectApplyShenpi();
+			busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
+			List<BusiProjectApplyShenpi> busiProjectApplyShenpis = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpiList(busiProjectApplyShenpi);
+			resultMap.put("code",200);
+			resultMap.put("data",busiProjectApplyShenpis);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();
