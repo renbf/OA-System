@@ -150,5 +150,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_workflow_node_checker swnc on swnc.workflow_node_id = bt.workflow_node_id
         left join sys_user su on su.user_name = bt.checker_user_name
         where bt.bill_id = #{billId}
+        <if test="workflowId != null  ">and bt.workflow_id = #{workflowId}</if>
+
     </select>
 </mapper>

@@ -49,6 +49,8 @@ public class BusiReimburseVo extends BaseEntity
     private String reimburseReason;
 
 //以上自动生成的尽量别动
+    //总金额
+    private Double amountTotal;
 
     /** 交通费用 list */
     private List<BusiReimTrafficFee> busiReimTrafficFeeList;
@@ -56,6 +58,14 @@ public class BusiReimburseVo extends BaseEntity
     private List<BusiReimTravelSubsidy> busiReimTravelSubsidyList;
     /** 其他费用 list */
     private List<BusiReimOtherFee> busiReimOtherFeeList;
+
+    public Double getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(Double amountTotal) {
+        this.amountTotal = amountTotal;
+    }
 
     public List<BusiReimTrafficFee> getBusiReimTrafficFeeList() {
         return busiReimTrafficFeeList;

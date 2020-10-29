@@ -25,17 +25,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark,workflow_id
     </sql>
 
-    <select id="selectBusiReimburseList" parameterType="com.xhkj.project.business.domain.BusiReimburse" resultMap="BusiReimburseResult">
-        <include refid="selectBusiReimburseVo"/>
-        from busi_reimburse
+    <select id="selectBusiReimburseList" parameterType="BusiReimburseAprVo" resultType="BusiReimburseAprVo">
+        select
+        br.reimburse_id, br.user_id, br.dept_id,  br.in_prj_flag, br.project_id, br.project_name, br.reimburse_reason,
+        br.create_by,  br.create_time,  br.update_by,  br.update_time,  br.remark,br.workflow_id,
+        ifnull(wb.bill_status,2) as billStatus,
+        swnc.workflow_node_user_name as orginHandler
+        from busi_reimburse br
+        left join workflow_bill wb on br.reimburse_id = wb.bill_id  and wb.workflow_id = br.workflow_id
+        left join sys_workflow_node swn on swn.workflow_node_id = wb.workflow_node_id
+        left join sys_workflow_node_checker swnc on swnc.workflow_node_id = swn.workflow_node_id
+
+        left join sys_user su on su.user_id = br.user_id
+        left join sys_dept sd on sd.dept_id = su.dept_id
         <where>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="deptId != null "> and dept_id = #{deptId}</if>
-            <if test="inPrjFlag != null "> and in_prj_flag = #{inPrjFlag}</if>
-            <if test="workflowId != null "> and workflow_id = #{workflowId}</if>
-            <if test="projectId != null "> and project_id = #{projectId}</if>
-            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
-            <if test="reimburseReason != null  and reimburseReason != ''"> and reimburse_reason = #{reimburseReason}</if>
+            <if test="userId != null "> and br.user_id = #{userId}</if>
+            <if test="deptId != null "> and br.dept_id = #{deptId}</if>
+            <if test="inPrjFlag != null "> and br.in_prj_flag = #{inPrjFlag}</if>
+            <if test="workflowId != null "> and br.workflow_id = #{workflowId}</if>
+            <if test="projectId != null "> and br.project_id = #{projectId}</if>
+            <if test="projectName != null  and projectName != ''"> and br.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="reimburseReason != null  and reimburseReason != ''"> and br.reimburse_reason = #{reimburseReason}</if>
+
+            <if test="beginTime != null and beginTime != ''"> and DATE_FORMAT(br.create_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginTime},'%Y-%m-%d')</if>
+            <if test="endTime != null and endTime != ''"> and DATE_FORMAT(br.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d') </if>
+
+            <if test="billStatus != null  and billStatus != ''"> and wb.bill_status = #{billStatus}</if>
+            ${dataScope}
         </where>
     </select>
 

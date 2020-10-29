@@ -1,6 +1,10 @@
 package com.xhkj.project.business.controller;
 
 import java.util.List;
+
+import com.xhkj.framework.aspectj.lang.annotation.DataScope;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiReimburseAprVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,10 +42,11 @@ public class BusiReimburseController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:reimburse:list')")
     @GetMapping("/list")
-    public TableDataInfo list(BusiReimburse busiReimburse)
+    @DataScope(deptAlias = "sd", userAlias = "su")
+    public TableDataInfo list(BusiReimburseAprVo busiReimburseAprVo)
     {
         startPage();
-        List<BusiReimburse> list = busiReimburseService.selectBusiReimburseList(busiReimburse);
+        List<BusiReimburseAprVo> list = busiReimburseService.selectBusiReimburseList(busiReimburseAprVo);
         return getDataTable(list);
     }
 
@@ -51,10 +56,10 @@ public class BusiReimburseController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:reimburse:export')")
     @Log(title = "报销信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(BusiReimburse busiReimburse)
+    public AjaxResult export(BusiReimburseAprVo busiReimburseAprVo)
     {
-        List<BusiReimburse> list = busiReimburseService.selectBusiReimburseList(busiReimburse);
-        ExcelUtil<BusiReimburse> util = new ExcelUtil<BusiReimburse>(BusiReimburse.class);
+        List<BusiReimburseAprVo> list = busiReimburseService.selectBusiReimburseList(busiReimburseAprVo);
+        ExcelUtil<BusiReimburseAprVo> util = new ExcelUtil<BusiReimburseAprVo>(BusiReimburseAprVo.class);
         return util.exportExcel(list, "reimburse");
     }
 
@@ -108,4 +113,17 @@ public class BusiReimburseController extends BaseController
     {
         return toAjax(busiReimburseService.deleteBusiReimburseByIds(reimburseIds));
     }
+
+    /**
+     * 报送-发起流程
+     */
+    @PreAuthorize("@ss.hasPermi('business:reimburse:submit')")
+    @Log(title = "请假上报", businessType = BusinessType.INSERT)
+    @PostMapping("/billSumbit/{reimburseIds}")
+    public AjaxResult billSumbit(@PathVariable("reimburseIds") Long[] reimburseIds)
+    {
+        return busiReimburseService.billSumbit(reimburseIds);
+    }
+
+
 }

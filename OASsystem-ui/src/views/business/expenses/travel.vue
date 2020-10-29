@@ -44,17 +44,18 @@
       </el-col>
     </el-row>
     <el-form :modal="queryParams" ref="queryForm" :inline="true">
-      <el-form-item label="申请时间">
+      <el-form-item label="申请时间" prop="time">
         <el-date-picker
-          v-model="queryParams.time"
+          v-model="datetime"
+          value-format="yyyy-MM-dd HH:mm:ss"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="queryParams.status" placeholder="请选择状态">
+      <el-form-item label="状态" prop="billStatus">
+        <el-select v-model="queryParams.billStatus" placeholder="请选择状态">
           <el-option
             v-for="dict in statusOptions"
             :key="dict.dictValue"
@@ -63,7 +64,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="部门">
+      <el-form-item label="部门" prop="deptId">
         <el-select v-model="queryParams.deptId" placeholder="请选择部门">
           <el-option
             v-for="dict in departmentOptions"
@@ -127,16 +128,15 @@
         prop="expenses_allmoney"
         :show-overflow-tooltip="true"
       />
-      <el-table-column
-        align="center"
-        label="状态"
-        prop="expenses_status"
-        :show-overflow-tooltip="true"
-      />
+      <el-table-column label="状态" align="center" width="100">
+        <template slot-scope="scope">
+          <span>{{ selectDictLabelByType(GLOBAL.SYS_CHECK_STATUS, scope.row.billStatus) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="当前审批人"
-        prop="expenses_exmain"
+        prop="orginHandler"
         :show-overflow-tooltip="true"
       />
       <el-table-column
@@ -145,30 +145,16 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit-outline"
-            @click.stop="handleUpdate(scope.row)"
-          >编辑
-          </el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit-outline"
-            @click.stop="handleDelete(scope.row)"
-          >删除
-          </el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit-outline"
-            @click.stop="handleReport(scope.row)"
-          >报送
-          </el-button
-          >
+
+          <!--  未报送  拒绝  按钮全部显示 -->
+          <div v-if="scope.row.billStatus == 2 || scope.row.billStatus == -1">
+            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)" v-hasPermi="['business:reimburse:edit']">编辑</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleDelete(scope.row)" v-hasPermi="['business:reimburse:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleReport(scope.row)" v-hasPermi="['business:reimburse:submit']">报送</el-button>
+          </div>
+          <!-- 通过 待审核  审批中  什么按钮都没有 -->
+          <div v-else-if="scope.row.billStatus == 0 || scope.row.billStatus == 1 || scope.row.billStatus == 99 "></div>
+
         </template>
       </el-table-column>
     </el-table>
@@ -529,7 +515,7 @@
       :visible.sync="transportdetail"
       width="800px" class="abow_dialog">
       <el-row>
-        <el-col :span="8">
+        <el-col :span="8" v-show="billTracesFlag">
           <el-timeline>
             <el-timeline-item
               v-for="(activity, index) in activities"
@@ -537,7 +523,6 @@
               :icon="activity.icon"
               :type="activity.type"
               :color="activity.color"
-              :size="activity.size"
               :timestamp="activity.timestamp"
             >
               <p>{{ activity.content }}</p>
@@ -734,18 +719,11 @@
                 </template>
               </el-col>
             </el-row>
-            <el-row>
-              <el-form-item label="审批备注" style="margin-top: 50px;">
-                <el-input type="textarea" v-model="detailform.remark"></el-input>
-              </el-form-item>
-            </el-row>
           </el-form>
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <span class="lf"><b>￥5,120,000.00</b></span>
-        <el-button >取 消</el-button>
-        <el-button type="primary" >保存</el-button>
+        <span class="lf"><b>￥{{amountTotalAll}}</b></span>
       </span>
     </el-dialog>
 
@@ -839,7 +817,7 @@
 <script>
   import { listDept } from "@/api/system/dept";
   import {expensesList,loadAll} from "@/api/business/mywork/expenses"
-  import { listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
+  import { billSumbit,listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
   import { listTrafficFee, getTrafficFee, delTrafficFee, addTrafficFee, updateTrafficFee, exportTrafficFee } from "@/api/business/mywork/trafficfee";
   import { listSubsidy, getSubsidy, delSubsidy, addSubsidy, updateSubsidy, exportSubsidy } from "@/api/business/mywork/subsidy";
   import { listOtherFee, getOtherFee, delOtherFee, addOtherFee, updateOtherFee, exportOtherFee } from "@/api/business/mywork/otherfee";
@@ -852,9 +830,10 @@
         data(){
           return{
             headers: { 'Authorization': 'Bearer ' + getToken() },
+            datetime:[],
             queryParams:{
               deptId:undefined,
-              time:[]
+              billStatus:undefined
             },
             expensesList:[],
             dateRange: [],
@@ -880,6 +859,7 @@
             fujiannum:0,
             transportmoney:0,
             transportnum:0,
+            amountTotalAll:0,
             beawayTotal:0,
             otherTotal:0,
             yesOrNo: [],
@@ -982,6 +962,7 @@
                 dictLabel: "软件部"
               }
             ],
+            billTracesFlag: true,
             activities: [
               {
                 content: "主管审批",
@@ -1114,7 +1095,7 @@
         methods:{
             getList(){
               this.loading = true;
-              listReimburse(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+              listReimburse(this.addDateRange(this.queryParams, this.datetime)).then(response => {
                 this.expensesList = response.rows;
                 this.total = response.total;
                 this.loading = false;
@@ -1273,8 +1254,33 @@
               });
 
           },
-          // 报送
-          handleReport(){},
+          //报送请假
+          handleReport(row) {
+            const reimburseIds = row.reimburseId || this.ids;
+            this.$confirm(
+              "请确认是否报送",
+              {
+                dangerouslyUseHTMLString: true,
+                distinguishCancelAndClose: true,
+                confirmButtonText: "报送",
+                cancelButtonText: "返回列表",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                billSumbit(reimburseIds).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("报送成功");
+                    this.reset();
+                    this.getList();
+                  }
+                })
+              })
+              .catch(() => {
+                this.reset();
+                this.getList();
+              });
+          },
           // 导出
           handleExport(){},
           // 编辑
@@ -1299,8 +1305,29 @@
               this.transportList = response.data.busiReimTrafficFeeList;
               this.reunTravcelList = response.data.busiReimTravelSubsidyList
               this.otherList = response.data.busiReimOtherFeeList
+              this.amountTotalAll =  response.data.amountTotal;
               //获取全部文件信息
               this.getAllFileList(response.data)
+            });
+
+
+            //查看流程节点信息
+            this.getBillTraces(this.form.reimburseId,this.form.workflowId).then(response => {
+              if (response.code === 200) {
+                this.activities = response.data;
+                if(!isNotEmpty(this.activities)){
+                  this.billTracesFlag = false;
+                }
+                this.activities.forEach( e=>{
+                  e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
+                  e.type = 'success'
+                  e.icon = "el-icon-check"
+                  e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
+                })
+
+              } else {
+                this.msgError(response.msg);
+              }
             });
           },
 
@@ -1336,14 +1363,24 @@
             }
           },
 
-          handleSelectionChange(){
-            this.ids = selection.map(item => item.leaveId);
+          handleSelectionChange(selection){
+            this.ids = selection.map(item => item.reimburseId);
             this.multiple = !selection.length;
           },
           // 搜索
-          handleQuery(){},
+          handleQuery(){
+            this.queryParams.pageNum = 1;
+            this.getList();
+          },
           // 重置
-          resetQuery(){},
+          resetQuery(){
+            this.datetime = []
+            this.queryParams={
+                deptId:undefined,
+                billStatus:undefined
+            },
+            this.handleQuery();
+          },
           // 删除文件
           handleRemove(file, fileList) {
             this.delfileIds.push(file.id)

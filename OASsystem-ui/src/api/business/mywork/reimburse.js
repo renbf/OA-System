@@ -60,3 +60,13 @@ export function exportReimburse(query) {
     params: query
   })
 }
+
+
+//请假上报
+export function billSumbit(reimburseIds) {
+  return request({
+    url: "/business/reimburse/billSumbit/" + reimburseIds,
+    method: "post",
+  });
+}
+

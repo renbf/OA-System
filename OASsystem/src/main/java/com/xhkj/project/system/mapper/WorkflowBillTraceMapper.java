@@ -74,5 +74,5 @@ public interface WorkflowBillTraceMapper
 	 * 获取流程审批信息
 	 * @return
 	 */
-	public List<WorkflowBillTraceVo> getBillTraces(Long billiId);
+	public List<WorkflowBillTraceVo> getBillTraces(Long billId,Long workflowId);
 }

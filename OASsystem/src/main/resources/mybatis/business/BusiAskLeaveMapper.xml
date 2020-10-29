@@ -48,8 +48,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leaveReason != null and leaveReason != ''"> and bal.leave_reason like  CONCAT('%',#{leaveReason},'%')</if>
             <if test="updateTime != null "> and bal.update_time = #{updateTime}</if>
             <if test="beginTime != null and beginTime != ''"> and bal.leave_begin_time >= #{beginTime}</if>
-            <if test="endTime != null and endTime != ''"> and bal.leave_end_time <![CDATA[ <= ]]> #{endTime} </if>
+            <if test="endTime != null and endTime != ''"> andbal.leave_end_time <![CDATA[ <= ]]> #{endTime} </if>
             <if test="createBy != null and createBy != ''"> and bal.create_by = #{createBy} </if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and wb.bill_status = #{approvalStatus}</if>
             ${dataScope}
         </where>
         order by create_time desc
