@@ -1,7 +1,12 @@
 package com.xhkj.project.business.service;
 
 import java.util.List;
+
+import com.xhkj.framework.web.domain.AjaxResult;
+import com.xhkj.project.business.domain.BusiAskLeave;
 import com.xhkj.project.business.domain.BusiReimburse;
+import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
+import com.xhkj.project.business.domain.vo.BusiReimburseAprVo;
 import com.xhkj.project.business.domain.vo.BusiReimburseVo;
 
 /**
@@ -30,7 +35,9 @@ public interface IBusiReimburseService
      * @param busiReimburse 报销信息
      * @return 报销信息集合
      */
-    public List<BusiReimburse> selectBusiReimburseList(BusiReimburse busiReimburse);
+    public List<BusiReimburseAprVo> selectBusiReimburseList(BusiReimburseAprVo busiReimburseAprVo);
+
+
 
     /**
      * 新增报销信息
@@ -63,4 +70,8 @@ public interface IBusiReimburseService
      * @return 结果
      */
     public int deleteBusiReimburseById(Long reimburseId);
+
+
+    public AjaxResult billSumbit(Long[] reimburseIds);
+
 }

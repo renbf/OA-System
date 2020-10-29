@@ -148,21 +148,15 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <!--  2是未报送按钮全部显示 -->
-          <div v-if="scope.row.approvalStatus == 2">
+          <!--  未报送  拒绝  按钮全部显示 -->
+          <div v-if="scope.row.approvalStatus == 2 || scope.row.approvalStatus == -1">
             <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)" v-hasPermi="['business:leave:edit']">编辑</el-button>
-            <!-- v-hasPermi="['business:leave:edit']" -->
             <el-button size="mini" type="text" icon="el-icon-delete" @click.stop="delLeaves(scope.row)" v-hasPermi="['business:leave:remove']">删除</el-button>
             <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)" v-hasPermi="['business:leave:submit']">报送</el-button>
           </div>
-          <!-- 4 通过什么按钮都没有 -->
+          <!-- 通过 待审核  审批中  什么按钮都没有 -->
           <div v-else-if="scope.row.approvalStatus == 0 || scope.row.approvalStatus == 1 || scope.row.approvalStatus == 99 "></div>
-          <div v-else-if="scope.row.approvalStatus == -1">
-            <el-button size="mini" type="text" icon="el-icon-edit-outline" @click.stop="handleUpdate(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" icon="el-icon-message" @click.stop="handleReport(scope.row)">报送</el-button>
 
-<!--            v-hasPermi="['business:leave:submit']"-->
-          </div>
         </template>
       </el-table-column>
     </el-table>
