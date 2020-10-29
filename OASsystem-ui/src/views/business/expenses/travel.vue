@@ -373,15 +373,15 @@
                 <el-carousel-item v-for="item in otherList">
                   <el-card class="box-card">
                     <div slot="header" class="clearfix">
-                      <span  style="font-size: 16px;line-height: 35px;"><b>{{item.title}}</b></span>
-                      <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteticket"></el-button>
+                      <span  style="font-size: 16px;line-height: 35px;"><b>{{item.otherFeeName}}</b></span>
+                      <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteOtherFree(item)"></el-button>
                     </div>
-                    <div class="text item train">
+                    <div class="text item train"   @click="editOhterFree(item)">
                       <div>
-                        <p>附件 {{item.fujian}}张</p>
+                        <p>附件 {{item.fileNum}}张</p>
                       </div>
                       <div>
-                        <p>￥<b>{{item.allmoney}}</b></p>
+                        <p>￥<b>{{item.amountTotal}}</b></p>
                       </div>
                     </div>
                   </el-card>
@@ -399,7 +399,7 @@
           <el-col>
             <el-form-item label="附件">
               <el-button type="primary" icon="el-icon-download" circle></el-button>
-              <span>共13张</span>
+              <span>共{{fillAllNum}}张</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -410,7 +410,11 @@
               <el-carousel-item v-for="item in fujianList">
                 <el-card class="box-card">
                   <div class="text item train">
-                    <img src="@/assets/image/train_ticket.png" alt="">
+                    <el-image
+                      style="width: 100px; height: 100px"
+                      :src="item.url"
+                      lazy
+                    ></el-image>
                   </div>
                 </el-card>
               </el-carousel-item>
@@ -674,14 +678,14 @@
                     <el-carousel-item v-for="item in otherList">
                       <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                          <span  style="font-size: 16px;line-height: 35px;"><b>{{item.title}}</b></span>
+                          <span  style="font-size: 16px;line-height: 35px;"><b>{{item.otherFeeName}}</b></span>
                         </div>
                         <div class="text item train">
                           <div>
-                            <p>附件 {{item.fujian}}张</p>
+                            <p>附件 {{item.fileNum}}张</p>
                           </div>
                           <div>
-                            <p>￥<b>{{item.allmoney}}</b></p>
+                            <p>￥<b>{{item.amountTotal}}</b></p>
                           </div>
                         </div>
                       </el-card>
@@ -698,7 +702,7 @@
             <el-row>
               <el-col>
                 <el-form-item label="附件">
-                  <span>共13张</span>
+                  <span>共{{fillAllNum}}张</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -710,7 +714,11 @@
                     <el-carousel-item v-for="item in fujianList">
                       <el-card class="box-card">
                         <div class="text item train">
-                          <img src="@/assets/image/train_ticket.png" alt="">
+                          <el-image
+                            style="width: 100px; height: 100px"
+                            :src="item.url"
+                            lazy
+                          ></el-image>
                         </div>
                       </el-card>
                     </el-carousel-item>
@@ -790,27 +798,32 @@
                :visible.sync="otheropen"
                width="600px" class="abow_dialog">
         <el-form  ref="form" :model="otherform" :rules="otherrules" label-width="80px">
-          <el-form-item label="项目名称" prop="name">
-            <el-input v-model="otherform.name"></el-input>
+          <el-form-item label="项目名称" prop="otherFeeName">
+            <el-input v-model="otherform.otherFeeName"></el-input>
           </el-form-item>
-          <el-form-item label="金额" prop="money">
-            <el-input v-model="otherform.money" @change="othermoney"></el-input>
+          <el-form-item label="金额" prop="othermoney">
+            <el-input v-model="otherform.amount" @input="othermoney"></el-input>
           </el-form-item>
           <el-form-item label="上传附件" prop="fujian">
             <el-upload
+              ref="upload"
               class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :headers="headers"
+              :action= "GLOBAL.UPLOADFILE_URL"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="handleSuccess"
+              :auto-upload="true"
               :file-list="otherform.fileList"
               list-type="picture">
-              <span>共{{otherform.fujiannum}}张</span>
+              <el-button size="small" type="primary">点击上传</el-button>
+              <span>共{{fujiannum}}张</span>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <span class="lf"><b style="font-size: 18px;">￥{{otherTotal}}</b></span>
+          <span class="lf"><b style="font-size: 18px;">￥{{otherform.amountTotal}}</b></span>
           <el-button @click="this.otheropen=false">取消</el-button>
           <el-button type="primary" @click="saveOtherFee">保存</el-button>
         </div>
@@ -826,7 +839,7 @@
   import { listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
   import { listTrafficFee, getTrafficFee, delTrafficFee, addTrafficFee, updateTrafficFee, exportTrafficFee } from "@/api/business/mywork/trafficfee";
   import { listSubsidy, getSubsidy, delSubsidy, addSubsidy, updateSubsidy, exportSubsidy } from "@/api/business/mywork/subsidy";
-  import { listFee, getFee, delFee, addFee, updateFee, exportFee } from "@/api/business/mywork/otherfee";
+  import { listOtherFee, getOtherFee, delOtherFee, addOtherFee, updateOtherFee, exportOtherFee } from "@/api/business/mywork/otherfee";
   import { getToken } from '@/utils/auth'
   import {uploadFile,delFile} from '@/api/system/file'
   import {isNotEmpty} from "../../../utils/common";
@@ -867,6 +880,7 @@
             yesOrNo: [],
             fileList: [],
             fileIds:[],
+            fillAllNum:0,
             uploadForm: new FormData(),
             form:{
               workflowId:'',
@@ -912,8 +926,11 @@
               fileList: []
             },
             otherform:{
-              name:'',
-              money:'',
+              amountTotal:0,
+              reimburseId: '',
+              otherFeeName:'',
+              amount:'',
+              fileNum:0,
               fileList: []
             },
             detailform:{
@@ -947,7 +964,7 @@
             // 附件
 
           fujianList:[
-            {src:'@/assets/image/train_ticket.png'}
+            // {url:'http://localhost/dev-api/profile/file/20201028/3388080a391e9922c0b458d31f38b5d7.jpg'}
           ],
             //部门label
             department: [
@@ -1120,10 +1137,6 @@
 
             },
 
-          cancelFun(){
-
-          },
-
           savetransport(){
             if(this.form.reimburseId){
               this.fileIds = JSON.stringify(this.fileIds);
@@ -1182,7 +1195,29 @@
             }
           },
           saveOtherFee(){
+            if(this.form.reimburseId){
 
+              this.fileIds = JSON.stringify(this.fileIds);
+              if(isNotEmpty(this.fileIds)){
+                this.otherform.fileIds = this.fileIds.replace("[","").replace("]","")
+              }
+
+              this.otherform.fileNum = this.fujiannum
+              this.otherform.reimburseId = this.form.reimburseId;
+
+              addOtherFee(this.otherform).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("保存成功");
+                  this.delFiles()
+                  this.getListOtherFree(this.otherform.tranvelId);
+                  this.otheropen = false;
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }else{
+              this.msgWarning('请先保存报销基础信息！');
+            }
           },
 
           getListTrafficFee(reimburseId){
@@ -1195,6 +1230,12 @@
           getListReimTranvel(tranvelId){
             listSubsidy(tranvelId).then(response => {
               this.reunTravcelList = response.rows;
+            });
+          },
+
+          getListOtherFree(otherId){
+            listOtherFee(otherId).then(response => {
+              this.otherList = response.rows;
             });
           },
 
@@ -1221,7 +1262,9 @@
             getRemburseDetail(row.reimburseId).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
               this.reunTravcelList = response.data.busiReimTravelSubsidyList
-              // this.otherList = response.data.busiReimOtherFeeList
+              this.otherList = response.data.busiReimOtherFeeList
+              //获取全部文件信息
+              this.getAllFileList(response.data)
             });
           },
           // 行点击
@@ -1232,9 +1275,42 @@
             getRemburseDetail(row.reimburseId).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
               this.reunTravcelList = response.data.busiReimTravelSubsidyList
-              // this.otherList = response.data.busiReimOtherFeeList
+              this.otherList = response.data.busiReimOtherFeeList
+              //获取全部文件信息
+              this.getAllFileList(response.data)
             });
           },
+
+          //获取全部文件信息
+          getAllFileList(allInfo){
+            this.setFujianList(allInfo.busiReimTrafficFeeList)
+            this.setFujianList(allInfo.busiReimTravelSubsidyList)
+            this.setFujianList(allInfo.busiReimOtherFeeList)
+
+            if(isNotEmpty(this.fujianList)){
+              this.fujianList.forEach(e=>{
+                e.name = e.fileNameReal
+                e.url =process.env.VUE_APP_BASE_API + e.previewPath;
+              })
+            }
+
+          },
+
+
+
+          setFujianList(list){
+            if(isNotEmpty(list)){
+              list.forEach(e=>{
+                if(isNotEmpty(e.fileList)){
+                  e.fileList.forEach(ee=>{
+                    this.fujianList.push(ee)
+                    this.fillAllNum += 1;
+                  })
+                }
+              })
+            }
+          },
+
           handleSelectionChange(){},
           // 搜索
           handleQuery(){},
@@ -1260,21 +1336,8 @@
             this.transportform.trafficDate.push(trafficStartDate);
             this.transportform.trafficDate.push(trafficEndDate);
 
-            if(isNotEmpty(fileIds)){
-              if(fileIds instanceof Array){
-                fileIds = JSON.stringify(fileIds).replace("[","").replace("]","")
-              }
+            this.getFileInfo(this.transportform,fileIds)
 
-              let fileIdStr = fileIds.split(',');
-              this.fileIds =  fileIdStr.map(Number);
-              this.fujiannum = this.fileIds.length;
-            }
-
-            let fileList = this.transportform.fileList;
-            this.transportform.fileList.forEach(e=>{
-              e.name = e.fileNameReal
-              e.url =process.env.VUE_APP_BASE_API + e.previewPath;
-            })
             this.transport=true
           },
 
@@ -1282,6 +1345,23 @@
             let {fileIds } = data;
             this.reimTravcelForm = data;
 
+            this.getFileInfo(this.reimTravcelForm,fileIds)
+            this.beaway=true
+
+          },
+
+
+          editOhterFree(data){
+            let {fileIds } = data;
+            this.otherform = data;
+
+            this.getFileInfo(this.otherform,fileIds)
+            this.otheropen=true
+          },
+
+
+          getFileInfo(form,fileIds){
+
             if(isNotEmpty(fileIds)){
               if(fileIds instanceof Array){
                 fileIds = JSON.stringify(fileIds).replace("[","").replace("]","")
@@ -1290,17 +1370,16 @@
               let fileIdStr = fileIds.split(',');
               this.fileIds =  fileIdStr.map(Number);
               this.fujiannum = this.fileIds.length;
+
+              if(isNotEmpty(form.fileList)){
+                form.fileList.forEach(e=>{
+                  e.name = e.fileNameReal
+                  e.url =process.env.VUE_APP_BASE_API + e.previewPath;
+                })
+              }
             }
 
-            let fileList = this.reimTravcelForm.fileList;
-            this.reimTravcelForm.fileList.forEach(e=>{
-              e.name = e.fileNameReal
-              e.url =process.env.VUE_APP_BASE_API + e.previewPath;
-            })
-            this.beaway=true
-
           },
-
 
           // 删除交通费
           deleteticket(data){
@@ -1339,13 +1418,37 @@
               delSubsidy(data.travelId).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("删除成功");
-                  this.getListReimTranvel(data.reimburseId);
+                  this.getListReimTranvel(data.travelId);
                 }
               });
             }).catch(() => {
-              this.getListReimTranvel(data.reimburseId);
+              this.getListReimTranvel(data.travelId);
             });
           },
+
+          // 删除其他费用
+          deleteOtherFree(data){
+            this.$confirm(
+              "请确认是否删除",
+              {
+                dangerouslyUseHTMLString: true,
+                distinguishCancelAndClose: true,
+                confirmButtonText: "删除",
+                cancelButtonText: "返回",
+                type: "warning"
+              }
+            ).then(() => {
+              delOtherFee(data.otherId).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("删除成功");
+                  this.getListOtherFree(data.reimburseId);
+                }
+              });
+            }).catch(() => {
+              this.getListOtherFree(data.reimburseId);
+            });
+          },
+
           addtransport(){
             this.transport=true
             this.transporttitle='新增'
@@ -1356,6 +1459,16 @@
           },
 
 
+          resetOtherFree(){
+            this.otherform={
+              amountTotal:0,
+                reimburseId: '',
+                otherFeeName:'',
+                amount:'',
+                fileNum:0,
+                fileList: []
+            }
+          },
 
           resetReimTravcel(){
             this.reimTravcelForm={
@@ -1450,13 +1563,17 @@
             this.reimTravcelForm.amountTotal=this.reimTravcelForm.peopleNum*this.reimTravcelForm.days*this.reimTravcelForm.subsidyAmount
           },
           othermoney(value){
-              this.otherform.money=value
-            this.otherTotal=this.otherform.money
+            this.otherform.amount=value
+            this.otherform.amountTotal=this.otherform.amount
 
           },
           otherclick(){
               this.otheropen=true;
               this.othertitle='新增'
+
+              this.resetOtherFree();
+              this.fujiannum = 0;
+              this.fileIds = []
           }
         }
     }

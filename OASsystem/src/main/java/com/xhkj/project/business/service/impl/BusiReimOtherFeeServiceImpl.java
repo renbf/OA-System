@@ -2,6 +2,12 @@ package com.xhkj.project.business.service.impl;
 
 import java.util.List;
 import com.xhkj.common.utils.DateUtils;
+import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.common.utils.StringUtils;
+import com.xhkj.project.business.domain.BusiReimTravelSubsidy;
+import com.xhkj.project.system.domain.Attachment;
+import com.xhkj.project.system.mapper.AttachmentMapper;
+import com.xhkj.project.system.service.IAttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiReimOtherFeeMapper;
@@ -19,6 +25,13 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
 {
     @Autowired
     private BusiReimOtherFeeMapper busiReimOtherFeeMapper;
+    @Autowired
+    private IAttachmentService iAttachmentService;
+    @Autowired
+    private AttachmentMapper attachmentMapper;
+
+
+
 
     /**
      * 查询交通费用
@@ -29,7 +42,16 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
     @Override
     public BusiReimOtherFee selectBusiReimOtherFeeById(Long otherId)
     {
-        return busiReimOtherFeeMapper.selectBusiReimOtherFeeById(otherId);
+        BusiReimOtherFee busiReimOtherFee = busiReimOtherFeeMapper.selectBusiReimOtherFeeById(otherId);
+        String fileIds = busiReimOtherFee.getFileIds();
+        if(StringUtils.isNoneBlank(fileIds)){
+            String[] ids = fileIds.split(",");
+            List<Attachment> attachments = attachmentMapper.selectFileList(ids);
+            busiReimOtherFee.setFileList(attachments);
+        }
+
+        return busiReimOtherFee;
+
     }
 
     /**
@@ -41,7 +63,21 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
     @Override
     public List<BusiReimOtherFee> selectBusiReimOtherFeeList(BusiReimOtherFee busiReimOtherFee)
     {
-        return busiReimOtherFeeMapper.selectBusiReimOtherFeeList(busiReimOtherFee);
+
+        List<BusiReimOtherFee> busiReimOtherFees = busiReimOtherFeeMapper.selectBusiReimOtherFeeList(busiReimOtherFee);
+
+        busiReimOtherFees.stream().forEach(e->{
+            String fileIds = e.getFileIds();
+            if(StringUtils.isNoneBlank(fileIds)){
+                String[] ids = fileIds.split(",");
+                List<Attachment> attachments = attachmentMapper.selectFileList(ids);
+                e.setFileList(attachments);
+            }
+        });
+
+        return busiReimOtherFees;
+
+
     }
 
     /**
@@ -53,8 +89,22 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
     @Override
     public int insertBusiReimOtherFee(BusiReimOtherFee busiReimOtherFee)
     {
-        busiReimOtherFee.setCreateTime(DateUtils.getNowDate());
-        return busiReimOtherFeeMapper.insertBusiReimOtherFee(busiReimOtherFee);
+
+
+        int i = 0;
+        Long otherId = busiReimOtherFee.getOtherId();
+        if(otherId!=null){
+            busiReimOtherFee.setUpdateBy(SecurityUtils.getUserId());
+            busiReimOtherFee.setUpdateTime(DateUtils.getNowDate());
+            i = busiReimOtherFeeMapper.updateBusiReimOtherFee(busiReimOtherFee);
+        }else{
+            busiReimOtherFee.setCreateBy(SecurityUtils.getUserId());
+            busiReimOtherFee.setCreateTime(DateUtils.getNowDate());
+            i = busiReimOtherFeeMapper.insertBusiReimOtherFee(busiReimOtherFee);
+        }
+
+        return i;
+
     }
 
     /**
@@ -91,6 +141,18 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
     @Override
     public int deleteBusiReimOtherFeeById(Long otherId)
     {
-        return busiReimOtherFeeMapper.deleteBusiReimOtherFeeById(otherId);
+        int i = 0;
+
+        BusiReimOtherFee busiReimOtherFee = this.selectBusiReimOtherFeeById(otherId);
+        List<Attachment> fileList = busiReimOtherFee.getFileList();
+
+        boolean isDelete = iAttachmentService.deleteFileList(fileList);
+
+        if(isDelete){
+            i = busiReimOtherFeeMapper.deleteBusiReimOtherFeeById(otherId);
+        }
+
+        return i;
+
     }
 }

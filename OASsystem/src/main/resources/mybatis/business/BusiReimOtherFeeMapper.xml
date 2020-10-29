@@ -14,10 +14,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="amountTotal"    column="amount_total"    />
+        <result property="fileIds"    column="file_ids"    />
+        <result property="fileNum"    column="file_num"    />
     </resultMap>
 
     <sql id="selectBusiReimOtherFeeVo">
-        select other_id, reimburse_id, other_fee_name, amount, create_by, create_time, update_by, update_time, remark
+        select other_id, reimburse_id, other_fee_name, amount, create_by, create_time, update_by, update_time, remark,amount_total,file_ids,file_num
     </sql>
 
     <select id="selectBusiReimOtherFeeList" parameterType="com.xhkj.project.business.domain.BusiReimOtherFee" resultMap="BusiReimOtherFeeResult">
@@ -48,6 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="amountTotal != null ">amount_total,</if>
+            <if test="fileIds != null ">file_ids,</if>
+            <if test="fileNum != null ">file_num,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="reimburseId != null ">#{reimburseId},</if>
@@ -58,6 +64,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="amountTotal != null ">#{amountTotal},</if>
+            <if test="fileIds != null ">#{fileIds},</if>
+            <if test="fileNum != null ">#{fileNum},</if>
          </trim>
     </insert>
 
@@ -72,6 +81,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="amountTotal != null ">amount_total = #{amountTotal},</if>
+            <if test="fileIds != null ">file_ids = #{fileIds},</if>
+            <if test="fileNum != null ">file_num = #{fileNum},</if>
         </trim>
         where other_id = #{otherId}
     </update>

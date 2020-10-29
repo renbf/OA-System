@@ -36,7 +36,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 查询交通费用列表
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:list')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:list')")
     @GetMapping("/list")
     public TableDataInfo list(BusiReimTrafficFee busiReimTrafficFee)
     {
@@ -48,7 +48,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 导出交通费用列表
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:export')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:export')")
     @Log(title = "交通费用", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(BusiReimTrafficFee busiReimTrafficFee)
@@ -61,7 +61,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 获取交通费用详细信息
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:query')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:query')")
     @GetMapping(value = "/{trafficId}")
     public AjaxResult getInfo(@PathVariable("trafficId") Long trafficId)
     {
@@ -71,7 +71,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 新增交通费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:add')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:add')")
     @Log(title = "交通费用", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody BusiReimTrafficFee busiReimTrafficFee)
@@ -82,7 +82,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 修改交通费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:edit')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:edit')")
     @Log(title = "交通费用", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BusiReimTrafficFee busiReimTrafficFee)
@@ -93,7 +93,7 @@ public class BusiReimTrafficFeeController extends BaseController
     /**
      * 删除交通费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:remove')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:remove')")
     @Log(title = "交通费用", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{trafficIds}")
     public AjaxResult remove(@PathVariable Long[] trafficIds)

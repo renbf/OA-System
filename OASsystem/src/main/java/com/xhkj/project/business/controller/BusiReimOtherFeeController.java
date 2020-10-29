@@ -21,7 +21,7 @@ import com.xhkj.common.utils.poi.ExcelUtil;
 import com.xhkj.framework.web.page.TableDataInfo;
 
 /**
- * 交通费用Controller
+ * 其他费用Controller
  * 
  * @author xhkj
  * @date 2020-10-21
@@ -34,9 +34,9 @@ public class BusiReimOtherFeeController extends BaseController
     private IBusiReimOtherFeeService busiReimOtherFeeService;
 
     /**
-     * 查询交通费用列表
+     * 查询其他费用列表
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:list')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:list')")
     @GetMapping("/list")
     public TableDataInfo list(BusiReimOtherFee busiReimOtherFee)
     {
@@ -46,10 +46,10 @@ public class BusiReimOtherFeeController extends BaseController
     }
 
     /**
-     * 导出交通费用列表
+     * 导出其他费用列表
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:export')")
-    @Log(title = "交通费用", businessType = BusinessType.EXPORT)
+//    @PreAuthorize("@ss.hasPermi('business:fee:export')")
+    @Log(title = "其他费用", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(BusiReimOtherFee busiReimOtherFee)
     {
@@ -59,9 +59,9 @@ public class BusiReimOtherFeeController extends BaseController
     }
 
     /**
-     * 获取交通费用详细信息
+     * 获取其他费用详细信息
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:query')")
+//    @PreAuthorize("@ss.hasPermi('business:fee:query')")
     @GetMapping(value = "/{otherId}")
     public AjaxResult getInfo(@PathVariable("otherId") Long otherId)
     {
@@ -69,10 +69,10 @@ public class BusiReimOtherFeeController extends BaseController
     }
 
     /**
-     * 新增交通费用
+     * 新增其他费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:add')")
-    @Log(title = "交通费用", businessType = BusinessType.INSERT)
+//    @PreAuthorize("@ss.hasPermi('business:fee:add')")
+    @Log(title = "其他费用", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody BusiReimOtherFee busiReimOtherFee)
     {
@@ -80,10 +80,10 @@ public class BusiReimOtherFeeController extends BaseController
     }
 
     /**
-     * 修改交通费用
+     * 修改其他费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:edit')")
-    @Log(title = "交通费用", businessType = BusinessType.UPDATE)
+//    @PreAuthorize("@ss.hasPermi('business:fee:edit')")
+    @Log(title = "其他费用", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BusiReimOtherFee busiReimOtherFee)
     {
@@ -91,13 +91,24 @@ public class BusiReimOtherFeeController extends BaseController
     }
 
     /**
-     * 删除交通费用
+     * 删除其他费用
      */
-    @PreAuthorize("@ss.hasPermi('business:fee:remove')")
-    @Log(title = "交通费用", businessType = BusinessType.DELETE)
+//    @PreAuthorize("@ss.hasPermi('business:fee:remove')")
+    @Log(title = "其他费用", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{otherIds}")
     public AjaxResult remove(@PathVariable Long[] otherIds)
     {
         return toAjax(busiReimOtherFeeService.deleteBusiReimOtherFeeByIds(otherIds));
     }
+
+
+    @Log(title = "其他费用", businessType = BusinessType.DELETE)
+    @DeleteMapping("/remove/{otherId}")
+    public AjaxResult remove(@PathVariable Long otherId)
+    {
+        return toAjax(busiReimOtherFeeService.deleteBusiReimOtherFeeById(otherId));
+    }
+    
+    
+    
 }
