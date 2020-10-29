@@ -21,7 +21,7 @@
       :title="projectApplyTitle"
       :visible.sync="projectApplyOpen"
       width="30%"
-      :before-close="lookClose">
+      >
       <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules">
         <el-form-item prop="projectApplyTitle"><span>标题</span>
           <el-input

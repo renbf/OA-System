@@ -79,24 +79,24 @@
                   <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
 
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                     <el-tooltip content="未报送" placement="top" effect="light" value="true" manual="false" >
+                     <el-tooltip content="未报送" placement="top" effect="light"  >
                     <el-button circle icon="el-icon-message" type="danger"></el-button>
                        </el-tooltip>
                   </span>
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
                     <el-button circle icon="el-icon-delete"></el-button>
                   </span>
-                  <el-tooltip content="审核中" placement="top" effect="light" value="true" manual="false" v-if="index==1" >
+                  <el-tooltip content="审核中" placement="top" effect="light"   v-if="index==1" >
                     <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-time" v-if="index==1" type="warning"></el-button>
                   </span>
                   </el-tooltip>
-                  <el-tooltip content="通过" placement="top" effect="light" value="true" manual="false" v-if="index==2">
+                  <el-tooltip content="通过" placement="top" effect="light"   v-if="index==2">
                     <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-check" v-if="index==2" type="success"></el-button>
                   </span>
                   </el-tooltip>
-                  <el-tooltip content="拒绝" placement="top" effect="light" value="true" manual="false" v-if="index==3" >
+                  <el-tooltip content="拒绝" placement="top" effect="light"   v-if="index==3" >
                   <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-close" v-if="index==3"  type="danger"></el-button>
                   </span>
@@ -623,56 +623,56 @@
     </el-dialog>
 
     <!--卡片未报送状态弹框-->
-    <!--<el-dialog-->
-      <!--title="修改项目申请"-->
-      <!--:visible.sync="lookopen2"-->
-      <!--width="30%"-->
-    <!--&gt;-->
-      <!--<el-form ref="UpdataForm" :model="UpdataForm"  >-->
-        <!--<el-form-item><span>标题</span>-->
-          <!--<el-input-->
-            <!--type="text"-->
-            <!--placeholder="请输入内容"-->
-            <!--v-model="UpdataForm.text"-->
-            <!--maxlength="10"-->
-            <!--show-word-limit-->
-            <!--style="width:400px;margin-left:50px;"-->
-          <!--&gt;-->
-          <!--</el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item><span>申请内容</span>-->
-          <!--<el-input-->
-            <!--type="textarea"-->
-            <!--:autosize="{ minRows: 2, maxRows: 4}"-->
-            <!--placeholder="请输入内容"-->
-            <!--v-model="UpdataForm.textarea2"-->
-            <!--style="width:400px;margin-left:20px;">-->
-          <!--</el-input></el-form-item>-->
-        <!--<el-form-item><span>审批人</span>-->
+    <el-dialog
+      title="修改项目申请"
+      :visible.sync="lookopen2"
+      width="30%"
+    >
+      <el-form ref="UpdataForm" :model="UpdataForm"  >
+        <el-form-item><span>标题</span>
+          <el-input
+            type="text"
+            placeholder="请输入内容"
+            v-model="UpdataForm.text"
+            maxlength="10"
+            show-word-limit
+            style="width:400px;margin-left:50px;"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item><span>申请内容</span>
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="UpdataForm.textarea2"
+            style="width:400px;margin-left:20px;">
+          </el-input></el-form-item>
+        <el-form-item><span>审批人</span>
 
-          <!--<el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionUpdate2=true"></el-button>-->
-          <!--<span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item style="padding:0 70px" >-->
-          <!--<el-tag-->
-            <!--:key="tag"-->
-            <!--v-for="tag in dynamicTags"-->
-            <!--closable-->
-            <!--:disable-transitions="false"-->
-            <!--@close="handleClose(tag)">-->
-            <!--{{tag}}-->
-          <!--</el-tag>-->
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionUpdate2=true"></el-button>
+          <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
+        </el-form-item>
+        <el-form-item style="padding:0 70px" >
+          <el-tag
+            :key="tag"
+            v-for="tag in dynamicTags"
+            closable
+            :disable-transitions="false"
+            style=""
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
 
 
-        <!--</el-form-item>-->
+        </el-form-item>
 
-      <!--</el-form>-->
+      </el-form>
 
-      <!--<span slot="footer" class="dialog-footer">-->
-    <!--<el-button @click="submissionSave">保存</el-button>-->
-    <!--<el-button type="primary" @click="submissionSubmit">提交</el-button>-->
-  <!--</span>-->
-    <!--</el-dialog>-->
+      <span slot="footer" class="dialog-footer">
+
+  </span>
+    </el-dialog>
 
     <!--卡片审核通过拒绝状态弹框-->
     <el-dialog
@@ -717,10 +717,10 @@
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer" v-if="inx==0" >
+      <span slot="footer" class="dialog-footer"  >
     <el-button type="primary" >提交</el-button>
   </span>
-      <span slot="footer" class="dialog-footer" v-if="inx==3">
+      <span slot="footer" class="dialog-footer" >
         <el-button type="primary" @click="looktEdit">编辑</el-button>
   </span>
     </el-dialog>
@@ -746,7 +746,6 @@
     data() {
       return {
         inx:'',
-        lookopen2:false,
         // 是否显示操作区域
         isVisableConfig:'',
         //title文字显示
@@ -754,11 +753,13 @@
         // 是否显示弹出层
         taskLookOpen: false,
         lookOpen:false,
+        lookopen2:false,
         //卡片弹出层
         looksOpen:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
+        dynamicTags: ['张三', '李四', '王五'],
         applyproject: [
           {
             title: '任务时间增加申请1',
@@ -1531,6 +1532,17 @@
 
       },
       Open(index){
+
+if(index==0){
+
+  this.lookopen2=true
+
+}else if(index==1){
+  this.looksOpen=true
+
+}else if(index==2){
+
+}
 
       }
     },
