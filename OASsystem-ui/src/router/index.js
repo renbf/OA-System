@@ -207,6 +207,11 @@ export const constantRoutes = [
         component: () => import("@/views/business/myproject/submission"),
         meta: { title: "OA项目开发-项目组申请", icon: "" }
       },
+      {
+        path:"Finish",
+        component: () => import("@/views/business/myproject/Finish"),
+        meta: { title: "OA项目开发-项目组申请", icon: "" }
+      },
     ]
   },
 

@@ -11,8 +11,8 @@
         </template>
         <el-switch
           v-model="projectInfo.status"
-          active-color="#999999"
-          inactive-color="#ff4949"
+          active-color="#0072E3"
+          inactive-color="#ADADAD"
           active-value="1"
           inactive-value="0"
           @change="changeStatusHandle"
@@ -22,7 +22,7 @@
       </div>
 
 
-        <el-card class="box-card">
+        <el-card class="box-detailcard">
           <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
             <el-form  ref="form" :model="projectInfo" label-width="80px">
               <el-form-item label="部门">
@@ -40,7 +40,7 @@
                 </div>
               </el-form-item>
               <el-form-item label="理由陈述">
-                <el-input type="textarea" v-model="projectInfo.projectDesc"></el-input>
+                <el-input type="textarea" v-model="projectInfo.projectDesc" :disabled="true"></el-input>
               </el-form-item>
             </el-form>
           </div>
@@ -360,7 +360,6 @@
     </el-dialog>
 
 <!--关闭按钮模块-->
-
     <el-dialog
       title="关闭项目"
       :visible.sync="dialogVisible"
@@ -1181,6 +1180,10 @@
 </script>
 
 <style>
+  .box-detailcard{
+    width: 1600px;
+    height:300px ;
+  }
   element.style{
     height: 300px !important;
   }
