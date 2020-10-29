@@ -99,13 +99,20 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
     public Long insertBusiReimburse(BusiReimburse busiReimburse)
     {
         Long userId = Long.valueOf(SecurityUtils.getUserId());
-
-        busiReimburse.setUserId(userId);
-        busiReimburse.setCreateTime(new Date());
-        busiReimburse.setCreateBy(String.valueOf(userId));
-
-        busiReimburseMapper.insertBusiReimburse(busiReimburse);
         Long reimburseId = busiReimburse.getReimburseId();
+
+        if(reimburseId!=null){
+            busiReimburse.setUpdateBy(SecurityUtils.getUserId());
+            busiReimburse.setUpdateTime(DateUtils.getNowDate());
+            busiReimburseMapper.updateBusiReimburse(busiReimburse);
+        }else{
+            busiReimburse.setUserId(userId);
+            busiReimburse.setCreateTime(new Date());
+            busiReimburse.setCreateBy(String.valueOf(userId));
+            busiReimburseMapper.insertBusiReimburse(busiReimburse);
+            reimburseId = busiReimburse.getReimburseId();
+        }
+
         return reimburseId;
     }
 

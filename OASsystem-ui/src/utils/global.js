@@ -30,14 +30,22 @@ const TRANSPORT_TYPE = "transport_type";
 
 
 //流程定义常量
+
 /** 加班流程标识 */
 const EXTRA_WORKFLOWID = 1;
 /** 请假流程标识 */
 const LEAVE_WORKFLOWID = 2;
+/** 差旅费报销流程标识 */
+const TRAVEL_EXPENSE_WORKFLOWID = 4;
+/** 费用报销流程标识 */
+const EXPENSE_WORKFLOWID = 5;
+
 //流程定义常量
 
 // 上传文件服务器地址
 const UPLOADFILE_URL = process.env.VUE_APP_BASE_API + "/system/attachment/files";
+
+
 
 
 export default {
@@ -61,6 +69,8 @@ export default {
   //流程定义常量   开始
   LEAVE_WORKFLOWID,
   EXTRA_WORKFLOWID,
+  TRAVEL_EXPENSE_WORKFLOWID,
+  EXPENSE_WORKFLOWID,
   //流程定义常量   结束
 
   UPLOADFILE_URL,

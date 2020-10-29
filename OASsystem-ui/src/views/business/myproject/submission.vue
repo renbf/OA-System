@@ -10,36 +10,36 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="primary text" @click="submissionOpen=true" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
-      <el-button type="danger" @click="submissionDelete" > <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
-      <el-button type="success" @click="submissionReport"> <span class="el-icon-message" style="margin-right:3px;"></span>报送</el-button>
-      <el-button type="warning" @click="submissionExport"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
+      <el-button type="primary text" @click="handleProjectApplyOpen" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
+      <el-button type="danger"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
+      <el-button type="success"> <span class="el-icon-message" style="margin-right:3px;"></span>报送</el-button>
+      <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
 
     <!--新建申请弹框一层-->
     <el-dialog
-      title="新建项目申请"
-      :visible.sync="submissionOpen"
+      :title="projectApplyTitle"
+      :visible.sync="projectApplyOpen"
       width="30%"
-    >
-      <el-form ref="submissionForm" :model="submissionForm">
-        <el-form-item><span>标题</span>
+      :before-close="lookClose">
+      <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules">
+        <el-form-item prop="projectApplyTitle"><span>标题</span>
           <el-input
             type="text"
             placeholder="请输入内容"
-            v-model="submissionForm.text"
+            v-model="projectApplyForm.projectApplyTitle"
             maxlength="10"
             show-word-limit
             style="width:400px;margin-left:50px;"
           >
           </el-input>
         </el-form-item>
-        <el-form-item><span>申请内容</span>
+        <el-form-item prop="content"><span>申请内容</span>
           <el-input
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="submissionForm.textarea2"
+            v-model="projectApplyForm.content"
             style="width:400px;margin-left:20px;">
           </el-input></el-form-item>
         <el-form-item><span>审批人</span>
@@ -49,20 +49,20 @@
         </el-form-item>
         <el-form-item style="padding:0 70px" >
           <el-tag
-            :key="tag"
-            v-for="tag in dynamicTags"
+            :key="item.shenpiUserId"
+            v-for="item in projectApplyForm.shenpiUserList"
             closable
             :disable-transitions="false"
-            @close="handleClose(tag)">
-            {{tag}}
+            @close="handleClose(item.shenpiUserId)">
+            {{item.shenpiUserName}}
           </el-tag>
         </el-form-item>
 
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-    <el-button @click="OpenSave">保存</el-button>
-    <el-button type="primary" @click="OpenSubmit">提交</el-button>
+    <el-button @click="projectApplySubmitForm(0)">保存</el-button>
+    <el-button type="primary" @click="projectApplySubmitForm(1)">提交</el-button>
   </span>
     </el-dialog>
 
@@ -74,13 +74,20 @@
     >
       <el-form ref="submissionForm" :model="submissionForm">
         <el-form-item><span>审批人</span>
-          <el-cascader :options="submissionForm.select" style="margin-left:20px;width:400px;"></el-cascader>
-
+          <!--<el-cascader :options="select" style="margin-left:20px;width:400px;"></el-cascader>-->
+          <el-select v-model="shenpiUser.shenpiUserId" placeholder="请选择" ref="shenpiren">
+            <el-option
+              v-for="item in busiProjectMembers"
+              :key="item.memberId"
+              :label="item.memberName"
+              :value="item.memberId">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="OpenCancel">取 消</el-button>
-    <el-button type="primary" @click="OpenSubmitForm">确 定</el-button>
+    <el-button @click="dialog2= false">取 消</el-button>
+    <el-button type="primary" @click="dialog2SubmitForm">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -299,10 +306,15 @@
 
 
 <script>
+  import { getProjectInfo,addProjectApply } from "@/api/business/mywork/myproject";
   export default {
     name: "page-little",
     data(){
       return{
+        projectId:this.$route.query.projectId,
+        busiProjectMembers:[],
+        textarea1:"项目任务延时申请",
+        textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
         submissionPage4:1,
         inputVisible: false,
         submissionOpen:false,
@@ -311,6 +323,28 @@
         submissionUpdate:false,
         submissionUpdate2:false,
         dynamicTags: ['张三', '李四', '王五'],
+        //新建项目审批注释
+        annotation:"注：审批顺序添加顺序依次审批",
+        //新建任务弹框布尔类型确认谈框
+        projectApplyTitle: '',
+        projectApplyOpen: false,
+        projectApplyForm: {
+          projectApplyId:undefined,
+          projectId:this.projectId,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[]
+        },
+        projectApplyFormRules: {
+          projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
+          content: [{required: true, message: "申请内容不能为空", trigger: "blur"}],
+        },
+        dialog2:false,
+        shenpiUser: {
+          shenpiUserId:undefined,
+          shenpiUserName:undefined
+        },
+        //陈述理由数据
         input: '',
         //新建申请数据
         submissionForm:{
@@ -404,91 +438,16 @@
           bumen:'技术部',
           zhuangtai:'待审核',
           caozuo:'审批'
-        },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-
-
-
-
+        }
         ],
         value: '',
         value1: '',
       }
 
     },
-
+    created() {
+      this.getProject();
+    },
     methods:{
       //删除
       submissionDelete(){
@@ -622,8 +581,91 @@
       submissionSubmit(){
         this.submissionUpdate=false
       },
-
-
+      //项目申请新增弹框
+      handleProjectApplyOpen(){
+        this.resetProjectApplyForm();
+        this.projectApplyTitle = "新建项目申请";
+        this.projectApplyOpen = true;
+      },
+      resetProjectApplyForm(){
+        this.projectApplyForm = {
+          projectApplyId:undefined,
+          projectId:this.projectId,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[]
+        }
+        this.resetForm("projectApplyForm");
+      },
+      //bean编辑弹框
+      handleUpdateProjectApply(item) {
+        this.resetProjectApplyForm();
+        this.projectApplyTitle = "编辑项目申请";
+        this.projectApplyOpen=true;
+        this.updateSetProjectApplyValue(item);
+      },
+      updateSetProjectApplyValue(item) {
+        let _this = this;
+        _this.projectApplyForm = {
+          projectApplyId:undefined,
+          projectId:this.projectId,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[]
+        };
+      },
+      projectApplySubmitForm(status) {
+        let _this = this;
+        _this.$refs.projectApplyForm.validate(valid => {
+          if (valid) {
+            let form = _this.projectApplyForm;
+            form.status = status;
+            if (form.projectApplyId != undefined) {
+              updateBusiTask(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.beanOpen = false;
+                  //this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            } else {
+              addProjectApply(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("新增成功");
+                  this.projectApplyOpen = false;
+                  //this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }
+          }
+        });
+      },
+      //添加审批人
+      dialog2SubmitForm() {
+        let _this = this;
+        let shenpiren = _this.$refs.shenpiren.selected.label;
+        let length = _this.projectApplyForm.shenpiUserList.length;
+        let shenpiUser = {
+          shenpiUserId:_this.shenpiUser.shenpiUserId,
+          shenpiUserName:shenpiren,
+          sortOrder:length
+        };
+        _this.projectApplyForm.shenpiUserList.push(shenpiUser);
+        _this.dialog2 = false;
+      },
+      getProject() {
+        let _this = this;
+        getProjectInfo({projectId:_this.projectId}).then(response => {
+          if(response.code == 200){
+            _this.projectInfo = response.data;
+            _this.busiProjectMembers= _this.projectInfo.busiProjectMembers;
+          }
+        });
+      },
     }
   }
 

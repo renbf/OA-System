@@ -1,6 +1,7 @@
 package com.xhkj.project.business.service;
 
 import com.xhkj.project.business.domain.BusiProject;
+import com.xhkj.project.business.domain.BusiProjectApply;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.BusiTaskLog;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
@@ -85,4 +86,5 @@ public interface IBusiProjectService
 
 	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog);
 
+	public Map<String, Object> insertProjectApply(BusiProjectApply busiProjectApply);
 }

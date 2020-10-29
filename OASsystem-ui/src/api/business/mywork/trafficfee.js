@@ -38,7 +38,7 @@ export function updateTrafficFee(data) {
 // 删除交通费用
 export function delTrafficFee(trafficId) {
   return request({
-    url: '/business/trafficFee/' + trafficId,
+    url: '/business/trafficFee/remove/' + trafficId,
     method: 'delete'
   })
 }

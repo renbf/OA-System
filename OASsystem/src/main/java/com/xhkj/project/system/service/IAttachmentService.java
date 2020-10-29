@@ -53,5 +53,7 @@ public interface IAttachmentService
      * @return 结果
      */
 	public int deleteAttachmentByIds(String ids);
+
+	public boolean deleteFileList(List<Attachment> fileList);
 	
 }

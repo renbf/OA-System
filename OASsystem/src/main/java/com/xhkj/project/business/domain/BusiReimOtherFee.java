@@ -2,13 +2,15 @@ package com.xhkj.project.business.domain;
 
 import com.xhkj.framework.aspectj.lang.annotation.Excel;
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.system.domain.Attachment;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
- * 交通费用对象 busi_reim_other_fee
+ * 其他费用对象 busi_reim_other_fee
  * 
  * @author xhkj
  * @date 2020-10-21
@@ -40,6 +42,48 @@ public class BusiReimOtherFee extends BaseEntity
     private Double amount;
 
 //以上自动生成的尽量别动
+
+    /** 总金额 */
+    private Double amountTotal;
+    /** 附件id */
+    private String fileIds;
+    /** 附件数量 */
+    private Integer fileNum;
+
+    private List<Attachment> fileList;
+
+    public Double getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(Double amountTotal) {
+        this.amountTotal = amountTotal;
+    }
+
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
+    }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
+
+    public List<Attachment> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(List<Attachment> fileList) {
+        this.fileList = fileList;
+    }
+
     public Long getOtherId() { return otherId; }
     public void setOtherId(Long otherId) { this.otherId = otherId; }
 

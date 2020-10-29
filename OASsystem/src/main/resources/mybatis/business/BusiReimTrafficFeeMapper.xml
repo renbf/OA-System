@@ -21,10 +21,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="fileIds"    column="file_Ids"    />
+        <result property="fileNum"    column="file_num"    />
+
     </resultMap>
 
     <sql id="selectBusiReimTrafficFeeVo">
-        select traffic_id, reimburse_id, traffic_type, traffic_start_date,traffic_end_date, departure_station, terminal_station, amount, bills_num,amount_total, create_by, create_time, update_by, update_time, remark,file_Ids
+        select traffic_id, reimburse_id, traffic_type, traffic_start_date,traffic_end_date, departure_station, terminal_station, amount, bills_num,amount_total, create_by, create_time, update_by, update_time, remark,file_Ids,file_num
     </sql>
 
     <select id="selectBusiReimTrafficFeeList" parameterType="com.xhkj.project.business.domain.BusiReimTrafficFee" resultMap="BusiReimTrafficFeeResult">
@@ -66,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="fileIds != null  and fileIds != ''">file_ids,</if>
+            <if test="fileNum != null ">file_num,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="reimburseId != null ">#{reimburseId},</if>
@@ -83,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="fileIds != null  and fileIds != ''">#{fileIds},</if>
+            <if test="fileNum != null ">#{fileNum},</if>
          </trim>
     </insert>
 
@@ -104,6 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="fileIds != null  and fileIds != ''">file_ids = #{fileIds},</if>
+            <if test="fileNum != null ">file_num = #{fileNum},</if>
         </trim>
         where traffic_id = #{trafficId}
     </update>

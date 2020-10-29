@@ -17,10 +17,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="workflowId"    column="workflow_id"    />
+
     </resultMap>
 
     <sql id="selectBusiReimburseVo">
-        select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark
+        select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark,workflow_id
     </sql>
 
     <select id="selectBusiReimburseList" parameterType="com.xhkj.project.business.domain.BusiReimburse" resultMap="BusiReimburseResult">
@@ -30,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="deptId != null "> and dept_id = #{deptId}</if>
             <if test="inPrjFlag != null "> and in_prj_flag = #{inPrjFlag}</if>
+            <if test="workflowId != null "> and workflow_id = #{workflowId}</if>
             <if test="projectId != null "> and project_id = #{projectId}</if>
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="reimburseReason != null  and reimburseReason != ''"> and reimburse_reason = #{reimburseReason}</if>
@@ -56,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="workflowId != null">workflow_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
@@ -69,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="workflowId != null">#{workflowId},</if>
          </trim>
     </insert>
 
@@ -86,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="workflowId != null">workflow_id = #{workflowId},</if>
         </trim>
         where reimburse_id = #{reimburseId}
     </update>

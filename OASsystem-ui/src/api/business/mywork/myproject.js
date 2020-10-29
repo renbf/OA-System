@@ -144,6 +144,18 @@ export function updateTaskProgress(data) {
     data: data
   })
 }
+
+// 新增项目审批
+export function addProjectApply(data) {
+  return request({
+    url: '/api/busiProject/addProjectApply',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
 export function project_progress() {
   return {
     code: 200,

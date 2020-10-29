@@ -54,6 +54,11 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiTaskLogMapper busiTaskLogMapper;
 	@Autowired
 	private BusiTaskLogFileMapper busiTaskLogFileMapper;
+	@Autowired
+	private BusiProjectApplyMapper busiProjectApplyMapper;
+	@Autowired
+	private BusiProjectApplyShenpiMapper busiProjectApplyShenpiMapper;
+
 	/**
      * 查询项目信息
      * 
@@ -533,6 +538,38 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 					busiTaskLogUp.setLogStatus("1");
 					busiTaskLogMapper.updateBusiTaskLog(busiTaskLogUp);
 				}
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> insertProjectApply(BusiProjectApply busiProjectApply) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiProjectApply.setCreateBy(username);
+			busiProjectApply.setCreateTime(now);
+			busiProjectApply.setUpdateTime(now);
+			busiProjectApply.setDeleteFlag("0");
+			busiProjectApplyMapper.insertBusiProjectApply(busiProjectApply);
+			Long projectApplyId = busiProjectApply.getProjectApplyId();
+			List<BusiProjectApplyShenpi> shenpiUserList = busiProjectApply.getShenpiUserList();
+			if (CollectionUtils.isNotEmpty(shenpiUserList)) {
+				for (BusiProjectApplyShenpi busiProjectApplyShenpi : shenpiUserList) {
+					busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
+					busiProjectApplyShenpi.setCheckStatus("-1");
+					busiProjectApplyShenpi.setCreateBy(username);
+					busiProjectApplyShenpi.setCreateTime(now);
+					busiProjectApplyShenpi.setUpdateTime(now);
+				}
+				busiProjectApplyShenpiMapper.insertBusiProjectApplyShenpiBatch(shenpiUserList);
 			}
 			resultMap.put("code",200);
 		} catch (Exception e) {

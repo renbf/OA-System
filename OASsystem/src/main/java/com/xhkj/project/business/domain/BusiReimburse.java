@@ -44,6 +44,9 @@ public class BusiReimburse extends BaseEntity
     @Excel(name = "报销理由")
     private String reimburseReason;
 
+    /** 流程Id */
+    private Long workflowId;
+
 //以上自动生成的尽量别动
     public Long getReimburseId() { return reimburseId; }
     public void setReimburseId(Long reimburseId) { this.reimburseId = reimburseId; }
@@ -58,6 +61,14 @@ public class BusiReimburse extends BaseEntity
 
     public Boolean getInPrjFlag() {
         return inPrjFlag;
+    }
+
+    public Long getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(Long workflowId) {
+        this.workflowId = workflowId;
     }
 
     public void setInPrjFlag(Boolean inPrjFlag) {
