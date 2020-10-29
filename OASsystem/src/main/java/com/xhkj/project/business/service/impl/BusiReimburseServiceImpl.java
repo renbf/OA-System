@@ -138,7 +138,18 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
     @Override
     public int deleteBusiReimburseByIds(Long[] reimburseIds)
     {
-        return busiReimburseMapper.deleteBusiReimburseByIds(reimburseIds);
+        int i = busiReimburseMapper.deleteBusiReimburseByIds(reimburseIds);
+
+
+
+
+
+
+
+
+
+
+        return i;
     }
 
     /**

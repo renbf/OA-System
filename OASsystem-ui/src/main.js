@@ -24,6 +24,8 @@ import { getDeptList } from "@/api/system/dept";
 import { getWorkflowList} from "@/api/system/examine/workflowgroup";
 import { approve,getBillTraces} from "@/api/system/workflow";
 import {parseTime, resetForm, addDateRange, selectDictByType,selectDictLabelByType, selectDictLabel, handleTree,isNotEmpty} from "@/utils/common";
+import { filesToZip } from "@/api/tool/fileDownload";
+
 
 import common from "@/utils/common";
 Vue.prototype.common = common;
@@ -34,6 +36,7 @@ Vue.prototype.GLOBAL = GLOBAL;
 Vue.prototype.storage = sessionStorage;
 
 // 全局方法挂载
+Vue.prototype.filesToZip = filesToZip;
 Vue.prototype.getBillTraces = getBillTraces;
 Vue.prototype.approve = approve;
 Vue.prototype.getWorkflowList = getWorkflowList;

@@ -15,6 +15,7 @@
           type="danger"
           icon="el-icon-delete"
           size="mini"
+          :disabled="multiple"
           @click="handleDelete"
         >删除</el-button
         >
@@ -24,6 +25,7 @@
           type="success"
           icon="el-icon-message"
           size="mini"
+          :disabled="multiple"
           @click="handleReport"
         >报送</el-button
         >
@@ -261,10 +263,13 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="reimburseSave">保存</el-button>
+            <div style="float:right">
+              <el-button @click="dialogVisible = false">取 消</el-button>
+              <el-button type="primary" @click="reimburseSave">保存</el-button>
+            </div>
           </el-col>
         </el-row>
+
 
         <el-row>
           <el-col>
@@ -398,7 +403,7 @@
         <el-row>
           <el-col>
             <el-form-item label="附件">
-              <el-button type="primary" icon="el-icon-download" circle></el-button>
+              <el-button type="primary" icon="el-icon-download" circle @click="downloadFile"></el-button>
               <span>共{{fillAllNum}}张</span>
             </el-form-item>
           </el-col>
@@ -413,7 +418,6 @@
                     <el-image
                       style="width: 100px; height: 100px"
                       :src="item.url"
-                      lazy
                     ></el-image>
                   </div>
                 </el-card>
@@ -717,7 +721,6 @@
                           <el-image
                             style="width: 100px; height: 100px"
                             :src="item.url"
-                            lazy
                           ></el-image>
                         </div>
                       </el-card>
@@ -868,6 +871,8 @@
             value1:'',
             value2:'',
             travel:true,
+            // 非多个禁用
+            multiple: true,
             butie:true,
             other:true,
             fujian:true,
@@ -1121,6 +1126,11 @@
               this.reset();
             },
 
+            downloadFile(){
+              this.filesToZip(this.fujianList,"fileall");
+            },
+
+
             reimburseSave(){
               this.projectOptions.forEach(e=>{
                 if(Object.is(e.dictValue,this.form.projectId)){
@@ -1129,6 +1139,7 @@
               })
               addReimburse(this.form).then(response => {
                 if (response.code === 200) {
+                  this.form.reimburseId = response.data;
                   this.msgSuccess("保存成功");
                 } else {
                   this.msgError(response.msg);
@@ -1138,7 +1149,6 @@
             },
 
           savetransport(){
-            if(this.form.reimburseId){
               this.fileIds = JSON.stringify(this.fileIds);
               if(isNotEmpty(this.fileIds)){
                 this.transportform.fileIds = this.fileIds.replace("[","").replace("]","")
@@ -1156,22 +1166,17 @@
                 if (response.code === 200) {
                   this.msgSuccess("保存成功");
                   this.delFiles()
-                  this.getListTrafficFee(this.form.reimburseId);
+                  this.getListTrafficFee({'reimburseId':this.form.reimburseId});
                   this.transport = false;
 
                 } else {
                   this.msgError(response.msg);
                 }
               });
-            }else{
-              this.msgWarning('请先保存报销基础信息！');
-            }
 
           },
 
           saveReimTranvel(){
-            if(this.form.reimburseId){
-
               this.fileIds = JSON.stringify(this.fileIds);
               if(isNotEmpty(this.fileIds)){
                 this.reimTravcelForm.fileIds = this.fileIds.replace("[","").replace("]","")
@@ -1184,19 +1189,14 @@
                 if (response.code === 200) {
                   this.msgSuccess("保存成功");
                   this.delFiles()
-                  this.getListReimTranvel(this.reimTravcelForm.tranvelId);
+                  this.getListReimTranvel({'reimburseId':this.form.reimburseId});
                   this.beaway = false;
                 } else {
                   this.msgError(response.msg);
                 }
               });
-            }else{
-              this.msgWarning('请先保存报销基础信息！');
-            }
           },
           saveOtherFee(){
-            if(this.form.reimburseId){
-
               this.fileIds = JSON.stringify(this.fileIds);
               if(isNotEmpty(this.fileIds)){
                 this.otherform.fileIds = this.fileIds.replace("[","").replace("]","")
@@ -1209,15 +1209,12 @@
                 if (response.code === 200) {
                   this.msgSuccess("保存成功");
                   this.delFiles()
-                  this.getListOtherFree(this.otherform.tranvelId);
+                  this.getListOtherFree(  {'reimburseId':this.form.reimburseId});
                   this.otheropen = false;
                 } else {
                   this.msgError(response.msg);
                 }
               });
-            }else{
-              this.msgWarning('请先保存报销基础信息！');
-            }
           },
 
           getListTrafficFee(reimburseId){
@@ -1249,7 +1246,33 @@
           },
 
           // 删除
-          handleDelete(){},
+          handleDelete(row){
+            const reimburseIds = row.reimburseId || this.ids;
+            this.$confirm(
+              "请确认是否删除",
+              {
+                dangerouslyUseHTMLString: true,
+                distinguishCancelAndClose: true,
+                confirmButtonText: "删除",
+                cancelButtonText: "返回列表",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                delReimburse(reimburseIds).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("删除成功");
+                    this.reset();
+                    this.getList();
+                  }
+                });
+              })
+              .catch(() => {
+                this.reset();
+                this.getList();
+              });
+
+          },
           // 报送
           handleReport(){},
           // 导出
@@ -1283,6 +1306,8 @@
 
           //获取全部文件信息
           getAllFileList(allInfo){
+            this.fillAllNum = 0;
+            this.fujianList = [];
             this.setFujianList(allInfo.busiReimTrafficFeeList)
             this.setFujianList(allInfo.busiReimTravelSubsidyList)
             this.setFujianList(allInfo.busiReimOtherFeeList)
@@ -1311,7 +1336,10 @@
             }
           },
 
-          handleSelectionChange(){},
+          handleSelectionChange(){
+            this.ids = selection.map(item => item.leaveId);
+            this.multiple = !selection.length;
+          },
           // 搜索
           handleQuery(){},
           // 重置
@@ -1450,6 +1478,12 @@
           },
 
           addtransport(){
+
+            if(!isNotEmpty(this.form.reimburseId)){
+              this.msgWarning('请先保存报销基础信息！');
+              return
+            }
+
             this.transport=true
             this.transporttitle='新增'
             this.fujiannum = 0;
@@ -1504,6 +1538,7 @@
             this.otherList = []
             this.reunTravcelList = []
             this.fujianList = []
+            this.fillAllNum = 0
             this.form={
               workflowId:'',
               reimburseId:'',
@@ -1544,6 +1579,11 @@
           },
           canceltransport(){},
           goaway(){
+            if(!isNotEmpty(this.form.reimburseId)){
+              this.msgWarning('请先保存报销基础信息！');
+              return
+            }
+
               this.beaway=true;
               this.beawaytitle='新增'
               this.resetReimTravcel();
@@ -1568,6 +1608,10 @@
 
           },
           otherclick(){
+            if(!isNotEmpty(this.form.reimburseId)){
+              this.msgWarning('请先保存报销基础信息！');
+              return
+            }
               this.otheropen=true;
               this.othertitle='新增'
 
@@ -1627,5 +1671,9 @@
   }
   .travel_container .el-button--medium.is-circle{
     padding:6px;
+  }
+  .el-dialog{
+    height: 800px;
+    overflow: scroll;
   }
 </style>
