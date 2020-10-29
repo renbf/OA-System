@@ -35,12 +35,12 @@
       <h3 class="h3">已完成</h3>
     </el-row>
     <el-row class="end" v-for="item in busiProjectDoneList">
-      <el-card class="box-card lf">
-        <div slot="header" class="clearfix">
+      <el-card class="box-card lf" >
+        <div slot="header" class="clearfix" @click="projectFinish(item)">
           <span><b>{{item.projectName}}</b></span>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
-        <div class="text item">
+        <div class="text item" @click="projectFinish(item)">
           <p>{{item.projectDesc}}</p>
           <p><span>总计项目任务:{{item.taskNums}}件</span><span>部门:{{item.deptNames}}</span></p>
           <p style="margin:0;font-size: 12px;">完成时间:{{item.updateTime}}(用时：130%)</p>
@@ -303,6 +303,10 @@
         projectdetail(item) {
           let projectId = item.projectId;
           this.$router.push({ path:'/myproject/look',query:{projectId:projectId}})
+        },
+      projectFinish(item){
+          let FinishId= item.FinishId;
+          this.$router.push({ path:'/myproject/Finish',query:{FinishId:FinishId}})
         },
         deleteProject(item) {
           let _this = this;

@@ -1,61 +1,61 @@
 <template>
   <div class="app-container travel_container projectdetail">
-      <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
+    <div class="one" name="1">{{projectInfo.projectName}} 项目负责人：{{projectInfo.leaderName}}
+    </div>
+    <el-card class="box-lookcard">
+      <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+        <el-form  ref="form" :model="projectInfo" label-width="80px">
+          <el-form-item label="部门">
+            <el-tag type="info">{{projectInfo.deptNames}}</el-tag>
+          </el-form-item>
+          <el-form-item label="项目任务">
+            <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
+          </el-form-item>
+          <el-form-item label="项目时间">
+            <div class="div1">
+              <i class="el-icon-date" style="margin-left:10px;"></i>
+              <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{projectInfo.projectStartDate}}</span>
+              <span style="margin-left:40px;">至</span>
+              <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{projectInfo.projectEndDate}}</span>
+            </div>
+          </el-form-item>
+          <el-form-item label="理由陈述">
+            <el-input type="textarea" v-model="projectInfo.projectDesc" :disabled="true"></el-input>
+          </el-form-item>
+        </el-form>
       </div>
-      <el-card class="box-lookcard">
-        <div  style="width:30%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-          <el-form  ref="form" :model="projectInfo" label-width="80px">
-            <el-form-item label="部门">
-              <el-tag type="info">{{projectInfo.deptNames}}</el-tag>
-            </el-form-item>
-            <el-form-item label="项目任务">
-              <el-tag type="info">{{projectInfo.taskNums}}件</el-tag>
-            </el-form-item>
-            <el-form-item label="项目时间">
-              <div class="div1">
-                <i class="el-icon-date" style="margin-left:10px;"></i>
-                <span style="margin-left:40px;color:rgba(221, 221, 221,0.8);" >{{projectInfo.projectStartDate}}</span>
-                <span style="margin-left:40px;">至</span>
-                <span style="margin-left:40px; color:rgba(221, 221, 221,0.8);">{{projectInfo.projectEndDate}}</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="理由陈述">
-              <el-input type="textarea" v-model="projectInfo.projectDesc" :disabled="true"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
-          <p>参与人员</p>
-          <template v-for="item in deptMemberList">
-            <p>{{item.deptName}}</p>
-            <p>
-              <el-tag type="info" v-for="item1 in item.members">{{item1.memberName}}</el-tag>
+      <div style="width:45%;float:left;padding:0 20px;border-right: 1px solid #ddd;">
+        <p>参与人员</p>
+        <template v-for="item in deptMemberList">
+          <p>{{item.deptName}}</p>
+          <p>
+            <el-tag type="info" v-for="item1 in item.members">{{item1.memberName}}</el-tag>
+          </p>
+        </template>
+      </div>
+
+
+      <div style="width: 15%;float:left;padding:0 20px;position: relative">
+        <svg-bar :value="projectInfo.projectProgress" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
+        <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
+        <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
+          <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
+            <p style="margin-top:60%;margin-bottom:0">
+              <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
+              <span>任务进度</span>
             </p>
-          </template>
-        </div>
-
-
-        <div style="width: 15%;float:left;padding:0 20px;position: relative">
-          <svg-bar :value="projectInfo.projectProgress" :options="projectoptions" style="position:absolute;left:27px;top:7px"></svg-bar>
-          <svg-bar :value="timeprocess" :options="timeoptions" style="position:absolute"></svg-bar>
-          <div style="position: absolute;width: 192px;height: 220px;left:32px;top:20px" class="clear">
-            <div class="lf" style="width:50%;height:80%;border-right: 2px dotted #ddd;text-align: center">
-              <p style="margin-top:60%;margin-bottom:0">
-                <span style="display: inline-block;width:6px;height:12px;background:#1989FA"></span>
-                <span>任务进度</span>
-              </p>
-              <p style="margin-top: 0"><b style="font-size: 25px;">{{projectInfo.projectProgress}}%</b></p>
-            </div>
-            <div class="lf" style="width:50%;height: 100%;text-align: center">
-              <p style="margin-top: 60%;margin-bottom:0">
-                <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
-                <span>时间进度</span>
-              </p>
-              <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
-            </div>
+            <p style="margin-top: 0"><b style="font-size: 25px;">{{projectInfo.projectProgress}}%</b></p>
+          </div>
+          <div class="lf" style="width:50%;height: 100%;text-align: center">
+            <p style="margin-top: 60%;margin-bottom:0">
+              <span style="display: inline-block;width:6px;height:12px;background:#C6E2FF"></span>
+              <span>时间进度</span>
+            </p>
+            <p style="margin-top: 0"><b style="font-size: 25px;">{{timeprocess}}%</b></p>
           </div>
         </div>
-      </el-card>
+      </div>
+    </el-card>
     <!--项目组申请模块-->
     <div style="margin-top:40px;">
       <p class="apply">
@@ -77,30 +77,20 @@
               <div style="border-bottom:1px solid #ddd">
                 <p>
                   <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                     <el-tooltip content="未报送" placement="top" effect="light"  >
                     <el-button circle icon="el-icon-message" type="danger"></el-button>
-                       </el-tooltip>
                   </span>
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
                     <el-button circle icon="el-icon-delete"></el-button>
                   </span>
-                  <el-tooltip content="审核中" placement="top" effect="light"   v-if="index==1" >
-                    <span class="rt" style="margin-right: 10px;">
+                  <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-time" v-if="index==1" type="warning"></el-button>
-                  </span>
-                  </el-tooltip>
-                  <el-tooltip content="通过" placement="top" effect="light"   v-if="index==2">
-                    <span class="rt" style="margin-right: 10px;">
+                  </span> <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-check" v-if="index==2" type="success"></el-button>
                   </span>
-                  </el-tooltip>
-                  <el-tooltip content="拒绝" placement="top" effect="light"   v-if="index==3" >
                   <span class="rt" style="margin-right: 10px;">
                     <el-button circle icon="el-icon-close" v-if="index==3"  type="danger"></el-button>
                   </span>
-                  </el-tooltip>
                 </p>
                 <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
               </div>
@@ -118,7 +108,7 @@
     <!--项目任务模块-->
 
     <div  style="margin-bottom: 10px;margin-top:45px;" >
-     <h2>项目任务</h2>
+      <h2>项目任务</h2>
       <el-button type="success" @click="handleBaosongBitch"><i class="el-icon-message" style="margin-right:5px;" ></i>报送
       </el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
@@ -264,7 +254,7 @@
               <el-button
                 size="mini"
                 type="text"
-                v-show="isVisableConfig==='1'"
+                v-show="isVisableConfig==='0'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -272,7 +262,7 @@
               >
               <el-button
                 size="mini"
-                v-show="isVisableConfig==='1'"
+                v-show="isVisableConfig==='0'"
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
@@ -472,7 +462,7 @@
   </span>
     </el-dialog>
 
- <!--项目任务列表弹框-->
+    <!--项目任务列表弹框-->
     <el-dialog
       :title="taskLookTitle"
       :visible.sync="taskLookOpen"
@@ -491,9 +481,9 @@
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item title="任务内容" name="4">
-        </el-collapse-item>
-          </el-collapse>
+          <el-collapse-item title="任务内容" name="4">
+          </el-collapse-item>
+        </el-collapse>
 
         <el-form-item label="参与人员">
           <el-tag type="info" style="margin-left:10px;" v-for="item in taskLookForm.userList">{{item.memberName}}</el-tag>
@@ -542,7 +532,7 @@
       </el-form>
     </el-dialog>
 
-<!--报销数据库编辑里的小编辑按钮-->
+    <!--报销数据库编辑里的小编辑按钮-->
     <el-dialog
       title="设置任务进度"
       :visible.sync="openlittle"
@@ -558,12 +548,12 @@
             </el-slider>
           </div>
         </template>
-         <h6 style="color:#BEBEBE">注：当设置“100%”时 任务及为完成状态，则任务不可在进行修改与编辑</h6>
+        <h6 style="color:#BEBEBE">注：当设置“100%”时 任务及为完成状态，则任务不可在进行修改与编辑</h6>
 
 
       </el-form>
       <el-divider></el-divider>
-        <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
     <el-button @click="openlittle = false">取 消</el-button>
     <el-button type="primary" @click="form2SubmitForm">确 定</el-button>
   </span>
@@ -571,49 +561,49 @@
 
     <!--table里编辑弹框-->
     <el-dialog
-               :visible.sync="lookOpen"
-               width="600px" class="abow_dialog">
+      :visible.sync="lookOpen"
+      width="600px" class="abow_dialog">
       <el-form ref="lookForm" :model="lookForm" label-width="80px">
-      <el-form-item label="参与人员">
-        <el-tag type="info" style="margin-left:10px;" v-for="item in lookForm.userList">{{item.memberName}}</el-tag>
-      </el-form-item>
-      <el-form-item label="任务时间">
-        <el-date-picker
-          v-model="lookForm.taskDate"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
+        <el-form-item label="参与人员">
+          <el-tag type="info" style="margin-left:10px;" v-for="item in lookForm.userList">{{item.memberName}}</el-tag>
+        </el-form-item>
+        <el-form-item label="任务时间">
+          <el-date-picker
+            v-model="lookForm.taskDate"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
 
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="任务内容">
-        <el-input type="textarea" v-model="lookForm.taskDesc"></el-input>
-      </el-form-item>
+        <el-form-item label="任务内容">
+          <el-input type="textarea" v-model="lookForm.taskDesc"></el-input>
+        </el-form-item>
 
 
-      <el-form-item label="工作内容">
-        <el-input type="textarea" v-model="lookForm.dayContent"></el-input>
-      </el-form-item>
+        <el-form-item label="工作内容">
+          <el-input type="textarea" v-model="lookForm.dayContent"></el-input>
+        </el-form-item>
 
-      <el-upload
-        class="upload-demo"
-        :action="uploadImgUrl"
-        name="file"
-        :headers="headers"
-        :auto-upload="true"
-        :multiple="false"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :before-remove="beforeRemove"
-        :limit="3"
-        :on-exceed="handleExceed"
-        :on-success="handleSuccess"
-        :file-list="lookForm.fileList">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-      </el-upload>
+        <el-upload
+          class="upload-demo"
+          :action="uploadImgUrl"
+          name="file"
+          :headers="headers"
+          :auto-upload="true"
+          :multiple="false"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :limit="3"
+          :on-exceed="handleExceed"
+          :on-success="handleSuccess"
+          :file-list="lookForm.fileList">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
       </el-form>
       <div slot="footer" class="dialog-footer">
 
@@ -622,59 +612,7 @@
       </div>
     </el-dialog>
 
-    <!--卡片未报送状态弹框-->
-    <el-dialog
-      title="修改项目申请"
-      :visible.sync="lookopen2"
-      width="30%"
-    >
-      <el-form ref="UpdataForm" :model="UpdataForm"  >
-        <el-form-item><span>标题</span>
-          <el-input
-            type="text"
-            placeholder="请输入内容"
-            v-model="UpdataForm.text"
-            maxlength="10"
-            show-word-limit
-            style="width:400px;margin-left:50px;"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item><span>申请内容</span>
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="UpdataForm.textarea2"
-            style="width:400px;margin-left:20px;">
-          </el-input></el-form-item>
-        <el-form-item><span>审批人</span>
-
-          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionUpdate2=true"></el-button>
-          <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
-        </el-form-item>
-        <el-form-item style="padding:0 70px" >
-          <el-tag
-            :key="tag"
-            v-for="tag in dynamicTags"
-            closable
-            :disable-transitions="false"
-            style=""
-            @close="handleClose(tag)">
-            {{tag}}
-          </el-tag>
-
-
-        </el-form-item>
-
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-
-  </span>
-    </el-dialog>
-
-    <!--卡片审核通过拒绝状态弹框-->
+    <!--卡片弹框-->
     <el-dialog
       title="修改项目申请"
       :visible.sync="looksOpen"
@@ -717,14 +655,13 @@
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer"  >
+      <span slot="footer" class="dialog-footer" v-if="inx==0" >
     <el-button type="primary" >提交</el-button>
   </span>
-      <span slot="footer" class="dialog-footer" >
+      <span slot="footer" class="dialog-footer" v-if="inx==3">
         <el-button type="primary" @click="looktEdit">编辑</el-button>
   </span>
     </el-dialog>
-
 
 
   </div>
@@ -746,6 +683,7 @@
     data() {
       return {
         inx:'',
+
         // 是否显示操作区域
         isVisableConfig:'',
         //title文字显示
@@ -753,13 +691,11 @@
         // 是否显示弹出层
         taskLookOpen: false,
         lookOpen:false,
-        lookopen2:false,
         //卡片弹出层
         looksOpen:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
-        dynamicTags: ['张三', '李四', '王五'],
         applyproject: [
           {
             title: '任务时间增加申请1',
@@ -890,26 +826,6 @@
           textarea2: '',
           textarea1:"项目任务延时申请",
           textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
-         },
-        UpdataForm:{
-          text: '',
-          textarea2: '',
-          select:[{
-            value: 'ziyuan',
-            label: '软件部',
-            children: [{
-              value: 'axure',
-              label: '任宝峰'
-            }, {
-              value: 'sketch',
-              label: '嘉琪'
-            }, {
-              value: 'jiaohu',
-              label: '安仔'
-            }]
-
-          }],
-
         },
         //责任人
         userDeptUserList:[],
@@ -918,7 +834,7 @@
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
-        //项目的部门成员列表
+        //部门成员列表
         deptMemberList: [],
         taskform:{
           taskId:undefined,
@@ -977,16 +893,16 @@
     },
     created() {
       // 状态
-      this.getDicts("task_status").then(response => {
-        this.statusOptions = response.data;
-      });
-      this.getProject();
-      //获取部门列表
-      userDeptList().then(response => {
-        if (response.code == 200) {
-          this.department = response.data;
-        }
-      });
+      // this.getDicts("task_status").then(response => {
+      //   this.statusOptions = response.data;
+      // });
+      // this.getProject();
+      // //获取部门列表
+      // userDeptList().then(response => {
+      //   if (response.code == 200) {
+      //     this.department = response.data;
+      //   }
+      // });
       this.getUserDeptUsers();
       this.getTaskList();
       this.getIsVisbleData()
@@ -1042,7 +958,7 @@
       getDataFromSession(){
 
         if(this.isVisableConfig===''){
-           this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
+          this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
 
         }
       },
@@ -1090,9 +1006,7 @@
       },
       //全部报送任务
       submission(){
-        let _this = this;
-        let projectId = _this.projectId;
-        this.$router.push({ path:'/myproject/submission',query:{projectId:projectId}})
+        this.$router.push({ path:'/myproject/submission'})
       },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
@@ -1213,7 +1127,7 @@
         });
         _this.taskLogIds = taskLogIds;
       },
-     lookUpdate(item) {
+      lookUpdate(item) {
         this.lookOpen=true;
         this.updateSetValue(item);
       },
@@ -1509,8 +1423,8 @@
       updateSetForm2Value(item) {
         let _this = this;
         _this.form2 = {
-            taskId:item.taskId,
-            taskProgress:item.taskProgress,
+          taskId:item.taskId,
+          taskProgress:item.taskProgress,
         };
       },
       form2SubmitForm() {
@@ -1532,18 +1446,9 @@
 
       },
       Open(index){
-
-if(index==0){
-
-  this.lookopen2=true
-
-}else if(index==1){
-  this.looksOpen=true
-
-}else if(index==2){
-
-}
-
+        this.looksOpen=true
+        this.inx=index
+        console.log(this.inx)
       }
     },
 
@@ -1732,35 +1637,35 @@ if(index==0){
   .demo{
     padding: 5px 15px;
     position: relative;
-  .chart-title {
-    position: absolute;
-    transform: translateX(-50%);
-    left: 50%;
-  i {
-    font-style: normal;
-    padding-right: 20px;
-  }
-  i:before {
-    content: '';
-    display: inline-block;
-    width: 30px;
-    height: 15px;
-    border-radius: 5px;
-    vertical-align: bottom;
-    margin-right: 3px;
-    background-color: #3e84e9;
-  }
-  i.to-be-completed:before {
-    background-color: #d4cece;
-  }
-  i.timeout:before {
-    background-color: #c23531;
-  }
-  }
-  #gantt-chart {
-    margin: 1em auto;
-    height: 500px;
-    width: 100%;
-  }
+    .chart-title {
+      position: absolute;
+      transform: translateX(-50%);
+      left: 50%;
+      i {
+        font-style: normal;
+        padding-right: 20px;
+      }
+      i:before {
+        content: '';
+        display: inline-block;
+        width: 30px;
+        height: 15px;
+        border-radius: 5px;
+        vertical-align: bottom;
+        margin-right: 3px;
+        background-color: #3e84e9;
+      }
+      i.to-be-completed:before {
+        background-color: #d4cece;
+      }
+      i.timeout:before {
+        background-color: #c23531;
+      }
+    }
+    #gantt-chart {
+      margin: 1em auto;
+      height: 500px;
+      width: 100%;
+    }
   }
 </style>

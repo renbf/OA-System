@@ -17,13 +17,11 @@
     </div>
 
     <!--新建申请弹框一层-->
-    <!--新建申请弹框一层-->
-    <!--新建申请弹框一层-->
     <el-dialog
       :title="projectApplyTitle"
       :visible.sync="projectApplyOpen"
       width="30%"
-      :before-close="lookClose">
+      >
       <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules">
         <el-form-item prop="projectApplyTitle"><span>标题</span>
           <el-input
@@ -46,11 +44,18 @@
           </el-input></el-form-item>
         <el-form-item><span>审批人</span>
 
-          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="dialog2=true"></el-button>
-          <span style="margin-left:10px;">{{annotation}}</span>
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionOpen1=true"></el-button>
+          <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
         </el-form-item>
         <el-form-item style="padding:0 70px" >
-          <el-tag style="width:70px;margin-right:5px;" type="info" v-for="item in projectApplyForm.shenpiUserList">{{item.shenpiUserName}}</el-tag><i class="el-icon-arrow-right"></i>
+          <el-tag
+            :key="item.shenpiUserId"
+            v-for="item in projectApplyForm.shenpiUserList"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(item.shenpiUserId)">
+            {{item.shenpiUserName}}
+          </el-tag>
         </el-form-item>
 
       </el-form>
@@ -62,14 +67,12 @@
     </el-dialog>
 
     <!--新建申请弹框二层-->
-    <!--新建申请弹框二层-->
-    <!--新建申请弹框二层-->
     <el-dialog
       title="添加审批人"
-      :visible.sync="dialog2"
+      :visible.sync="submissionOpen1"
       width="30%"
-      :before-close="handleClose2">
-      <el-form>
+    >
+      <el-form ref="submissionForm" :model="submissionForm">
         <el-form-item><span>审批人</span>
           <!--<el-cascader :options="select" style="margin-left:20px;width:400px;"></el-cascader>-->
           <el-select v-model="shenpiUser.shenpiUserId" placeholder="请选择" ref="shenpiren">
@@ -88,13 +91,10 @@
   </span>
     </el-dialog>
 
-<!--table弹框三层-->
-    <!--table弹框三层-->
-    <!--table弹框三层-->
-
+    <!--table弹框-->
     <el-dialog
       title="审批项目申请"
-      :visible.sync="submissionOpen"
+      :visible.sync="submissionOpen2"
       width="40%"
     >
       <div style="height: 400px;width:200px;">
@@ -106,11 +106,12 @@
 
         </el-steps>
       </div>
-      <div style="float:right;top:0;right:0;" class="dialogtext">
+      <div style="float:right;top:20px;right:50px;" class="dialogtext">
         <el-form ref="submissionForm" :model="submissionForm" label-width="80px">
           <el-form-item style="margin-top:90px;font-weight: bold">
             标题
             <el-input
+              :disabled="true"
               style="width:350px;margin-left: 40px"
               type="textarea"
               autosize
@@ -123,6 +124,7 @@
           <el-form-item style="font-weight: bold">
             申请内容
             <el-input
+              :disabled="true"
               style="width:350px;margin-left: 10px;margin-right:40px;"
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
@@ -132,6 +134,73 @@
           </el-form-item>
         </el-form>
       </div>
+    </el-dialog>
+
+
+    <!--修改项目申请1层-->
+    <el-dialog
+      title="修改项目申请"
+      :visible.sync="submissionUpdate"
+      width="30%"
+    >
+      <el-form ref="UpdataForm" :model="UpdataForm"  >
+        <el-form-item><span>标题</span>
+          <el-input
+            type="text"
+            placeholder="请输入内容"
+            v-model="UpdataForm.text"
+            maxlength="10"
+            show-word-limit
+            style="width:400px;margin-left:50px;"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item><span>申请内容</span>
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="UpdataForm.textarea2"
+            style="width:400px;margin-left:20px;">
+          </el-input></el-form-item>
+        <el-form-item><span>审批人</span>
+
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionUpdate2=true"></el-button>
+          <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
+        </el-form-item>
+        <el-form-item style="padding:0 70px" >
+          <el-tag
+            :key="tag"
+            v-for="tag in dynamicTags"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+
+
+        </el-form-item>
+
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="submissionSave">保存</el-button>
+    <el-button type="primary" @click="submissionSubmit">提交</el-button>
+  </span>
+    </el-dialog>
+
+    <!--修改项目申请2层-->
+    <el-dialog
+      title="添加审批人"
+      :visible.sync="submissionUpdate2"
+      width="30%"
+      >
+      <el-form ref="UpdataForm" :model="UpdataForm">
+        <el-form-item><span>审批人</span>
+          <el-cascader :options="UpdataForm.select" style="margin-left:20px;width:400px;"></el-cascader>
+
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="submissionCancel">取 消</el-button>
     <el-button type="primary" @click="submissionSubmitForm">确 定</el-button>
@@ -172,7 +241,7 @@
     <el-table
       :data="tableData"
       style="width: 100%;margin-top:20px;"
-         @row-click="submissionOpen=true">
+      @row-click="submissionOpen2=true">
       <el-table-column
         type="selection"
         width="55">
@@ -210,9 +279,9 @@
       label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
-          <span class="el-icon-edit-outline">编辑</span>
-          <span class="el-icon-delete" style="margin-left:5px;">删除</span>
-          <span class="el-icon-message" style="margin-left:5px;">报送</span>
+          <span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>
+          <span class="el-icon-delete" @click.stop="delsubmission">删除</span>
+          <span class="el-icon-message" style="margin-left:5px;" @click.stop="submissionReport" >报送</span>
 
         </template>
 
@@ -247,7 +316,13 @@
         textarea1:"项目任务延时申请",
         textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
         submissionPage4:1,
+        inputVisible: false,
         submissionOpen:false,
+        submissionOpen1:false,
+        submissionOpen2:false,
+        submissionUpdate:false,
+        submissionUpdate2:false,
+        dynamicTags: ['张三', '李四', '王五'],
         //新建项目审批注释
         annotation:"注：审批顺序添加顺序依次审批",
         //新建任务弹框布尔类型确认谈框
@@ -271,10 +346,58 @@
         },
         //陈述理由数据
         input: '',
-        submissionForm: {
+        //新建申请数据
+        submissionForm:{
+          text: '',
+          textarea2: '',
           textarea1:"项目任务延时申请",
-          textarea3:"因功能修改需要重新调整，需增加任务时间，故作此申请",
+          textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
+          tags: [
+            { name: '张三', type: 'info' },
+            { name: '李四', type: 'info' },
+            { name: '王五', type: 'info' },
+
+          ],
+          select:[{
+            value: 'ziyuan',
+            label: '软件部',
+            children: [{
+              value: 'axure',
+              label: '任宝峰'
+            }, {
+              value: 'sketch',
+              label: '嘉琪'
+            }, {
+              value: 'jiaohu',
+              label: '安仔'
+            }]
+
+          }],
+
         },
+        //编辑数据
+        UpdataForm:{
+          text: '',
+          textarea2: '',
+          select:[{
+            value: 'ziyuan',
+            label: '软件部',
+            children: [{
+              value: 'axure',
+              label: '任宝峰'
+            }, {
+              value: 'sketch',
+              label: '嘉琪'
+            }, {
+              value: 'jiaohu',
+              label: '安仔'
+            }]
+
+          }],
+
+        },
+
+
         //状态选择数据
         options: [{
           value: '选项1',
@@ -326,20 +449,98 @@
       this.getProject();
     },
     methods:{
-      lookClose(done){
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
+      //删除
+      submissionDelete(){
+        this.$confirm('确认是否删除?', '确认删除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
 
       },
-      handleClose2(){
+      //报送
+      submissionReport(){
+        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
+          confirmButtonText: "报送",
+          cancelButtonText: "返回列表",
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '报送成功!'
+          });
+        }).catch(() => {
+        });
+
+      },
+      // 导出
+      submissionExport(){
+
+      },
+      // lookClose(done){
+      //   this.$confirm('确认关闭？')
+      //     .then(_ => {
+      //       done();
+      //     })
+      //     .catch(_ => {});
+      //
+      // },
+      //tag标签删除
+      handleClose(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      },
+      handleClose2(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      },
+
+      // 删除
+     delsubmission() {
+        this.$confirm('确认是否删除?', '确认删除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+
+      //报送
+      submissionReport(){
+        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
+          confirmButtonText: "报送",
+          cancelButtonText: "返回列表",
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '报送成功!'
+          });
+        }).catch(() => {
+        });
 
       },
       submission(){
         this.submissionClick=true;
       },
+
       //添加批注人
 
       goBack(){
@@ -352,12 +553,33 @@
       submission2Change(val) {
         console.log(`当前页: ${val}`);
       },
-      submissionCancel(){
+      //新建保存提交
+     OpenSave(){
         this.submissionOpen=false
+      },
+      OpenSubmit(){
+        this.submissionOpen=false
+      },
+      //新建取消确定
+      OpenCancel(){
+        this.submissionOpen1=false
+      },
+      OpenSubmitForm(){
+        this.submissionOpen1=false
+      },
 
+      //编辑保存提交
+      submissionCancel(){
+        this.submissionUpdate2=false
       },
       submissionSubmitForm(){
-        this.submissionOpen=false
+        this.submissionUpdate2=false
+      },
+      submissionSave(){
+        this.submissionUpdate=false
+      },
+      submissionSubmit(){
+        this.submissionUpdate=false
       },
       //项目申请新增弹框
       handleProjectApplyOpen(){
@@ -450,14 +672,30 @@
 </script>
 
 <style lang="scss">
-  .submissionright{
-    float:right;
-    top:0;
-    right:0;
+  .el-tag + .el-tag {
+    margin-left: 10px;
   }
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+  /*.submissionright{*/
+    /*float:right;*/
+    /*top:0;*/
+    /*right:50px;*/
+  /*}*/
 
   .dialogtext{
     position: absolute;
+
   }
 
   .header{
