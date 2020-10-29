@@ -1,10 +1,9 @@
-package com.xhkj.project.business.domain;
+package com.xhkj.project.business.domain.vo;
 
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.business.domain.BusiProjectApplyShenpi;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
  * @author rbf
  * @date 2020-09-30
  */
-public class BusiProjectApply extends BaseEntity {
+public class BusiProjectApplyVo extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -47,6 +46,9 @@ public class BusiProjectApply extends BaseEntity {
 	 */
 	private Integer sortOrder;
 //以上自动生成的尽量别动
+
+	private List<Date> searchDate;
+
 	private List<BusiProjectApplyShenpi> shenpiUserList;
 
 	public List<BusiProjectApplyShenpi> getShenpiUserList() {

@@ -765,7 +765,7 @@
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
-        //部门成员列表
+        //项目的部门成员列表
         deptMemberList: [],
         taskform:{
           taskId:undefined,
@@ -937,7 +937,9 @@
       },
       //全部报送任务
       submission(){
-        this.$router.push({ path:'/myproject/submission'})
+        let _this = this;
+        let projectId = _this.projectId;
+        this.$router.push({ path:'/myproject/submission',query:{projectId:projectId}})
       },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
