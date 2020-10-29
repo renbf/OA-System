@@ -7,21 +7,12 @@
       </el-page-header>
 
     </el-card>
-    <!--按钮区-->
-
-    <div class="btn">
-      <el-button type="primary text" @click="handleProjectApplyOpen" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
-      <el-button type="danger" @click.stop="delsubmission2"> <span class="el-icon-delete" style="margin-right:3px;"  ></span>删除</el-button>
-      <el-button type="success"  @click.stop="submissionReport"> <span class="el-icon-message" style="margin-right:3px;"></span >报送</el-button>
-      <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
-    </div>
-
     <!--新建申请弹框一层-->
     <el-dialog
       :title="projectApplyTitle"
       :visible.sync="projectApplyOpen"
       width="30%"
-      >
+    >
       <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules">
         <el-form-item prop="projectApplyTitle"><span>标题</span>
           <el-input
@@ -194,7 +185,7 @@
       title="添加审批人"
       :visible.sync="submissionUpdate2"
       width="30%"
-      >
+    >
       <el-form ref="UpdataForm" :model="UpdataForm">
         <el-form-item><span>审批人</span>
           <el-cascader :options="UpdataForm.select" style="margin-left:20px;width:400px;"></el-cascader>
@@ -275,8 +266,8 @@
         label="当前审批人">
       </el-table-column>
       <el-table-column
-      prop="caozuo"
-      label="操作">
+        prop="caozuo"
+        label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
           <span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>
@@ -285,7 +276,7 @@
 
         </template>
 
-    </el-table-column>
+      </el-table-column>
 
 
     </el-table>
@@ -446,7 +437,7 @@
 
     },
     created() {
-      this.getProject();
+      // this.getProject();
     },
     methods:{
       //删除
@@ -504,22 +495,22 @@
       },
 
       // 删除
-     delsubmission() {
+      delsubmission() {
         this.$confirm('确认是否删除?', '确认删除', {
-         confirmButtonText: '确定',
-         cancelButtonText: '取消',
-         type: 'warning'
-       }).then(() => {
-         this.$message({
-           type: 'success',
-           message: '删除成功!'
-         });
-       }).catch(() => {
-         this.$message({
-           type: 'info',
-           message: '已取消删除'
-         });
-       });
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
       delsubmission2() {
         this.$confirm('确认是否删除?', '确认删除', {
@@ -586,7 +577,7 @@
         console.log(`当前页: ${val}`);
       },
       //新建保存提交
-     OpenSave(){
+      OpenSave(){
         this.submissionOpen=false
       },
       OpenSubmit(){
@@ -689,15 +680,15 @@
         _this.projectApplyForm.shenpiUserList.push(shenpiUser);
         _this.dialog2 = false;
       },
-      getProject() {
-        let _this = this;
-        getProjectInfo({projectId:_this.projectId}).then(response => {
-          if(response.code == 200){
-            _this.projectInfo = response.data;
-            _this.busiProjectMembers= _this.projectInfo.busiProjectMembers;
-          }
-        });
-      },
+      // getProject() {
+      //   let _this = this;
+      //   getProjectInfo({projectId:_this.projectId}).then(response => {
+      //     if(response.code == 200){
+      //       _this.projectInfo = response.data;
+      //       _this.busiProjectMembers= _this.projectInfo.busiProjectMembers;
+      //     }
+      //   });
+      // },
     }
   }
 
@@ -720,9 +711,9 @@
     vertical-align: bottom;
   }
   /*.submissionright{*/
-    /*float:right;*/
-    /*top:0;*/
-    /*right:50px;*/
+  /*float:right;*/
+  /*top:0;*/
+  /*right:50px;*/
   /*}*/
 
   .dialogtext{

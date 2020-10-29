@@ -77,30 +77,30 @@
               <div style="border-bottom:1px solid #ddd">
                 <p>
                   <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-
+                  <span class="rt" style="margin-right: 10px;" v-if="index==0"  @click.stop="delLook">
+                     <el-tooltip content="未报送" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" v-if="index==0">
+                    <el-button circle icon="el-icon-message" type="danger" disabled  ></el-button>
+                         </el-tooltip>
+                  </span>
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                     <el-tooltip content="未报送" placement="top" effect="light"  >
-                    <el-button circle icon="el-icon-message" type="danger"></el-button>
+                    <el-button circle icon="el-icon-delete"@click.stop="del"></el-button>
+                  </span>
+
+                    <span class="rt" style="margin-right: 10px;">
+                       <el-tooltip content="审核中" placement="top" effect="light"   :value="tooltipValue" :manual="tooltipManual" v-if="index==1">
+                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning" disabled></el-button>
+                          </el-tooltip>
+                  </span>
+                    <span class="rt" style="margin-right: 10px;">
+                       <el-tooltip content="通过" placement="top" effect="light" :value="tooltipValue" :manual="tooltipManual" v-if="index==2">
+                    <el-button circle icon="el-icon-check" v-if="index==2" type="success" disabled></el-button>
+                         </el-tooltip>
+                  </span>
+                  <span class="rt" style="margin-right: 10px;">
+                    <el-tooltip content="拒绝" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual"  v-if="index==3">
+                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger" disabled></el-button>
                        </el-tooltip>
                   </span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                    <el-button circle icon="el-icon-delete"></el-button>
-                  </span>
-                  <el-tooltip content="审核中" placement="top" effect="light"   v-if="index==1" >
-                    <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning"></el-button>
-                  </span>
-                  </el-tooltip>
-                  <el-tooltip content="通过" placement="top" effect="light"   v-if="index==2">
-                    <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-check" v-if="index==2" type="success"></el-button>
-                  </span>
-                  </el-tooltip>
-                  <el-tooltip content="拒绝" placement="top" effect="light"   v-if="index==3" >
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger"></el-button>
-                  </span>
-                  </el-tooltip>
                 </p>
                 <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
               </div>
@@ -119,7 +119,7 @@
 
     <div  style="margin-bottom: 10px;margin-top:45px;" >
      <h2>项目任务</h2>
-      <el-button type="success" @click="handleBaosongBitch"><i class="el-icon-message" style="margin-right:5px;" ></i>报送
+      <el-button type="success" @click="handleBaosongBitch"><i class="el-icon-message" style="margin-right:5px;"  ></i>报送
       </el-button>
       <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
@@ -624,7 +624,7 @@
 
     <!--卡片未报送状态弹框-->
     <el-dialog
-      title="修改项目申请"
+      title="审批项目申请"
       :visible.sync="lookopen2"
       width="30%"
     >
@@ -650,7 +650,7 @@
           </el-input></el-form-item>
         <el-form-item><span>审批人</span>
 
-          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="submissionUpdate2=true"></el-button>
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="lookopenLittle=true"></el-button>
           <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
         </el-form-item>
         <el-form-item style="padding:0 70px" >
@@ -659,7 +659,7 @@
             v-for="tag in dynamicTags"
             closable
             :disable-transitions="false"
-            style=""
+            style="margin-left:10px;"
             @close="handleClose(tag)">
             {{tag}}
           </el-tag>
@@ -670,13 +670,32 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
+         <el-button type="primary" @click="lookUpdata">提交</el-button>
 
+  </span>
+    </el-dialog>
+
+    <!--未报送状态添加审批人弹框-->
+    <el-dialog
+      title="添加审批人"
+      :visible.sync="lookopenLittle"
+      width="30%"
+    >
+      <el-form ref="UpdataForm" :model="UpdataForm">
+        <el-form-item><span>审批人</span>
+          <el-cascader :options="UpdataForm.select" style="margin-left:20px;width:400px;"></el-cascader>
+
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="lookCancel2">取 消</el-button>
+    <el-button type="primary" @click="lookSubmitForm2">确 定</el-button>
   </span>
     </el-dialog>
 
     <!--卡片审核通过拒绝状态弹框-->
     <el-dialog
-      title="修改项目申请"
+      title="项目申请"
       :visible.sync="looksOpen"
       width="40%"
     >
@@ -717,13 +736,12 @@
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer"  >
-    <el-button type="primary" >提交</el-button>
-  </span>
-      <span slot="footer" class="dialog-footer" >
+      <span slot="footer" class="dialog-footer" v-if="inx==3">
         <el-button type="primary" @click="looktEdit">编辑</el-button>
   </span>
     </el-dialog>
+
+
 
 
 
@@ -745,6 +763,9 @@
     },
     data() {
       return {
+
+        tooltipValue:true,
+        tooltipManual:true,
         inx:'',
         // 是否显示操作区域
         isVisableConfig:'',
@@ -756,6 +777,7 @@
         lookopen2:false,
         //卡片弹出层
         looksOpen:false,
+        lookopenLittle:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
@@ -1093,6 +1115,7 @@
         let _this = this;
         let projectId = _this.projectId;
         this.$router.push({ path:'/myproject/submission',query:{projectId:projectId}})
+
       },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
@@ -1280,6 +1303,9 @@
       },
       lookCancel(){
         this.lookOpen = false;
+      },
+      handleClose(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
       },
       lookSubmitForm(logStatus){
         let _this = this;
@@ -1531,19 +1557,53 @@
       looktEdit(){
 
       },
+      lookUpdata(){
+        this.lookopen2=false
+      },
+      // 添加审批人取消操作
+      lookCancel2(){
+     this.lookopenLittle=false
+      },
+      lookSubmitForm2(){
+        this.lookopenLittle=false
+      },
+
+      delLook(){
+        console.log(111)
+      },
+      // 添加审批人确定操作
+      lookSubmitForm(){
+
+      },
+      del(){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      //项目组申请弹框
       Open(index){
-
+        this.inx=index
 if(index==0){
-
   this.lookopen2=true
-
 }else if(index==1){
   this.looksOpen=true
-
 }else if(index==2){
-
+  this.looksOpen=true
+}else if(index==3){
+  this.looksOpen=true
 }
-
       }
     },
 
@@ -1552,6 +1612,11 @@ if(index==0){
 </script>
 
 <style>
+  .el-tooltip__popper.is-light{
+    background: #fff;
+    border: 1px solid #b1b7c3;
+
+  }
   .dialogtext{
     position: absolute;
 

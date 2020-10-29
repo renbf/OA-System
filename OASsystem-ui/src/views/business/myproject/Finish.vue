@@ -60,9 +60,7 @@
     <div style="margin-top:40px;">
       <p class="apply">
         <span>项目组申请</span>
-        <span>
-          <el-button>全部报送</el-button>
-        </span>
+
         <span>
           <el-button icon="el-icon-right" size="small" circle @click="submission"></el-button>
         </span>
@@ -77,20 +75,29 @@
               <div style="border-bottom:1px solid #ddd">
                 <p>
                   <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                    <el-button circle icon="el-icon-message" type="danger"></el-button>
+                  <span class="rt" style="margin-right: 10px;" v-if="index==0"  @click.stop="delLook">
+                     <el-tooltip content="未报送" placement="top" effect="light"  >
+                    <el-button circle icon="el-icon-message" type="danger" disabled  ></el-button>
+                       </el-tooltip>
                   </span>
                   <span class="rt" style="margin-right: 10px;" v-if="index==0">
                     <el-button circle icon="el-icon-delete"></el-button>
                   </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning"></el-button>
-                  </span> <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-check" v-if="index==2" type="success"></el-button>
+                  <el-tooltip content="审核中" placement="top" effect="light"   v-if="index==1" >
+                    <span class="rt" style="margin-right: 10px;">
+                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning" disabled></el-button>
                   </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger"></el-button>
+                  </el-tooltip>
+                  <el-tooltip content="通过" placement="top" effect="light"   v-if="index==2">
+                    <span class="rt" style="margin-right: 10px;">
+                    <el-button circle icon="el-icon-check" v-if="index==2" type="success" disabled></el-button>
                   </span>
+                  </el-tooltip>
+                  <el-tooltip content="拒绝" placement="top" effect="light"   v-if="index==3" >
+                  <span class="rt" style="margin-right: 10px;">
+                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger" disabled></el-button>
+                  </span>
+                  </el-tooltip>
                 </p>
                 <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
               </div>
@@ -109,9 +116,6 @@
 
     <div  style="margin-bottom: 10px;margin-top:45px;" >
       <h2>项目任务</h2>
-      <el-button type="success" @click="handleBaosongBitch"><i class="el-icon-message" style="margin-right:5px;" ></i>报送
-      </el-button>
-      <el-button type="warning"><i class=" el-icon-download" style="margin-right:5px;"></i> 导出</el-button>
     </div>
     <div v-if="model=='列表'" style="margin-top:20px;">
 
@@ -254,7 +258,6 @@
               <el-button
                 size="mini"
                 type="text"
-                v-show="isVisableConfig==='0'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -262,7 +265,6 @@
               >
               <el-button
                 size="mini"
-                v-show="isVisableConfig==='0'"
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
@@ -612,7 +614,78 @@
       </div>
     </el-dialog>
 
-    <!--卡片弹框-->
+    <!--卡片未报送状态弹框-->
+    <el-dialog
+      title="修改项目申请"
+      :visible.sync="lookopen2"
+      width="30%"
+    >
+      <el-form ref="UpdataForm" :model="UpdataForm"  >
+        <el-form-item><span>标题</span>
+          <el-input
+            type="text"
+            placeholder="请输入内容"
+            v-model="UpdataForm.text"
+            maxlength="10"
+            show-word-limit
+            style="width:400px;margin-left:50px;"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item><span>申请内容</span>
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="UpdataForm.textarea2"
+            style="width:400px;margin-left:20px;">
+          </el-input></el-form-item>
+        <el-form-item><span>审批人</span>
+
+          <el-button type="primary" icon="el-icon-plus" circle size="small" style="margin-left:10px;" @click="lookopenLittle=true"></el-button>
+          <span style="margin-left:10px;">注：审批顺序添加顺序依次审批</span>
+        </el-form-item>
+        <el-form-item style="padding:0 70px" >
+          <el-tag
+            :key="tag"
+            v-for="tag in dynamicTags"
+            closable
+            :disable-transitions="false"
+            style="margin-left:10px;"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+
+
+        </el-form-item>
+
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+         <el-button type="primary" @click="lookUpdata">提交</el-button>
+
+  </span>
+    </el-dialog>
+
+    <!--未报送状态添加审批人弹框-->
+    <el-dialog
+      title="添加审批人"
+      :visible.sync="lookopenLittle"
+      width="30%"
+    >
+      <el-form ref="UpdataForm" :model="UpdataForm">
+        <el-form-item><span>审批人</span>
+          <el-cascader :options="UpdataForm.select" style="margin-left:20px;width:400px;"></el-cascader>
+
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="lookCancel2">取 消</el-button>
+    <el-button type="primary" @click="lookSubmitForm2">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <!--卡片审核通过拒绝状态弹框-->
     <el-dialog
       title="修改项目申请"
       :visible.sync="looksOpen"
@@ -655,13 +728,13 @@
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer" v-if="inx==0" >
-    <el-button type="primary" >提交</el-button>
-  </span>
       <span slot="footer" class="dialog-footer" v-if="inx==3">
         <el-button type="primary" @click="looktEdit">编辑</el-button>
   </span>
     </el-dialog>
+
+
+
 
 
   </div>
@@ -683,7 +756,6 @@
     data() {
       return {
         inx:'',
-
         // 是否显示操作区域
         isVisableConfig:'',
         //title文字显示
@@ -691,11 +763,14 @@
         // 是否显示弹出层
         taskLookOpen: false,
         lookOpen:false,
+        lookopen2:false,
         //卡片弹出层
         looksOpen:false,
+        lookopenLittle:false,
         //当前页数
         currentPage4:1,
         dialogVisible: false,
+        dynamicTags: ['张三', '李四', '王五'],
         applyproject: [
           {
             title: '任务时间增加申请1',
@@ -827,6 +902,26 @@
           textarea1:"项目任务延时申请",
           textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
         },
+        UpdataForm:{
+          text: '',
+          textarea2: '',
+          select:[{
+            value: 'ziyuan',
+            label: '软件部',
+            children: [{
+              value: 'axure',
+              label: '任宝峰'
+            }, {
+              value: 'sketch',
+              label: '嘉琪'
+            }, {
+              value: 'jiaohu',
+              label: '安仔'
+            }]
+
+          }],
+
+        },
         //责任人
         userDeptUserList:[],
         memberList:[],
@@ -834,7 +929,7 @@
         department: [],
         matters_needing_attention: undefined,
         projectInfo: {},
-        //部门成员列表
+        //项目的部门成员列表
         deptMemberList: [],
         taskform:{
           taskId:undefined,
@@ -893,16 +988,16 @@
     },
     created() {
       // 状态
-      // this.getDicts("task_status").then(response => {
-      //   this.statusOptions = response.data;
-      // });
+      this.getDicts("task_status").then(response => {
+        this.statusOptions = response.data;
+      });
       // this.getProject();
-      // //获取部门列表
-      // userDeptList().then(response => {
-      //   if (response.code == 200) {
-      //     this.department = response.data;
-      //   }
-      // });
+      //获取部门列表
+      userDeptList().then(response => {
+        if (response.code == 200) {
+          this.department = response.data;
+        }
+      });
       this.getUserDeptUsers();
       this.getTaskList();
       this.getIsVisbleData()
@@ -1006,7 +1101,10 @@
       },
       //全部报送任务
       submission(){
-        this.$router.push({ path:'/myproject/submission'})
+        let _this = this;
+        let projectId = _this.projectId;
+        this.$router.push({ path:'/myproject/finishsubmission',query:{projectId:projectId}})
+
       },
       moveCarousel(direction) {
         // Find a more elegant way to express the :style. consider using props to make it truly generic
@@ -1037,23 +1135,23 @@
         };
         this.resetForm("taskform");
       },
-      getProject() {
-        let _this = this;
-        getProjectInfo({projectId:_this.projectId}).then(response => {
-          if(response.code == 200){
-            _this.projectInfo = response.data;
-            _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
-            _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
-            //任务时间进度
-            _this.timeprocess = _this.projectInfo.timeProgress;
-            if(_this.timeprocess < 0){
-              _this.timeprocess = 0;
-            }
-            let busiProjectMembers= _this.projectInfo.busiProjectMembers;
-            _this.getDeptMemberList(busiProjectMembers);
-          }
-        });
-      },
+      // getProject() {
+      //   let _this = this;
+      //   getProjectInfo({projectId:_this.projectId}).then(response => {
+      //     if(response.code == 200){
+      //       _this.projectInfo = response.data;
+      //       _this.projectInfo.projectStartDate = _this.projectInfo.projectStartDate.substring(0, 10);
+      //       _this.projectInfo.projectEndDate = _this.projectInfo.projectEndDate.substring(0, 10);
+      //       //任务时间进度
+      //       _this.timeprocess = _this.projectInfo.timeProgress;
+      //       if(_this.timeprocess < 0){
+      //         _this.timeprocess = 0;
+      //       }
+      //       let busiProjectMembers= _this.projectInfo.busiProjectMembers;
+      //       _this.getDeptMemberList(busiProjectMembers);
+      //     }
+      //   });
+      // },
       getDeptMemberList(busiProjectMembers) {
         let _this = this;
         let map = new Map();
@@ -1194,6 +1292,9 @@
       },
       lookCancel(){
         this.lookOpen = false;
+      },
+      handleClose(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
       },
       lookSubmitForm(logStatus){
         let _this = this;
@@ -1359,12 +1460,27 @@
       },
       //报送
       handleBaosong(item) {
-        taskLogBaosong({taskLogIds:[item.taskLogId]}).then(response => {
-          if (response.code === 200) {
-            this.msgSuccess("报送成功");
-          } else {
-            this.msgError(response.msg);
-          }
+        // taskLogBaosong({taskLogIds:[item.taskLogId]}).then(response => {
+        //   if (response.code === 200) {
+        //     this.msgSuccess("报送成功");
+        //   } else {
+        //     this.msgError(response.msg);
+        //   }
+        // });
+        this.$confirm('是否提交报送?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
         });
       },
       resetTaskLookForm(){
@@ -1445,10 +1561,36 @@
       looktEdit(){
 
       },
+      lookUpdata(){
+        this.lookopen2=false
+      },
+      // 添加审批人取消操作
+      lookCancel2(){
+        this.lookopenLittle=false
+      },
+      lookSubmitForm2(){
+        this.lookopenLittle=false
+      },
+
+      delLook(){
+        console.log(111)
+      },
+      // 添加审批人确定操作
+      lookSubmitForm(){
+
+      },
+      //项目组申请弹框
       Open(index){
-        this.looksOpen=true
         this.inx=index
-        console.log(this.inx)
+        if(index==0){
+          this.lookopen2=true
+        }else if(index==1){
+          this.looksOpen=true
+        }else if(index==2){
+          this.looksOpen=true
+        }else if(index==3){
+          this.looksOpen=true
+        }
       }
     },
 
