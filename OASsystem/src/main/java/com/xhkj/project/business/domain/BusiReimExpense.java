@@ -13,11 +13,15 @@ import javax.validation.constraints.NotBlank;
  * @author xhkj
  * @date 2020-10-21
  */
-public class BusiReimburse extends BaseEntity
+public class BusiReimExpense extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键id */
+    private Long reimExpenseId;
+
+    /** 报销id */
+    @Excel(name = "报销id")
     private Long reimburseId;
 
     /** 用户id */
@@ -28,17 +32,9 @@ public class BusiReimburse extends BaseEntity
     @Excel(name = "部门Id")
     private Long deptId;
 
-    /** 是否在项目中 */
-    @Excel(name = "是否在项目中")
-    private Boolean inPrjFlag;
-
-    /** 项目id */
-    @Excel(name = "项目id")
-    private String projectId;
-
     /** 项目名称 */
     @Excel(name = "项目名称")
-    private String projectName;
+    private String reimExpenseName;
 
     /** 报销理由 */
     @Excel(name = "报销理由")
@@ -47,19 +43,79 @@ public class BusiReimburse extends BaseEntity
     /** 流程Id */
     private Long workflowId;
 
-    //报销类型
-    private String reimburseType;
+    /** 金额 */
+    @Excel(name = "金额")
+    private Double amount;
+
+    /** 票据数量 */
+    @Excel(name = "票据数量")
+    private Integer billsNum;
+
 
 //以上自动生成的尽量别动
 
 
+    /** 总金额 */
+    private Double amountTotal;
+    /** 附件id */
+    private String fileIds;
+    /** 附件数量 */
+    private Integer fileNum;
 
-    public String getReimburseType() {
-        return reimburseType;
+    public Long getReimExpenseId() {
+        return reimExpenseId;
     }
 
-    public void setReimburseType(String reimburseType) {
-        this.reimburseType = reimburseType;
+    public void setReimExpenseId(Long reimExpenseId) {
+        this.reimExpenseId = reimExpenseId;
+    }
+
+    public String getReimExpenseName() {
+        return reimExpenseName;
+    }
+
+    public void setReimExpenseName(String reimExpenseName) {
+        this.reimExpenseName = reimExpenseName;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Integer getBillsNum() {
+        return billsNum;
+    }
+
+    public void setBillsNum(Integer billsNum) {
+        this.billsNum = billsNum;
+    }
+
+    public Double getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(Double amountTotal) {
+        this.amountTotal = amountTotal;
+    }
+
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
+    }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
     }
 
     public Long getReimburseId() { return reimburseId; }
@@ -73,9 +129,6 @@ public class BusiReimburse extends BaseEntity
     public Long getDeptId() { return deptId; }
     public void setDeptId(Long deptId) { this.deptId = deptId; }
 
-    public Boolean getInPrjFlag() {
-        return inPrjFlag;
-    }
 
     public Long getWorkflowId() {
         return workflowId;
@@ -85,40 +138,9 @@ public class BusiReimburse extends BaseEntity
         this.workflowId = workflowId;
     }
 
-    public void setInPrjFlag(Boolean inPrjFlag) {
-        this.inPrjFlag = inPrjFlag;
-    }
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getProjectName() { return projectName; }
-    public void setProjectName(String projectName) { this.projectName = projectName; }
 
     public String getReimburseReason() { return reimburseReason; }
     public void setReimburseReason(String reimburseReason) { this.reimburseReason = reimburseReason; }
 
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("reimburseId", getReimburseId())
-            .append("userId", getUserId())
-            .append("deptId", getDeptId())
-            .append("inPrjFlag", getInPrjFlag())
-            .append("projectId", getProjectId())
-            .append("projectName", getProjectName())
-            .append("reimburseReason", getReimburseReason())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("remark", getRemark())
-            .toString();
-    }
 }

@@ -18,17 +18,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="workflowId"    column="workflow_id"    />
+        <result property="reimburseType"    column="reimburse_type"    />
 
     </resultMap>
 
     <sql id="selectBusiReimburseVo">
-        select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark,workflow_id
+        select reimburse_id, user_id, dept_id, in_prj_flag, project_id, project_name, reimburse_reason, create_by, create_time, update_by, update_time, remark,workflow_id,reimburse_type
     </sql>
 
     <select id="selectBusiReimburseList" parameterType="BusiReimburseAprVo" resultType="BusiReimburseAprVo">
         select
         br.reimburse_id, br.user_id, br.dept_id,  br.in_prj_flag, br.project_id, br.project_name, br.reimburse_reason,
-        br.create_by,  br.create_time,  br.update_by,  br.update_time,  br.remark,br.workflow_id,
+        br.create_by,  br.create_time,  br.update_by,  br.update_time,  br.remark,br.workflow_id,br.reimburse_type,
         ifnull(wb.bill_status,2) as billStatus,
         swnc.workflow_node_user_name as orginHandler
         from busi_reimburse br
@@ -46,11 +47,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectId != null "> and br.project_id = #{projectId}</if>
             <if test="projectName != null  and projectName != ''"> and br.project_name like concat('%', #{projectName}, '%')</if>
             <if test="reimburseReason != null  and reimburseReason != ''"> and br.reimburse_reason = #{reimburseReason}</if>
-
             <if test="beginTime != null and beginTime != ''"> and DATE_FORMAT(br.create_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginTime},'%Y-%m-%d')</if>
             <if test="endTime != null and endTime != ''"> and DATE_FORMAT(br.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d') </if>
-
             <if test="billStatus != null  and billStatus != ''"> and wb.bill_status = #{billStatus}</if>
+            <if test="reimburseType != null  and reimburseType != ''"> and br.reimburse_type = #{reimburseType}</if>
             ${dataScope}
         </where>
     </select>
@@ -76,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="workflowId != null">workflow_id,</if>
+            <if test="reimburseType != null and reimburseType != ''">reimburse_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
@@ -90,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="workflowId != null">#{workflowId},</if>
+            <if test="reimburseType != null  and reimburseType != ''">#{reimburseType},</if>
          </trim>
     </insert>
 
@@ -108,6 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="workflowId != null">workflow_id = #{workflowId},</if>
+            <if test="reimburseType != null">reimburse_type = #{reimburseType},</if>
         </trim>
         where reimburse_id = #{reimburseId}
     </update>

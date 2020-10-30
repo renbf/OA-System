@@ -48,6 +48,9 @@ public class BusiReimburseVo extends BaseEntity
     @Excel(name = "报销理由")
     private String reimburseReason;
 
+    //报销类型
+    private String reimburseType;
+
 //以上自动生成的尽量别动
     //总金额
     private Double amountTotal;
@@ -58,6 +61,16 @@ public class BusiReimburseVo extends BaseEntity
     private List<BusiReimTravelSubsidy> busiReimTravelSubsidyList;
     /** 其他费用 list */
     private List<BusiReimOtherFee> busiReimOtherFeeList;
+
+
+    public String getReimburseType() {
+        return reimburseType;
+    }
+
+    public void setReimburseType(String reimburseType) {
+        this.reimburseType = reimburseType;
+    }
+
 
     public Double getAmountTotal() {
         return amountTotal;
