@@ -833,7 +833,8 @@
             datetime:[],
             queryParams:{
               deptId:undefined,
-              billStatus:undefined
+              billStatus:undefined,
+              reimburseType :'travel'
             },
             expensesList:[],
             dateRange: [],
@@ -1118,6 +1119,7 @@
                   this.form.projectName = e.dictLabel;
                 }
               })
+              this.form.reimburseType = 'travel';
               addReimburse(this.form).then(response => {
                 if (response.code === 200) {
                   this.form.reimburseId = response.data;
@@ -1135,13 +1137,13 @@
                 this.transportform.fileIds = this.fileIds.replace("[","").replace("]","")
               }
 
-              this.transportform.reimburseId = this.form.reimburseId;
               if(isNotEmpty(this.transportform.trafficDate)){
                 this.transportform.trafficStartDate = this.transportform.trafficDate[0];
                 this.transportform.trafficEndDate = this.transportform.trafficDate[1];
               }
 
               this.transportform.fileNum = this.fujiannum
+              this.transportform.reimburseId = this.form.reimburseId;
 
               addTrafficFee(this.transportform).then(response => {
                 if (response.code === 200) {
@@ -1254,7 +1256,7 @@
               });
 
           },
-          //报送请假
+          //报送
           handleReport(row) {
             const reimburseIds = row.reimburseId || this.ids;
             this.$confirm(
@@ -1601,7 +1603,7 @@
           },
 
           handleSelect(item) {
-            console.log(item);
+
           },
           handleChange(value){
             this.transportnum=value;
@@ -1612,7 +1614,7 @@
             this.transportform.amountTotal=this.transportmoney*this.transportnum;
           },
           handlePreview(file) {
-            console.log(file);
+
           },
           canceltransport(){},
           goaway(){
