@@ -66,4 +66,6 @@ public interface BusiProjectApplyShenpiMapper
 	 */
 	public int insertBusiProjectApplyShenpiBatch(List<BusiProjectApplyShenpi> list);
 	//以上自动生成的尽量别动
+
+	public int deleteBusiProjectApplyShenpiByProjectApplyId(Long projectApplyId);
 }

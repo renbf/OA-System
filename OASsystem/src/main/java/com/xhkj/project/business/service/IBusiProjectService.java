@@ -4,6 +4,7 @@ import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.domain.BusiProjectApply;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.BusiTaskLog;
+import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
 
@@ -87,4 +88,12 @@ public interface IBusiProjectService
 	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog);
 
 	public Map<String, Object> insertProjectApply(BusiProjectApply busiProjectApply);
+
+	public Map<String, Object> updateProjectApply(BusiProjectApply busiProjectApply);
+
+	public Map<String, Object> removeProjectApply(BusiProjectApplyVo busiProjectApplyVo);
+
+	public Map<String, Object> listProjectApply(BusiProjectApplyVo busiProjectApplyVo);
+
+	public Map<String, Object> listProjectApplyShenpi(Long projectApplyId);
 }

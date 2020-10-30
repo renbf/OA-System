@@ -153,8 +153,40 @@ export function addProjectApply(data) {
     data: data
   })
 }
+// 修改项目审批
+export function updateProjectApply(data) {
+  return request({
+    url: '/api/busiProject/updateProjectApply',
+    method: 'post',
+    data: data
+  })
+}
+// 删除项目申请
+export function removeProjectApply(data) {
+  return request({
+    url: '/api/busiProject/removeProjectApply',
+    method: 'post',
+    data: data
+  })
+}
 
+// 项目申请列表
+export function listProjectApply(data) {
+  return request({
+    url: '/api/busiProject/listProjectApply',
+    method: 'post',
+    data: data
+  })
+}
 
+// 查询项目申请审批列表
+export function listProjectApplyShenpi(query) {
+  return request({
+    url: '/api/busiProject/listProjectApplyShenpi',
+    method: 'get',
+    params: query
+  })
+}
 
 export function project_progress() {
   return {

@@ -3,6 +3,7 @@ package com.xhkj.project.business.controller;
 import com.xhkj.project.business.domain.BusiProjectApply;
 import com.xhkj.project.business.domain.BusiTask;
 import com.xhkj.project.business.domain.BusiTaskLog;
+import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import org.slf4j.Logger;
@@ -361,20 +362,75 @@ public class BusiProjectController
 	}
 
 	/**
+	 * 修改项目申请
+	 */
+	@PostMapping("/updateProjectApply")
+	@ResponseBody
+	public Map<String,Object> updateProjectApply(@RequestBody BusiProjectApply busiProjectApply)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.updateProjectApply(busiProjectApply);
+		} catch (Exception e) {
+			log.error("修改项目申请异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","修改项目申请异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 删除项目申请
+	 */
+	@PostMapping( "/removeProjectApply")
+	@ResponseBody
+	public Map<String,Object> removeProjectApply(@RequestBody BusiProjectApplyVo busiProjectApplyVo)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.removeProjectApply(busiProjectApplyVo);
+		} catch (Exception e) {
+			log.error("删除项目申请异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","删除项目申请异常");
+		}
+		return resultMap;
+	}
+
+	/**
 	 * 项目申请列表
 	 */
 	@PostMapping("/listProjectApply")
 	@ResponseBody
-	public Map<String,Object> listProjectApply(BusiProjectApply busiProjectApply)
+	public Map<String,Object> listProjectApply(@RequestBody BusiProjectApplyVo busiProjectApplyVo)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			resultMap = busiProjectService.insertProjectApply(busiProjectApply);
+			resultMap = busiProjectService.listProjectApply(busiProjectApplyVo);
 		} catch (Exception e) {
-			log.error("新增项目申请异常",e);
+			log.error("项目申请列表异常",e);
 			resultMap.put("code",-1);
-			resultMap.put("msg","新增项目申请异常");
+			resultMap.put("msg","项目申请列表异常");
 		}
 		return resultMap;
 	}
+
+	/**
+	 * 项目申请审批列表
+	 */
+	@GetMapping("/listProjectApplyShenpi")
+	@ResponseBody
+	public Map<String,Object> listProjectApplyShenpi(Long projectApplyId)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.listProjectApplyShenpi(projectApplyId);
+		} catch (Exception e) {
+			log.error("项目申请审批列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","项目申请审批列表异常");
+		}
+		return resultMap;
+	}
+
 }
