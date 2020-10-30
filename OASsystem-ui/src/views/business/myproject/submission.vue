@@ -286,7 +286,7 @@
           <!--<span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>-->
           <span class="el-icon-edit-outline" v-show="scope.row.status == 0" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
           <span class="el-icon-delete" v-show="scope.row.status == 0" @click.stop="delsubmission(scope.row)">删除</span>
-          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport" >报送</span>
+          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport(scope.row)" >报送</span>
 
         </template>
 
@@ -309,7 +309,7 @@
 
 
 <script>
-  import { getProjectInfo,addProjectApply,updateProjectApply,removeProjectApply,listProjectApply,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
+  import { getProjectInfo,addProjectApply,updateProjectApply,removeProjectApply,listProjectApply,listProjectApplyShenpi,baosongProjectApply } from "@/api/business/mywork/myproject";
   export default {
     name: "page-little",
     data(){
@@ -468,19 +468,27 @@
 
       },
       //报送
-      submissionReport(){
+      submissionReport(item){
         this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
           confirmButtonText: "报送",
           cancelButtonText: "返回列表",
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '报送成功!'
+          let _this = this;
+          let projectApplyIds = [];
+          if (item != undefined && item.projectApplyId != undefined) {
+            projectApplyIds = [item.projectApplyId];
+          }else{
+            projectApplyIds = _this.projectApplyIds;
+          }
+          baosongProjectApply({projectApplyIds:projectApplyIds}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("报送成功");
+            }
           });
         }).catch(() => {
         });
-
       },
       // 导出
       submissionExport(){
@@ -500,7 +508,7 @@
         _this.projectApplyForm.shenpiUserList.splice(index, 1);
       },
       // 删除
-      delsubmission() {
+      delsubmission(item) {
         this.$confirm('确认是否删除?', '确认删除', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -518,37 +526,6 @@
             message: '已取消删除'
           });
         });
-      },
-
-
-      //报送
-      submissionReport(){
-        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
-          confirmButtonText: "报送",
-          cancelButtonText: "返回列表",
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '报送成功!'
-          });
-        }).catch(() => {
-        });
-
-      },
-      submissionReport2(){
-        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
-          confirmButtonText: "报送",
-          cancelButtonText: "返回列表",
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '报送成功!'
-          });
-        }).catch(() => {
-        });
-
       },
       submission(){
         this.submissionClick=true;

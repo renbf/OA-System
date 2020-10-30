@@ -433,4 +433,21 @@ public class BusiProjectController
 		return resultMap;
 	}
 
+	/**
+	 * 报送项目申请
+	 */
+	@PostMapping( "/baosongProjectApply")
+	@ResponseBody
+	public Map<String,Object> baosongProjectApply(@RequestBody BusiProjectApplyVo busiProjectApplyVo)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.baosongProjectApply(busiProjectApplyVo);
+		} catch (Exception e) {
+			log.error("报送项目申请异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","报送项目申请异常");
+		}
+		return resultMap;
+	}
 }

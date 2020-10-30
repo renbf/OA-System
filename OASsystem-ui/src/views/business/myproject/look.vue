@@ -61,7 +61,7 @@
       <p class="apply">
         <span>项目组申请</span>
         <span>
-          <el-button>全部报送</el-button>
+          <el-button @click.stop="submissionReport">全部报送</el-button>
         </span>
         <span>
           <el-button icon="el-icon-right" size="small" circle @click="submission"></el-button>
@@ -76,37 +76,36 @@
             <div class="card-carousel--card lf" v-for="(item,index) in applyproject" @click="Open(index)">
               <div style="border-bottom:1px solid #ddd">
                 <p>
-                  <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0"  @click.stop="delLook">
-                     <el-tooltip content="未报送" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" v-if="index==0">
-                    <el-button circle icon="el-icon-message" type="danger" disabled  ></el-button>
+                  <span style="margin-left: 10px;"><b>{{item.projectApplyTitle}}</b></span>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 0"  @click.stop="delLook">
+                     <el-tooltip content="未报送" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" v-if="item.status == 0">
+                    <el-button circle icon="el-icon-message" type="danger" @click.stop="submissionReport(item)"  ></el-button>
                          </el-tooltip>
                   </span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                    <el-button circle icon="el-icon-delete"@click.stop="del"></el-button>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 0">
+                    <el-button circle icon="el-icon-delete"@click.stop="del(item)"></el-button>
                   </span>
-
-                    <span class="rt" style="margin-right: 10px;">
-                       <el-tooltip content="审核中" placement="top" effect="light"   :value="tooltipValue" :manual="tooltipManual" v-if="index==1">
-                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning" disabled></el-button>
+                    <span class="rt" style="margin-right: 10px;" v-if="item.status == 1">
+                       <el-tooltip content="审核中" placement="top" effect="light"   :value="tooltipValue" :manual="tooltipManual">
+                    <el-button circle icon="el-icon-time" type="warning" disabled></el-button>
                           </el-tooltip>
                   </span>
-                    <span class="rt" style="margin-right: 10px;">
-                       <el-tooltip content="通过" placement="top" effect="light" :value="tooltipValue" :manual="tooltipManual" v-if="index==2">
-                    <el-button circle icon="el-icon-check" v-if="index==2" type="success" disabled></el-button>
+                    <span class="rt" style="margin-right: 10px;" v-if="item.status == 2">
+                       <el-tooltip content="通过" placement="top" effect="light" :value="tooltipValue" :manual="tooltipManual">
+                    <el-button circle icon="el-icon-check" type="success" disabled></el-button>
                          </el-tooltip>
                   </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-tooltip content="拒绝" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual"  v-if="index==3">
-                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger" disabled></el-button>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 3">
+                    <el-tooltip content="拒绝" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" >
+                    <el-button circle icon="el-icon-close"  type="danger" disabled></el-button>
                        </el-tooltip>
                   </span>
                 </p>
-                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
+                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.createTime}}</p>
               </div>
               <div>
-                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.applypeople}}</p>
-                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.applyreason}}</p>
+                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.nickName}}</p>
+                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.content}}</p>
               </div>
             </div>
           </div>
@@ -753,7 +752,7 @@
   import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
   import eventBus from '@/utils/eventBus.js'
   export default {
@@ -782,68 +781,7 @@
         currentPage4:1,
         dialogVisible: false,
         dynamicTags: ['张三', '李四', '王五'],
-        applyproject: [
-          {
-            title: '任务时间增加申请1',
-            applytime: '2020-05-21',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请2',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请3',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请4',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请5',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请6',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请7',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请8',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请9',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请10',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          }
-        ],
+        applyproject: [],
         //关闭原因
         textarea2: '',
         dialogTaskVisible: false,
@@ -1013,7 +951,7 @@
       this.getTaskList();
       this.getIsVisbleData()
       this.getDataFromSession()
-
+      this.getApplyList();
 
     },
     computed: {
@@ -1575,15 +1513,17 @@
       lookSubmitForm(){
 
       },
-      del(){
+      del(item){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          removeProjectApply({projectApplyIds:[item.projectApplyId]}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("删除成功");
+            }
           });
         }).catch(() => {
           this.$message({
@@ -1604,7 +1544,43 @@ if(index==0){
 }else if(index==3){
   this.looksOpen=true
 }
-      }
+      },
+      getApplyList() {
+        let _this = this;
+        let queryParams = {};
+        listProjectApply(queryParams).then(response => {
+          if(response.code == 200){
+            _this.applyproject= response.data;
+          }
+        });
+      },
+      //报送
+      submissionReport(item){
+        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
+          confirmButtonText: "报送",
+          cancelButtonText: "返回列表",
+          type: 'warning'
+        }).then(() => {
+          let _this = this;
+          let projectApplyIds = [];
+          if (item != undefined && item.projectApplyId != undefined) {
+            projectApplyIds = [item.projectApplyId];
+          }else{
+            _this.applyproject.forEach((item)=>{
+              if (item.status == '0') {
+                projectApplyIds.push(item.projectApplyId);
+              }
+            });
+          }
+          baosongProjectApply({projectApplyIds:projectApplyIds}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("报送成功");
+            }
+          });
+        }).catch(() => {
+        });
+      },
     },
 
 
