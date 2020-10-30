@@ -305,8 +305,8 @@
           this.$router.push({ path:'/myproject/look',query:{projectId:projectId}})
         },
       projectFinish(item){
-          let FinishId= item.FinishId;
-          this.$router.push({ path:'/myproject/Finish',query:{FinishId:FinishId}})
+          let projectId= item.projectId;
+          this.$router.push({ path:'/myproject/Finish',query:{projectId:projectId}})
         },
         deleteProject(item) {
           let _this = this;

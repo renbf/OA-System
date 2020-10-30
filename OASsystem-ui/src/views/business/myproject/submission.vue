@@ -72,7 +72,7 @@
       :visible.sync="submissionOpen1"
       width="30%"
     >
-      <el-form ref="submissionForm" :model="submissionForm">
+      <el-form>
         <el-form-item><span>审批人</span>
           <!--<el-cascader :options="select" style="margin-left:20px;width:400px;"></el-cascader>-->
           <el-select v-model="shenpiUser.shenpiUserId" placeholder="请选择" ref="shenpiren">
@@ -98,16 +98,17 @@
       width="40%"
     >
       <div style="height: 400px;width:200px;">
-        <el-steps direction="vertical" :active="1" finish-status="success">
-          <el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+          <!--<el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
           <el-step title="迈克尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
           <el-step title="伊利斯" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>-->
+          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
 
         </el-steps>
       </div>
       <div style="float:right;top:20px;right:50px;" class="dialogtext">
-        <el-form ref="submissionForm" :model="submissionForm" label-width="80px">
+        <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px">
           <el-form-item style="margin-top:90px;font-weight: bold">
             标题
             <el-input
@@ -116,7 +117,7 @@
               type="textarea"
               autosize
               placeholder="请输入内容"
-              v-model="submissionForm.textarea1">
+              v-model="projectApplyForm.projectApplyTitle">
             </el-input>
             <div style="margin: 20px 0;"></div>
 
@@ -129,7 +130,7 @@
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入内容"
-              v-model="submissionForm.textarea3">
+              v-model="projectApplyForm.content">
             </el-input>
           </el-form-item>
         </el-form>
@@ -240,7 +241,7 @@
       :data="tableData"
       style="width: 100%;margin-top:20px;"
       @selection-change="handleSelectionChange"
-      @row-click="submissionOpen2=true">
+      @row-click="handleLookOpen">
       <el-table-column
         type="selection"
         width="55">
@@ -283,7 +284,6 @@
       label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
-          <!--<span class="el-icon-edit-outline" @click.stop="submissionUpdate=true">编辑</span>-->
           <span class="el-icon-edit-outline" v-show="scope.row.status == 0" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
           <span class="el-icon-delete" v-show="scope.row.status == 0" @click.stop="delsubmission(scope.row)">删除</span>
           <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport(scope.row)" >报送</span>
@@ -335,7 +335,8 @@
           projectId:this.projectId,
           projectApplyTitle:undefined,
           content:undefined,
-          shenpiUserList:[]
+          shenpiUserList:[],
+          activeNum:0
         },
         projectApplyFormRules: {
           projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
@@ -350,32 +351,8 @@
         input: '',
         //新建申请数据
         submissionForm:{
-          text: '',
-          textarea2: '',
-          textarea1:"项目任务延时申请",
-          textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
-          tags: [
-            { name: '张三', type: 'info' },
-            { name: '李四', type: 'info' },
-            { name: '王五', type: 'info' },
-
-          ],
-          select:[{
-            value: 'ziyuan',
-            label: '软件部',
-            children: [{
-              value: 'axure',
-              label: '任宝峰'
-            }, {
-              value: 'sketch',
-              label: '嘉琪'
-            }, {
-              value: 'jiaohu',
-              label: '安仔'
-            }]
-
-          }],
-
+          projectApplyTitle:"项目任务延时申请",
+          content:"因功能修改需重新调整，需增加任务时间，故作此申请",
         },
         //编辑数据
         UpdataForm:{
@@ -600,6 +577,22 @@
         listProjectApplyShenpi({projectApplyId:item.projectApplyId}).then(response => {
           if(response.code == 200){
             _this.projectApplyForm.shenpiUserList = response.data;
+            _this.projectApplyForm.shenpiUserList.forEach((item)=>{
+              let checkStatus = item.checkStatus;
+              let isCurrent = item.isCurrent;
+              let checkStatusText = '';
+              if(checkStatus == '-1'){
+                checkStatusText = '待审核';
+              }else if(checkStatus == '1'){
+                checkStatusText = '通过';
+              }else if(checkStatus == '0'){
+                checkStatusText = '拒绝';
+              }
+              if (isCurrent == '1') {
+                _this.projectApplyForm.activeNum = item.sortOrder +1;
+              }
+              item.description = item.shenpiUserName + item.updateTime.substring(0,10) + checkStatusText;
+            })
           }
         });
       },
@@ -720,6 +713,10 @@
             message: '已取消删除'
           });
         });
+      },
+      handleLookOpen(row, column, event){
+        this.submissionOpen2 = true;
+        this.updateSetProjectApplyValue(row);
       }
     }
   }
