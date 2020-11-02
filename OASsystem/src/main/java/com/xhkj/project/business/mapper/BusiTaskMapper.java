@@ -72,4 +72,14 @@ public interface BusiTaskMapper
 	public List<BusiTaskVo> selectBusiTasks(BusiTaskVo busiTaskVo);
 
 	public BusiTaskVo selectBusiTaskByTaskId(Long taskId);
+
+	/**
+	 * 项目任务日志合计
+	 * @param projectId
+	 * @return
+	 */
+	public int taskLogCount(Long projectId);
+
+	public int taskLogCountByTask(Long taskId);
+
 }

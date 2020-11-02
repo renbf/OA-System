@@ -2,6 +2,7 @@ package com.xhkj.project.business.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.xhkj.common.exception.CustomException;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
@@ -201,6 +202,12 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			if ("1".equals(status)) {
 				resultMap.put("code",500);
 				resultMap.put("msg", "项目在启用中不能删除");
+				return resultMap;
+			}
+			int i = busiTaskMapper.taskLogCount(projectId);
+			if (i > 0) {
+				resultMap.put("code",500);
+				resultMap.put("msg", "项目已有任务日志回复不能删除");
 				return resultMap;
 			}
 			busiProjectMapper.deleteBusiProjectById(projectId);
@@ -439,19 +446,25 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 					BusiTask busiTask1 = busiTaskMapper.selectBusiTaskById(taskId);
 					String status = busiTask1.getStatus();
 					if ("0".equals(status)) {
+						int i = busiTaskMapper.taskLogCountByTask(taskId);
+						if (i > 0) {
+							throw new CustomException("已有任务日志，不能删除");
+						}
 						busiTaskMapper.deleteBusiTaskById(taskId);
 						busiTaskMemberMapper.deleteBusiTaskMemberByTaskId(taskId);
 					}else{
-						resultMap.put("code",-1);
-						resultMap.put("msg","在启用中，不能删除");
-						return resultMap;
+						throw new CustomException("在启用中，不能删除");
 					}
 				}
 			}
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);
-			throw new RuntimeException();
+			if (e instanceof CustomException) {
+				throw (CustomException)e;
+			}else{
+				throw new RuntimeException();
+			}
 		}
 		return resultMap;
 	}
