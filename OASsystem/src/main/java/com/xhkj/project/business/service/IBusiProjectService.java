@@ -96,4 +96,7 @@ public interface IBusiProjectService
 	public Map<String, Object> listProjectApply(BusiProjectApplyVo busiProjectApplyVo);
 
 	public Map<String, Object> listProjectApplyShenpi(Long projectApplyId);
+
+	public Map<String, Object> baosongProjectApply(BusiProjectApplyVo busiProjectApplyVo);
+
 }

@@ -656,8 +656,6 @@ public class BusiProjectServiceImpl implements IBusiProjectService
     public Map<String, Object> listProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			Date now = new Date();
-			String username = SecurityUtils.getUsername();
 			if (Objects.nonNull(busiProjectApplyVo.getPage()) && Objects.nonNull(busiProjectApplyVo.getLimit())) {
 				PageHelper.startPage(busiProjectApplyVo.getPage(), busiProjectApplyVo.getLimit());
 			}
@@ -688,4 +686,39 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		}
 		return resultMap;
 	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> baosongProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Long> projectApplyIds = busiProjectApplyVo.getProjectApplyIds();
+			if (CollectionUtils.isNotEmpty(projectApplyIds)) {
+				for (Long projectApplyId : projectApplyIds) {
+					BusiProjectApply busiProjectApply = busiProjectApplyMapper.selectBusiProjectApplyById(projectApplyId);
+					String status = busiProjectApply.getStatus();
+					if ("0".equals(status)) {
+						BusiProjectApply busiProjectApplyUp = new BusiProjectApply();
+						busiProjectApplyUp.setProjectApplyId(projectApplyId);
+						busiProjectApplyUp.setStatus("1");
+						busiProjectApplyUp.setUpdateBy(username);
+						busiProjectApplyUp.setUpdateTime(now);
+						busiProjectApplyMapper.updateBusiProjectApply(busiProjectApplyUp);
+					}else{
+						resultMap.put("code",-1);
+						resultMap.put("msg","在启用中，不能报送");
+						return resultMap;
+					}
+				}
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
 }

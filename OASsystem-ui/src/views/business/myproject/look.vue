@@ -61,7 +61,7 @@
       <p class="apply">
         <span>项目组申请</span>
         <span>
-          <el-button>全部报送</el-button>
+          <el-button @click.stop="submissionReport">全部报送</el-button>
         </span>
         <span>
           <el-button icon="el-icon-right" size="small" circle @click="submission"></el-button>
@@ -73,40 +73,39 @@
       <div class="card-carousel">
         <div class="card-carousel--overflow-container">
           <div class="card-carousel-cards clear" :style="{ transform: 'translateX' + '(' + currentOffset + 'px' + ')'}">
-            <div class="card-carousel--card lf" v-for="(item,index) in applyproject" @click="Open(index)">
+            <div class="card-carousel--card lf" v-for="(item,index) in applyproject" @click="Open(item)">
               <div style="border-bottom:1px solid #ddd">
                 <p>
-                  <span style="margin-left: 10px;"><b>{{item.title}}</b></span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0"  @click.stop="delLook">
-                     <el-tooltip content="未报送" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" v-if="index==0">
-                    <el-button circle icon="el-icon-message" type="danger" disabled  ></el-button>
+                  <span style="margin-left: 10px;"><b>{{item.projectApplyTitle}}</b></span>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 0"  @click.stop="delLook">
+                     <el-tooltip content="未报送" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" v-if="item.status == 0">
+                    <el-button circle icon="el-icon-message" type="danger" @click.stop="submissionReport(item)"  ></el-button>
                          </el-tooltip>
                   </span>
-                  <span class="rt" style="margin-right: 10px;" v-if="index==0">
-                    <el-button circle icon="el-icon-delete"@click.stop="del"></el-button>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 0">
+                    <el-button circle icon="el-icon-delete"@click.stop="del(item)"></el-button>
                   </span>
-
-                    <span class="rt" style="margin-right: 10px;">
-                       <el-tooltip content="审核中" placement="top" effect="light"   :value="tooltipValue" :manual="tooltipManual" v-if="index==1">
-                    <el-button circle icon="el-icon-time" v-if="index==1" type="warning" disabled></el-button>
+                    <span class="rt" style="margin-right: 10px;" v-if="item.status == 1">
+                       <el-tooltip content="审核中" placement="top" effect="light"   :value="tooltipValue" :manual="tooltipManual">
+                    <el-button circle icon="el-icon-time" type="warning" disabled></el-button>
                           </el-tooltip>
                   </span>
-                    <span class="rt" style="margin-right: 10px;">
-                       <el-tooltip content="通过" placement="top" effect="light" :value="tooltipValue" :manual="tooltipManual" v-if="index==2">
-                    <el-button circle icon="el-icon-check" v-if="index==2" type="success" disabled></el-button>
+                    <span class="rt" style="margin-right: 10px;" v-if="item.status == 2">
+                       <el-tooltip content="通过" placement="top" effect="light" :value="tooltipValue" :manual="tooltipManual">
+                    <el-button circle icon="el-icon-check" type="success" disabled></el-button>
                          </el-tooltip>
                   </span>
-                  <span class="rt" style="margin-right: 10px;">
-                    <el-tooltip content="拒绝" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual"  v-if="index==3">
-                    <el-button circle icon="el-icon-close" v-if="index==3"  type="danger" disabled></el-button>
+                  <span class="rt" style="margin-right: 10px;" v-if="item.status == 3">
+                    <el-tooltip content="拒绝" placement="top" effect="light"  :value="tooltipValue" :manual="tooltipManual" >
+                    <el-button circle icon="el-icon-close"  type="danger" disabled></el-button>
                        </el-tooltip>
                   </span>
                 </p>
-                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.applytime}}</p>
+                <p style="margin-left: 10px; font-size: 12px;color:#C0C4CC">申请时间:{{item.createTime}}</p>
               </div>
               <div>
-                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.applypeople}}</p>
-                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.applyreason}}</p>
+                <p style="margin-left: 10px;font-size: 13px;">申请人：{{item.nickName}}</p>
+                <p style="margin-left: 10px;font-size: 13px;">原  因：{{item.content}}</p>
               </div>
             </div>
           </div>
@@ -628,12 +627,12 @@
       :visible.sync="lookopen2"
       width="30%"
     >
-      <el-form ref="UpdataForm" :model="UpdataForm"  >
+      <el-form ref="projectApplyForm" :model="projectApplyForm"  :rules="projectApplyFormRules">
         <el-form-item><span>标题</span>
           <el-input
             type="text"
             placeholder="请输入内容"
-            v-model="UpdataForm.text"
+            v-model="projectApplyForm.projectApplyTitle"
             maxlength="10"
             show-word-limit
             style="width:400px;margin-left:50px;"
@@ -645,7 +644,7 @@
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="UpdataForm.textarea2"
+            v-model="projectApplyForm.content"
             style="width:400px;margin-left:20px;">
           </el-input></el-form-item>
         <el-form-item><span>审批人</span>
@@ -655,22 +654,20 @@
         </el-form-item>
         <el-form-item style="padding:0 70px" >
           <el-tag
-            :key="tag"
-            v-for="tag in dynamicTags"
+            :key="item.shenpiUserId"
+            v-for="(item,index) in projectApplyForm.shenpiUserList"
             closable
             :disable-transitions="false"
             style="margin-left:10px;"
-            @close="handleClose(tag)">
-            {{tag}}
+            @close="handleClose(index)">
+            {{item.shenpiUserName}}
           </el-tag>
-
-
         </el-form-item>
 
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-         <el-button type="primary" @click="lookUpdata">提交</el-button>
+         <el-button type="primary" @click="projectApplySubmitForm(1)">提交</el-button>
 
   </span>
     </el-dialog>
@@ -700,16 +697,16 @@
       width="40%"
     >
       <div style="height: 400px;width:200px;">
-        <el-steps direction="vertical" :active="1" finish-status="success">
-          <el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
+        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+          <!--<el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
           <el-step title="迈克尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
           <el-step title="伊利斯" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-
+          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>-->
+          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
         </el-steps>
       </div>
       <div style="float:right;top:20px;right:50px;" class="dialogtext">
-        <el-form ref="looksForm" :model="looksForm" label-width="80px" >
+        <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px" >
           <el-form-item style="margin-top:90px;font-weight: bold">
             标题
             <el-input
@@ -718,7 +715,7 @@
               type="textarea"
               autosize
               placeholder="请输入内容"
-              v-model="looksForm.textarea1">
+              v-model="projectApplyForm.projectApplyTitle">
             </el-input>
             <div style="margin: 20px 0;"></div>
 
@@ -731,12 +728,12 @@
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入内容"
-              v-model="looksForm.textarea3">
+              v-model="projectApplyForm.content">
             </el-input>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer" v-if="inx==3">
+      <span slot="footer" class="dialog-footer" v-if="projectApplyForm.status == 3">
         <el-button type="primary" @click="looktEdit">编辑</el-button>
   </span>
     </el-dialog>
@@ -753,7 +750,7 @@
   import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
   import eventBus from '@/utils/eventBus.js'
   export default {
@@ -782,68 +779,7 @@
         currentPage4:1,
         dialogVisible: false,
         dynamicTags: ['张三', '李四', '王五'],
-        applyproject: [
-          {
-            title: '任务时间增加申请1',
-            applytime: '2020-05-21',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请2',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请3',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请4',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请5',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请6',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请7',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请8',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请9',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          },
-          {
-            title: '任务时间增加申请10',
-            applytime: '2020-05-22',
-            applypeople: '迈克尔',
-            applyreason: '因功能修改需重新调整，需增加任务时间，故作此申请。'
-          }
-        ],
+        applyproject: [],
         //关闭原因
         textarea2: '',
         dialogTaskVisible: false,
@@ -907,12 +843,18 @@
           status: [{required: true, message: "状态必须选择", trigger: "change"}]
         },
         //卡片数据
-        looksForm:{
-          text: '',
-          textarea2: '',
-          textarea1:"项目任务延时申请",
-          textarea3:"因功能修改需重新调整，需增加任务时间，故作此申请",
+        projectApplyForm:{
+          projectApplyId:undefined,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[],
+          status:undefined,
+          activeNum:0
          },
+        projectApplyFormRules: {
+          projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
+          content: [{required: true, message: "申请内容不能为空", trigger: "blur"}],
+        },
         UpdataForm:{
           text: '',
           textarea2: '',
@@ -1013,7 +955,7 @@
       this.getTaskList();
       this.getIsVisbleData()
       this.getDataFromSession()
-
+      this.getApplyList();
 
     },
     computed: {
@@ -1304,8 +1246,9 @@
       lookCancel(){
         this.lookOpen = false;
       },
-      handleClose(tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      handleClose(index) {
+        let _this = this;
+        _this.projectApplyForm.shenpiUserList.splice(index, 1);
       },
       lookSubmitForm(logStatus){
         let _this = this;
@@ -1557,8 +1500,34 @@
       looktEdit(){
 
       },
-      lookUpdata(){
-        this.lookopen2=false
+      projectApplySubmitForm(status){
+        let _this = this;
+        _this.$refs.projectApplyForm.validate(valid => {
+          if (valid) {
+            let form = _this.projectApplyForm;
+            form.status = status;
+            let length = form.shenpiUserList.length;
+            if (length <= 0) {
+              this.msgError("审批人不能为空");
+              return false;
+            }else{
+              form.shenpiUserList.forEach((item, index) => {
+                item.sortOrder = index;
+              });
+            }
+            if (form.projectApplyId != undefined) {
+              updateProjectApply(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.lookopen2 = false;
+                  this.getApplyList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }
+          }
+        });
       },
       // 添加审批人取消操作
       lookCancel2(){
@@ -1575,15 +1544,17 @@
       lookSubmitForm(){
 
       },
-      del(){
+      del(item){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          removeProjectApply({projectApplyIds:[item.projectApplyId]}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("删除成功");
+            }
           });
         }).catch(() => {
           this.$message({
@@ -1593,18 +1564,83 @@
         });
       },
       //项目组申请弹框
-      Open(index){
-        this.inx=index
-if(index==0){
-  this.lookopen2=true
-}else if(index==1){
-  this.looksOpen=true
-}else if(index==2){
-  this.looksOpen=true
-}else if(index==3){
-  this.looksOpen=true
-}
-      }
+      Open(item){
+        if(item.status == '0'){
+          this.lookopen2=true;
+          this.updateSetProjectApplyValue(item);
+        }else{
+          this.looksOpen=true;
+          this.updateSetProjectApplyValue(item);
+        }
+      },
+      getApplyList() {
+        let _this = this;
+        let queryParams = {};
+        listProjectApply(queryParams).then(response => {
+          if(response.code == 200){
+            _this.applyproject= response.data;
+          }
+        });
+      },
+      //报送
+      submissionReport(item){
+        this.$confirm('请确认是否提交报送？提交后不可进行修改', '提交报送', {
+          confirmButtonText: "报送",
+          cancelButtonText: "返回列表",
+          type: 'warning'
+        }).then(() => {
+          let _this = this;
+          let projectApplyIds = [];
+          if (item != undefined && item.projectApplyId != undefined) {
+            projectApplyIds = [item.projectApplyId];
+          }else{
+            _this.applyproject.forEach((item)=>{
+              if (item.status == '0') {
+                projectApplyIds.push(item.projectApplyId);
+              }
+            });
+          }
+          baosongProjectApply({projectApplyIds:projectApplyIds}).then(response => {
+            if(response.code == 200){
+              this.getApplyList();
+              this.msgSuccess("报送成功");
+            }
+          });
+        }).catch(() => {
+        });
+      },
+      updateSetProjectApplyValue(item) {
+        let _this = this;
+        _this.projectApplyForm = {
+          projectApplyId:item.projectApplyId,
+          projectId:this.projectId,
+          projectApplyTitle:item.projectApplyTitle,
+          content:item.content,
+          shenpiUserList:[],
+          status:item.status
+        };
+        listProjectApplyShenpi({projectApplyId:item.projectApplyId}).then(response => {
+          if(response.code == 200){
+            _this.projectApplyForm.shenpiUserList = response.data;
+            _this.projectApplyForm.shenpiUserList.forEach((item)=>{
+              let checkStatus = item.checkStatus;
+              let isCurrent = item.isCurrent;
+              let checkStatusText = '';
+              if(checkStatus == '-1'){
+                checkStatusText = '待审核';
+              }else if(checkStatus == '1'){
+                checkStatusText = '通过';
+              }else if(checkStatus == '0'){
+                checkStatusText = '拒绝';
+              }
+              if (isCurrent == '1') {
+                _this.projectApplyForm.activeNum = item.sortOrder +1;
+              }
+              item.description = item.shenpiUserName + item.updateTime.substring(0,10) + checkStatusText;
+            })
+          }
+        });
+      },
     },
 
 

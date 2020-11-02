@@ -187,6 +187,14 @@ export function listProjectApplyShenpi(query) {
     params: query
   })
 }
+// 报送申请列表
+export function baosongProjectApply(data) {
+  return request({
+    url: '/api/busiProject/baosongProjectApply',
+    method: 'post',
+    data: data
+  })
+}
 
 export function project_progress() {
   return {

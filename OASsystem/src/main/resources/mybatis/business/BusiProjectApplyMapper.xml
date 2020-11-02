@@ -130,19 +130,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="shenpiUserNames"    column="shenpiUserNames"    />
         <result property="currentShenpiUserName"    column="current_shenpi_user_name"    />
+        <result property="nickName"    column="nick_name"    />
     </resultMap>
 
     <select id="selectBusiProjectApplyVos" parameterType="com.xhkj.project.business.domain.vo.BusiProjectApplyVo" resultMap="BusiProjectApplyVoResult">
         <include refid="selectBusiProjectApplybasicColums"/>
         ,(select GROUP_CONCAT(pas.shenpi_user_name ORDER BY pas.sort_order SEPARATOR ',') from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id) shenpiUserNames,
-        (select pas.shenpi_user_name from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id and pas.check_status = '-1' and pas.is_current = '1' ) current_shenpi_user_name
+        (select pas.shenpi_user_name from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id and pas.check_status = '-1' and pas.is_current = '1' ) current_shenpi_user_name,
+        u.nick_name
         from busi_project_apply pa
+        join sys_user u on pa.create_by = u.user_name
         <where>
             <if test="searchDate != null and searchDate.size > 0">
              and pa.create_time >= #{searchDate[0]}
              and pa.create_time <![CDATA[ <= ]]> #{searchDate[1]}
              </if>
-            <if test="content != null  and content != '' "> and pa.content like concat('%',#{content},'') </if>
+            <if test="content != null  and content != '' "> and pa.content like concat('%',#{content},'%') </if>
             <if test="status != null  and status != '' "> and pa.status = #{status}</if>
         </where>
     </select>
