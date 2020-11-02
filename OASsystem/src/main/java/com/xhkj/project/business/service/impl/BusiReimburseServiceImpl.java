@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import com.xhkj.common.utils.DateUtils;
 import com.xhkj.common.utils.SecurityUtils;
+import com.xhkj.common.utils.StringUtils;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.*;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
@@ -14,9 +15,7 @@ import com.xhkj.project.business.mapper.BusiReimOtherFeeMapper;
 import com.xhkj.project.business.mapper.BusiReimTrafficFeeMapper;
 import com.xhkj.project.business.mapper.BusiReimTravelSubsidyMapper;
 import com.xhkj.project.business.mapper.BusiReimburseMapper;
-import com.xhkj.project.business.service.IBusiReimOtherFeeService;
-import com.xhkj.project.business.service.IBusiReimTrafficFeeService;
-import com.xhkj.project.business.service.IBusiReimTravelSubsidyService;
+import com.xhkj.project.business.service.*;
 import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.service.ISysWorkflowService;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,7 +23,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.xhkj.project.business.service.IBusiReimburseService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,6 +44,9 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
     IBusiReimTrafficFeeService iBusiReimTrafficFeeService;
     @Autowired
     ISysWorkflowService sysWorkflowService;
+    @Autowired
+    IBusiReimExpenseService iBusiReimExpenseService;
+
 
     /**
      * 查询报销信息
@@ -66,36 +67,53 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
      * @return
      */
     @Override
-    public BusiReimburseVo getRemburseDetail(Long reimburseId)
+    public BusiReimburseVo getRemburseDetail(Long reimburseId,String reimburseType)
     {
         BusiReimburseVo busiReimburseVo = new BusiReimburseVo();
         BusiReimburse busiReimburse = busiReimburseMapper.selectBusiReimburseById(reimburseId);
 
         BeanUtils.copyProperties(busiReimburse,busiReimburseVo);
-
-        List<BusiReimTrafficFee> busiReimTrafficFees = iBusiReimTrafficFeeService.selectBusiReimTrafficFeeList(new BusiReimTrafficFee(reimburseId));
-        List<BusiReimTravelSubsidy> busiReimTravelSubsidies = ibusiReimTravelSubsidyService.selectBusiReimTravelSubsidyList(new BusiReimTravelSubsidy(reimburseId));
-        List<BusiReimOtherFee> busiReimOtherFees = ibusiReimOtherFeeService.selectBusiReimOtherFeeList(new BusiReimOtherFee(reimburseId));
-
         BigDecimal total = new BigDecimal(0);
-        for (BusiReimTrafficFee busiReimTrafficFee : busiReimTrafficFees) {
-            BigDecimal amountTotal = new BigDecimal(busiReimTrafficFee.getAmountTotal());
-            total = total.add(amountTotal);
-        }
-        for (BusiReimTravelSubsidy busiReimTravelSubsidy : busiReimTravelSubsidies) {
-            BigDecimal amountTotal = new BigDecimal(busiReimTravelSubsidy.getAmountTotal());
-            total = total.add(amountTotal);
+
+
+        if(StringUtils.equals(reimburseType,"travel")){
+            List<BusiReimTrafficFee> busiReimTrafficFees = iBusiReimTrafficFeeService.selectBusiReimTrafficFeeList(new BusiReimTrafficFee(reimburseId));
+            List<BusiReimTravelSubsidy> busiReimTravelSubsidies = ibusiReimTravelSubsidyService.selectBusiReimTravelSubsidyList(new BusiReimTravelSubsidy(reimburseId));
+            List<BusiReimOtherFee> busiReimOtherFees = ibusiReimOtherFeeService.selectBusiReimOtherFeeList(new BusiReimOtherFee(reimburseId));
+
+
+            for (BusiReimTrafficFee busiReimTrafficFee : busiReimTrafficFees) {
+                BigDecimal amountTotal = new BigDecimal(busiReimTrafficFee.getAmountTotal());
+                total = total.add(amountTotal);
+            }
+            for (BusiReimTravelSubsidy busiReimTravelSubsidy : busiReimTravelSubsidies) {
+                BigDecimal amountTotal = new BigDecimal(busiReimTravelSubsidy.getAmountTotal());
+                total = total.add(amountTotal);
+            }
+
+            for (BusiReimOtherFee busiReimOtherFee : busiReimOtherFees) {
+                BigDecimal amountTotal = new BigDecimal(busiReimOtherFee.getAmountTotal());
+                total = total.add(amountTotal);
+            }
+
+            busiReimburseVo.setBusiReimTrafficFeeList(busiReimTrafficFees);
+            busiReimburseVo.setBusiReimTravelSubsidyList(busiReimTravelSubsidies);
+            busiReimburseVo.setBusiReimOtherFeeList(busiReimOtherFees);
+
+        }else if(StringUtils.equals(reimburseType,"expenses")){
+            List<BusiReimExpense> busiReimExpenses = iBusiReimExpenseService.selectBusiReimExpenseList(new BusiReimExpense(reimburseId));
+            for (BusiReimExpense busiReimExpense : busiReimExpenses) {
+                BigDecimal amountTotal = new BigDecimal(busiReimExpense.getAmountTotal());
+                total = total.add(amountTotal);
+            }
+
+            busiReimburseVo.setBusiReimExpenseList(busiReimExpenses);
+
         }
 
-        for (BusiReimOtherFee busiReimOtherFee : busiReimOtherFees) {
-            BigDecimal amountTotal = new BigDecimal(busiReimOtherFee.getAmountTotal());
-            total = total.add(amountTotal);
-        }
 
         busiReimburseVo.setAmountTotal(total.doubleValue());
-        busiReimburseVo.setBusiReimTrafficFeeList(busiReimTrafficFees);
-        busiReimburseVo.setBusiReimTravelSubsidyList(busiReimTravelSubsidies);
-        busiReimburseVo.setBusiReimOtherFeeList(busiReimOtherFees);
+
 
         return busiReimburseVo;
     }
@@ -166,6 +184,13 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
             List<BusiReimTrafficFee> busiReimTrafficFees = iBusiReimTrafficFeeService.selectBusiReimTrafficFeeList(new BusiReimTrafficFee(reimburseId));
             List<BusiReimTravelSubsidy> busiReimTravelSubsidies = ibusiReimTravelSubsidyService.selectBusiReimTravelSubsidyList(new BusiReimTravelSubsidy(reimburseId));
             List<BusiReimOtherFee> busiReimOtherFees = ibusiReimOtherFeeService.selectBusiReimOtherFeeList(new BusiReimOtherFee(reimburseId));
+
+            List<BusiReimExpense> busiReimExpenses = iBusiReimExpenseService.selectBusiReimExpenseList(new BusiReimExpense(reimburseId));
+            if(CollectionUtils.isNotEmpty(busiReimExpenses)){
+                busiReimExpenses.stream().forEach(e->{
+                    iBusiReimExpenseService.deleteBusiReimExpenseById(e.getReimExpenseId());
+                });
+            }
 
             if(CollectionUtils.isNotEmpty(busiReimTrafficFees)){
                 busiReimTrafficFees.stream().forEach(e->{

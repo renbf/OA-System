@@ -26,7 +26,7 @@ public interface IBusiReimburseService
     public BusiReimburse selectBusiReimburseById(Long reimburseId);
 
 
-    public BusiReimburseVo getRemburseDetail(Long reimburseId);
+    public BusiReimburseVo getRemburseDetail(Long reimburseIdString ,String reimburseType);
 
 
     /**

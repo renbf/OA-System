@@ -90,7 +90,6 @@ public class BusiReimOtherFeeServiceImpl implements IBusiReimOtherFeeService
     public int insertBusiReimOtherFee(BusiReimOtherFee busiReimOtherFee)
     {
 
-
         int i = 0;
         Long otherId = busiReimOtherFee.getOtherId();
         if(otherId!=null){

@@ -2,6 +2,7 @@ package com.xhkj.project.business.domain.vo;
 
 import com.xhkj.framework.aspectj.lang.annotation.Excel;
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.business.domain.BusiReimExpense;
 import com.xhkj.project.business.domain.BusiReimOtherFee;
 import com.xhkj.project.business.domain.BusiReimTrafficFee;
 import com.xhkj.project.business.domain.BusiReimTravelSubsidy;
@@ -62,6 +63,18 @@ public class BusiReimburseVo extends BaseEntity
     /** 其他费用 list */
     private List<BusiReimOtherFee> busiReimOtherFeeList;
 
+
+    /** 费用报销 list */
+    private List<BusiReimExpense> busiReimExpenseList;
+
+
+    public List<BusiReimExpense> getBusiReimExpenseList() {
+        return busiReimExpenseList;
+    }
+
+    public void setBusiReimExpenseList(List<BusiReimExpense> busiReimExpenseList) {
+        this.busiReimExpenseList = busiReimExpenseList;
+    }
 
     public String getReimburseType() {
         return reimburseType;

@@ -143,6 +143,7 @@
 <!--    添加报销-->
     <el-dialog
       :title="title"
+      @close="closeEven"
       :visible.sync="dialogVisible"
       width="600px" class="abow_dialog">
 
@@ -242,7 +243,7 @@
         <el-row>
           <el-col>
             <el-form-item label="报销项目">
-              <el-button type="primary" icon="el-icon-plus" circle @click="addtransport"></el-button>
+              <el-button type="primary" icon="el-icon-plus" circle @click="addexpense"></el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -253,24 +254,16 @@
                 <el-carousel-item v-for="item in expenseList" >
                   <el-card class="box-card">
                     <div slot="header" class="clearfix">
-                      <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>
-                        {{ selectDictLabelByType(GLOBAL.TRANSPORT_TYPE, item.trafficType) }}
-                      </b></span>
+                      <span  style="font-size: 16px;line-height: 35px;"><b>{{item.reimExpenseName}}</b></span>
                       <el-button icon="el-icon-delete"  style="float: right;" circle @click="deleteticket(item)"></el-button>
                     </div>
-                    <div class="text item train"  @click="editTransport(item)">
+                    <div class="text item train" @click="editexpense(item)">
                       <div>
-                        <p><b>{{item.departureStation}}</b></p>
-                        <p>{{item.trafficStartDate}}</p>
+                        <p><b>{{item.reimburseReason}}</b></p>
                         <p>附件 {{item.fileNum}}张</p>
                       </div>
                       <div>
-                        <p>至</p>
-                      </div>
-                      <div>
-                        <p><b>{{item.terminalStation}}</b></p>
-                        <p>{{item.trafficEndDate}}</p>
-                        <p>￥<b>{{item.amountTotal}}</b></p>
+                        <p>￥<b>{{item.amount}}</b></p>
                       </div>
                     </div>
                   </el-card>
@@ -322,16 +315,16 @@
 
 <!--新建报销项目-->
     <el-dialog
-      :title="transporttitle"
-      :visible.sync="transport"
+      :title="expensetitle"
+      :visible.sync="expense"
       width="600px" class="abow_dialog">
 
-      <el-form ref="form" :model="expenseform" :rules="transportrules" label-width="80px">
+      <el-form ref="form" :model="expenseform" :rules="expenserules" label-width="80px">
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="expenseform.reimExpenseName"></el-input>
         </el-form-item>
         <el-form-item label="报销事由">
-          <el-input type="textarea" v-model="expenseform.reimburseReason" disabled></el-input>
+          <el-input type="textarea" v-model="expenseform.reimburseReason"></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="10">
@@ -366,14 +359,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <span class="lf"><b style="font-size: 18px;">￥{{expenseform.amountTotal}}</b></span>
-        <el-button @click="transport=false">取消</el-button>
-        <el-button type="primary" @click="savetransport">保存</el-button>
+        <el-button @click="expense=false">取消</el-button>
+        <el-button type="primary" @click="saveexpense">保存</el-button>
       </div>
     </el-dialog>
-<!--差旅费查看审批-->
+<!--查看-->
     <el-dialog
       :title="expensedetailtitle"
-      :visible.sync="transportdetail"
+      :visible.sync="expensedetail"
       width="800px" class="abow_dialog">
       <el-row>
         <el-col :span="8" v-show="billTracesFlag">
@@ -439,23 +432,15 @@
                     <el-carousel-item v-for="item in expenseList">
                       <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                          <span  style="font-size: 16px;margin-top: 10px;line-height: 35px;"><b>
-                            {{ selectDictLabelByType(GLOBAL.TRANSPORT_TYPE, item.trafficType) }}
-                          </b></span>
+                          <span  style="font-size: 16px;line-height: 35px;"><b>{{item.reimExpenseName}}</b></span>
                         </div>
                         <div class="text item train">
                           <div>
-                            <p><b>{{item.departureStation}}</b></p>
-                            <p>{{item.trafficStartDate}}</p>
+                            <p><b>{{item.reimburseReason}}</b></p>
                             <p>附件 {{item.fileNum}}张</p>
                           </div>
                           <div>
-                            <p>至</p>
-                          </div>
-                          <div>
-                            <p><b>{{item.terminalStation}}</b></p>
-                            <p>{{item.trafficEndDate}}</p>
-                            <p>￥<b>{{item.amountTotal}}</b></p>
+                            <p>￥<b>{{item.amount}}</b></p>
                           </div>
                         </div>
                       </el-card>
@@ -521,12 +506,9 @@
 </template>
 
 <script>
-  import { listDept } from "@/api/system/dept";
   import {expensesList,loadAll} from "@/api/business/mywork/expenses"
   import { billSumbit,listReimburse, getReimburse, delReimburse, addReimburse, updateReimburse, exportReimburse,getRemburseDetail } from "@/api/business/mywork/reimburse";
-  import { listTrafficFee, getTrafficFee, delTrafficFee, addTrafficFee, updateTrafficFee, exportTrafficFee } from "@/api/business/mywork/trafficfee";
-  import { listSubsidy, getSubsidy, delSubsidy, addSubsidy, updateSubsidy, exportSubsidy } from "@/api/business/mywork/subsidy";
-  import { listOtherFee, getOtherFee, delOtherFee, addOtherFee, updateOtherFee, exportOtherFee } from "@/api/business/mywork/otherfee";
+  import { listExpense, getExpense, delExpense, addExpense, updateExpense, exportExpense } from "@/api/business/mywork/expense";
   import { getToken } from '@/utils/auth'
   import {uploadFile,delFile} from '@/api/system/file'
   import {isNotEmpty} from "../../../utils/common";
@@ -551,7 +533,7 @@
           // 遮罩层
             loading: true,
             dialogVisible: false,
-            transport:false,
+            expense:false,
             beaway:false,
             otheropen:false,
             value1:'',
@@ -562,10 +544,10 @@
             butie:true,
             other:true,
             fujian:true,
-            transportdetail:false,
+            expensedetail:false,
             fujiannum:0,
-            transportmoney:0,
-            transportnum:0,
+            expensemoney:0,
+            expensenum:0,
             amountTotalAll:0,
             beawayTotal:0,
             otherTotal:0,
@@ -614,15 +596,11 @@
               remark:''
             },
             title:"",
-            transporttitle:"",
+            expensetitle:"",
             beawaytitle:"",
             othertitle:"",
             expensedetailtitle:"",
-            expenseList:[
-              // {trafficType:'火车票',departureStation:'石家庄',terminalStation:'北京',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
-              // {trafficType:'火车票',departureStation:'郑州',terminalStation:'上海',trafficStartDate:'2020/05/03 17:30',trafficEndDate:'2020/05/04 17:20',fujian:1,amountTotal:'199.05'},
-              // {title:'火车票',begin:'南昌',end:'上海',begintime:'2020/05/03 17:30',endtime:'2020/05/04 17:20',fujian:1,money:'199.05'},
-            ],
+            expenseList:[],
 
             // 附件
 
@@ -660,7 +638,7 @@
                 description: "审核通过"
               },
             ],
-            transportrules:{
+            expenserules:{
               trafficType: [
                 { required: true, message: "交通类型不能为空", trigger: "blur" }
               ],
@@ -699,10 +677,6 @@
           this.getDeptList({parentId:'100'}).then(response => {
             response.data.forEach((val)=> this.departmentOptions.push({'dictValue': val.deptId,'dictLabel': val.deptName}))
           });
-          // 交通类型
-          this.getDicts("transport_type").then(response => {
-            this.trafficTypeOptions = response.data;
-          });
 
           this.getWorkflowList({workflowGroupId:this.GLOBAL.EXPENSE_WORKFLOWID}).then(response => {
             this.workflowOptions = response.rows;
@@ -711,6 +685,9 @@
 
         },
         methods:{
+            closeEven(){
+              this.getList()
+            },
             getList(){
               this.loading = true;
               listReimburse(this.addDateRange(this.queryParams, this.datetime)).then(response => {
@@ -750,7 +727,7 @@
 
             },
 
-          savetransport(){
+          saveexpense(){
               this.fileIds = JSON.stringify(this.fileIds);
               if(isNotEmpty(this.fileIds)){
                 this.expenseform.fileIds = this.fileIds.replace("[","").replace("]","")
@@ -765,12 +742,12 @@
               this.expenseform.reimburseId = this.form.reimburseId;
               this.expenseform.fileNum = this.fujiannum
 
-              addTrafficFee(this.expenseform).then(response => {
+            addExpense(this.expenseform).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("保存成功");
                   this.delFiles()
-                  this.getListTrafficFee({'reimburseId':this.form.reimburseId});
-                  this.transport = false;
+                  this.getListExpense({'reimburseId':this.form.reimburseId});
+                  this.expense = false;
 
                 } else {
                   this.msgError(response.msg);
@@ -780,8 +757,8 @@
           },
 
 
-          getListTrafficFee(reimburseId){
-            listTrafficFee(reimburseId).then(response => {
+          getListExpense(reimburseId){
+            listExpense(reimburseId).then(response => {
               this.expenseList = response.rows;
             });
           },
@@ -858,19 +835,19 @@
             this.form = row;
             this.dialogVisible=true;
 
-            getRemburseDetail(row.reimburseId).then(response => {
-              this.expenseList = response.data.busiReimTrafficFeeList;
+            getRemburseDetail(row.reimburseId,row.reimburseType).then(response => {
+              this.expenseList = response.data.busiReimExpenseList;
               //获取全部文件信息
               this.getAllFileList(response.data)
             });
           },
           // 行点击
           handleRowClick(row){
-            this.transportdetail=true;
+            this.expensedetail=true;
             this.expensedetailtitle='查看'
             this.form = row;
-            getRemburseDetail(row.reimburseId).then(response => {
-              this.expenseList = response.data.busiReimTrafficFeeList;
+            getRemburseDetail(row.reimburseId,row.reimburseType).then(response => {
+              this.expenseList = response.data.busiReimExpenseList;
               this.amountTotalAll =  response.data.amountTotal;
               //获取全部文件信息
               this.getAllFileList(response.data)
@@ -901,7 +878,7 @@
           getAllFileList(allInfo){
             this.fillAllNum = 0;
             this.fujianList = [];
-            this.setFujianList(allInfo.busiReimTrafficFeeList)
+            this.setFujianList(allInfo.busiReimExpenseList)
 
             if(isNotEmpty(this.fujianList)){
               this.fujianList.forEach(e=>{
@@ -958,16 +935,13 @@
           },
           changeHandler(){},
 
-          editTransport(data){
-            let {trafficStartDate,trafficEndDate,fileIds } = data;
+          editexpense(data){
+            let {fileIds } = data;
             this.expenseform = data;
-            this.expenseform.trafficDate = new Array();
-            this.expenseform.trafficDate.push(trafficStartDate);
-            this.expenseform.trafficDate.push(trafficEndDate);
 
             this.getFileInfo(this.expenseform,fileIds)
 
-            this.transport=true
+            this.expense=true
           },
 
 
@@ -1004,53 +978,50 @@
                 type: "warning"
               }
             ).then(() => {
-              delTrafficFee(data.trafficId).then(response => {
+              delExpense(data.reimExpenseId).then(response => {
                   if (response.code === 200) {
                     this.msgSuccess("删除成功");
-                    this.getListTrafficFee(data.reimburseId);
+                    this.getListExpense(data.reimburseId);
                   }
                 });
               }).catch(() => {
-                this.getListTrafficFee(data.reimburseId);
+              this.getListExpense(data.reimburseId);
               });
           },
 
 
-          addtransport(){
+          addexpense(){
 
             if(!isNotEmpty(this.form.reimburseId)){
               this.msgWarning('请先保存报销基础信息！');
               return
             }
 
-            this.transport=true
-            this.transporttitle='新增'
+            this.expense=true
+            this.expensetitle='新增'
             this.fujiannum = 0;
             this.fileIds = []
 
-            this.resetTransport();
+            this.resetexpense();
           },
 
-          resetTransport(){
+          resetexpense(){
             this.expenseform={
-                fileNum:0,
-                reimburseId: '',
-                trafficType: '',
-                trafficDate: [],
-                departureStation:'',
-                terminalStation:'',
-                amount:0,
-                billsNum:1,
-                amountTotal:0,
-                fileIds:[],
-                fileList: []
+              fileNum:0,
+              reimburseId: '',
+              reimExpenseName:'',
+              reimburseReason:'',
+              amount:0,
+              billsNum:1,
+              amountTotal:0,
+              fileIds:[],
+              fileList: []
             }
+
           },
 
           reset() {
             this.expenseList = []
-            this.otherList = []
-            this.reunTravcelList = []
             this.fujianList = []
             this.fillAllNum = 0
             this.form={
@@ -1081,17 +1052,17 @@
             console.log(item);
           },
           handleChange(value){
-            this.transportnum=value;
-            this.expenseform.amountTotal=this.transportmoney*this.transportnum;
+            this.expensenum=value;
+            this.expenseform.amountTotal=this.expensemoney*this.expensenum;
           },
           transpormoneychange(value){
-            this.transportmoney=value;
-            this.expenseform.amountTotal=this.transportmoney*this.transportnum;
+            this.expensemoney=value;
+            this.expenseform.amountTotal=this.expensemoney*this.expensenum;
           },
           handlePreview(file) {
             console.log(file);
           },
-          canceltransport(){},
+          cancelexpense(){},
         }
     }
 </script>
