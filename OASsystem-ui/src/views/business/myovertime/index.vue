@@ -198,6 +198,25 @@
             >
           </el-radio-group>
         </el-form-item>
+
+        <el-form-item label="审批流程" prop="workflowId">
+          <el-select
+            v-model="form.workflowId"
+            placeholder="选择审批流程"
+            clearable
+            size="small"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="dict in workflowOptions"
+              :key="dict.workflowId"
+              :label="dict.workflowName"
+              :value="dict.workflowId"
+            />
+          </el-select>
+        </el-form-item>
+
+
         <el-form-item
           label="加班项目"
           class="extraWork_after"
@@ -270,7 +289,7 @@
       </el-collapse>
       <div slot="footer" class="dialog-footer">
         <el-button @click="save">保 存</el-button>
-        <el-button type="primary" @click="form.saveFlag = false">提交</el-button>
+        <el-button type="primary" @click="save('submit')">提交</el-button>
       </div>
     </el-dialog>
 
@@ -436,7 +455,7 @@ export default {
       overPeriodEnd: "",
       overPeriodVal: [],
       overDayVal: [],
-
+      workflowOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -527,6 +546,10 @@ export default {
       if(response.data){
         this.realOvertimeSurTime = this.form.overtimeSurTime = response.data.leaveRest
       }
+    });
+
+    this.getWorkflowList({workflowGroupId:this.GLOBAL.EXTRA_WORKFLOWID}).then(response => {
+      this.workflowOptions = response.rows;
     });
 
   },
@@ -645,7 +668,7 @@ export default {
 
 
         //查看流程节点信息
-        this.getBillTraces(this.form.extraWorkId).then(response => {
+        this.getBillTraces(this.form.extraWorkId,this.form.workflowId).then(response => {
 
           if (response.code === 200) {
             this.activities = response.data;
@@ -654,8 +677,13 @@ export default {
             }
             this.activities.forEach( e=>{
               e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
-              e.type = 'success'
-              e.icon = "el-icon-check"
+              if(e.checkStatus == '0'){
+                e.type = 'danger'
+                e.icon = 'el-icon-close'
+              }else if(e.checkStatus == '1'){
+                e.type = 'success'
+                e.icon = "el-icon-check"
+              }
               e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
             })
 
@@ -748,7 +776,12 @@ export default {
     },
 
     //保存加班提交
-    save() {
+    save(type) {
+
+      if(isNotEmpty(type) && type == 'submit'){
+        this.form.saveFlag = false
+      }
+
       this.$refs["form"].validate(valid => {
         if (this.form.dateRange[0].length == 0) {
           this.err_blo_hide = true;

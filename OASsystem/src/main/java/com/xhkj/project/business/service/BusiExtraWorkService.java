@@ -6,6 +6,7 @@ import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiExtraWork;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkVo;
 
 /**
  * 加班Service接口
@@ -37,7 +38,7 @@ public interface BusiExtraWorkService
      * @param busiExtraWork 加班
      * @return 结果
      */
-    public int insertBusiExtraWork(BusiExtraWork busiExtraWork);
+    public int insertBusiExtraWork(BusiExtraWorkVo busiExtraWorkVo);
 
     /**
      * 修改加班
@@ -45,7 +46,7 @@ public interface BusiExtraWorkService
      * @param busiExtraWork 加班
      * @return 结果
      */
-    public int updateBusiExtraWork(BusiExtraWork busiExtraWork);
+    public int updateBusiExtraWork(BusiExtraWorkVo busiExtraWorkVo);
 
     /**
      * 批量删除加班

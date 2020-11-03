@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         extra_work_Prj_Name,
         in_prj_flag,
         overtime_sur_time,
-        create_by, create_Time, update_by, update_Time, remark from busi_extra_work
+        create_by, create_Time, update_by, update_Time, remark,workflow_id from busi_extra_work
     </sql>
 
     <select id="selectBusiExtraWorkList" parameterType="com.xhkj.project.business.domain.BusiExtraWork" resultType="com.xhkj.project.business.domain.BusiExtraWork">
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         be.overtime_sur_time,
         ifnull(wb.bill_status,2) as approvalStatus,
         swnc.workflow_node_user_name as curApprover,
-        be.create_by, be.create_Time, be.update_by, be.update_Time, be.remark
+        be.create_by, be.create_Time, be.update_by, be.update_Time, be.remark,be.workflow_id
         from busi_extra_work be
         left join workflow_bill wb on be.extra_work_id = wb.bill_id and wb.workflow_id = 1
         left join sys_workflow_node swn on swn.workflow_node_id = wb.workflow_node_id
@@ -72,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_time,</if>
+            <if test="workflowId != null">workflow_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
@@ -88,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="overtimeSurTime != null  and overtimeSurTime != ''">#{overtimeSurTime},</if>
+            <if test="workflowId != null">#{workflowId},</if>
          </trim>
     </insert>
 
@@ -107,6 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="overtimeSurTime != null  and overtimeSurTime != ''">overtime_sur_time = #{overtimeSurTime},</if>
+            <if test="workflowId != null">workflow_id = #{workflowId},</if>
         </trim>
         where extra_work_id = #{extraWorkId}
     </update>
@@ -138,7 +141,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ifnull(wb.bill_status,2) as approval_Status,
         wb.create_time as applyTime,
         su.nick_name as orginHandler,
-        wb.bill_status
+        wb.bill_status,
+        bew.workflow_id
         from busi_extra_work bew
         left join workflow_bill wb on bew.extra_work_id = wb.bill_id  and wb.workflow_id = 1
         left join sys_user su on su.user_name = wb.orgin_Handler

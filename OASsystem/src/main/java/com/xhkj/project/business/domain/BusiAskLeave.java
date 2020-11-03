@@ -76,6 +76,16 @@ public class BusiAskLeave extends BaseEntity
     /*请假结束时间*/
     private String leaveEndTime;
 
+    /** 流程Id */
+    private Long workflowId;
+
+    public Long getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(Long workflowId) {
+        this.workflowId = workflowId;
+    }
 
     public String getLeaveHoursUnit() {
         return leaveHoursUnit;

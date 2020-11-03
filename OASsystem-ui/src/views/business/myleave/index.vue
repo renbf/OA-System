@@ -201,6 +201,24 @@
             >
           </el-radio-group>
         </el-form-item>
+
+        <el-form-item label="审批流程" prop="workflowId">
+          <el-select
+            v-model="form.workflowId"
+            placeholder="选择审批流程"
+            clearable
+            size="small"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="dict in workflowOptions"
+              :key="dict.workflowId"
+              :label="dict.workflowName"
+              :value="dict.workflowId"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item
           label="请假项目"
           class="leave_after"
@@ -331,7 +349,7 @@
       </el-collapse>
       <div slot="footer" class="dialog-footer">
         <el-button @click="save">保 存</el-button>
-        <el-button type="primary" @click="form.saveFlag = false">提交</el-button>
+        <el-button type="primary" @click="save('submit')">提交</el-button>
       </div>
     </el-dialog>
 
@@ -533,7 +551,7 @@ export default {
       leaveDateRange: [],
       realOvertimeSurTime: 0,
       realAnnLeaSurTime: 0,
-
+      workflowOptions:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -543,6 +561,7 @@ export default {
       },
       // 表单参数
       form: {
+        workflowId:'',
         leaveId:'',
         inPrjFlag: true,
         leaveType: '',
@@ -627,6 +646,10 @@ export default {
         this.realOvertimeSurTime = this.form.overtimeSurTime = response.data.leaveRest
         this.realAnnLeaSurTime = this.form.annLeaSurTime = response.data.holsRestDays
       }
+    });
+
+    this.getWorkflowList({workflowGroupId:this.GLOBAL.LEAVE_WORKFLOWID}).then(response => {
+      this.workflowOptions = response.rows;
     });
 
   },
@@ -807,7 +830,7 @@ export default {
         this.overleaveHoursShow(this.form.leaveType);
 
         //查看流程节点信息
-        this.getBillTraces(this.form.leaveId).then(response => {
+        this.getBillTraces(this.form.leaveId,this.form.workflowId).then(response => {
 
           if (response.code === 200) {
             this.activities = response.data;
@@ -816,8 +839,15 @@ export default {
             }
             this.activities.forEach( e=>{
               e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
-              e.type = 'success'
-              e.icon = "el-icon-check"
+
+              if(e.checkStatus == '0'){
+                e.type = 'danger'
+                e.icon = 'el-icon-close'
+              }else if(e.checkStatus == '1'){
+                e.type = 'success'
+                e.icon = "el-icon-check"
+              }
+
               e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
             })
 
@@ -960,8 +990,14 @@ export default {
       this.timeBackUp = [];
     },
 
+
     //保存请假提交
-    save() {
+    save(type) {
+
+      if(isNotEmpty(type) && type == 'submit'){
+        this.form.saveFlag = false
+      }
+
       this.$refs["form"].validate(valid => {
         if (this.form.dateRange[0].length == 0) {
           this.err_blo_hide = true;
@@ -1051,6 +1087,7 @@ export default {
           this.getList();
         });
     },
+
 
     //报送请假
     handleReport(row) {

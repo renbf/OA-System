@@ -17,29 +17,13 @@ public class BusiAskLeaveVo extends BusiAskLeave {
     /*年休假剩余时长*/
     private Double annLeaSurTime;
 
-
-
-    public Double getOvertimeSurTime() {
-        return overtimeSurTime;
-    }
-
-    public void setOvertimeSurTime(Double overtimeSurTime) {
-        this.overtimeSurTime = overtimeSurTime;
-    }
-
-    public Double getAnnLeaSurTime() {
-        return annLeaSurTime;
-    }
-
-    public void setAnnLeaSurTime(Double annLeaSurTime) {
-        this.annLeaSurTime = annLeaSurTime;
-    }
-
     /*判断是保存还是提交*/
     private Boolean saveFlag;
 
     /*是否在项目中*/
     private Boolean inPrjFlag;
+
+
 
     public Boolean getInPrjFlag() {
         return inPrjFlag;
@@ -57,5 +41,20 @@ public class BusiAskLeaveVo extends BusiAskLeave {
         this.saveFlag = saveFlag;
     }
 
+    public Double getOvertimeSurTime() {
+        return overtimeSurTime;
+    }
+
+    public void setOvertimeSurTime(Double overtimeSurTime) {
+        this.overtimeSurTime = overtimeSurTime;
+    }
+
+    public Double getAnnLeaSurTime() {
+        return annLeaSurTime;
+    }
+
+    public void setAnnLeaSurTime(Double annLeaSurTime) {
+        this.annLeaSurTime = annLeaSurTime;
+    }
 
 }

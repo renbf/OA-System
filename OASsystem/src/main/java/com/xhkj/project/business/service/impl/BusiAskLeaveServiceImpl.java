@@ -14,6 +14,7 @@ import com.xhkj.common.utils.StringUtils;
 import com.xhkj.framework.aspectj.lang.annotation.DataScope;
 import com.xhkj.framework.web.domain.AjaxResult;
 import com.xhkj.project.business.domain.BusiHolsCheck;
+import com.xhkj.project.business.domain.BusiReimburse;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveVo;
 import com.xhkj.project.business.service.BusiHolsCheckService;
@@ -88,11 +89,10 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         BusiAskLeave busiAskLeave =  new BusiAskLeave();
         Long userId = Long.valueOf(SecurityUtils.getUserId());
 
-        //更新加班、年休假时长   审核通过以后再进行更新
-        //updateLeaveSurTime(busiAskLeaveVo, userId);
 
         //新增请假信息
         BeanUtils.copyProperties(busiAskLeaveVo,busiAskLeave);
+
         busiAskLeave.setCreateTime(new Date());
         busiAskLeave.setCreateBy(String.valueOf(userId));
         String leaveDatesStr = busiAskLeave.getLeaveDates();
@@ -105,7 +105,12 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
 
         //如果是表单点提交 或 列表页点击报送按钮  则开启审批流程
         if(!busiAskLeaveVo.getSaveFlag()){
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(busiAskLeave.getLeaveId());
+            wfbt.setWorkflowId(busiAskLeave.getWorkflowId());
 
+            //发起流程申请
+            sysWorkflowService.submitToNextWorkflow(wfbt,"busiAskLeaveServiceImpl","approvedToDo");
         }
 
         return num;
@@ -186,7 +191,19 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
             splitLeaveTime(busiAskLeave, leaveDatesStr);
         }
 
-        return busiAskLeaveMapper.updateBusiAskLeave(busiAskLeave);
+        int i = busiAskLeaveMapper.updateBusiAskLeave(busiAskLeave);
+
+        //如果是表单点提交 或 列表页点击报送按钮  则开启审批流程
+        if(!busiAskLeaveVo.getSaveFlag()){
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(busiAskLeave.getLeaveId());
+            wfbt.setWorkflowId(busiAskLeave.getWorkflowId());
+
+            //发起流程申请
+            sysWorkflowService.submitToNextWorkflow(wfbt,"busiAskLeaveServiceImpl","approvedToDo");
+        }
+
+        return i;
     }
 
     /**
@@ -219,9 +236,12 @@ public class BusiAskLeaveServiceImpl implements BusiAskLeaveService
         for (int i = 0; i < leaveIds.length; i++) {
             Long leaveId = leaveIds[i];
 
+            BusiAskLeave busiAskLeave = this.selectBusiAskLeaveById(leaveId);
+            Long workflowId = busiAskLeave.getWorkflowId();
+
             WorkflowBillTrace wfbt = new WorkflowBillTrace();
             wfbt.setBillId(leaveId);
-            wfbt.setWorkflowId(2l);
+            wfbt.setWorkflowId(workflowId);
 
             //发起流程申请
             ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt,"busiAskLeaveServiceImpl","approvedToDo");

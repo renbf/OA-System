@@ -338,7 +338,7 @@ public class SysWorkflowController extends BaseController
 
 
     @GetMapping("/getBillTraces/{billId}/{workflowId}")
-    public AjaxResult getBillTraces(@PathVariable Long billId,Long workflowId)
+    public AjaxResult getBillTraces(@PathVariable Long billId,@PathVariable Long workflowId)
     {
         return AjaxResult.success(workflowBillTraceMapper.getBillTraces(billId,workflowId));
     }
