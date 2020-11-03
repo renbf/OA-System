@@ -587,14 +587,7 @@
               fileIds:[],
               fileList: []
             },
-            detailform:{
-              inPrjFlag:true,
-              project:'马克尔\n' +
-                      '河北省小贷管理系统开发项目\n' +
-                      'XCV23456',
-              reimburseReason:'唐山项目出差费用',
-              remark:''
-            },
+            detailform:{},
             title:"",
             expensetitle:"",
             beawaytitle:"",
@@ -619,25 +612,7 @@
               }
             ],
             billTracesFlag: true,
-            activities: [
-              {
-                content: "主管审批",
-                placement: "top",
-                timestamp: "丹尼尔（软件部)2020-05-22 ",
-                size: "large",
-                type: "success",
-                icon: "el-icon-check",
-                description: "审核通过"
-              },
-              {
-                content: "主管审批",
-                size: "large",
-                placement: "top",
-                type: "danger",
-                timestamp: "丹尼尔（软件部)2020-05-22 ",
-                description: "审核通过"
-              },
-            ],
+            activities: [],
             expenserules:{
               trafficType: [
                 { required: true, message: "交通类型不能为空", trigger: "blur" }

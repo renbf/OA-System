@@ -376,16 +376,7 @@
           annLeaSurTime: 0,
         },
         //表格数据
-        tableData: [{
-          applyTime: '2016-05-02',
-          orginHandler: '迈克尔',
-          extraWorkPrjName:'马克尔/河北省小贷管理系统',
-          extraWorkHours:'0.5天',
-          extraWorkDates:'2020-05-16 17:30 至 20:30',
-          deptId:'技术部',
-          billStatus:'待审核',
-          caozuo:'审批'
-        }],
+        tableData: [],
         overtimeOptions: [
           {
             dictValue: "0",
