@@ -836,7 +836,10 @@ export default {
             this.activities = response.data;
             if(!isNotEmpty(this.activities)){
               this.billTracesFlag = false;
+            }else{
+              this.billTracesFlag = true;
             }
+
             this.activities.forEach( e=>{
               e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
 
