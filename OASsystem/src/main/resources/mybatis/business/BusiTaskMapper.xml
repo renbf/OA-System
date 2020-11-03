@@ -198,4 +198,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t.task_id = #{taskId}
     </select>
 
+    <select id="taskLogCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from busi_task t
+        join busi_task_log tl on t.task_id = tl.task_id
+        where t.project_id = #{projectId}
+    </select>
+
+    <select id="taskLogCountByTask" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from busi_task_log tl
+        where tl.task_id = #{projectId}
+    </select>
 </mapper>

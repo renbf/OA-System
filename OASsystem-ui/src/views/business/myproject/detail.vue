@@ -139,7 +139,7 @@
         v-loading="loading"
         :data="taskList"
         @selection-change="handleSelectionChange"
-        @row-click="handleOpen=true"
+        @row-click="handleOpenButton"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
@@ -230,7 +230,7 @@
         >
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
-            <div>
+            <div v-show="scope.row.status == 0 && scope.row.taskProgress != 100">
               <el-button
                 size="mini"
                 type="text"
@@ -436,7 +436,7 @@
 
 
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-show="showTaskReasonButton">
     <el-button @click="dialogTaskVisible = false">取 消</el-button>
     <el-button type="primary" @click="handleCloseTaskSubmit">确 定</el-button>
   </span>
@@ -565,7 +565,8 @@
         <el-form-item label="活动时间">
           <el-date-picker
             v-model="detailForm.lookvalue"
-            type="datetimerange"
+            type="daterange"
+            :disabled="true"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
@@ -574,7 +575,7 @@
         </el-form-item>
 
         <el-form-item label="活动内容">
-          <el-input type="textarea" v-model="detailForm.desc"></el-input>
+          <el-input type="textarea" v-model="detailForm.desc" :disabled="true"></el-input>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -616,7 +617,6 @@
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask } from "@/api/business/mywork/myproject";
-  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -631,6 +631,8 @@
         //关闭原因
         textarea2: '',
         dialogTaskVisible: false,
+        //是否显示关闭原因确认按钮
+        showTaskReasonButton:false,
         closeTaskform: {
           taskId:undefined,
           closeReason:undefined
@@ -1065,7 +1067,6 @@
           if (response.code === 200) {
             this.msgSuccess("修改成功");
             console.log(response,value,1)
-            eventBus.$emit('isVisableData',value)
             this.getTaskList();
           } else {
             this.msgError(response.msg);
@@ -1114,6 +1115,7 @@
               if (response.code === 200) {
                 this.msgSuccess("关闭成功");
                 this.dialogTaskVisible = false;
+                this.getTaskList();
               } else {
                 this.msgError(response.msg);
               }
@@ -1136,6 +1138,7 @@
       //关闭任务弹框
       handleCloseTask(item) {
         this.dialogTaskVisible = true;
+        this.showTaskReasonButton = true;
         this.resetCloseTaskform();
         this.closeTaskform.taskId = item.taskId;
       },
@@ -1173,6 +1176,14 @@
           this.msgSuccess("删除成功");
           this.getTaskList();
         }).catch(function() {});
+      },
+      handleOpenButton(row, column, event) {
+        this.handleOpen = true;
+        if (row.taskProgress == 100 && row.closeReason != '') {
+          this.dialogTaskVisible = true;
+          this.showTaskReasonButton = false;
+          this.closeTaskform.closeReason = row.closeReason;
+        }
       }
     }
 

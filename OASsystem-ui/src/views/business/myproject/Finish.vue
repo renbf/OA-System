@@ -747,7 +747,6 @@
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
-  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -1000,8 +999,6 @@
       });
       this.getUserDeptUsers();
       this.getTaskList();
-      this.getIsVisbleData()
-      this.getDataFromSession()
 
 
     },
@@ -1048,26 +1045,6 @@
     //   }
     // },
     methods: {
-      // 本地获取isVisableData
-
-      getDataFromSession(){
-
-        if(this.isVisableConfig===''){
-          this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
-
-        }
-      },
-
-      // 获取控制显隐字段
-      getIsVisbleData(){
-        // console.log(111)
-        eventBus.$on('isVisableData',data=>{
-          console.log(data,'jiushou')
-          this.isVisableConfig=data
-          window.sessionStorage.setItem('isVisableData',data)
-        })
-      },
-
       downloadFile(item) {
         downloadUrl(item.fileUrl);
       },

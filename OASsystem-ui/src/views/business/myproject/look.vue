@@ -263,7 +263,6 @@
               <el-button
                 size="mini"
                 type="text"
-                v-show="isVisableConfig==='1'"
                 icon="el-icon-edit-outline"
                 @click.stop="lookUpdate(scope.row)"
                 style="color:#6C6C6C"
@@ -271,7 +270,6 @@
               >
               <el-button
                 size="mini"
-                v-show="isVisableConfig==='1'"
                 type="text"
                 icon="el-icon-edit-outline"
                 @click.stop="handleBaosong(scope.row)"
@@ -486,7 +484,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)"></el-button>
+          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -752,7 +750,6 @@
   import { userDeptUsers } from "@/api/system/user";
   import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
-  import eventBus from '@/utils/eventBus.js'
   export default {
     name: "detail",
     components: {
@@ -953,8 +950,6 @@
       });
       this.getUserDeptUsers();
       this.getTaskList();
-      this.getIsVisbleData()
-      this.getDataFromSession()
       this.getApplyList();
 
     },
@@ -992,35 +987,7 @@
         }
       },
     },
-    // watch: {
-    //   isVisableConfig: {
-    //     handler: function (o, n) {
-    //       console.log(o, n,'监听')
-    //     },
-    //     immediate: true
-    //   }
-    // },
     methods: {
-      // 本地获取isVisableData
-
-      getDataFromSession(){
-
-        if(this.isVisableConfig===''){
-           this.isVisableConfig= window.sessionStorage.getItem('isVisableData')
-
-        }
-      },
-
-      // 获取控制显隐字段
-      getIsVisbleData(){
-        // console.log(111)
-        eventBus.$on('isVisableData',data=>{
-          console.log(data,'jiushou')
-          this.isVisableConfig=data
-          window.sessionStorage.setItem('isVisableData',data)
-        })
-      },
-
       downloadFile(item) {
         downloadUrl(item.fileUrl);
       },
