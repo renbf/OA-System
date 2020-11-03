@@ -18,9 +18,9 @@ export function getReimburse(reimburseId) {
 }
 
 // 查询报销信息详细
-export function getRemburseDetail(reimburseId) {
+export function getRemburseDetail(reimburseId,reimburseType) {
   return request({
-    url: '/business/reimburse/getRemburseDetail/' + reimburseId,
+    url: '/business/reimburse/getRemburseDetail/' + reimburseId + '/' + reimburseType,
     method: 'get'
   })
 }

@@ -62,6 +62,20 @@ public class BusiExtraWork extends BaseEntity
     @Excel(name = "剩余加班时长")
     private String overtimeSurTime;
 
+    /** 流程Id */
+    private Long workflowId;
+
+    public Long getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(Long workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public String getExtraHoursUnit() {
         return extraHoursUnit;

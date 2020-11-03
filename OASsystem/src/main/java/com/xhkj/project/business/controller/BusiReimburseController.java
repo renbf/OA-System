@@ -74,10 +74,10 @@ public class BusiReimburseController extends BaseController
     }
 
     @PreAuthorize("@ss.hasPermi('business:reimburse:query')")
-    @GetMapping(value = "/getRemburseDetail/{reimburseId}")
-    public AjaxResult getRemburseDetail(@PathVariable("reimburseId") Long reimburseId)
+    @GetMapping(value = "/getRemburseDetail/{reimburseId}/{reimburseType}")
+    public AjaxResult getRemburseDetail(@PathVariable("reimburseId") Long reimburseId , @PathVariable("reimburseType") String reimburseType)
     {
-        return AjaxResult.success(busiReimburseService.getRemburseDetail(reimburseId));
+        return AjaxResult.success(busiReimburseService.getRemburseDetail(reimburseId,reimburseType));
     }
 
     /**

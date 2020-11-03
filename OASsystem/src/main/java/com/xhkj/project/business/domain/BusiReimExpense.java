@@ -2,10 +2,12 @@ package com.xhkj.project.business.domain;
 
 import com.xhkj.framework.aspectj.lang.annotation.Excel;
 import com.xhkj.framework.web.domain.BaseEntity;
+import com.xhkj.project.system.domain.Attachment;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 报销信息对象 busi_reimburse
@@ -16,6 +18,15 @@ import javax.validation.constraints.NotBlank;
 public class BusiReimExpense extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
+
+    public BusiReimExpense() {
+    }
+
+    public BusiReimExpense(Long reimburseId) {
+        this.reimburseId = reimburseId;
+    }
+
+
 
     /** 主键id */
     private Long reimExpenseId;
@@ -61,6 +72,16 @@ public class BusiReimExpense extends BaseEntity
     private String fileIds;
     /** 附件数量 */
     private Integer fileNum;
+
+    private List<Attachment> fileList;
+
+    public List<Attachment> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(List<Attachment> fileList) {
+        this.fileList = fileList;
+    }
 
     public Long getReimExpenseId() {
         return reimExpenseId;

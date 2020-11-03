@@ -478,14 +478,19 @@
 
 
           //查看流程节点信息
-          this.getBillTraces(this.form.extraWorkId).then(response => {
+          this.getBillTraces(this.form.extraWorkId,this.form.workflowId).then(response => {
 
             if (response.code === 200) {
               this.activities = response.data;
               this.activities.forEach( e=>{
                 e.checkRemarks = e.checkRemarks ? e.checkRemarks : "审核通过"
-                e.type = 'success'
-                e.icon = "el-icon-check"
+                if(e.checkStatus == '0'){
+                  e.type = 'danger'
+                  e.icon = 'el-icon-close'
+                }else if(e.checkStatus == '1'){
+                  e.type = 'success'
+                  e.icon = "el-icon-check"
+                }
                 e.timestamp = e.checkerUserName + "(" + e.checkerDeptName+ ")" + this.parseTime(e.createTime)
               })
 

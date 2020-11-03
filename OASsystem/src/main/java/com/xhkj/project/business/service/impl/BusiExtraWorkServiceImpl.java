@@ -5,15 +5,19 @@ import java.util.List;
 
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.framework.web.domain.AjaxResult;
+import com.xhkj.project.business.domain.BusiAskLeave;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkVo;
 import com.xhkj.project.system.domain.WorkflowBillTrace;
 import com.xhkj.project.system.service.ISysWorkflowService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xhkj.project.business.mapper.BusiExtraWorkMapper;
 import com.xhkj.project.business.domain.BusiExtraWork;
 import com.xhkj.project.business.service.BusiExtraWorkService;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.xhkj.framework.web.domain.AjaxResult.CODE_TAG;
 
@@ -62,12 +66,30 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
      * @return 结果
      */
     @Override
-    public int insertBusiExtraWork(BusiExtraWork busiExtraWork)
+    @Transactional
+    public int insertBusiExtraWork(BusiExtraWorkVo busiExtraWorkVo)
     {
+        BusiExtraWork busiExtraWork =  new BusiExtraWork();
         Long userId = Long.valueOf(SecurityUtils.getUserId());
+
+        BeanUtils.copyProperties(busiExtraWorkVo,busiExtraWork);
+
         busiExtraWork.setCreateBy(String.valueOf(userId));
         busiExtraWork.setCreateTime(new Date());
-        return busiExtraWorkMapper.insertBusiExtraWork(busiExtraWork);
+
+        int num = busiExtraWorkMapper.insertBusiExtraWork(busiExtraWork);
+
+        //如果是表单点提交 或 列表页点击报送按钮  则开启审批流程
+        if(!busiExtraWorkVo.getSaveFlag()){
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(busiExtraWork.getExtraWorkId());
+            wfbt.setWorkflowId(busiExtraWork.getWorkflowId());
+
+            //发起流程申请
+            sysWorkflowService.submitToNextWorkflow(wfbt);
+        }
+
+        return num;
     }
 
     /**
@@ -77,9 +99,31 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
      * @return 结果
      */
     @Override
-    public int updateBusiExtraWork(BusiExtraWork busiExtraWork)
+    @Transactional
+    public int updateBusiExtraWork(BusiExtraWorkVo busiExtraWorkVo)
     {
-        return busiExtraWorkMapper.updateBusiExtraWork(busiExtraWork);
+
+        Long userId = Long.valueOf(SecurityUtils.getUserId());
+
+        //更新请假信息
+        BusiExtraWork busiExtraWork =  new BusiExtraWork();
+        BeanUtils.copyProperties(busiExtraWorkVo,busiExtraWork);
+        busiExtraWork.setUpdateTime(new Date());
+        busiExtraWork.setUpdateBy(String.valueOf(userId));
+
+        int i = busiExtraWorkMapper.updateBusiExtraWork(busiExtraWork);
+
+        //如果是表单点提交 或 列表页点击报送按钮  则开启审批流程
+        if(!busiExtraWorkVo.getSaveFlag()){
+            WorkflowBillTrace wfbt = new WorkflowBillTrace();
+            wfbt.setBillId(busiExtraWork.getExtraWorkId());
+            wfbt.setWorkflowId(busiExtraWork.getWorkflowId());
+
+            //发起流程申请
+            sysWorkflowService.submitToNextWorkflow(wfbt);
+        }
+
+        return i;
     }
 
     /**
@@ -114,16 +158,18 @@ public class BusiExtraWorkServiceImpl implements BusiExtraWorkService
         for (int i = 0; i < extraWorkIds.length; i++) {
             Long extraWorkId = extraWorkIds[i];
 
+            BusiExtraWork busiExtraWork = this.selectBusiExtraWorkById(extraWorkId);
+            Long workflowId = busiExtraWork.getWorkflowId();
+
             WorkflowBillTrace wfbt = new WorkflowBillTrace();
             wfbt.setBillId(extraWorkId);
-            wfbt.setWorkflowId(1l);
+            wfbt.setWorkflowId(workflowId);
 
             //发起流程申请
             ajaxResult = sysWorkflowService.submitToNextWorkflow(wfbt);
 
         }
-//        int code = (int)ajaxResult.get(CODE_TAG);
-//        int num = code == 200 ? 1 : 0;
+
         return ajaxResult;
     }
 

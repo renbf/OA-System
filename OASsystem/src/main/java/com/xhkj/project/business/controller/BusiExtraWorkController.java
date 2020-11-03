@@ -5,6 +5,7 @@ import java.util.List;
 import com.xhkj.framework.aspectj.lang.annotation.DataScope;
 import com.xhkj.project.business.domain.vo.BusiAskLeaveAprVo;
 import com.xhkj.project.business.domain.vo.BusiExtraWorkAprVo;
+import com.xhkj.project.business.domain.vo.BusiExtraWorkVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,9 +80,9 @@ public class BusiExtraWorkController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:extraWork:add')")
     @Log(title = "加班", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult addExtraWork(@RequestBody BusiExtraWork busiExtraWork)
+    public AjaxResult addExtraWork(@RequestBody BusiExtraWorkVo busiExtraWorkVo)
     {
-        return toAjax(busiExtraWorkService.insertBusiExtraWork(busiExtraWork));
+        return toAjax(busiExtraWorkService.insertBusiExtraWork(busiExtraWorkVo));
     }
 
     /**
@@ -90,9 +91,9 @@ public class BusiExtraWorkController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:extraWork:edit')")
     @Log(title = "加班", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody BusiExtraWork busiExtraWork)
+    public AjaxResult edit(@RequestBody BusiExtraWorkVo busiExtraWorkVo)
     {
-        return toAjax(busiExtraWorkService.updateBusiExtraWork(busiExtraWork));
+        return toAjax(busiExtraWorkService.updateBusiExtraWork(busiExtraWorkVo));
     }
 
     /**

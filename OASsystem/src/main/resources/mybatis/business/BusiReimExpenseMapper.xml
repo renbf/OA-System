@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiReimExpenseMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiReimExpense" id="BusiReimExpenseResult">
+        <result property="reimExpenseId"    column="reim_expense_id"    />
+        <result property="reimburseId"    column="reimburse_id"    />
+        <result property="reimExpenseName"    column="reim_expense_name"    />
+        <result property="reimburseReason"    column="reimburse_reason"    />
+        <result property="amount"    column="amount"    />
+        <result property="billsNum"    column="bills_num"    />
+        <result property="amountTotal"    column="amount_total"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="fileIds"    column="file_ids"    />
+        <result property="fileNum"    column="file_num"    />
+    </resultMap>
+
+    <sql id="selectBusiReimExpenseVo">
+        select reim_expense_id, reimburse_id, reim_expense_name, reimburse_reason, amount, bills_num, amount_total, create_by, create_time, update_by, update_time, remark, file_ids, file_num
+    </sql>
+
+    <select id="selectBusiReimExpenseList" parameterType="com.xhkj.project.business.domain.BusiReimExpense" resultMap="BusiReimExpenseResult">
+        <include refid="selectBusiReimExpenseVo"/>
+        from busi_reim_expense
+        <where>
+            <if test="reimburseId != null "> and reimburse_id = #{reimburseId}</if>
+            <if test="reimExpenseName != null  and reimExpenseName != ''"> and reim_expense_name like concat('%', #{reimExpenseName}, '%')</if>
+            <if test="reimburseReason != null  and reimburseReason != ''"> and reimburse_reason = #{reimburseReason}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="billsNum != null "> and bills_num = #{billsNum}</if>
+            <if test="amountTotal != null "> and amount_total = #{amountTotal}</if>
+            <if test="fileIds != null  and fileIds != ''"> and file_ids = #{fileIds}</if>
+            <if test="fileNum != null "> and file_num = #{fileNum}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiReimExpenseById" parameterType="Long" resultMap="BusiReimExpenseResult">
+        <include refid="selectBusiReimExpenseVo"/>
+        from busi_reim_expense
+        where reim_expense_id = #{reimExpenseId}
+    </select>
+        
+    <insert id="insertBusiReimExpense" parameterType="com.xhkj.project.business.domain.BusiReimExpense" useGeneratedKeys="true" keyProperty="reimExpenseId">
+        insert into busi_reim_expense
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id,</if>
+            <if test="reimExpenseName != null  and reimExpenseName != ''">reim_expense_name,</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">reimburse_reason,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="billsNum != null ">bills_num,</if>
+            <if test="amountTotal != null ">amount_total,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids,</if>
+            <if test="fileNum != null ">file_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reimburseId != null ">#{reimburseId},</if>
+            <if test="reimExpenseName != null  and reimExpenseName != ''">#{reimExpenseName},</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">#{reimburseReason},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="billsNum != null ">#{billsNum},</if>
+            <if test="amountTotal != null ">#{amountTotal},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="fileIds != null  and fileIds != ''">#{fileIds},</if>
+            <if test="fileNum != null ">#{fileNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiReimExpense" parameterType="com.xhkj.project.business.domain.BusiReimExpense">
+        update busi_reim_expense
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reimburseId != null ">reimburse_id = #{reimburseId},</if>
+            <if test="reimExpenseName != null  and reimExpenseName != ''">reim_expense_name = #{reimExpenseName},</if>
+            <if test="reimburseReason != null  and reimburseReason != ''">reimburse_reason = #{reimburseReason},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="billsNum != null ">bills_num = #{billsNum},</if>
+            <if test="amountTotal != null ">amount_total = #{amountTotal},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids = #{fileIds},</if>
+            <if test="fileNum != null ">file_num = #{fileNum},</if>
+        </trim>
+        where reim_expense_id = #{reimExpenseId}
+    </update>
+
+    <delete id="deleteBusiReimExpenseById" parameterType="Long">
+        delete from busi_reim_expense where reim_expense_id = #{reimExpenseId}
+    </delete>
+
+    <delete id="deleteBusiReimExpenseByIds" parameterType="String">
+        delete from busi_reim_expense where reim_expense_id in 
+        <foreach item="reimExpenseId" collection="array" open="(" separator="," close=")">
+            #{reimExpenseId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiReimExpenseBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="reimExpenseId">
+        insert into busi_reim_expense (  reimburse_id, reim_expense_name, reimburse_reason, amount, bills_num, amount_total, create_by, create_time, update_by, update_time, remark, file_ids, file_num) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname}, #{item.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

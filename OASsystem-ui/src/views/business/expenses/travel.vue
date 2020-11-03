@@ -161,6 +161,7 @@
 <!--    添加报销-->
     <el-dialog
       :title="title"
+      @close="closeEven"
       :visible.sync="dialogVisible"
       width="600px" class="abow_dialog">
 
@@ -1094,6 +1095,9 @@
 
         },
         methods:{
+          closeEven(){
+            this.getList()
+          },
             getList(){
               this.loading = true;
               listReimburse(this.addDateRange(this.queryParams, this.datetime)).then(response => {
@@ -1290,7 +1294,7 @@
             this.form = row;
             this.dialogVisible=true;
 
-            getRemburseDetail(row.reimburseId).then(response => {
+            getRemburseDetail(row.reimburseId,row.reimburseType).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
               this.reunTravcelList = response.data.busiReimTravelSubsidyList
               this.otherList = response.data.busiReimOtherFeeList
@@ -1303,7 +1307,7 @@
             this.transportdetail=true;
             this.transportdetailtitle='查看'
             this.form = row;
-            getRemburseDetail(row.reimburseId).then(response => {
+            getRemburseDetail(row.reimburseId,row.reimburseType).then(response => {
               this.transportList = response.data.busiReimTrafficFeeList;
               this.reunTravcelList = response.data.busiReimTravelSubsidyList
               this.otherList = response.data.busiReimOtherFeeList

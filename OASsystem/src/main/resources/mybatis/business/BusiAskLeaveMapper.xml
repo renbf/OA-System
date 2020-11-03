@@ -6,11 +6,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectBusiAskLeaveVo">
-        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time from busi_ask_leave
+        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time,workflow_id from busi_ask_leave
     </sql>
 
     <sql id="selectBusiAskLeave">
-        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time
+        select leave_id, user_id, leave_type, leave_hours,leave_hours_unit,leave_dates,leave_reason, create_by, create_time, update_by, update_time, remark,dept_id,in_prj_flag,leave_prj_name,overtime_sur_Time,annLea_sur_Time,leave_begin_time,leave_end_time,workflow_id
     </sql>
 
 
@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select
          bal.leave_id, bal.user_id, bal.leave_type, bal.leave_hours,bal.leave_hours_unit,bal.leave_dates,bal.leave_reason, bal.create_by, bal.create_time, bal.update_by,
          bal.update_time,bal.remark,bal.dept_id,bal.in_prj_flag,bal.leave_prj_name,bal.overtime_sur_Time,bal.annLea_sur_Time,bal.leave_begin_time,
-         bal.leave_end_time,
+         bal.leave_end_time,bal.workflow_id,
          ifnull(wb.bill_status,2) as approvalStatus,
          swnc.workflow_node_user_name as curApprover
         from busi_ask_leave bal
@@ -77,6 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="annLeaSurTime != null  and annLeaSurTime != ''">annLea_sur_Time,</if>
             <if test="leaveBeginTime != null  and leaveBeginTime != ''">leave_begin_time,</if>
             <if test="leaveEndTime != null  and leaveEndTime != ''">leave_end_time,</if>
+            <if test="workflowId != null">workflow_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null ">#{userId},</if>
@@ -97,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="annLeaSurTime != null  and annLeaSurTime != ''">#{annLeaSurTime},</if>
             <if test="leaveBeginTime != null  and leaveBeginTime != ''">#{leaveBeginTime},</if>
             <if test="leaveEndTime != null  and leaveEndTime != ''">#{leaveEndTime},</if>
+            <if test="workflowId != null">#{workflowId},</if>
          </trim>
     </insert>
 
@@ -119,8 +121,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="annLeaSurTime != null  and annLeaSurTime != ''">annLea_sur_Time = #{annLeaSurTime},</if>
             <if test="leaveBeginTime != null  and leaveBeginTime != ''">leave_begin_time = #{leaveBeginTime},</if>
             <if test="leaveEndTime != null  and leaveEndTime != ''">leave_end_time = #{leaveEndTime},</if>
-            leave_prj_name = #{leavePrjName},
-            in_prj_flag = #{inPrjFlag},
+            <if test="workflowId != null">workflow_id = #{workflowId},</if>
+            <if test="leavePrjName != null">leave_prj_name = #{leavePrjName},</if>
+            <if test="inPrjFlag != null">in_prj_flag = #{inPrjFlag},</if>
         </trim>
         where leave_id = #{leaveId}
     </update>
@@ -161,7 +164,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ifnull(wb.bill_status,2) as approval_Status,
         wb.create_time as applyTime,
         su.nick_name as orginHandler,
-        wb.bill_status
+        wb.bill_status,
+        bal.workflow_id
         from busi_ask_leave bal
         left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
         left join sys_user su on su.user_name = wb.orgin_Handler
