@@ -496,6 +496,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			String username = SecurityUtils.getUsername();
 			busiTask.setUpdateBy(username);
 			busiTask.setUpdateTime(now);
+			busiTask.setTaskProgress(100);
+			busiTask.setTaskStatus("1");
 			busiTaskMapper.updateBusiTask(busiTask);
 			resultMap.put("code",200);
 		} catch (Exception e) {

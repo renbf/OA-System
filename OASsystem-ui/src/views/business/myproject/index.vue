@@ -20,7 +20,7 @@
         <div slot="header" class="clearfix" @click="projectdetail(item)">
           <span><b>{{item.projectName}}</b></span>
           <el-button icon="el-icon-delete" style="float: right;" circle v-if="item.status == 0" @click="deleteProject(item)"></el-button>
-          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.stop="editproject(item)"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.stop="editproject(item)" v-hasPermi="['api:busiProject:edit']"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail(item)">
