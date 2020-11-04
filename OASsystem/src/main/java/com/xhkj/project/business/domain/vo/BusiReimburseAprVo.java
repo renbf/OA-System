@@ -1,10 +1,10 @@
 package com.xhkj.project.business.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xhkj.project.business.domain.BusiAskLeave;
-import com.xhkj.project.business.domain.BusiReimburse;
+import com.xhkj.project.business.domain.*;
 
 import java.util.Date;
+import java.util.List;
 
 public class BusiReimburseAprVo extends BusiReimburse {
     private static final long serialVersionUID = 1L;
@@ -33,12 +33,67 @@ public class BusiReimburseAprVo extends BusiReimburse {
     /** 备注 */
     private String remarks;
 
+    /** 交通费总金额 */
+    private Double trafficFeeTotal;
+    /** 出差补助总金额 */
+    private Double travelSubsidyTotal;
+    /** 其他费用总金额 */
+    private Double otherFeeTotal;
+
+    /** 费用报销总金额 */
+    private Double expensesTotal;
+
+    /** 全部总金额 */
+    private Double amountAllTotal;
+
+
+
+    public Double getExpensesTotal() {
+        return expensesTotal;
+    }
+
+    public void setExpensesTotal(Double expensesTotal) {
+        this.expensesTotal = expensesTotal;
+    }
+
     public Date getApplyTime() {
         return applyTime;
     }
 
     public void setApplyTime(Date applyTime) {
         this.applyTime = applyTime;
+    }
+
+    public Double getTrafficFeeTotal() {
+        return trafficFeeTotal;
+    }
+
+    public void setTrafficFeeTotal(Double trafficFeeTotal) {
+        this.trafficFeeTotal = trafficFeeTotal;
+    }
+
+    public Double getTravelSubsidyTotal() {
+        return travelSubsidyTotal;
+    }
+
+    public void setTravelSubsidyTotal(Double travelSubsidyTotal) {
+        this.travelSubsidyTotal = travelSubsidyTotal;
+    }
+
+    public Double getOtherFeeTotal() {
+        return otherFeeTotal;
+    }
+
+    public void setOtherFeeTotal(Double otherFeeTotal) {
+        this.otherFeeTotal = otherFeeTotal;
+    }
+
+    public Double getAmountAllTotal() {
+        return amountAllTotal;
+    }
+
+    public void setAmountAllTotal(Double amountAllTotal) {
+        this.amountAllTotal = amountAllTotal;
     }
 
     public Long getBillId() {
