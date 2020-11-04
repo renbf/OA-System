@@ -107,7 +107,7 @@
       <el-table-column
         align="center"
         label="总金额"
-        prop="expenses_allmoney"
+        prop="expensesTotal"
         :show-overflow-tooltip="true"
       />
       <el-table-column label="状态" align="center" width="100">
