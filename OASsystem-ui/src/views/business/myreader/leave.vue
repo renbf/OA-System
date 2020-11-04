@@ -138,7 +138,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span>{{ selectDictLabel(overtimeOptions, scope.row.leavePrjName) }}</span>
+          <span>{{ selectDictLabel(projectNameOptions, scope.row.leavePrjName) }}</span>
         </template>
       </el-table-column>
 
@@ -254,7 +254,7 @@
               disabled
             >
               <el-option
-                v-for="(item, index) in overtimeOptions"
+                v-for="(item, index) in projectNameOptions"
                 :key="index"
                 :label="item.dictLabel"
                 :value="item.dictValue"
@@ -409,7 +409,8 @@
           pageSize: 10,
           deptId: '',
           leaveType: '',
-          billStatus: ''
+          billStatus: '',
+          workflowId: this.GLOBAL.LEAVE_WORKFLOWID,
         },
         form: {
           leaveId:'',
@@ -427,7 +428,7 @@
         },
         //表格数据
         tableData: [],
-        overtimeOptions: [
+        projectNameOptions: [
           {
             dictValue: "0",
             dictLabel: "小额贷款项目"

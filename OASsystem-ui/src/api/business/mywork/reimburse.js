@@ -62,11 +62,20 @@ export function exportReimburse(query) {
 }
 
 
-//请假上报
+//上报
 export function billSumbit(reimburseIds) {
   return request({
     url: "/business/reimburse/billSumbit/" + reimburseIds,
     method: "post",
+  });
+}
+
+// 查询待审批
+export function approveList(query) {
+  return request({
+    url: "/business/reimburse/approveList",
+    method: "get",
+    params: query
   });
 }
 

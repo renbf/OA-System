@@ -526,8 +526,8 @@
               :color="activity.color"
               :timestamp="activity.timestamp"
             >
-              <p>{{ activity.content }}</p>
-              <p>{{ activity.description }}</p>
+              <p>{{ activity.workflowNodeName }}</p>
+              <p>{{ activity.checkRemarks }}</p>
             </el-timeline-item>
           </el-timeline>
         </el-col>

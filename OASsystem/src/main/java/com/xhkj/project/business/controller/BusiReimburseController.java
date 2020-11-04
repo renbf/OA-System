@@ -66,14 +66,12 @@ public class BusiReimburseController extends BaseController
     /**
      * 获取报销信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('business:reimburse:query')")
     @GetMapping(value = "/{reimburseId}")
     public AjaxResult getInfo(@PathVariable("reimburseId") Long reimburseId)
     {
         return AjaxResult.success(busiReimburseService.selectBusiReimburseById(reimburseId));
     }
 
-    @PreAuthorize("@ss.hasPermi('business:reimburse:query')")
     @GetMapping(value = "/getRemburseDetail/{reimburseId}/{reimburseType}")
     public AjaxResult getRemburseDetail(@PathVariable("reimburseId") Long reimburseId , @PathVariable("reimburseType") String reimburseType)
     {
@@ -123,6 +121,15 @@ public class BusiReimburseController extends BaseController
     public AjaxResult billSumbit(@PathVariable("reimburseIds") Long[] reimburseIds)
     {
         return busiReimburseService.billSumbit(reimburseIds);
+    }
+
+
+    @GetMapping("/approveList")
+    public TableDataInfo approveList(BusiReimburseAprVo busiReimburseAprVo)
+    {
+        startPage();
+        List<BusiReimburseAprVo> list = busiReimburseService.approveList(busiReimburseAprVo);
+        return getDataTable(list);
     }
 
 

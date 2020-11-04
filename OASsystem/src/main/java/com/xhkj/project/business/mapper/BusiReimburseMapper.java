@@ -73,4 +73,10 @@ public interface BusiReimburseMapper
      */
     public int insertBusiReimburseBatch(List<BusiReimburse> list);
     //以上自动生成的尽量别动
+
+
+    public List<BusiReimburseAprVo> approveList(BusiReimburseAprVo busiReimburseAprVo);
+
+
+
 }
