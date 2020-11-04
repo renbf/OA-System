@@ -85,7 +85,7 @@ public interface IBusiProjectService
 
 	public Map<String, Object> insertBusiTaskLog(BusiTaskLog busiTaskLog);
 
-	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog);
+	public Map<String, Object> taskLogBaosong(BusiTask busiTask);
 
 	public Map<String, Object> insertProjectApply(BusiProjectApply busiProjectApply);
 

@@ -259,7 +259,7 @@
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
 
-            <div >
+            <div v-show="scope.row.taskStatus == 0">
               <el-button
                 size="mini"
                 type="text"
@@ -676,10 +676,17 @@
       :visible.sync="lookopenLittle"
       width="30%"
     >
-      <el-form ref="UpdataForm" :model="UpdataForm">
+      <el-form>
         <el-form-item><span>审批人</span>
-          <el-cascader :options="UpdataForm.select" style="margin-left:20px;width:400px;"></el-cascader>
-
+          <!--<el-cascader :options="select" style="margin-left:20px;width:400px;"></el-cascader>-->
+          <el-select v-model="shenpiUser.shenpiUserId" placeholder="请选择" ref="shenpiren">
+            <el-option
+              v-for="item in busiProjectMembers"
+              :key="item.memberId"
+              :label="item.memberName"
+              :value="item.memberId">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -748,8 +755,10 @@
   import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi,updateProjectApply } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
+  import { formatDate } from '../../../utils/index'
+
   export default {
     name: "detail",
     components: {
@@ -757,7 +766,7 @@
     },
     data() {
       return {
-
+        busiProjectMembers:[],
         tooltipValue:true,
         tooltipManual:true,
         inx:'',
@@ -839,6 +848,10 @@
           projectDesc: [{required: true, message: "项目描述不能为空", trigger: "change"}],
           status: [{required: true, message: "状态必须选择", trigger: "change"}]
         },
+        shenpiUser: {
+          shenpiUserId:undefined,
+          shenpiUserName:undefined
+        },
         //卡片数据
         projectApplyForm:{
           projectApplyId:undefined,
@@ -851,26 +864,6 @@
         projectApplyFormRules: {
           projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
           content: [{required: true, message: "申请内容不能为空", trigger: "blur"}],
-        },
-        UpdataForm:{
-          text: '',
-          textarea2: '',
-          select:[{
-            value: 'ziyuan',
-            label: '软件部',
-            children: [{
-              value: 'axure',
-              label: '任宝峰'
-            }, {
-              value: 'sketch',
-              label: '嘉琪'
-            }, {
-              value: 'jiaohu',
-              label: '安仔'
-            }]
-
-          }],
-
         },
         //责任人
         userDeptUserList:[],
@@ -926,7 +919,8 @@
         ],
         taskList: [],
         pageInfo: {},
-        taskLogIds: [],
+        //批量报送任务ids
+        taskIds: [],
         activeIndex: 'project_progress',
         value: true,
         //文件上传url
@@ -1067,7 +1061,8 @@
             if(_this.timeprocess < 0){
               _this.timeprocess = 0;
             }
-            let busiProjectMembers= _this.projectInfo.busiProjectMembers;
+            _this.busiProjectMembers = _this.projectInfo.busiProjectMembers;
+            let busiProjectMembers= _this.busiProjectMembers;
             _this.getDeptMemberList(busiProjectMembers);
           }
         });
@@ -1139,11 +1134,11 @@
       },
       handleSelectionChange(val) {
         let _this = this;
-        let taskLogIds = [];
+        let taskIds = [];
         val.forEach((item) => {
-          taskLogIds.push(item.taskLogId);
+          taskIds.push(item.taskId);
         });
-        _this.taskLogIds = taskLogIds;
+        _this.taskIds = taskIds;
       },
      lookUpdate(item) {
         this.lookOpen=true;
@@ -1371,17 +1366,31 @@
       //批量报送
       handleBaosongBitch() {
         let _this = this;
-        taskLogBaosong({taskLogIds:_this.taskLogIds}).then(response => {
-          if (response.code === 200) {
-            this.msgSuccess("报送成功");
-          } else {
-            this.msgError(response.msg);
-          }
+        let taskIds = _this.taskIds;
+        if (taskIds.length <= 0) {
+          this.msgError('请至少选择一条报送任务');
+          return false;
+        }
+        this.$confirm('确认是否批量报送？', '报送任务', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          taskLogBaosong({taskIds:taskIds}).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("报送成功");
+            } else {
+              this.msgError(response.msg);
+            }
+          });
+        }).catch(() => {
+          this.msgError('操作异常');
         });
+
       },
       //报送
       handleBaosong(item) {
-        taskLogBaosong({taskLogIds:[item.taskLogId]}).then(response => {
+        taskLogBaosong({taskIds:[item.taskId]}).then(response => {
           if (response.code === 200) {
             this.msgSuccess("报送成功");
           } else {
@@ -1501,7 +1510,15 @@
      this.lookopenLittle=false
       },
       lookSubmitForm2(){
-        this.lookopenLittle=false
+        let _this = this;
+        let shenpiren = _this.$refs.shenpiren.selected.label;
+        let length = _this.projectApplyForm.shenpiUserList.length;
+        let shenpiUser = {
+          shenpiUserId:_this.shenpiUser.shenpiUserId,
+          shenpiUserName:shenpiren
+        };
+        _this.projectApplyForm.shenpiUserList.push(shenpiUser);
+        _this.lookopenLittle = false;
       },
 
       delLook(){
@@ -1542,7 +1559,7 @@
       },
       getApplyList() {
         let _this = this;
-        let queryParams = {};
+        let queryParams = {createTime:formatDate(new Date().getTime())};
         listProjectApply(queryParams).then(response => {
           if(response.code == 200){
             _this.applyproject= response.data;

@@ -312,11 +312,11 @@ public class BusiProjectController
 	 */
 	@PostMapping("/taskLogBaosong")
 	@ResponseBody
-	public Map<String,Object> taskLogBaosong(@RequestBody BusiTaskLog busiTaskLog)
+	public Map<String,Object> taskLogBaosong(@RequestBody BusiTask busiTask)
 	{
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			resultMap = busiProjectService.taskLogBaosong(busiTaskLog);
+			resultMap = busiProjectService.taskLogBaosong(busiTask);
 		} catch (Exception e) {
 			log.error("报送任务异常",e);
 			resultMap.put("code",-1);

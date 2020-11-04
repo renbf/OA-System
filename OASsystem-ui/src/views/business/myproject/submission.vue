@@ -86,7 +86,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialog2= false">取 消</el-button>
+    <el-button @click="submissionOpen1= false">取 消</el-button>
     <el-button type="primary" @click="dialog2SubmitForm">确 定</el-button>
   </span>
     </el-dialog>
@@ -342,7 +342,6 @@
           projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
           content: [{required: true, message: "申请内容不能为空", trigger: "blur"}],
         },
-        dialog2:false,
         shenpiUser: {
           shenpiUserId:undefined,
           shenpiUserName:undefined
@@ -511,8 +510,8 @@
       //添加批注人
 
       goBack(){
-
-        this.$router.push({ path:'/myreader/index'})
+        let projectId = this.projectId;
+        this.$router.push({ path:'/myproject/look',query:{projectId:projectId}})
       },
       //新建保存提交
      OpenSave(){
@@ -598,42 +597,63 @@
       },
       projectApplySubmitForm(status) {
         let _this = this;
-        _this.$refs.projectApplyForm.validate(valid => {
-          if (valid) {
-            let form = _this.projectApplyForm;
-            form.status = status;
-            let length = form.shenpiUserList.length;
-            if (length <= 0) {
-              this.msgError("审批人不能为空");
-              return false;
-            }else{
-              form.shenpiUserList.forEach((item, index) => {
-                item.sortOrder = index;
-              });
+        let msg = '';
+        let title = '';
+        if (status == '1') {
+          msg = '确认报送?';
+          title = '提交报送';
+        }else{
+          msg = '确认保存?';
+          title = '项目申请保存';
+        }
+        this.$confirm(msg, title, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          _this.$refs.projectApplyForm.validate(valid => {
+            if (valid) {
+              let form = _this.projectApplyForm;
+              form.status = status;
+              let length = form.shenpiUserList.length;
+              if (length <= 0) {
+                this.msgError("审批人不能为空");
+                return false;
+              }else{
+                form.shenpiUserList.forEach((item, index) => {
+                  item.sortOrder = index;
+                });
+              }
+              if (form.projectApplyId != undefined) {
+                updateProjectApply(form).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("修改成功");
+                    this.projectApplyOpen = false;
+                    this.getApplyList();
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
+              } else {
+                addProjectApply(form).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("新增成功");
+                    this.projectApplyOpen = false;
+                    this.getApplyList();
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
+              }
             }
-            if (form.projectApplyId != undefined) {
-              updateProjectApply(form).then(response => {
-                if (response.code === 200) {
-                  this.msgSuccess("修改成功");
-                  this.projectApplyOpen = false;
-                  this.getApplyList();
-                } else {
-                  this.msgError(response.msg);
-                }
-              });
-            } else {
-              addProjectApply(form).then(response => {
-                if (response.code === 200) {
-                  this.msgSuccess("新增成功");
-                  this.projectApplyOpen = false;
-                  this.getApplyList();
-                } else {
-                  this.msgError(response.msg);
-                }
-              });
-            }
-          }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '操作异常'
+          });
         });
+
       },
       //添加审批人
       dialog2SubmitForm() {
@@ -645,7 +665,7 @@
           shenpiUserName:shenpiren
         };
         _this.projectApplyForm.shenpiUserList.push(shenpiUser);
-        _this.dialog2 = false;
+        _this.submissionOpen1 = false;
       },
       getProject() {
         let _this = this;

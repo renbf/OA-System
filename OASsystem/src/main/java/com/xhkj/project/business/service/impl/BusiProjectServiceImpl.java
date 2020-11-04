@@ -15,6 +15,7 @@ import com.xhkj.project.business.domain.vo.BusiTaskVo;
 import com.xhkj.project.business.mapper.*;
 import com.xhkj.project.common.UploadFile;
 import com.xhkj.project.system.domain.SysUser;
+import com.xhkj.project.system.domain.vo.SysRoleDeptVo;
 import com.xhkj.project.system.mapper.SysUserMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -542,17 +543,30 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 
 	@Override
 	@Transactional
-	public Map<String, Object> taskLogBaosong(BusiTaskLog busiTaskLog) {
+	public Map<String, Object> taskLogBaosong(BusiTask busiTask) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			List<Long> taskLogIds = busiTaskLog.getTaskLogIds();
-			if (CollectionUtils.isNotEmpty(taskLogIds)) {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			List<Long> taskIds = busiTask.getTaskIds();
+			if (CollectionUtils.isNotEmpty(taskIds)) {
 				BusiTaskLog busiTaskLogUp = null;
-				for (Long taskLogId : taskLogIds) {
-					busiTaskLogUp = new BusiTaskLog();
-					busiTaskLogUp.setTaskLogId(taskLogId);
-					busiTaskLogUp.setLogStatus("1");
-					busiTaskLogMapper.updateBusiTaskLog(busiTaskLogUp);
+				for (Long taskId : taskIds) {
+					BusiTaskLog busiTaskLog = new BusiTaskLog();
+					busiTaskLog.setTaskId(taskId);
+					busiTaskLog.setLogStatus("0");
+					List<BusiTaskLogVo> busiTaskLogVos = busiTaskLogMapper.selectBusiTaskLogVos(busiTaskLog);
+					if (CollectionUtils.isNotEmpty(busiTaskLogVos)) {
+						for (BusiTaskLogVo busiTaskLogVo : busiTaskLogVos) {
+							Long taskLogId = busiTaskLogVo.getTaskLogId();
+							busiTaskLogUp = new BusiTaskLog();
+							busiTaskLogUp.setTaskLogId(taskLogId);
+							busiTaskLogUp.setLogStatus("1");
+							busiTaskLogUp.setUpdateTime(now);
+							busiTaskLogUp.setUpdateBy(username);
+							busiTaskLogMapper.updateBusiTaskLog(busiTaskLogUp);
+						}
+					}
 				}
 			}
 			resultMap.put("code",200);
@@ -671,8 +685,14 @@ public class BusiProjectServiceImpl implements IBusiProjectService
     public Map<String, Object> listProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
 			if (Objects.nonNull(busiProjectApplyVo.getPage()) && Objects.nonNull(busiProjectApplyVo.getLimit())) {
 				PageHelper.startPage(busiProjectApplyVo.getPage(), busiProjectApplyVo.getLimit());
+			}
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			if (!SecurityUtils.isAdmin(userId)) {
+				busiProjectApplyVo.setCreateBy(username);
 			}
 			List<BusiProjectApplyVo> busiProjectApplyVos = busiProjectApplyMapper.selectBusiProjectApplyVos(busiProjectApplyVo);
 			PageInfo<BusiProjectApplyVo> pageInfo = new PageInfo<BusiProjectApplyVo>(busiProjectApplyVos);

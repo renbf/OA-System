@@ -147,6 +147,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              </if>
             <if test="content != null  and content != '' "> and pa.content like concat('%',#{content},'%') </if>
             <if test="status != null  and status != '' "> and pa.status = #{status}</if>
+            <if test="createBy != null  and createBy != '' "> and pa.create_by = #{createBy}</if>
+            <if test="createTime != null ">
+                and date_format(pa.create_time,'%y%m%d') = date_format(#{createTime},'%y%m%d')
+            </if>
         </where>
     </select>
 
