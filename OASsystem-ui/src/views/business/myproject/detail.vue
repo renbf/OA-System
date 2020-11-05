@@ -406,7 +406,7 @@
     <el-dialog
       title="关闭任务"
       :visible.sync="dialogTaskVisible"
-      width="30%">
+      width="30%" class="closedialog">
       <el-divider></el-divider>
       <el-form ref="closeTaskform" :model="closeTaskform" :rules="closeTaskformRules">
         <el-form-item prop="closeReason">
@@ -1280,6 +1280,9 @@
 </script>
 
 <style>
+  .closedialog{
+    z-index: 2046!important;
+  }
   .box-detailcard{
     width: 1600px;
     height:300px ;
