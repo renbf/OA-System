@@ -231,7 +231,7 @@
         >
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
-            <div v-show="scope.row.status == 0 && scope.row.taskProgress != 100">
+            <div v-show="scope.row.status == 0 && scope.row.taskProgress < 100">
               <el-button
                 size="mini"
                 type="text"
@@ -549,7 +549,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
+          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
