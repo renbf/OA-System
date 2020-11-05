@@ -30,14 +30,20 @@
         >报送</el-button
         >
       </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--        >导出</el-button-->
+<!--        >-->
+<!--      </el-col>-->
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-        >导出</el-button
-        >
+        <export-import
+          excel-title="费用报销列表"
+          exp-function="json"
+          :set-export-data="setExportData"/>
       </el-col>
       <el-col :span="1.5">
         <b>单位：元</b>
@@ -660,6 +666,23 @@
 
         },
         methods:{
+          setExportData(){
+            let dataArray = [];
+            this.expensesList.forEach((data, i) => {
+              const { createTime,projectName,deptId,expensesTotal,billStatus,orginHandler  } = data;
+              var format = {
+                "报销时间":createTime,
+                "项目":projectName,
+                "部门":this.selectDictLabel(this.departmentOptions, deptId),
+                "总金额":expensesTotal,
+                "状态":this.selectDictLabel(this.statusOptions, billStatus),
+                "当前审批人":orginHandler,
+              }
+              dataArray.push(format)
+            });
+
+            return dataArray;
+          },
             closeEven(){
               this.getList()
             },

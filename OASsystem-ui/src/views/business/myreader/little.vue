@@ -34,7 +34,7 @@
       <!--导出-->
       <el-col :span="1.5">
         <export-import
-          excel-title="我的审批列表"
+          excel-title="加班审批列表"
           exp-function="json"
           :disabled="multiple"
           :set-export-data="setExportData"
@@ -408,7 +408,23 @@
     },
     methods:{
       setExportData(){
+        let dataArray = [];
+        this.tableData.forEach((data, i) => {
+          const { applyTime,orginHandler,extraWorkReason,leavePrjName,deptId,extraWorkHours,approvalStatus,extraHoursUnit,extraWorkDates  } = data;
+          var format = {
+            "申请时间":applyTime,
+            "申请人":orginHandler,
+            "项目":leavePrjName,
+            "理由陈述":extraWorkReason,
+            "加班时长":extraWorkHours+extraHoursUnit,
+            "加班时间":extraWorkDates,
+            "部门":this.selectDictLabel(this.departmentOption, deptId),
+            "状态":this.selectDictLabel(this.statusOptions, approvalStatus),
+          }
+          dataArray.push(format)
+        });
 
+        return dataArray;
       },
 
       getList(){

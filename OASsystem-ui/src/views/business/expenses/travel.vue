@@ -30,15 +30,23 @@
         >报送</el-button
         >
       </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--        >导出</el-button-->
+<!--        >-->
+<!--      </el-col>-->
+
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-        >导出</el-button
-        >
+        <export-import
+          excel-title="差旅费报销列表"
+          exp-function="json"
+          :set-export-data="setExportData"/>
       </el-col>
+
       <el-col :span="1.5">
         <b>单位：元</b>
       </el-col>
@@ -1038,6 +1046,27 @@
 
         },
         methods:{
+          setExportData(){
+            let dataArray = [];
+            this.expensesList.forEach((data, i) => {
+              const { createTime,projectName,deptId,trafficFeeTotal,travelSubsidyTotal,otherFeeTotal,amountAllTotal,billStatus,orginHandler  } = data;
+              var format = {
+                "报销时间":createTime,
+                "项目":projectName,
+                "部门":this.selectDictLabel(this.departmentOptions, deptId),
+                "交通费": trafficFeeTotal,
+                "出差补贴":travelSubsidyTotal,
+                "其他费用":otherFeeTotal,
+                "总金额":amountAllTotal,
+                "状态":this.selectDictLabel(this.statusOptions, billStatus),
+                "当前审批人":orginHandler,
+              }
+              dataArray.push(format)
+            });
+
+            return dataArray;
+          },
+
           closeEven(){
             this.getList()
           },

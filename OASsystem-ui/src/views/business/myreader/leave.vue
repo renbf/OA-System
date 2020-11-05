@@ -34,7 +34,7 @@
       <!--导出-->
       <el-col :span="1.5">
         <export-import
-          excel-title="我的审批列表"
+          excel-title="请假审批列表"
           exp-function="json"
           :disabled="multiple"
           :set-export-data="setExportData"
@@ -460,7 +460,23 @@
     },
     methods:{
       setExportData(){
+          let dataArray = [];
+          this.tableData.forEach((data, i) => {
+            const { leaveDates,applyTime,orginHandler,leavePrjName,deptId,leaveType,leaveHours,approvalStatus,leaveHoursUnit  } = data;
+            var format = {
+              "申请时间":applyTime,
+              "申请人":orginHandler,
+              "项目":leavePrjName,
+              "请假时长":leaveHours+leaveHoursUnit,
+              "请假时间":JSON.parse(leaveDates)[0][0][0],
+              "请假类型": this.selectDictLabel(this.leaveTypeOptions, leaveType),
+              "部门":this.selectDictLabel(this.departmentOption, deptId),
+              "状态":this.selectDictLabel(this.statusOptions, approvalStatus),
+            }
+            dataArray.push(format)
+          });
 
+          return dataArray;
       },
       getList(){
         this.loading = true;

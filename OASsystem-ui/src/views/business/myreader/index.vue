@@ -19,13 +19,14 @@
 <script>
   import {approveList as approveListLittle} from "@/api/business/mywork/extrawork";
   import {approveList as approveListLeave} from "@/api/business/mywork/leave";
+  import {approveList as approveListReimburse} from "@/api/business/mywork/reimburse";
 
   export default {
     name: "page-reader",
     data(){
       return{
         req:[
-          {index:1,titles:"加班审批",ready:"待审批",number:"12"},
+          {index:1,titles:"加班审批",ready:"待审批",number:"0"},
           {index:2,titles:"请假审批",ready:"待审批",number:"0"},
           {index:3,titles:"面试申请",ready:"待审批",number:"0"},
           {index:4,titles:"差旅费报销（元）",ready:"待审批",number:"0"},
@@ -34,36 +35,51 @@
           {index:7,titles:"离职申请",ready:"待审批",number:"0"},
           {index:8,titles:"调岗申请",ready:"待审批",number:"0"},
           {index:9,titles:"xxx项目组职申请",ready:"待审批",number:"0"},
-
-
         ]
       }
     },
     created() {
       //获取加班审批数量
       this.getLittleNum();
-
       //获取请假审批数量
       this.getLeaveNum();
-
-
-
+      //获取差旅费审批数量
+      this.getReimburseChaiNum();
+      //获取费用审批数量
+      this.getReimburseFeiNum();
     },
     methods:{
       getLittleNum(){
         this.loading = true;
-        approveListLittle().then(response => {
+        approveListLittle({workflowId: this.GLOBAL.EXTRA_WORKFLOWID}).then(response => {
           this.req[0].number = response.total;
           this.loading = false;
         });
       },
       getLeaveNum(){
         this.loading = true;
-        approveListLeave().then(response => {
+        approveListLeave({workflowId: this.GLOBAL.LEAVE_WORKFLOWID}).then(response => {
           this.req[1].number = response.total;
           this.loading = false;
         });
       },
+
+      getReimburseChaiNum(){
+        this.loading = true;
+        approveListReimburse({workflowId: this.GLOBAL.TRAVEL_EXPENSE_WORKFLOWID,reimburseType :'travel'}).then(response => {
+          this.req[3].number = response.total;
+          this.loading = false;
+        });
+      },
+
+      getReimburseFeiNum(){
+        this.loading = true;
+        approveListReimburse({workflowId: this.GLOBAL.EXPENSE_WORKFLOWID,reimburseType :'expenses'}).then(response => {
+          this.req[4].number = response.total;
+          this.loading = false;
+        });
+      },
+
 
       edit(id){
         if(id===1){

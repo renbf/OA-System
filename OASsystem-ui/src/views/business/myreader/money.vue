@@ -3,7 +3,7 @@
   <div class="contain-leave">
     <!--导航栏-->
     <el-card class="header">
-      <el-page-header @back="goBack" content="请假审批">
+      <el-page-header @back="goBack" content="费用审批">
       </el-page-header>
 
     </el-card>
@@ -34,7 +34,7 @@
       <!--导出-->
       <el-col :span="1.5">
         <export-import
-          excel-title="我的审批列表"
+          excel-title="费用审批列表"
           exp-function="json"
           :disabled="multiple"
           :set-export-data="setExportData"
@@ -431,7 +431,20 @@
     },
     methods:{
       setExportData(){
-
+        let dataArray = [];
+        this.tableData.forEach((data, i) => {
+          const { applyTime,projectId,deptId,amountAllTotal,billStatus,orginHandler} = data;
+          var format = {
+            "申请时间":applyTime,
+            "申请人":orginHandler,
+            "项目": this.selectDictLabel(this.projectNameOptions, projectId),
+            "部门":this.selectDictLabel(this.departmentOption, deptId),
+            "总金额":amountAllTotal,
+            "状态":this.selectDictLabel(this.statusOptions, billStatus),
+          }
+          dataArray.push(format)
+        });
+        return dataArray;
       },
       getList(){
         this.loading = true;
