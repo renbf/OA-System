@@ -154,7 +154,7 @@
         align="center"
         label="请假时间">
         <template slot-scope="scope">
-          <span>{{scope.row.leaveDates}}</span>
+          <span>{{ JSON.parse(scope.row.leaveDates)[0][0][0] }}  -  {{ JSON.parse(scope.row.leaveDates)[0][0][1] }}</span>
         </template>
       </el-table-column>
 
