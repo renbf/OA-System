@@ -147,4 +147,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
+
+
+    <select id="approveList" parameterType="BusiReimburseAprVo" resultType="com.xhkj.project.business.domain.vo.BusiReimburseAprVo">
+        select
+        a.*
+        ,a.trafficFeeTotal + a.travelSubsidyTotal + a.otherFeeTotal + a.expensesTotal as amountAllTotal
+        from (
+
+        select
+        br.reimburse_id, br.user_id, br.dept_id,  br.in_prj_flag, br.project_id, br.project_name, br.reimburse_reason,
+        br.create_by,  br.create_time,  br.update_by,  br.update_time,  br.remark,br.workflow_id,br.reimburse_type,
+        (select ifnull(sum(ifnull(amount_total,0)),0) from busi_reim_traffic_fee where reimburse_id = br.reimburse_id) as trafficFeeTotal,
+        (select ifnull(sum(ifnull(amount_total,0)),0) from busi_reim_travel_subsidy where reimburse_id = br.reimburse_id) as travelSubsidyTotal,
+        (select ifnull(sum(ifnull(amount_total,0)),0) from busi_reim_other_fee where reimburse_id = br.reimburse_id) as otherFeeTotal,
+        (select ifnull(sum(ifnull(amount_total,0)),0) from busi_reim_expense where reimburse_id = br.reimburse_id) as expensesTotal,
+        ifnull(wb.bill_status,2) as billStatus,
+        wb.create_time as applyTime,
+        su.nick_name as orginHandler,
+        wb.bill_status
+        from busi_reimburse br
+        left join workflow_bill wb on br.reimburse_id = wb.bill_id  and wb.workflow_id = #{workflowId}
+        left join sys_user su on su.user_name = wb.orgin_Handler
+        where 1=1
+        and wb.workflow_node_id in (
+        select swn.workflow_node_id from sys_workflow_node swn
+        left join sys_workflow_node_checker swnc on swnc.workflow_node_id = swn.workflow_node_id
+        where swn.workflow_node_checker_type = 2 -- 指定人员
+        and swn.workflow_node_check_type = 1   -- 依次审批
+        and swnc.workflow_node_user_id = #{userId}
+        )
+        <if test="deptId != null  and deptId != '' "> and br.dept_id = #{deptId}</if>
+        <if test="billStatus != null and billStatus != ''"> and wb.bill_status = #{billStatus}</if>
+        <if test="beginTime != null and beginTime != ''"> and  DATE_FORMAT(wb.create_time,'%Y-%m-%d') >= #{beginTime}</if>
+        <if test="endTime != null and endTime != ''"> and  DATE_FORMAT(wb.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> #{endTime} </if>
+        <if test="reimburseType != null  and reimburseType != ''"> and br.reimburse_type = #{reimburseType}</if>
+        order by wb.create_time desc
+
+        ) a
+    </select>
+
+
+
 </mapper>

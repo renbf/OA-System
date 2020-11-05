@@ -144,7 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         wb.bill_status,
         bew.workflow_id
         from busi_extra_work bew
-        left join workflow_bill wb on bew.extra_work_id = wb.bill_id  and wb.workflow_id = 1
+        left join workflow_bill wb on bew.extra_work_id = wb.bill_id  and wb.workflow_id = #{workflowId}
         left join sys_user su on su.user_name = wb.orgin_Handler
         where 1=1
         and wb.workflow_node_id in (

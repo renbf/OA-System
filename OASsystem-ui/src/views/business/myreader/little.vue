@@ -360,7 +360,8 @@
           pageNum: 1,
           pageSize: 10,
           deptId: '',
-          billStatus: ''
+          billStatus: '',
+          workflowId: this.GLOBAL.EXTRA_WORKFLOWID,
         },
         form: {
           extraWorkId:'',

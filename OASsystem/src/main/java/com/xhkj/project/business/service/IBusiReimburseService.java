@@ -74,4 +74,7 @@ public interface IBusiReimburseService
 
     public AjaxResult billSumbit(Long[] reimburseIds);
 
+    public List<BusiReimburseAprVo> approveList(BusiReimburseAprVo busiReimburseAprVo);
+
+
 }

@@ -167,7 +167,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         wb.bill_status,
         bal.workflow_id
         from busi_ask_leave bal
-        left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = 2
+        left join workflow_bill wb on bal.leave_id = wb.bill_id  and wb.workflow_id = #{workflowId}
         left join sys_user su on su.user_name = wb.orgin_Handler
         where 1=1
         and wb.workflow_node_id in (

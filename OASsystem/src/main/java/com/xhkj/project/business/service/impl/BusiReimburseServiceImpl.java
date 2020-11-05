@@ -249,4 +249,15 @@ public class BusiReimburseServiceImpl implements IBusiReimburseService
         return ajaxResult;
 
     }
+
+
+    @Override
+    public List<BusiReimburseAprVo> approveList(BusiReimburseAprVo busiReimburseAprVo)
+    {
+        busiReimburseAprVo.setUserId(Long.valueOf(SecurityUtils.getUserId()));
+        return busiReimburseMapper.approveList(busiReimburseAprVo);
+    }
+
+
+
 }
