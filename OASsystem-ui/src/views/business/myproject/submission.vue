@@ -10,9 +10,9 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="primary text" @click="handleProjectApplyOpen" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
-      <el-button type="danger" @click="handleProjectApplyDel"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
-      <el-button type="success"  @click.stop="submissionReport"> <span class="el-icon-message" style="margin-right:3px;"></span >报送</el-button>
+      <el-button type="primary text" @click="handleProjectApplyOpen" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
+      <el-button type="danger" @click="handleProjectApplyDel" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
+      <el-button type="success"  @click.stop="submissionReport" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-message" style="margin-right:3px;"></span >报送</el-button>
       <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
 
@@ -86,7 +86,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialog2= false">取 消</el-button>
+    <el-button @click="submissionOpen1= false">取 消</el-button>
     <el-button type="primary" @click="dialog2SubmitForm">确 定</el-button>
   </span>
     </el-dialog>
@@ -284,9 +284,9 @@
       label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
-          <span class="el-icon-edit-outline" v-show="scope.row.status == 0" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
-          <span class="el-icon-delete" v-show="scope.row.status == 0" @click.stop="delsubmission(scope.row)">删除</span>
-          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport(scope.row)" >报送</span>
+          <span class="el-icon-edit-outline" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
+          <span class="el-icon-delete" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="delsubmission(scope.row)">删除</span>
+          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="submissionReport(scope.row)" >报送</span>
 
         </template>
 
@@ -342,7 +342,6 @@
           projectApplyTitle: [{required: true, message: "标题不能为空", trigger: "blur"}],
           content: [{required: true, message: "申请内容不能为空", trigger: "blur"}],
         },
-        dialog2:false,
         shenpiUser: {
           shenpiUserId:undefined,
           shenpiUserName:undefined
@@ -416,7 +415,8 @@
           limit:10
         },
         pageInfo: {},
-        projectApplyIds: []
+        projectApplyIds: [],
+        projectInfo: {},
       }
 
     },
@@ -511,8 +511,8 @@
       //添加批注人
 
       goBack(){
-
-        this.$router.push({ path:'/myreader/index'})
+        let projectId = this.projectId;
+        this.$router.push({ path:'/myproject/look',query:{projectId:projectId}})
       },
       //新建保存提交
      OpenSave(){
@@ -598,42 +598,63 @@
       },
       projectApplySubmitForm(status) {
         let _this = this;
-        _this.$refs.projectApplyForm.validate(valid => {
-          if (valid) {
-            let form = _this.projectApplyForm;
-            form.status = status;
-            let length = form.shenpiUserList.length;
-            if (length <= 0) {
-              this.msgError("审批人不能为空");
-              return false;
-            }else{
-              form.shenpiUserList.forEach((item, index) => {
-                item.sortOrder = index;
-              });
+        let msg = '';
+        let title = '';
+        if (status == '1') {
+          msg = '确认报送?';
+          title = '提交报送';
+        }else{
+          msg = '确认保存?';
+          title = '项目申请保存';
+        }
+        this.$confirm(msg, title, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          _this.$refs.projectApplyForm.validate(valid => {
+            if (valid) {
+              let form = _this.projectApplyForm;
+              form.status = status;
+              let length = form.shenpiUserList.length;
+              if (length <= 0) {
+                this.msgError("审批人不能为空");
+                return false;
+              }else{
+                form.shenpiUserList.forEach((item, index) => {
+                  item.sortOrder = index;
+                });
+              }
+              if (form.projectApplyId != undefined) {
+                updateProjectApply(form).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("修改成功");
+                    this.projectApplyOpen = false;
+                    this.getApplyList();
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
+              } else {
+                addProjectApply(form).then(response => {
+                  if (response.code === 200) {
+                    this.msgSuccess("新增成功");
+                    this.projectApplyOpen = false;
+                    this.getApplyList();
+                  } else {
+                    this.msgError(response.msg);
+                  }
+                });
+              }
             }
-            if (form.projectApplyId != undefined) {
-              updateProjectApply(form).then(response => {
-                if (response.code === 200) {
-                  this.msgSuccess("修改成功");
-                  this.projectApplyOpen = false;
-                  this.getApplyList();
-                } else {
-                  this.msgError(response.msg);
-                }
-              });
-            } else {
-              addProjectApply(form).then(response => {
-                if (response.code === 200) {
-                  this.msgSuccess("新增成功");
-                  this.projectApplyOpen = false;
-                  this.getApplyList();
-                } else {
-                  this.msgError(response.msg);
-                }
-              });
-            }
-          }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '操作异常'
+          });
         });
+
       },
       //添加审批人
       dialog2SubmitForm() {
@@ -645,13 +666,14 @@
           shenpiUserName:shenpiren
         };
         _this.projectApplyForm.shenpiUserList.push(shenpiUser);
-        _this.dialog2 = false;
+        _this.submissionOpen1 = false;
       },
       getProject() {
         let _this = this;
         getProjectInfo({projectId:_this.projectId}).then(response => {
           if(response.code == 200){
             let projectInfo = response.data;
+            _this.projectInfo = projectInfo;
             _this.busiProjectMembers= projectInfo.busiProjectMembers;
           }
         });
