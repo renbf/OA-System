@@ -499,6 +499,7 @@
           <el-date-picker
             v-model="taskLookForm.taskDate"
             type="daterange"
+            :disabled="true"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
@@ -506,7 +507,7 @@
 
         </el-form-item>
         <el-form-item label="任务内容">
-          <el-input type="textarea" v-model="taskLookForm.taskDesc"></el-input>
+          <el-input type="textarea" v-model="taskLookForm.taskDesc" :disabled="true"></el-input>
         </el-form-item>
         <!--<el-upload
           class="upload-demo"
@@ -578,6 +579,7 @@
         <el-date-picker
           v-model="lookForm.taskDate"
           type="daterange"
+          :disabled="true"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
@@ -586,7 +588,7 @@
       </el-form-item>
 
       <el-form-item label="任务内容">
-        <el-input type="textarea" v-model="lookForm.taskDesc"></el-input>
+        <el-input type="textarea" v-model="lookForm.taskDesc" :disabled="true"></el-input>
       </el-form-item>
 
 
@@ -1523,10 +1525,6 @@
 
       delLook(){
         console.log(111)
-      },
-      // 添加审批人确定操作
-      lookSubmitForm(){
-
       },
       del(item){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {

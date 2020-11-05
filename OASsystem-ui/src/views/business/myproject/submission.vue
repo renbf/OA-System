@@ -10,9 +10,9 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="primary text" @click="handleProjectApplyOpen" > <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
-      <el-button type="danger" @click="handleProjectApplyDel"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
-      <el-button type="success"  @click.stop="submissionReport"> <span class="el-icon-message" style="margin-right:3px;"></span >报送</el-button>
+      <el-button type="primary text" @click="handleProjectApplyOpen" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-plus" style="margin-right:3px;"></span>新建申请</el-button>
+      <el-button type="danger" @click="handleProjectApplyDel" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-delete" style="margin-right:3px;"></span>删除</el-button>
+      <el-button type="success"  @click.stop="submissionReport" v-if="projectInfo.projectProgress < 100"> <span class="el-icon-message" style="margin-right:3px;"></span >报送</el-button>
       <el-button type="warning"><span class="el-icon-download" style="margin-right:3px;"></span>导出</el-button>
     </div>
 
@@ -284,9 +284,9 @@
       label="操作">
         <template slot-scope="scope">
           <!--  2是未报送按钮全部显示 -->
-          <span class="el-icon-edit-outline" v-show="scope.row.status == 0" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
-          <span class="el-icon-delete" v-show="scope.row.status == 0" @click.stop="delsubmission(scope.row)">删除</span>
-          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0" @click.stop="submissionReport(scope.row)" >报送</span>
+          <span class="el-icon-edit-outline" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="handleUpdateProjectApply(scope.row)">编辑</span>
+          <span class="el-icon-delete" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="delsubmission(scope.row)">删除</span>
+          <span class="el-icon-message" style="margin-left:5px;" v-show="scope.row.status == 0 && projectInfo.projectProgress < 100" @click.stop="submissionReport(scope.row)" >报送</span>
 
         </template>
 
@@ -415,7 +415,8 @@
           limit:10
         },
         pageInfo: {},
-        projectApplyIds: []
+        projectApplyIds: [],
+        projectInfo: {},
       }
 
     },
@@ -672,6 +673,7 @@
         getProjectInfo({projectId:_this.projectId}).then(response => {
           if(response.code == 200){
             let projectInfo = response.data;
+            _this.projectInfo = projectInfo;
             _this.busiProjectMembers= projectInfo.busiProjectMembers;
           }
         });
