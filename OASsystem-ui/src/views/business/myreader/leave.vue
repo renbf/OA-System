@@ -233,7 +233,7 @@
               <el-radio
                 v-for="(dict,index) in yesOrNo"
                 :key="index"
-                :label="dict.dictValue"
+                :label="dict.dictLabel"
                 :value="dict.dictValue"
               >{{ dict.dictLabel }}</el-radio
               >

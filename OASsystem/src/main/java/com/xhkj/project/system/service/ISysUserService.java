@@ -170,4 +170,7 @@ public interface ISysUserService
     public boolean checkDeptLeaderByRole(SysUser user);
 
     public AjaxResult userDeptUsers();
+
+    public List<SysUser> getUserListByDeptIds(Long[] deptIds);
+
 }

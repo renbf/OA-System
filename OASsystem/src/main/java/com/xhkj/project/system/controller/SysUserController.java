@@ -229,4 +229,16 @@ public class SysUserController extends BaseController
         }
         return ajaxResult;
     }
+
+
+    /**
+     * 根据部门集合获取用户列表
+     */
+    @GetMapping("/getUserListByDeptIds/{deptIds}")
+    public AjaxResult getUserListByDeptIds(@PathVariable("deptIds") Long[] deptIds)
+    {
+        return AjaxResult.success(userService.getUserListByDeptIds(deptIds));
+    }
+
+
 }

@@ -77,7 +77,7 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in bumenOptions"
+            v-for="dict in departmentOption"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -195,8 +195,8 @@
 <!--                                  :name="dict.dictLabel"-->
 <!--                                  border-->
 <!--              ></el-checkbox-button>-->
-              <el-checkbox v-for="dict in department"
-                           :label="dict.dictLabel"
+              <el-checkbox v-for="dict in departmentOption"
+                           :label="dict.dictValue"
                            border>
                 {{dict.dictLabel}}
               </el-checkbox>
@@ -208,8 +208,10 @@
                 filterable
                 :filter-method="filterMethod"
                 filter-placeholder="请输入成员名称"
+                :titles="['待选人员', '已选人员']"
                 v-model="form.peoplevalue"
                 :data="canyupeople">
+
               </el-transfer>
             </template>
           </el-form-item>
@@ -259,7 +261,7 @@
             <el-tag v-for="item in editform.department">{{item.name}}</el-tag>
 <!--            <el-radio-group v-model="form.bumenStatus">-->
 <!--              <el-radio-->
-<!--                v-for="dict in department"-->
+<!--                v-for="dict in departmentOption"-->
 <!--                :key="dict.dictValue"-->
 <!--                :label="dict.dictValue"-->
 <!--                border-->
@@ -355,27 +357,27 @@
 <script>
   // 引入日常任务数据方法
   import { taskList,editform} from "@/api/business/mywork/dailytask";
-  import { listDept } from "@/api/system/dept";
+  import {getUserListByDeptIds} from "@/api/system/user";
+  import {isNotEmpty} from "../../../utils/common";
+
   export default {
     data() {
       const generateData = _ => {
         const data = [];
-        const namelist = ['迈克尔', '丹尼斯', '伊利斯', '卡梅隆'];
-        const canyu = ['迈克尔', '丹尼斯', '伊利斯', '卡梅隆'];
-        namelist.forEach((name, index) => {
+        this.namelist = ['迈克尔', '丹尼斯', '伊利斯', '卡梅隆'];
+        this.namelist.forEach((name, index) => {
           data.push({
             label: name,
             key: index,
-            pinyin: canyu[index]
+            userNames: name
           });
         });
         return data;
       };
       return {
         // 穿梭框
-        canyupeople:generateData(),
-
-        bumenStatus:[],
+        //canyupeople:generateData(),
+        canyupeople:[],
         multiple:false,
         // 遮罩层
         loading: true,
@@ -390,6 +392,7 @@
         title:"",
         open:false,
         editopen:false,
+        nameList:[],
         // 表单参数
         form:{
           title:"",
@@ -410,7 +413,6 @@
           workmain:"",
           timestamp:[]
         },
-        bumenOptions:[],
         // 状态数据字典
         statusOptions: [],
         // 表单校验
@@ -428,22 +430,13 @@
             {required: true, message: "任务时间不能为空", trigger: "change" }
           ]
         },
-        department: [
-          {
-            dictValue: "1",
-            dictLabel: "技术部"
-          },
-          {
-            dictValue: "2",
-            dictLabel: "软件部"
-          }
-        ],
+        departmentOption: [],
         // 隐藏展示
         activeNames: ['1'],
         // 穿梭框内容
 
         filterMethod(query, item) {
-          return item.pinyin.indexOf(query) > -1;
+          return item.userNames.indexOf(query) > -1;
         },
         uploadImgUrl: process.env.VUE_APP_BASE_API + "/system/attachment/files", // 上传的图片服务器地址
         // 上传列表
@@ -463,10 +456,12 @@
       });
       // 部门
       //获取部门列表
-      listDept({parentId:'100'}).then(response => {
-        response.data.forEach((val)=> this.bumenOptions.push({'dictValue': val.deptId,'dictLabel': val.deptName})
-        )
+      this.getDeptList({parentId:'100'}).then(response => {
+        response.data.forEach( (val) => this.departmentOption.push({'dictValue': val.deptId,'dictLabel': val.deptName}) )
+        this.form.bumenStatus.push(this.departmentOption[0].dictValue)
+        this.handleCheckedCitiesChange(this.departmentOption[0].dictValue)
       });
+
       //审批状态
       this.getDicts("sys_check_status").then(response => {
         this.statusOptions = response.data;
@@ -529,7 +524,26 @@
       // 多选框发生改变
       handleCheckedCitiesChange(value){
         let checkedCount = value.length;
-        console.log(value,123)
+        //根据部门查询所属员工
+        getUserListByDeptIds(value).then(response => {
+          if (response.code === 200) {
+            //获取用户集合
+            let users = response.data;
+            const data = [];
+            if(isNotEmpty(users)){
+              for(let i = 0; i < users.length; i++) {
+                data.push({
+                  key: users[i].userId,
+                  label: users[i].nickName,
+                  userNames: users[i].nickName,
+                });
+              }
+            }
+
+            this.canyupeople = data;
+          }
+        })
+
       },
       // 编辑
       handleUpdate(){
