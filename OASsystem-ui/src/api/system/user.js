@@ -134,3 +134,12 @@ export function userDeptUsers(query) {
     params: query
   })
 }
+
+//获取当前用户管理的部门列表
+export function getUserListByDeptIds(deptIds) {
+  return request({
+    url: '/system/user/getUserListByDeptIds/'+deptIds,
+    method: 'get',
+  })
+}
+

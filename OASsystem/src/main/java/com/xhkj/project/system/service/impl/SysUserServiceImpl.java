@@ -525,4 +525,9 @@ public class SysUserServiceImpl implements ISysUserService
             }
         }
     }
+
+
+    public List<SysUser> getUserListByDeptIds(Long[] deptIds){
+        return sysUserMapper.getUserListByDeptIds(deptIds);
+    }
 }

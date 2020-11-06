@@ -256,4 +256,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{item}
 		</foreach>
 	</select>
+
+	<select id="getUserListByDeptIds" parameterType="long" resultMap="SysUserResult">
+		<include refid="selectUser"/>
+		from sys_user u
+		where u.dept_id in
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
 </mapper> 

@@ -121,4 +121,7 @@ public interface SysUserMapper
     public List<SysUser> userDeptUsers(List<SysRoleDeptVo> sysRoleDeptVos);
 
     public List<SysUser> selectUsersByIds(List<Long> userList);
+
+    public List<SysUser> getUserListByDeptIds(Long[] deptIds);
+
 }

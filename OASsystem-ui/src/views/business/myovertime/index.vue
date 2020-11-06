@@ -448,7 +448,8 @@ export default {
       workHour: "",
       overtimePrecautions:[],
       dateRanges: [],
-
+      amWorkDate: [],
+      pmWorkDate: [],
       statusOptions: [],
       realOvertimeSurTime: 0,
       overPeriodStart: "",
@@ -524,6 +525,9 @@ export default {
       this.overPeriodEnd = this.overPeriodVal[0][0][1];
       this.overtimePrecautions = eval(response.rows.filter(e => Object.is(e.comConfigKey,'overtimePrecautions')))[0].comConfigValue;
       this.overtimePrecautions = this.overtimePrecautions.replace("\"","").replace("\"","").split("；");
+
+      this.amWorkDate  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'amWorkDate'))[0].comConfigValue);
+      this.pmWorkDate  = eval(response.rows.filter(e => Object.is(e.comConfigKey,'pmWorkDate'))[0].comConfigValue);
 
       this.defaultDate.push(this.overPeriodStart +":00")
       this.defaultDate.push(this.overPeriodEnd +":00")
@@ -610,42 +614,50 @@ export default {
         let endDay = dateRange[1].split(" ")[0]
 
 
-        //实际选择的开始日期与结束日期
-        let startTime = new Date(dateRange[0]);
-        let endTime = new Date(dateRange[1]);
-        //实际开始结束日期相差毫秒数
-        let realSubMils = endTime - startTime;
-
-
-        let comStartTime = new Date(startDay +" "+ this.overPeriodStart);
-        if(comStartTime.getTime()!=startTime.getTime()){
-          this.$message.error('错了哦，加班开始日期选错,请修正！');
-          return;
-        }
-        this.form.extraWorkHours = timehour;
+        // let comStartTime = new Date(startDay +" "+ this.overPeriodStart);
+        // if(comStartTime.getTime()!=startTime.getTime()){
+        //   this.$message.error('错了哦，加班开始日期选错,请修正！');
+        //   return;
+        // }
+        // this.form.extraWorkHours = timehour;
 
         // 加班调休加班时长重新计算
         if(Object.is(this.workHourUnit,'时')){
-          this.form.overtimeSurTime += timehour;
+          this.form.overtimeSurTime += this.form.extraWorkHours = timehour;
         }else if(Object.is(this.workHourUnit,'天')){
 
-          let length = this.overPeriodVal.length;
-          //循环加班时间段 计算加班天数
-          for (let i = 0; i < length; i++) {
+          //判断是周几
+          let week = new Date(startDay).getDay();
 
-            let overDay = this.overDayVal[i];
-            let overPeriod = this.overPeriodVal[i][0];
+          //如果是星期六日就计算白天日期
+          if(week == 0 || week == 6){
+            let start_Time = dateRange[0].split(" ")[1];
+            let end_Time = dateRange[1].split(" ")[1];
 
-            //公司规定晚上加班开始、结束时间
-            let comStartTimeY = new Date(startDay +" "+ overPeriod[0]);
-            let comendTimeY = new Date(startDay +" "+ overPeriod[1]);
-            //公司规定相差毫秒数  10800000
-            let comSubMils = comendTimeY - comStartTimeY;
+            let amWorkDate = this.amWorkDate;//公司上午上班开始结束日期  ["08:30","12:00"]
+            let pmWorkDate = this.pmWorkDate;//公司下午上班开始结束日期  ["13:30","17:30"]
 
-            //如果实际时间 大于等于 公司规定时间，就获取其实际加班时长 并进行计算
-            if(realSubMils>=comSubMils){
-              timehour = overDay;
+            if(start_Time == amWorkDate[0] && end_Time == amWorkDate[1]){
+              timehour = 0.5
+            }else if(start_Time == amWorkDate[0] && end_Time >= pmWorkDate[1]){
+              timehour = 1
+            }else if(start_Time == pmWorkDate[0] && end_Time >= pmWorkDate[1]){
+              timehour = 0.5
             }
+
+
+            //如果选择结束日期为晚上
+            let WeekNightStartStr = startDay +" "+ this.overPeriodVal[0][0][0];//公司晚上加班开始日期
+            let WeekNightStartTime = new Date(WeekNightStartStr);
+            let actNightStartTime = new Date(dateRange[1]);
+
+            //如果选择都结束时间大于 公司要求晚上加班开始时间，则进行此运算
+            if(actNightStartTime>WeekNightStartTime){
+              timehour += Number(this.calNightTime(WeekNightStartStr,dateRange[1]))
+            }
+
+          }else{
+            timehour = this.calNightTime(dateRange[0],dateRange[1])
           }
 
           this.form.overtimeSurTime += this.form.extraWorkHours = eval(timehour);
@@ -655,6 +667,42 @@ export default {
 
 
     },
+
+    //计算晚上加班时长
+    calNightTime(startTimeStr,endTimeStr){
+      let startDay = endTimeStr.split(" ")[0];
+      let endDay = endTimeStr.split(" ")[0]
+
+      //实际选择的开始日期与结束日期
+      let startTime = new Date(startTimeStr);
+      let endTime = new Date(endTimeStr);
+      //实际开始结束日期相差毫秒数
+      let realSubMils = endTime - startTime;
+
+      let length = this.overPeriodVal.length;
+      let timehour;
+      //循环加班时间段 计算加班天数
+      for (let i = 0; i < length; i++) {
+
+        let overDay = this.overDayVal[i];
+        let overPeriod = this.overPeriodVal[i][0];
+
+        //公司规定晚上加班开始、结束时间
+        let comStartTimeY = new Date(startDay +" "+ overPeriod[0]);
+        let comendTimeY = new Date(startDay +" "+ overPeriod[1]);
+        //公司规定相差毫秒数  10800000
+        let comSubMils = comendTimeY - comStartTimeY;
+
+        //如果实际时间 大于等于 公司规定时间，就获取其相应加班时长 并进行计算
+        if(realSubMils>=comSubMils){
+          timehour = overDay;
+        }
+      }
+      return timehour;
+    },
+
+
+
     handleRowClick(row, column, event) {
       if (column.label == "操作") {
       } else {

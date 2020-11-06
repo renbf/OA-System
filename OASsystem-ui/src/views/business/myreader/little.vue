@@ -147,7 +147,7 @@
         align="center"
         label="加班时间">
         <template slot-scope="scope">
-          <span>{{scope.row.extraWorkDates}}</span>
+          <span>{{ JSON.parse(scope.row.extraWorkDates)[0] }} - {{ JSON.parse(scope.row.extraWorkDates)[1] }}</span>
         </template>
       </el-table-column>
 
