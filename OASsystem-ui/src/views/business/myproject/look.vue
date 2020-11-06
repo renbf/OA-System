@@ -432,7 +432,7 @@
     <el-dialog
       title="关闭任务"
       :visible.sync="dialogTaskVisible"
-      width="30%">
+      width="30%" class="closedialog">
       <el-divider></el-divider>
       <el-form ref="closeTaskform" :model="closeTaskform" :rules="closeTaskformRules">
         <el-form-item prop="closeReason">
@@ -463,7 +463,7 @@
 
 
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-show="showTaskReasonButton">
     <el-button @click="dialogTaskVisible = false">取 消</el-button>
     <el-button type="primary" @click="handleCloseTaskSubmit">确 定</el-button>
   </span>
@@ -484,7 +484,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
+          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -757,7 +757,7 @@
   import { getToken } from '@/utils/auth';
   import { userDeptList } from "@/api/system/dept";
   import { userDeptUsers } from "@/api/system/user";
-  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi,updateProjectApply } from "@/api/business/mywork/myproject";
+  import { listBusiProject,editBusiProject,changeStatus,addBusiTask,updateBusiTask,listTask,getProjectInfo,getTaskInfo,delBusiProject,delBusiTask,changeTaskStatus,closeProject,closeTask,addBusiTaskLog,taskLogBaosong,updateTaskProgress,listProjectApply,removeProjectApply,baosongProjectApply,listProjectApplyShenpi,updateProjectApply,getDayTaskLog,updateTaskLog } from "@/api/business/mywork/myproject";
   import {downloadUrl,deleteFile} from "../../../utils/common";
   import { formatDate } from '../../../utils/index'
 
@@ -791,6 +791,8 @@
         //关闭原因
         textarea2: '',
         dialogTaskVisible: false,
+        //是否显示关闭原因确认按钮
+        showTaskReasonButton:false,
         closeTaskform: {
           taskId:undefined,
           closeReason:undefined
@@ -827,6 +829,7 @@
           taskDate: [],
           taskDesc:undefined,
           userList: [],
+          taskLogId:undefined,
           dayContent:undefined,
           logStatus:undefined,
           fileList: []
@@ -989,8 +992,10 @@
       },
       //上传附件
       handleRemove(file, fileList) {
+        let _this = this;
         deleteFile(file.fileId).then(response => {
           if (response.code === 200) {
+            _this.lookForm.fileList = fileList;
             this.msgSuccess("删除成功");
           } else {
             this.msgError(response.msg);
@@ -1159,6 +1164,7 @@
               taskNumber:busiTaskVo.taskNumber,
               taskDate: [busiTaskVo.taskStartDate,busiTaskVo.taskEndDate],
               taskDesc:busiTaskVo.taskDesc,
+              taskLogId:undefined,
               dayContent:undefined,
               logStatus:undefined,
               userList: [],
@@ -1166,6 +1172,19 @@
             };
             taskMembers.forEach((val) =>{
               _this.lookForm.userList.push({memberId:val.memberId,memberName:val.memberName});
+            });
+            getDayTaskLog({taskId:item.taskId}).then(response => {
+              if(response.code == 200){
+                let busiTaskLogVo = response.data;
+                if (busiTaskLogVo != undefined && busiTaskLogVo != null) {
+                  _this.lookForm.taskLogId = busiTaskLogVo.taskLogId;
+                  _this.lookForm.dayContent = busiTaskLogVo.dayContent;
+                  let busiTaskLogFiles = busiTaskLogVo.busiTaskLogFiles;
+                  busiTaskLogFiles.forEach((item)=>{
+                    _this.lookForm.fileList.push({url:item.fileUrl,name:item.fileName,fileId:item.fileId})
+                  });
+                }
+              }
             });
           }
         });
@@ -1221,19 +1240,33 @@
             let lookForm = _this.lookForm;
             let form = {
               taskId:lookForm.taskId,
+              taskLogId:lookForm.taskLogId,
               dayContent:lookForm.dayContent,
               logStatus:logStatus,
               fileList:lookForm.fileList
             }
-            addBusiTaskLog(form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.lookOpen = false;
-                this.getTaskList();
-              } else {
-                this.msgError(response.msg);
-              }
-            });
+            if (form.taskLogId != undefined) {
+              updateTaskLog(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("修改成功");
+                  this.lookOpen = false;
+                  this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }else{
+              addBusiTaskLog(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("新增成功");
+                  this.lookOpen = false;
+                  this.getTaskList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }
+
           }
         });
       },
@@ -1352,19 +1385,6 @@
         queryParams.page = val;
         this.getTaskList();
       },
-      //关闭任务弹框
-      handleCloseTask(item) {
-        this.dialogTaskVisible = true;
-        this.resetCloseTaskform();
-        this.closeTaskform.taskId = item.taskId;
-      },
-      resetCloseTaskform() {
-        this.closeTaskform = {
-          taskId:undefined,
-          closeReason:undefined
-        }
-        this.resetForm("closeTaskform");
-      },
       //批量报送
       handleBaosongBitch() {
         let _this = this;
@@ -1420,6 +1440,11 @@
         this.taskLookTitle = "查看任务";
         this.taskLookOpen = true;
         this.updateSetTaskLookValue(row);
+        if (row.taskProgress == 100 && row.closeReason != '') {
+          this.dialogTaskVisible = true;
+          this.showTaskReasonButton = false;
+          this.closeTaskform.closeReason = row.closeReason;
+        }
       },
       updateSetTaskLookValue(item) {
         let _this = this;
@@ -1557,7 +1582,7 @@
       },
       getApplyList() {
         let _this = this;
-        let queryParams = {createTime:formatDate(new Date().getTime())};
+        let queryParams = {createTime:formatDate(new Date().getTime()),projectId:_this.projectId,};
         listProjectApply(queryParams).then(response => {
           if(response.code == 200){
             _this.applyproject= response.data;
@@ -1630,6 +1655,9 @@
 </script>
 
 <style>
+  .closedialog{
+    z-index: 2046!important;
+  }
   .el-tooltip__popper.is-light{
     background: #fff;
     border: 1px solid #b1b7c3;

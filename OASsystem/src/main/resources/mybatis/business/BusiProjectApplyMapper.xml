@@ -151,6 +151,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">
                 and date_format(pa.create_time,'%y%m%d') = date_format(#{createTime},'%y%m%d')
             </if>
+            <if test="projectId != null "> and pa.project_id = #{projectId}</if>
         </where>
     </select>
 

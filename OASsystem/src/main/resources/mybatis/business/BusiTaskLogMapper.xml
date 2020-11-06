@@ -12,11 +12,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createDate"    column="create_date"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectBusiTaskLogbasicColums">
-        select tl.task_log_id, tl.task_id, tl.day_content, tl.log_status, tl.create_date, tl.create_by, tl.create_time, tl.remark
+        select tl.task_log_id, tl.task_id, tl.day_content, tl.log_status, tl.create_date, tl.create_by, tl.create_time, tl.update_by, tl.update_time, tl.remark
     </sql>
 
     <select id="selectBusiTaskLogList" parameterType="com.xhkj.project.business.domain.BusiTaskLog" resultMap="BusiTaskLogResult">
@@ -30,6 +32,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createDate != null "> and tl.create_date = #{createDate}</if>
             <if test="createBy != null  and createBy != '' "> and tl.create_by = #{createBy}</if>
             <if test="createTime != null "> and tl.create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != '' "> and tl.update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and tl.update_time = #{updateTime}</if>
             <if test="remark != null  and remark != '' "> and tl.remark = #{remark}</if>
         </where>
     </select>
@@ -49,6 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createDate != null  ">create_date,</if>
             <if test="createBy != null  and createBy != ''  ">create_by,</if>
             <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
             <if test="remark != null  and remark != ''  ">remark,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -58,6 +64,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createDate != null  ">#{createDate},</if>
             <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
             <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
             <if test="remark != null  and remark != ''  ">#{remark},</if>
         </trim>
     </insert>
@@ -71,6 +79,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createDate != null  ">create_date = #{createDate},</if>
             <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
             <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
         </trim>
         where task_log_id = #{taskLogId}
@@ -88,9 +98,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="insertBusiTaskLogBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="taskLogId">
-        insert into busi_task_log ( task_id, day_content, log_status, create_date, create_by, create_time, remark) values
+        insert into busi_task_log ( task_id, day_content, log_status, create_date, create_by, create_time, update_by, update_time, remark) values
         <foreach item="item" collection="list" separator=",">
-            ( #{item.taskId}, #{item.dayContent}, #{item.logStatus}, #{item.createDate}, #{item.createBy}, #{item.createTime}, #{item.remark})
+            ( #{item.taskId}, #{item.dayContent}, #{item.logStatus}, #{item.createDate}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
@@ -103,6 +113,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createDate"    column="create_date"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="nickName"    column="nick_name"    />
         <collection property="busiTaskLogFiles" ofType="com.xhkj.project.business.mapper.BusiTaskLogFileMapper.BusiTaskLogFileResult" column="task_log_id" select="com.xhkj.project.business.mapper.BusiTaskLogFileMapper.selectBusiTaskLogFiles"></collection>
@@ -124,6 +136,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null  and remark != '' "> and tl.remark = #{remark}</if>
         </where>
         order by tl.create_time
+    </select>
+
+    <select id="selectBusiTaskLogByUniqueKey" parameterType="java.util.Map" resultMap="BusiTaskLogVoResult">
+        <include refid="selectBusiTaskLogbasicColums"/>
+        from busi_task_log tl
+        <where>
+            <if test="taskId != null "> and tl.task_id = #{taskId}</if>
+            <if test="createDate != null and createDate != ''"> and tl.create_date = #{createDate}</if>
+            <if test="createBy != null  and createBy != '' "> and tl.create_by = #{createBy}</if>
+        </where>
     </select>
 
 </mapper>

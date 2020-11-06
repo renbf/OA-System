@@ -20,6 +20,16 @@ public class UploadFile implements Serializable
 	private String name;
 	/** 上传的附件访问路径 */
 	private String url;
+	/**  */
+	private Long fileId;
+
+	public Long getFileId() {
+		return fileId;
+	}
+
+	public void setFileId(Long fileId) {
+		this.fileId = fileId;
+	}
 
 	public String getName() {
 		return name;

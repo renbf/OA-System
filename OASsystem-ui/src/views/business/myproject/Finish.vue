@@ -744,7 +744,41 @@
     </el-dialog>
 
 
+    <!--关闭项目弹框-->
+    <el-dialog
+      title="关闭任务"
+      :visible.sync="dialogProjectVisible"
+      width="30%" class="closedialog">
+      <el-divider></el-divider>
+      <el-form>
+        <el-form-item>
+          关闭原因
+          <el-input
+            style="width:400px;margin-left:20px; vertical-align:text-top;display:inline-block;height:100px;"
+            type="textarea"
+            :disabled="true"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入至少20字的原因描述"
+            v-model="projectInfo.closeReason">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
 
+          <el-collapse >
+            <el-collapse-item title=" 关闭注意事项" name="1">
+              <div>
+                1、当执行关闭操作后，项目将自动默认完成所有任务，并不可在进行修改和编辑。
+              </div>
+              <div>
+                2、关闭操作完成后将不可逆转。
+              </div>
+              <div>3、关闭后参与人将不能再进行项目的编辑操作。</div>
+
+            </el-collapse-item>
+          </el-collapse>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
 
 
   </div>
@@ -927,7 +961,9 @@
         uploadImgUrl:process.env.VUE_APP_BASE_API + "/api/attachmentFile/upload",
         headers: {
           Authorization: 'Bearer ' + getToken()
-        }
+        },
+        //关闭项目
+        dialogProjectVisible:false
       }
     },
     created() {
@@ -1064,6 +1100,10 @@
             _this.busiProjectMembers = _this.projectInfo.busiProjectMembers;
             let busiProjectMembers= _this.busiProjectMembers;
             _this.getDeptMemberList(busiProjectMembers);
+            //关闭项目弹框
+            if (_this.projectInfo.projectProgress == 100 && _this.projectInfo.closeReason != '') {
+              this.dialogProjectVisible = true;
+            }
           }
         });
       },

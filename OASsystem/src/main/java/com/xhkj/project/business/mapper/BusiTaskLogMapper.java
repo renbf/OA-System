@@ -2,7 +2,9 @@ package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiTaskLog;
 import com.xhkj.project.business.domain.vo.BusiTaskLogVo;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 /**
  * 任务日志 数据层
@@ -70,4 +72,6 @@ public interface BusiTaskLogMapper
 	//以上自动生成的尽量别动
 
 	public List<BusiTaskLogVo> selectBusiTaskLogVos(BusiTaskLog busiTaskLog);
+
+	public BusiTaskLogVo selectBusiTaskLogByUniqueKey(@Param("taskId") Long taskId,@Param("createDate") String createDate,@Param("createBy") String createBy);
 }

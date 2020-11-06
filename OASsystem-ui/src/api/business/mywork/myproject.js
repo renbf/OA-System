@@ -128,6 +128,24 @@ export function addBusiTaskLog(data) {
   })
 }
 
+// 修改任务日志
+export function updateTaskLog(data) {
+  return request({
+    url: '/api/busiProject/updateTaskLog',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询今日任务日志
+export function getDayTaskLog(query) {
+  return request({
+    url: '/api/busiProject/getDayTaskLog',
+    method: 'get',
+    params: query
+  })
+}
+
 // 报送任务
 export function taskLogBaosong(data) {
   return request({

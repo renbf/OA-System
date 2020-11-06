@@ -3,6 +3,7 @@ package com.xhkj.project.business.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xhkj.common.exception.CustomException;
+import com.xhkj.common.utils.DateUtils;
 import com.xhkj.common.utils.SecurityUtils;
 import com.xhkj.common.utils.ServletUtils;
 import com.xhkj.framework.security.LoginUser;
@@ -518,6 +519,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 			busiTaskLog.setCreateDate(now);
 			busiTaskLog.setCreateTime(now);
 			busiTaskLog.setCreateBy(username);
+			busiTaskLog.setUpdateTime(now);
 			busiTaskLogMapper.insertBusiTaskLog(busiTaskLog);
 			Long taskLogId = busiTaskLog.getTaskLogId();
 			List<UploadFile> fileList = busiTaskLog.getFileList();
@@ -526,6 +528,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 				BusiTaskLogFile busiTaskLogFile = null;
 				for (UploadFile uploadFile : fileList) {
 					busiTaskLogFile = new BusiTaskLogFile();
+					busiTaskLogFile.setFileId(uploadFile.getFileId());
 					busiTaskLogFile.setFileName(uploadFile.getName());
 					busiTaskLogFile.setFileUrl(uploadFile.getUrl());
 					busiTaskLogFile.setTaskLogId(taskLogId);
@@ -534,6 +537,61 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 				busiTaskLogFileMapper.insertBusiTaskLogFileBatch(list);
 			}
 			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> updateTaskLog(BusiTaskLog busiTaskLog) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiTaskLog.setUpdateTime(now);
+			busiTaskLog.setUpdateBy(username);
+			busiTaskLogMapper.updateBusiTaskLog(busiTaskLog);
+			Long taskLogId = busiTaskLog.getTaskLogId();
+			List<UploadFile> fileList = busiTaskLog.getFileList();
+			if (CollectionUtils.isNotEmpty(fileList)) {
+				busiTaskLogFileMapper.deleteBusiTaskLogFileByTaskLogId(taskLogId);
+				List<BusiTaskLogFile> list = new ArrayList<>();
+				BusiTaskLogFile busiTaskLogFile = null;
+				for (UploadFile uploadFile : fileList) {
+					busiTaskLogFile = new BusiTaskLogFile();
+					busiTaskLogFile.setFileId(uploadFile.getFileId());
+					busiTaskLogFile.setFileName(uploadFile.getName());
+					busiTaskLogFile.setFileUrl(uploadFile.getUrl());
+					busiTaskLogFile.setTaskLogId(taskLogId);
+					list.add(busiTaskLogFile);
+				}
+				busiTaskLogFileMapper.insertBusiTaskLogFileBatch(list);
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> getDayTaskLog(Long taskId) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			String now = DateUtils.getDate();
+			String username = SecurityUtils.getUsername();
+			BusiTaskLogVo busiTaskLogVo = busiTaskLogMapper.selectBusiTaskLogByUniqueKey(taskId, now, username);
+			if (Objects.nonNull(busiTaskLogVo)) {
+				Long taskLogId = busiTaskLogVo.getTaskLogId();
+				List<BusiTaskLogFile> busiTaskLogFiles = busiTaskLogFileMapper.selectBusiTaskLogFiles(taskLogId);
+				busiTaskLogVo.setBusiTaskLogFiles(busiTaskLogFiles);
+			}
+			resultMap.put("code",200);
+			resultMap.put("data",busiTaskLogVo);
 		} catch (Exception e) {
 			log.error("",e);
 			throw new RuntimeException();

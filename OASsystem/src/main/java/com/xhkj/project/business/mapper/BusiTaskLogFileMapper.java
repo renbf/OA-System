@@ -68,4 +68,6 @@ public interface BusiTaskLogFileMapper
 	//以上自动生成的尽量别动
 
 	public List<BusiTaskLogFile> selectBusiTaskLogFiles(Long taskLogId);
+
+	public int deleteBusiTaskLogFileByTaskLogId(Long taskLogId);
 }

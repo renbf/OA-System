@@ -15,71 +15,83 @@ import java.io.Serializable;
 public class BusiTaskLogFile implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	/** 日志文件ID */
 	private Long taskLogFileId;
 	/** 任务日志ID */
 	private Long taskLogId;
+	/**  */
+	private Long fileId;
 	/** 文件名称 */
 	private String fileName;
 	/** 上传的附件访问路径 */
 	private String fileUrl;
 	/** 备注 */
 	private String remark;
-//以上自动生成的尽量别动
-	public void setTaskLogFileId(Long taskLogFileId) 
+	//以上自动生成的尽量别动
+	public void setTaskLogFileId(Long taskLogFileId)
 	{
 		this.taskLogFileId = taskLogFileId;
 	}
 
-	public Long getTaskLogFileId() 
+	public Long getTaskLogFileId()
 	{
 		return taskLogFileId;
 	}
-	public void setTaskLogId(Long taskLogId) 
+	public void setTaskLogId(Long taskLogId)
 	{
 		this.taskLogId = taskLogId;
 	}
 
-	public Long getTaskLogId() 
+	public Long getTaskLogId()
 	{
 		return taskLogId;
 	}
-	public void setFileName(String fileName) 
+	public void setFileId(Long fileId)
+	{
+		this.fileId = fileId;
+	}
+
+	public Long getFileId()
+	{
+		return fileId;
+	}
+	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
 	}
 
-	public String getFileName() 
+	public String getFileName()
 	{
 		return fileName;
 	}
-	public void setFileUrl(String fileUrl) 
+	public void setFileUrl(String fileUrl)
 	{
 		this.fileUrl = fileUrl;
 	}
 
-	public String getFileUrl() 
+	public String getFileUrl()
 	{
 		return fileUrl;
 	}
-	public void setRemark(String remark) 
+	public void setRemark(String remark)
 	{
 		this.remark = remark;
 	}
 
-	public String getRemark() 
+	public String getRemark()
 	{
 		return remark;
 	}
 
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("taskLogFileId", getTaskLogFileId())
-            .append("taskLogId", getTaskLogId())
-            .append("fileName", getFileName())
-            .append("fileUrl", getFileUrl())
-            .append("remark", getRemark())
-            .toString();
-    }
+	public String toString() {
+		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+				.append("taskLogFileId", getTaskLogFileId())
+				.append("taskLogId", getTaskLogId())
+				.append("fileId", getFileId())
+				.append("fileName", getFileName())
+				.append("fileUrl", getFileUrl())
+				.append("remark", getRemark())
+				.toString();
+	}
 }

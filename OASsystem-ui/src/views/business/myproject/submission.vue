@@ -408,6 +408,7 @@
         //表格数据
         tableData: [],
         queryParams:{
+          projectId:this.projectId,
           searchDate: [],
           content: undefined,
           status: undefined,

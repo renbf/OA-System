@@ -308,6 +308,42 @@ public class BusiProjectController
 	}
 
 	/**
+	 * 修改任务日志
+	 */
+	@PostMapping("/updateTaskLog")
+	@ResponseBody
+	public Map<String,Object> updateTaskLog(@RequestBody BusiTaskLog busiTaskLog)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.updateTaskLog(busiTaskLog);
+		} catch (Exception e) {
+			log.error("修改任务日志异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","修改任务日志异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 查询今日任务日志
+	 */
+	@GetMapping("/getDayTaskLog")
+	@ResponseBody
+	public Map<String,Object> getDayTaskLog(Long taskId)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.getDayTaskLog(taskId);
+		} catch (Exception e) {
+			log.error("查询今日任务日志异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","查询今日任务日志异常");
+		}
+		return resultMap;
+	}
+
+	/**
 	 * 报送任务
 	 */
 	@PostMapping("/taskLogBaosong")
