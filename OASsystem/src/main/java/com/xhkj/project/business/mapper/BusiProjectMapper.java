@@ -71,6 +71,8 @@ public interface BusiProjectMapper
 
 	public List<BusiProjectVo> selectBusiProjects(BusiProjectVo busiProjectVo);
 
+	public List<BusiProjectVo> todolist(BusiProjectVo busiProjectVo);
+
 	public BusiProjectVo selectBusiProject(Long projectId);
 
 }

@@ -332,7 +332,7 @@
         projectApplyOpen: false,
         projectApplyForm: {
           projectApplyId:undefined,
-          projectId:this.projectId,
+          projectId:this.$route.query.projectId,
           projectApplyTitle:undefined,
           content:undefined,
           shenpiUserList:[],
@@ -408,7 +408,7 @@
         //表格数据
         tableData: [],
         queryParams:{
-          projectId:this.projectId,
+          projectId:this.$route.query.projectId,
           searchDate: [],
           content: undefined,
           status: undefined,

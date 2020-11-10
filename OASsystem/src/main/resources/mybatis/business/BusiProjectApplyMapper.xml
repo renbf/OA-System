@@ -155,4 +155,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectBusiProjectApplyVosTodo" parameterType="com.xhkj.project.business.domain.vo.BusiProjectApplyVo" resultMap="BusiProjectApplyVoResult">
+        <include refid="selectBusiProjectApplybasicColums"/>
+        ,(select GROUP_CONCAT(pas.shenpi_user_name ORDER BY pas.sort_order SEPARATOR ',') from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id) shenpiUserNames,
+        u.nick_name
+        from busi_project_apply pa
+        join sys_user u on pa.create_by = u.user_name
+        <where>
+            <if test="searchDate != null and searchDate.size > 0">
+                and pa.create_time >= #{searchDate[0]}
+                and pa.create_time <![CDATA[ <= ]]> #{searchDate[1]}
+            </if>
+            <if test="content != null  and content != '' "> and pa.content like concat('%',#{content},'%') </if>
+            <if test="status != null  and status != '' "> and pa.status = #{status}</if>
+            <if test="createBy != null  and createBy != '' "> and pa.create_by = #{createBy}</if>
+            <if test="createTime != null ">
+                and date_format(pa.create_time,'%y%m%d') = date_format(#{createTime},'%y%m%d')
+            </if>
+            <if test="projectId != null "> and pa.project_id = #{projectId}</if>
+             <if test="currentShenpiUserId != null and currentShenpiUserId != ''">
+                 and exists (select 1 from busi_project_apply_shenpi pas where pas.project_apply_id = pa.project_apply_id and pas.check_status = '-1' and pas.is_current = '1' and pas.shenpi_user_id = #{currentShenpiUserId} )
+             </if>
+        </where>
+    </select>
+
 </mapper>

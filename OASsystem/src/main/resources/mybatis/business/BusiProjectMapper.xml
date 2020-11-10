@@ -160,6 +160,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskNums"    column="taskNums"    />
         <result property="finishNums"    column="finishNums"    />
         <result property="timeProgress"    column="time_progress"    />
+        <result property="todoNum"    column="todoNum"    />
     </resultMap>
 
     <select id="selectBusiProjects" parameterType="com.xhkj.project.business.domain.vo.BusiProjectVo" resultMap="BusiProjectResultVo">
@@ -186,6 +187,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from busi_project p
         where 1=1
         and p.project_id = #{projectId}
+    </select>
+
+    <select id="todolist" parameterType="com.xhkj.project.business.domain.vo.BusiProjectVo" resultMap="BusiProjectResultVo">
+        <include refid="selectBusiProjectbasicColums"/>
+        <if test="memberId != null">
+        ,(select count(1) from busi_project_apply pa join busi_project_apply_shenpi pas where pa.project_id = p.project_id and pa.project_apply_id = pas.project_apply_id and pas.shenpi_user_id = #{memberId} and pa.status = '1') todoNum
+        </if>
+        <if test="memberId == null">
+            ,(select count(1) from busi_project_apply pa join busi_project_apply_shenpi pas where pa.project_id = p.project_id and pa.project_apply_id = pas.project_apply_id and pa.status = '1') todoNum
+        </if>
+        from busi_project p
+        where 1=1
+        <if test="memberId != null">
+            and (p.leader_id = #{memberId} or exists (
+            select 1 from busi_project_member pm where pm.project_id = p.project_id and pm.member_id = #{memberId}
+            ))
+        </if>
+            and p.project_progress <![CDATA[ < ]]> 100
     </select>
 
 </mapper>

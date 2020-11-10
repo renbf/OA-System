@@ -55,6 +55,16 @@ public class BusiProjectVo extends BaseEntity
 	private Integer finishNums;
 	/** 时间进度 */
 	private Integer timeProgress;
+	/** 待审批数 */
+	private Integer todoNum;
+
+	public Integer getTodoNum() {
+		return todoNum;
+	}
+
+	public void setTodoNum(Integer todoNum) {
+		this.todoNum = todoNum;
+	}
 
 	public String getCloseReason() {
 		return closeReason;

@@ -20,34 +20,27 @@
 
     <div class="seach" >
       <span style="margin-left:20px;" >申请时间</span>
-      <el-time-picker
-        style="width:200px;margin-left:20px"
-        is-range
-        v-model="value1"
+      <el-date-picker
+        style="margin-left:20px;"
+        v-model="queryParams.searchDate"
+        type="daterange"
+        format="yyyy-MM-dd"
         range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
-        placeholder="选择时间范围">
-      </el-time-picker>
+        start-placeholder="开始日期"
+        end-placeholder="结束日期">
+      </el-date-picker>
 
       <span style="margin-left:20px;">状态</span>
-      <el-select v-model="value" placeholder="请选择状态" style="margin-left:20px;">
+      <el-select v-model="queryParams.status" placeholder="请选择状态" style="margin-left:20px;">
         <el-option
           v-for="item in options"
-          :key="item.value1"
+          :key="item.value"
           :label="item.label"
           :value="item.value">
         </el-option>
       </el-select>
-      <span style="margin-left:20px;">部门</span>
-      <el-select v-model="value" placeholder="请选择部门" style="margin-left:20px;">
-        <el-option
-          v-for="item in options"
-          :key="item.value1"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+      <span style="margin-left:20px;">陈述</span>
+      <el-input v-model="queryParams.content" placeholder="请输入陈述理由" style="width:200px;margin-left:10px;"></el-input>
 
 
       <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
@@ -58,43 +51,53 @@
     <el-table
       class="tables"
       :data="tableData"
+      @selection-change="handleSelectionChange"
       style="width: 100%">
       <el-table-column
         type="selection"
         width="55">
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="createTime"
         label="申请时间"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="nickName"
         label="申请人"
         width="170">
       </el-table-column>
       <el-table-column
-        prop="app"
+        prop="projectApplyTitle"
         label="标题"
       >
       </el-table-column>
       <el-table-column
-        prop="time"
+        prop="content"
         label="申请内容"
         width="170">
       </el-table-column>
       <el-table-column
-        prop="timetwo"
+        prop="shenpiUserNames"
         label="审核人">
       </el-table-column>
 
       <el-table-column
-        prop="bumen"
         label="状态">
+        <template slot-scope="scope">
+          <span v-show="scope.row.status == 0">未报送</span>
+          <span v-show="scope.row.status == 1">待审核</span>
+          <span v-show="scope.row.status == 2">通过</span>
+          <span v-show="scope.row.status == 3">拒绝</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="bumen"
         label="操作">
+        <template slot-scope="scope">
+          <!--  2是未报送按钮全部显示 -->
+          <span class="el-icon-edit-outline" v-show="scope.row.status == 1" @click.stop="handleUpdateProjectApply(scope.row)">审批</span>
+        </template>
       </el-table-column>
 
     </el-table>
@@ -102,11 +105,11 @@
       style="margin-top:15px"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="xxxPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="pageInfo.pageNum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pageInfo.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="pageInfo.total">
     </el-pagination>
 
 
@@ -115,160 +118,87 @@
 
 
 <script>
+  import { todolistProjectApply } from "@/api/business/mywork/myproject";
+
   export default {
     name: "page-face",
     data(){
       return{
-        xxxPage4:1,
+        projectId:this.$route.query.projectId,
         //状态选择数据
         options: [{
-          value: '选项1',
-          label: '待审批'
+          value: '0',
+          label: '未报送'
         }, {
-          value: '选项2',
+          value: '1',
+          label: '审批中'
+        }, {
+          value: '2',
           label: '通过'
         }, {
-          value: '选项3',
+          value: '3',
           label: '拒绝'
-        }, {
-          value: '选项4',
-          label: '全部'
-        }, ],
-        value: '',
-        //部门选择数据
-        res: [{
-          value: '选项1',
-          label: '软件部'
-        }, {
-          value: '选项2',
-          label: '销售部'
-        }, {
-          value: '选项3',
-          label: '技术部'
-        }, {
-          value: '选项4',
-          label: '开发部'
-        }, ],
-
-        lx: [{
-          value: '选项1',
-          label: '加班调休'
-        }, {
-          value: '选项2',
-          label: '事假'
-        }, {
-          value: '选项3',
-          label: '年假'
-        }, ],
-
+        }],
         //表格数据
-        tableData: [{
-          date: '2016-05-02',
-          type:"加班调休",
-          name: '迈克尔',
-          address: '小贷报表处理',
-          app:'马克尔/河北省小贷管理系统',
-          time:'0.5天',
-          timetwo:'2020-05-16 17:30 至 20:30',
-          bumen:'技术部',
-          zhuangtai:'待审核',
-          caozuo:'审批'
+        tableData: [],
+        queryParams:{
+          projectId:this.$route.query.projectId,
+          searchDate: [],
+          content: undefined,
+          status: undefined,
+          page:1,
+          limit:10
         },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-          {
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },{
-            date: '2016-05-02',
-            name: '迈克尔',
-            address: '小贷报表处理',
-            app:'马克尔/河北省小贷管理系统',
-            time:'0.5天',
-            timetwo:'2020-05-16 17:30 至 20:30',
-            bumen:'技术部',
-            zhuangtai:'待审核',
-            caozuo:'审批'
-          },
-
-
-
-
-        ],
-        value1: '',
-        value2: '',
-        value3: ''
-
+        pageInfo: {},
+        projectApplyIds: []
       }
 
     },
+    created() {
+      this.getApplyList();
+    },
     methods:{
-      handleSizeChange(){
-
-      },
-      handleCurrentChange(){
-
-      },
       goBack(){
-
         this.$router.push({ path:'/myreader/index'})
+      },
+      getApplyList() {
+        let _this = this;
+        todolistProjectApply(_this.queryParams).then(response => {
+          if(response.code == 200){
+            _this.tableData= response.data;
+            _this.pageInfo = response.pageInfo;
+          }
+        });
+      },
+      //每页多少条
+      handleSizeChange(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.limit = val;
+        this.getApplyList();
+      },
+      //第几页
+      handleCurrentChange(val) {
+        let _this = this;
+        let queryParams = _this.queryParams;
+        queryParams.page = val;
+        this.getApplyList();
+      },
+      //多选
+      handleSelectionChange(val) {
+        let _this = this;
+        let taskIds = [];
+        val.forEach((item) => {
+          taskIds.push(item.taskId);
+        });
+        _this.taskIds = taskIds;
+      },
+      //查看
+      handleLookOpen(row, column, event){
+        this.resetTaskLookForm();
+        this.taskLookTitle = "查看任务";
+        this.taskLookOpen = true;
+        this.updateSetTaskLookValue(row);
       },
     }
   }
