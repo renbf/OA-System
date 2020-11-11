@@ -5,7 +5,7 @@
     <div slot="header" class="clearfix">
 
       <span class="big" >{{item.titles}}</span>
-      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"  @click.native="edit(item.index)"></el-button>
+      <el-button class="little" style="float: right" icon="el-icon-right" circle size="mini"  @click.native="edit(item)"></el-button>
     </div>
     <div class="father"> <span class="son">{{item.ready}}</span></div>
     <div class="father"> <span class="conten">{{item.number}}</span>件</div>
@@ -20,6 +20,7 @@
   import {approveList as approveListLittle} from "@/api/business/mywork/extrawork";
   import {approveList as approveListLeave} from "@/api/business/mywork/leave";
   import {approveList as approveListReimburse} from "@/api/business/mywork/reimburse";
+  import { todolistBusiProject } from "@/api/business/mywork/myproject";
 
   export default {
     name: "page-reader",
@@ -47,6 +48,8 @@
       this.getReimburseChaiNum();
       //获取费用审批数量
       this.getReimburseFeiNum();
+      //待办项目审批列表
+      this.gettodolistBusiProject();
     },
     methods:{
       getLittleNum(){
@@ -81,30 +84,50 @@
       },
 
 
-      edit(id){
-        if(id===1){
+      edit(item){
+        if(item.index===1){
           this.$router.push({ path:'/myreader/little'})
-        } else if (id===2) {
+        } else if (item.index===2) {
           this.$router.push({ path:'/myreader/leave'})
-        }else if (id===3) {
+        }else if (item.index===3) {
           this.$router.push({ path:'/myreader/face'})
-        }else if (id===4) {
+        }else if (item.index===4) {
           this.$router.push({ path:'/myreader/business'})
         }
-        else if (id===5) {
+        else if (item.index===5) {
           this.$router.push({ path:'/myreader/money'})
         }
-        else if (id===6) {
+        else if (item.index===6) {
           this.$router.push({ path:'/myreader/entry'})
         }
-        else if (id===7) {
+        else if (item.index===7) {
           this.$router.push({ path:'/myreader/down'})
         }
-        else if (id===9) {
-          this.$router.push({ path:'/myreader/xxx'})
+        else if (item.index===9) {
+          this.$router.push({ path:'/myreader/xxx',query:{projectId:item.projectId}})
         }
 
-      }
+      },
+      gettodolistBusiProject() {
+        let _this = this;
+        todolistBusiProject().then(response => {
+          if(response.code == 200){
+            let todolist = response.data;
+            let list = [];
+            todolist.forEach((item)=>{
+              let obj = {
+                index:9,
+                titles:item.projectName,
+                ready:"待审批",
+                number:item.todoNum,
+                projectId:item.projectId
+              }
+              list.push(obj);
+            });
+            _this.req =_this.req.concat(list);
+          }
+        });
+      },
     }
 
   }

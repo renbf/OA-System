@@ -814,4 +814,47 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		return resultMap;
 	}
 
+	@Override
+	public Map<String, Object> todolist(BusiProjectVo busiProjectVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			if (!SecurityUtils.isAdmin(userId)) {
+				busiProjectVo.setMemberId(userId);
+			}
+			List<BusiProjectVo> list = busiProjectMapper.todolist(busiProjectVo);
+			resultMap.put("code",200);
+			resultMap.put("data",list);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> todolistProjectApply(BusiProjectApplyVo busiProjectApplyVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			if (Objects.nonNull(busiProjectApplyVo.getPage()) && Objects.nonNull(busiProjectApplyVo.getLimit())) {
+				PageHelper.startPage(busiProjectApplyVo.getPage(), busiProjectApplyVo.getLimit());
+			}
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			if (!SecurityUtils.isAdmin(userId)) {
+				busiProjectApplyVo.setCurrentShenpiUserId(userId);
+			}
+			List<BusiProjectApplyVo> busiProjectApplyVos = busiProjectApplyMapper.selectBusiProjectApplyVosTodo(busiProjectApplyVo);
+			PageInfo<BusiProjectApplyVo> pageInfo = new PageInfo<BusiProjectApplyVo>(busiProjectApplyVos);
+			resultMap.put("code",200);
+			resultMap.put("data",busiProjectApplyVos);
+			resultMap.put("pageInfo",pageInfo);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
 }

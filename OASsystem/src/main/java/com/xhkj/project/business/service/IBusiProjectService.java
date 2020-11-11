@@ -103,4 +103,8 @@ public interface IBusiProjectService
 
 	public Map<String, Object> baosongProjectApply(BusiProjectApplyVo busiProjectApplyVo);
 
+	public Map<String, Object> todolist(BusiProjectVo busiProjectVo);
+
+	public Map<String, Object> todolistProjectApply(BusiProjectApplyVo busiProjectApplyVo);
+
 }

@@ -214,6 +214,22 @@ export function baosongProjectApply(data) {
   })
 }
 
+// 待办项目审批列表
+export function todolistBusiProject(query) {
+  return request({
+    url: '/api/busiProject/todolist',
+    method: 'get',
+    params: query
+  })
+}
+// 项目申请待审核列表
+export function todolistProjectApply(data) {
+  return request({
+    url: '/api/busiProject/todolistProjectApply',
+    method: 'post',
+    data: data
+  })
+}
 export function project_progress() {
   return {
     code: 200,

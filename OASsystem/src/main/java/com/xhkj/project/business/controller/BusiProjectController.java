@@ -486,4 +486,40 @@ public class BusiProjectController
 		}
 		return resultMap;
 	}
+
+	/**
+	 * 待办项目审批列表
+	 */
+	@GetMapping("/todolist")
+	@ResponseBody
+	public Map<String,Object> todolist(BusiProjectVo busiProjectVo)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.todolist(busiProjectVo);
+		} catch (Exception e) {
+			log.error("待办项目审批列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","待办项目审批列表异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 项目申请待审核列表
+	 */
+	@PostMapping("/todolistProjectApply")
+	@ResponseBody
+	public Map<String,Object> todolistProjectApply(@RequestBody BusiProjectApplyVo busiProjectApplyVo)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.todolistProjectApply(busiProjectApplyVo);
+		} catch (Exception e) {
+			log.error("项目申请待审核列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","项目申请待审核列表异常");
+		}
+		return resultMap;
+	}
 }

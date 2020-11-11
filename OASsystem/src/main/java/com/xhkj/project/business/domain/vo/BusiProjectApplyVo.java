@@ -56,6 +56,16 @@ public class BusiProjectApplyVo extends BaseEntity {
 	private List<Long> projectApplyIds;
 	/**申请人*/
 	private String nickName;
+	/** 当前审批人id */
+	private Long currentShenpiUserId;
+
+	public Long getCurrentShenpiUserId() {
+		return currentShenpiUserId;
+	}
+
+	public void setCurrentShenpiUserId(Long currentShenpiUserId) {
+		this.currentShenpiUserId = currentShenpiUserId;
+	}
 
 	public String getNickName() {
 		return nickName;

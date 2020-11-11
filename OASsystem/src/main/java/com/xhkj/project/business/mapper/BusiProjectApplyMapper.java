@@ -70,4 +70,6 @@ public interface BusiProjectApplyMapper
 	//以上自动生成的尽量别动
 
 	public List<BusiProjectApplyVo> selectBusiProjectApplyVos(BusiProjectApplyVo busiProjectApplyVo);
+
+	public List<BusiProjectApplyVo> selectBusiProjectApplyVosTodo(BusiProjectApplyVo busiProjectApplyVo);
 }
