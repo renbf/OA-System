@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiDailyTaskWorkMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiDailyTaskWork" id="BusiDailyTaskWorkResult">
+        <result property="dailyTaskWorksId"    column="daily_task_works_id"    />
+        <result property="dailyTaskId"    column="daily_task_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="workContent"    column="work_content"    />
+        <result property="fileIds"    column="file_ids"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiDailyTaskWorkVo">
+        select daily_task_works_id, daily_task_id, user_id, work_content, file_ids, create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <select id="selectBusiDailyTaskWorkList" parameterType="com.xhkj.project.business.domain.BusiDailyTaskWork" resultMap="BusiDailyTaskWorkResult">
+        <include refid="selectBusiDailyTaskWorkVo"/>
+        from busi_daily_task_work
+        <where>
+            <if test="dailyTaskId != null "> and daily_task_id = #{dailyTaskId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="workContent != null  and workContent != ''"> and work_content = #{workContent}</if>
+            <if test="fileIds != null  and fileIds != ''"> and file_ids = #{fileIds}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiDailyTaskWorkById" parameterType="Long" resultMap="BusiDailyTaskWorkResult">
+        <include refid="selectBusiDailyTaskWorkVo"/>
+        from busi_daily_task_work
+        where daily_task_works_id = #{dailyTaskWorksId}
+    </select>
+        
+    <insert id="insertBusiDailyTaskWork" parameterType="com.xhkj.project.business.domain.BusiDailyTaskWork" useGeneratedKeys="true" keyProperty="dailyTaskWorksId">
+        insert into busi_daily_task_work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dailyTaskId != null ">daily_task_id,</if>
+            <if test="userId != null ">user_id,</if>
+            <if test="workContent != null  and workContent != ''">work_content,</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dailyTaskId != null ">#{dailyTaskId},</if>
+            <if test="userId != null ">#{userId},</if>
+            <if test="workContent != null  and workContent != ''">#{workContent},</if>
+            <if test="fileIds != null  and fileIds != ''">#{fileIds},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiDailyTaskWork" parameterType="com.xhkj.project.business.domain.BusiDailyTaskWork">
+        update busi_daily_task_work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dailyTaskId != null ">daily_task_id = #{dailyTaskId},</if>
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="workContent != null  and workContent != ''">work_content = #{workContent},</if>
+            <if test="fileIds != null  and fileIds != ''">file_ids = #{fileIds},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where daily_task_works_id = #{dailyTaskWorksId}
+    </update>
+
+    <delete id="deleteBusiDailyTaskWorkById" parameterType="Long">
+        delete from busi_daily_task_work where daily_task_works_id = #{dailyTaskWorksId}
+    </delete>
+
+    <delete id="deleteBusiDailyTaskWorkByIds" parameterType="String">
+        delete from busi_daily_task_work where daily_task_works_id in 
+        <foreach item="dailyTaskWorksId" collection="array" open="(" separator="," close=")">
+            #{dailyTaskWorksId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiDailyTaskWorkBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="dailyTaskWorksId">
+        insert into busi_daily_task_work (  daily_task_id, user_id, work_content, file_ids, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>
