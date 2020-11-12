@@ -1,8 +1,5 @@
 
 <template>
-<!--  <div class="wrapper">-->
-<!--    <div ref="map" class="map"></div>-->
-<!--  </div>-->
   <div id="app">
 
   </div>
@@ -25,30 +22,6 @@
     created() {},
 
     mounted() {
-      // const options = { url: "https://js.arcgis.com/3.27/" };
-      // esriLoader
-      //   .loadModules(
-      //     [
-      //       "esri/map"
-      //     ],
-      //     options
-      //   )
-      //   .then(
-      //     ([
-      //        Map
-      //      ]) => {
-      //       let map = new Map(this.$refs.map, {
-      //         backgroundColor: "#eee",
-      //         basemap: 'streets',
-      //         logo: false,
-      //         slider: false,
-      //         zoom: 7,
-      //         minZoom: 7
-      //       });
-      //       Vue.prototype.$map = map;
-      //     }
-      //   ).catch();
-
       this._createMapView();
     },
 
@@ -85,10 +58,14 @@
     }
   };
 </script>
-<!--<style scoped>-->
-<!--  @import url('https://js.arcgis.com/3.27/esri/css/esri.css');-->
-<!--  .map {-->
-<!--    width: 100%;-->
-<!--    height: 100vh;-->
-<!--  }-->
-<!--</style>-->
+<style scoped>
+  body {
+    margin: 0;   /**主要是去除谷歌浏览器默认的8像素的外边距 */
+  }
+  #app {
+    position: absolute;   /**使这个div的大小撑满整个屏幕 */
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
