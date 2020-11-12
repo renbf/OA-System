@@ -522,4 +522,23 @@ public class BusiProjectController
 		}
 		return resultMap;
 	}
+
+	/**
+	 * 批量项目申请审批
+	 */
+	@PostMapping("/batchProjectApplyShenpi")
+	@ResponseBody
+	public Map<String,Object> batchProjectApplyShenpi(@RequestBody BusiProjectApplyVo busiProjectApplyVo)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.batchProjectApplyShenpi(busiProjectApplyVo);
+		} catch (Exception e) {
+			log.error("批量项目申请审批异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","批量项目申请审批异常");
+		}
+		return resultMap;
+	}
+
 }

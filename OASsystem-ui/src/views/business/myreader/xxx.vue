@@ -43,7 +43,7 @@
       <el-input v-model="queryParams.content" placeholder="请输入陈述理由" style="width:200px;margin-left:10px;"></el-input>
 
 
-      <el-button type="primary" style="margin-left:20px;"> <span class="el-icon-search"></span>搜索</el-button>
+      <el-button type="primary" style="margin-left:20px;" @click="searchButton"> <span class="el-icon-search"></span>搜索</el-button>
       <el-button style="margin-left:20px;"> <span class="el-icon-refresh-right"></span>重置</el-button>
 
     </div>
@@ -118,7 +118,7 @@
 
 
 <script>
-  import { todolistProjectApply } from "@/api/business/mywork/myproject";
+  import { todolistProjectApply,batchProjectApplyShenpi } from "@/api/business/mywork/myproject";
 
   export default {
     name: "page-face",
@@ -199,6 +199,11 @@
         this.taskLookTitle = "查看任务";
         this.taskLookOpen = true;
         this.updateSetTaskLookValue(row);
+      },
+      searchButton() {
+        let _this = this;
+        _this.queryParams.page = 1;
+        this.getApplyList();
       },
     }
   }

@@ -230,6 +230,16 @@ export function todolistProjectApply(data) {
     data: data
   })
 }
+
+
+// 批量项目申请审批
+export function batchProjectApplyShenpi(data) {
+  return request({
+    url: '/api/busiProject/batchProjectApplyShenpi',
+    method: 'post',
+    data: data
+  })
+}
 export function project_progress() {
   return {
     code: 200,

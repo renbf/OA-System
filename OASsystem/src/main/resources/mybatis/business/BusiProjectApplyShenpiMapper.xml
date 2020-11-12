@@ -118,4 +118,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <delete id="deleteBusiProjectApplyShenpiByProjectApplyId" parameterType="java.lang.Long">
         delete from busi_project_apply_shenpi where project_apply_id = #{projectApplyId}
     </delete>
+
+    <select id="selectBusiProjectApplyShenpiByCurrent" parameterType="java.lang.Long" resultMap="BusiProjectApplyShenpiResult">
+        <include refid="selectBusiProjectApplyShenpibasicColums"/>
+        from busi_project_apply_shenpi pas
+        where pas.project_apply_id = #{projectApplyId}
+        and pas.is_current = '1'
+    </select>
+
+    <select id="selectNextNode" parameterType="java.util.Map" resultMap="BusiProjectApplyShenpiResult">
+        <include refid="selectBusiProjectApplyShenpibasicColums"/>
+        from busi_project_apply_shenpi pas
+        where pas.project_apply_id = #{projectApplyId}
+        and pas.sort_order > #{sortOrder}
+        limit 1
+    </select>
+
 </mapper>

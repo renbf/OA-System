@@ -857,4 +857,60 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		return resultMap;
 	}
 
+	@Override
+	@Transactional
+	public Map<String, Object> batchProjectApplyShenpi(BusiProjectApplyVo busiProjectApplyVo) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			List<Long> projectApplyIds = busiProjectApplyVo.getProjectApplyIds();
+			String status = busiProjectApplyVo.getStatus();
+			String remark = busiProjectApplyVo.getRemark();
+			if (CollectionUtils.isNotEmpty(projectApplyIds)) {
+				for (Long projectApplyId : projectApplyIds) {
+					BusiProjectApplyShenpi busiProjectApplyShenpi = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpiByCurrent(projectApplyId);
+					if (Objects.nonNull(busiProjectApplyShenpi)) {
+						Long shenpiUserId = busiProjectApplyShenpi.getShenpiUserId();
+						if (userId.longValue() == shenpiUserId.longValue()) {
+							BusiProjectApply busiProjectApply = new BusiProjectApply();
+							busiProjectApply.setProjectApplyId(projectApplyId);
+							busiProjectApply.setUpdateTime(now);
+							busiProjectApply.setUpdateBy(username);
+							BusiProjectApplyShenpi busiProjectApplyShenpiUp = new BusiProjectApplyShenpi();
+							busiProjectApplyShenpiUp.setProjectApplyShenpiId(busiProjectApplyShenpi.getProjectApplyShenpiId());
+							busiProjectApplyShenpiUp.setRemark(remark);
+							busiProjectApplyShenpiUp.setCheckStatus(status);
+							busiProjectApplyShenpiUp.setUpdateTime(now);
+							busiProjectApplyShenpiUp.setUpdateBy(username);
+							if ("1".equals(status)) {
+								busiProjectApplyShenpiUp.setIsCurrent("0");
+								Integer sortOrder = busiProjectApplyShenpi.getSortOrder();
+								BusiProjectApplyShenpi nextNode = busiProjectApplyShenpiMapper.selectNextNode(projectApplyId,sortOrder);
+								if (Objects.nonNull(nextNode)) {
+									nextNode.setIsCurrent("1");
+									busiProjectApplyShenpiMapper.updateBusiProjectApplyShenpi(nextNode);
+								}else{
+									//审核全部通过
+									busiProjectApply.setStatus("2");
+									busiProjectApplyMapper.updateBusiProjectApply(busiProjectApply);
+								}
+							}else{
+								//审核拒绝
+								busiProjectApply.setStatus("3");
+								busiProjectApplyMapper.updateBusiProjectApply(busiProjectApply);
+							}
+							busiProjectApplyShenpiMapper.updateBusiProjectApplyShenpi(busiProjectApplyShenpiUp);
+						}
+					}
+				}
+			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
 }
