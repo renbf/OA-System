@@ -77,7 +77,6 @@
               zoom: 13
             });
 
-            view.ui.components = [];   //清除掉地图左上角默认的缩放图标
           }).catch((err) => {
            _self.$message('地图创建失败，' + err);
         });
