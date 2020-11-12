@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiDailyTaskMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiDailyTask" id="BusiDailyTaskResult">
+        <result property="dailyTaskId"    column="daily_task_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="taskTitle"    column="task_title"    />
+        <result property="joinDepts"    column="join_depts"    />
+        <result property="joinUsers"    column="join_users"    />
+        <result property="taskTime"    column="task_time"    />
+        <result property="taskText"    column="task_text"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBusiDailyTaskVo">
+        select daily_task_id, user_id, task_title, join_depts, join_users, task_time, task_text, task_status, create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <select id="selectBusiDailyTaskList" parameterType="com.xhkj.project.business.domain.BusiDailyTask" resultMap="BusiDailyTaskResult">
+        <include refid="selectBusiDailyTaskVo"/>
+        from busi_daily_task
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="taskTitle != null  and taskTitle != ''"> and task_title = #{taskTitle}</if>
+            <if test="joinDepts != null  and joinDepts != ''"> and join_depts = #{joinDepts}</if>
+            <if test="joinUsers != null  and joinUsers != ''"> and join_users = #{joinUsers}</if>
+            <if test="taskTime != null  and taskTime != ''"> and task_time = #{taskTime}</if>
+            <if test="taskText != null  and taskText != ''"> and task_text = #{taskText}</if>
+            <if test="taskStatus != null "> and task_status = #{taskStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectBusiDailyTaskById" parameterType="Long" resultMap="BusiDailyTaskResult">
+        <include refid="selectBusiDailyTaskVo"/>
+        from busi_daily_task
+        where daily_task_id = #{dailyTaskId}
+    </select>
+        
+    <insert id="insertBusiDailyTask" parameterType="com.xhkj.project.business.domain.BusiDailyTask" useGeneratedKeys="true" keyProperty="dailyTaskId">
+        insert into busi_daily_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="taskTitle != null  and taskTitle != ''">task_title,</if>
+            <if test="joinDepts != null  and joinDepts != ''">join_depts,</if>
+            <if test="joinUsers != null  and joinUsers != ''">join_users,</if>
+            <if test="taskTime != null  and taskTime != ''">task_time,</if>
+            <if test="taskText != null  and taskText != ''">task_text,</if>
+            <if test="taskStatus != null ">task_status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="taskTitle != null  and taskTitle != ''">#{taskTitle},</if>
+            <if test="joinDepts != null  and joinDepts != ''">#{joinDepts},</if>
+            <if test="joinUsers != null  and joinUsers != ''">#{joinUsers},</if>
+            <if test="taskTime != null  and taskTime != ''">#{taskTime},</if>
+            <if test="taskText != null  and taskText != ''">#{taskText},</if>
+            <if test="taskStatus != null ">#{taskStatus},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiDailyTask" parameterType="com.xhkj.project.business.domain.BusiDailyTask">
+        update busi_daily_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="taskTitle != null  and taskTitle != ''">task_title = #{taskTitle},</if>
+            <if test="joinDepts != null  and joinDepts != ''">join_depts = #{joinDepts},</if>
+            <if test="joinUsers != null  and joinUsers != ''">join_users = #{joinUsers},</if>
+            <if test="taskTime != null  and taskTime != ''">task_time = #{taskTime},</if>
+            <if test="taskText != null  and taskText != ''">task_text = #{taskText},</if>
+            <if test="taskStatus != null ">task_status = #{taskStatus},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where daily_task_id = #{dailyTaskId}
+    </update>
+
+    <delete id="deleteBusiDailyTaskById" parameterType="Long">
+        delete from busi_daily_task where daily_task_id = #{dailyTaskId}
+    </delete>
+
+    <delete id="deleteBusiDailyTaskByIds" parameterType="String">
+        delete from busi_daily_task where daily_task_id in 
+        <foreach item="dailyTaskId" collection="array" open="(" separator="," close=")">
+            #{dailyTaskId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiDailyTaskBatch" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="dailyTaskId">
+        insert into busi_daily_task (  user_id, task_title, join_depts, join_users, task_time, task_text, task_status, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            (  #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname}, #{item.$column.attrname})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+</mapper>

@@ -451,7 +451,7 @@
 
 
       // 状态
-      this.getDicts("sys_check_status").then(response => {
+      this.getDicts("sys_normal_disable").then(response => {
         this.statusOptions = response.data;
       });
       // 部门
@@ -462,10 +462,6 @@
         this.handleCheckedCitiesChange(this.departmentOption[0].dictValue)
       });
 
-      //审批状态
-      this.getDicts("sys_check_status").then(response => {
-        this.statusOptions = response.data;
-      });
 
 
     },
