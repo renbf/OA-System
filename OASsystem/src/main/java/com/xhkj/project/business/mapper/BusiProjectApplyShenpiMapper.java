@@ -1,7 +1,10 @@
 package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiProjectApplyShenpi;
-import java.util.List;	
+import io.swagger.models.auth.In;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 /**
  * 项目申请审批 数据层
  * 
@@ -68,4 +71,14 @@ public interface BusiProjectApplyShenpiMapper
 	//以上自动生成的尽量别动
 
 	public int deleteBusiProjectApplyShenpiByProjectApplyId(Long projectApplyId);
+
+	public BusiProjectApplyShenpi selectBusiProjectApplyShenpiByCurrent(Long projectApplyId);
+
+	/***
+	 * 下一个节点
+	 * @param projectApplyId
+	 * @param sortOrder
+	 * @return
+	 */
+	public BusiProjectApplyShenpi selectNextNode(@Param("projectApplyId") Long projectApplyId,@Param("sortOrder") Integer sortOrder);
 }

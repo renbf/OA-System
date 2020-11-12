@@ -107,4 +107,6 @@ public interface IBusiProjectService
 
 	public Map<String, Object> todolistProjectApply(BusiProjectApplyVo busiProjectApplyVo);
 
+	public Map<String, Object> batchProjectApplyShenpi(BusiProjectApplyVo busiProjectApplyVo);
+
 }
