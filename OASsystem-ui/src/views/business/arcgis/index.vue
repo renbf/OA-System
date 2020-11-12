@@ -32,8 +32,8 @@
       _createMapView: function() {
         const _self = this;   //定义一个_self防止后续操作中this丢失
         const option = {      //定义一个包含有JS API中js开发包和css样式文件的对象
-          url: 'http://js.arcgis.com/4.16/init.js',
-          css: 'http://js.arcgis.com/4.16/esri/themes/light/main.css',
+          url: 'http://js.arcgis.com/4.17/init.js',
+          css: 'http://js.arcgis.com/4.17/esri/themes/light/main.css',
         };
 
         //通过loadModules来做衔接
