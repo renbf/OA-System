@@ -1,57 +1,40 @@
-
 <template>
-  <div id="app">
-
+  <div class="main">
+    <div id="map"></div>
   </div>
 </template>
 
 <script>
-  import esriLoader from "esri-loader";
-  import config from "@/api/tool/gisconfig";
+  // 引入 ArcGIS 模块，并进行实例化
+  import ArcGIS from "@/api/business/arcgis/init";
 
+  let Map = new ArcGIS();
   export default {
-    name: "app",
-
-    components: {},
-
-    props: {},
-
-    data() {
-      return {};
-    },
-
-    created() {},
-
+    name: "App",
     mounted() {
-      this._createMapView();
+      Map.init("map"); // 初始化地图模块
     },
-
-    computed: {},
-
-    methods: {
-      //创建地图
-      _createMapView: function() {
-        const _self = this;   //定义一个_self防止后续操作中this丢失
-        //通过loadModules来做衔接
-        esriLoader.loadModules(['esri/Map', 'esri/views/MapView'], config.loadConfig)
-          .then(([Map, MapView]) => {
-            var map = new Map({
-              basemap: "streets"
-            });
-
-            var view = new MapView({
-              container: "app",
-              map: map,
-              center: [114.48,38.03], // longitude, latitude
-              zoom: 13
-            });
-
-          }).catch((err) => {
-           _self.$message('地图创建失败，' + err);
-        });
-      },
-
-    }
   };
 </script>
 
+<style lang="less">
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .main {
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    width: 100%;
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+</style>

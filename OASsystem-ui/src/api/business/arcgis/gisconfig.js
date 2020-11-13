@@ -1,8 +1,8 @@
 export default {
   // load配置
   loadConfig: {
-    url: 'http://js.arcgis.com/4.17/init.js',
-    css: 'http://js.arcgis.com/4.17/esri/themes/light/main.css',
+    url: 'http://192.168.157.1:3000/arcgis-4.17/init.js',
+    css: 'http://192.168.157.1:3000/arcgis-4.17/esri/themes/light/main.css',
   },
 
   // 初始化位置
