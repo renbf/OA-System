@@ -34,7 +34,7 @@ class ArcGIS {
             container: $el,
             map: map,
             center: [114.48,38.03], // longitude, latitude
-            zoom: 13
+            zoom: 6
           });
         }
       ) //end
