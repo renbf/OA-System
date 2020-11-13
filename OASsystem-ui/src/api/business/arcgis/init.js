@@ -1,6 +1,6 @@
-
 import { loadModules, loadCss } from "esri-loader"; // 异步加载模块
 import config from "./gisconfig"; // 配置项
+
 
 class ArcGIS {
   constructor() {
@@ -16,26 +16,28 @@ class ArcGIS {
     loadModules(
       [
         "esri/Map",
-        'esri/views/MapView'
+        'esri/views/MapView',
+        "esri/views/SceneView",
+        "esri/core/watchUtils"
       ],
       config.loadConfig
     )
       .then(
-        ([
-           Map, // 地图模块
-           MapView,
-         ]) => {
+        ([Map, MapView, SceneView,  watchUtils]) => {
 
           var map = new Map({
-            basemap: "streets"
+             // basemap: "streets"
+             basemap: "oceans",
           });
 
           var view = new MapView({
             container: $el,
             map: map,
             center: [114.48,38.03], // longitude, latitude
-            zoom: 6
+            zoom: 6,
           });
+
+
         }
       ) //end
       .catch((err) => {

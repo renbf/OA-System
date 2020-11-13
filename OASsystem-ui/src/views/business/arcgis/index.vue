@@ -1,7 +1,12 @@
 <template>
   <div class="main">
-    <div id="map"></div>
+    <div id="map">
+    </div>
+    <div id="info" class="esri-widget">
+      <camera-info v-bind:camera="camera"></camera-info>
+    </div>
   </div>
+
 </template>
 
 <script>
