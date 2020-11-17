@@ -134,4 +134,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         limit 1
     </select>
 
+    <select id="selectBusiProjectApplyShenpis" parameterType="java.lang.Long" resultMap="BusiProjectApplyShenpiResult">
+        <include refid="selectBusiProjectApplyShenpibasicColums"/>
+        from busi_project_apply_shenpi pas
+        where pas.project_apply_id = #{projectApplyId}
+        order by pas.sort_order
+    </select>
+
 </mapper>

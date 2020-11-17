@@ -52,6 +52,7 @@
       class="tables"
       :data="tableData"
       @selection-change="handleSelectionChange"
+      @row-click="handleLookOpen"
       style="width: 100%">
       <el-table-column
         type="selection"
@@ -113,12 +114,104 @@
     </el-pagination>
 
 
+    <el-dialog
+      :title="projectApplyLookTitle"
+      :visible.sync="projectApplyLookOpen"
+      width="40%">
+      <div style="height: 400px;width:200px;">
+        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
+        </el-steps>
+      </div>
+      <div style="float:right;top:20px;right:50px;" class="dialogtext">
+        <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px">
+          <el-form-item style="margin-top:90px;font-weight: bold">
+            标题
+            <el-input
+              :disabled="true"
+              style="width:350px;margin-left: 40px"
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model="projectApplyForm.projectApplyTitle">
+            </el-input>
+            <div style="margin: 20px 0;"></div>
+
+          </el-form-item>
+          <el-form-item style="font-weight: bold">
+            申请内容
+            <el-input
+              :disabled="true"
+              style="width:350px;margin-left: 10px;margin-right:40px;"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="projectApplyForm.content">
+            </el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      :title="projectApplyTitle"
+      :visible.sync="projectApplyOpen"
+      width="40%">
+      <div style="height: 400px;width:200px;">
+        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
+        </el-steps>
+      </div>
+      <div style="float:right;top:20px;right:50px;" class="dialogtext">
+        <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules" label-width="80px">
+          <el-form-item style="margin-top:90px;font-weight: bold">
+            标题
+            <el-input
+              :disabled="true"
+              style="width:350px;margin-left: 40px"
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model="projectApplyForm.projectApplyTitle">
+            </el-input>
+            <div style="margin: 20px 0;"></div>
+
+          </el-form-item>
+          <el-form-item style="font-weight: bold">
+            申请内容
+            <el-input
+              :disabled="true"
+              style="width:350px;margin-left: 10px;margin-right:40px;"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="projectApplyForm.content">
+            </el-input>
+          </el-form-item>
+          <el-form-item style="font-weight: bold">
+            审批备注
+            <el-input
+              style="width:350px;margin-left: 10px;margin-right:40px;"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="projectApplyForm.remark">
+            </el-input>
+          </el-form-item>
+          <div slot="footer">
+            <el-button @click="projectApplySubmitForm(0)">拒绝</el-button>
+            <el-button type="primary" @click="projectApplySubmitForm(1)">通过</el-button>
+          </div>
+        </el-form>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 
 <script>
-  import { todolistProjectApply,batchProjectApplyShenpi } from "@/api/business/mywork/myproject";
+  import { todolistProjectApply,batchProjectApplyShenpi,listProjectApplyShenpi } from "@/api/business/mywork/myproject";
 
   export default {
     name: "page-face",
@@ -150,7 +243,22 @@
           limit:10
         },
         pageInfo: {},
-        projectApplyIds: []
+        projectApplyIds: [],
+        projectApplyLookTitle: "",
+        projectApplyLookOpen:false,
+        projectApplyForm: {
+          projectApplyId:undefined,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[],
+          activeNum:0,
+          remark:undefined
+        },
+        projectApplyTitle: "",
+        projectApplyOpen:false,
+        projectApplyFormRules: {
+          remark: [{required: true, message: "审批备注不能为空", trigger: "blur"}],
+        },
       }
 
     },
@@ -193,18 +301,109 @@
         });
         _this.taskIds = taskIds;
       },
-      //查看
+      //查看行
       handleLookOpen(row, column, event){
-        this.resetTaskLookForm();
-        this.taskLookTitle = "查看任务";
-        this.taskLookOpen = true;
-        this.updateSetTaskLookValue(row);
+        this.resetProjectApplyForm();
+        this.projectApplyLookTitle = "审批项目申请";
+        this.projectApplyLookOpen = true;
+        this.setProjectApplyValue(row);
       },
       searchButton() {
         let _this = this;
         _this.queryParams.page = 1;
         this.getApplyList();
       },
+      resetProjectApplyForm(){
+        this.projectApplyForm = {
+          projectApplyId:undefined,
+          projectApplyTitle:undefined,
+          content:undefined,
+          shenpiUserList:[],
+          activeNum:0,
+          remark:undefined
+        }
+        this.resetForm("projectApplyForm");
+      },
+      setProjectApplyValue(item) {
+        let _this = this;
+        _this.projectApplyForm = {
+          projectApplyId:item.projectApplyId,
+          projectApplyTitle:item.projectApplyTitle,
+          content:item.content,
+          shenpiUserList:[],
+          activeNum:0,
+          remark:undefined
+        };
+        listProjectApplyShenpi({projectApplyId:item.projectApplyId}).then(response => {
+          if(response.code == 200){
+            _this.projectApplyForm.shenpiUserList = response.data;
+            _this.projectApplyForm.shenpiUserList.forEach((item)=>{
+              let checkStatus = item.checkStatus;
+              let isCurrent = item.isCurrent;
+              let checkStatusText = '';
+              if(checkStatus == '-1'){
+                checkStatusText = '待审核';
+              }else if(checkStatus == '1'){
+                checkStatusText = '通过';
+              }else if(checkStatus == '0'){
+                checkStatusText = '拒绝';
+              }
+              if (isCurrent == '1') {
+                _this.projectApplyForm.activeNum = item.sortOrder +1;
+              }
+              item.description = item.shenpiUserName + item.updateTime.substring(0,10) + checkStatusText;
+            })
+          }
+        });
+      },
+      //审批弹框
+      handleUpdateProjectApply(item) {
+        this.resetProjectApplyForm();
+        this.projectApplyTitle = "审批项目申请";
+        this.projectApplyOpen = true;
+        this.setProjectApplyValue(item);
+      },
+      //提交审批
+      projectApplySubmitForm(checkStatus) {
+        let _this = this;
+        _this.$refs.projectApplyForm.validate(valid => {
+          if (valid) {
+            let msg = '';
+            let title = '';
+            if (checkStatus == '1') {
+              msg = '确认通过审批?';
+              title = '通过审批';
+            }else{
+              msg = '确认拒绝审批?';
+              title = '拒绝审批';
+            }
+            this.$confirm(msg, title, {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              let form = _this.projectApplyForm;
+              form.status = checkStatus;
+              form.projectApplyIds = [item.projectApplyId];
+              batchProjectApplyShenpi(form).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess("审批成功");
+                  this.projectApplyOpen = false;
+                  this.getApplyList();
+                } else {
+                  this.msgError(response.msg);
+                }
+              });
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '操作异常'
+              });
+            });
+          }
+        });
+
+      }
     }
   }
 

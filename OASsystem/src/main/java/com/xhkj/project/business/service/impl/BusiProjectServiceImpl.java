@@ -768,9 +768,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	public Map<String, Object> listProjectApplyShenpi(Long projectApplyId) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			BusiProjectApplyShenpi busiProjectApplyShenpi = new BusiProjectApplyShenpi();
-			busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
-			List<BusiProjectApplyShenpi> busiProjectApplyShenpis = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpiList(busiProjectApplyShenpi);
+			List<BusiProjectApplyShenpi> busiProjectApplyShenpis = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpis(projectApplyId);
 			resultMap.put("code",200);
 			resultMap.put("data",busiProjectApplyShenpis);
 		} catch (Exception e) {
