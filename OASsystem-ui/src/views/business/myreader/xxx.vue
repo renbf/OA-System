@@ -201,11 +201,11 @@
                 v-model="projectApplyForm.remark">
               </el-input>
             </el-form-item>
-            <div slot="footer">
-              <el-button @click="projectApplySubmitForm(0)">拒绝</el-button>
-              <el-button type="primary" @click="projectApplySubmitForm(1)">通过</el-button>
-            </div>
           </el-form>
+          <div slot="footer" class="dialog-footer" style="text-align: center">
+            <el-button @click="projectApplySubmitForm(0)">拒绝</el-button>
+            <el-button type="primary" @click="projectApplySubmitForm(1)">通过</el-button>
+          </div>
         </div>
       </div>
 
