@@ -242,6 +242,9 @@ public class BusiProjectServiceImpl implements IBusiProjectService
             if (!SecurityUtils.isAdmin(userId)) {
                 busiProjectVo.setMemberId(userId);
             }
+			if (!SecurityUtils.isAdmin(userId)) {
+				busiProjectVo.setLeaderId(userId);
+			}
 			List<BusiProjectVo> list = busiProjectMapper.selectBusiProjects(busiProjectVo);
 			resultMap.put("code",200);
 			resultMap.put("data",list);

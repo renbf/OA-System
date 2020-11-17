@@ -177,6 +177,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="projectProgress != null  and projectProgress != '' ">
          and p.project_progress = #{projectProgress}
         </if>
+        <if test="leaderId != null">
+            and (case when p.status = '0' then p.leader_id = #{leaderId}
+            when p.status = '1' then 1=1 end)
+        </if>
     </select>
 
     <select id="selectBusiProject" parameterType="java.lang.Long" resultMap="BusiProjectResultVo">

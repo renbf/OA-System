@@ -484,7 +484,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
+          <el-button icon="el-icon-edit-outline" circle @click="handleUpdateForm2(taskLookForm)" v-if="userId == 1 || userId == projectInfo.leaderId" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -800,6 +800,7 @@
     },
     data() {
       return {
+        userId:this.$store.state.user.userId,
         busiProjectMembers:[],
         tooltipValue:true,
         tooltipManual:true,

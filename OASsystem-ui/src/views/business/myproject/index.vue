@@ -20,7 +20,7 @@
         <div slot="header" class="clearfix" @click="projectdetail(item)">
           <span><b>{{item.projectName}}</b></span>
           <el-button icon="el-icon-delete" style="float: right;" circle v-if="item.status == 0" @click="deleteProject(item)"></el-button>
-          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.stop="editproject(item)" v-hasPermi="['api:busiProject:edit']"></el-button>
+          <el-button icon="el-icon-setting" style="float: right;margin-right:5px;" circle @click.stop="editproject(item)" v-if="userId == 1 || userId == item.leaderId" v-hasPermi="['api:busiProject:edit']"></el-button>
           <p>{{item.projectStartDate}}至{{item.projectEndDate}}</p>
         </div>
         <div class="text item"  @click="projectdetail(item)">
@@ -88,7 +88,7 @@
             </el-transfer>
           </template>
         </el-form-item>
-        <el-form-item label="项目日期" prop="tasktime">
+        <el-form-item label="项目时间" prop="projectDate">
           <el-date-picker
             v-model="addform.projectDate"
             type="daterange"
@@ -146,6 +146,7 @@
       name: "index",
       data() {
         return {
+          userId:this.$store.state.user.userId,
           cards:[
             "card1",
             "card2",
@@ -160,7 +161,7 @@
             projectDesc: '',
             projectDate: '',
             userList: [],
-            status:''
+            status:'1'
           },
           addrules: {
             projectName: [{required: true, message: "项目名称不能为空", trigger: "change"}],

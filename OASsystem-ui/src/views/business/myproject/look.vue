@@ -259,7 +259,7 @@
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
 
-            <div v-show="scope.row.taskStatus == 0">
+            <div v-show="projectInfo.status == 1 && scope.row.taskStatus == 0 && scope.row.baosongNum == 0">
               <el-button
                 size="mini"
                 type="text"
@@ -484,7 +484,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
+          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100 && (userId == 1 ||  userId == projectInfo.leaderId)" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -768,6 +768,7 @@
     },
     data() {
       return {
+        userId:this.$store.state.user.userId,
         busiProjectMembers:[],
         tooltipValue:true,
         tooltipManual:true,
@@ -1401,6 +1402,7 @@
           taskLogBaosong({taskIds:taskIds}).then(response => {
             if (response.code === 200) {
               this.msgSuccess("报送成功");
+              this.getTaskList();
             } else {
               this.msgError(response.msg);
             }
@@ -1415,6 +1417,7 @@
         taskLogBaosong({taskIds:[item.taskId]}).then(response => {
           if (response.code === 200) {
             this.msgSuccess("报送成功");
+            this.getTaskList();
           } else {
             this.msgError(response.msg);
           }
