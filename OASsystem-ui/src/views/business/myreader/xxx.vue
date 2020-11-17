@@ -118,38 +118,40 @@
       :title="projectApplyLookTitle"
       :visible.sync="projectApplyLookOpen"
       width="40%">
-      <div style="height: 400px;width:200px;">
-        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
-          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
-        </el-steps>
-      </div>
-      <div style="float:right;top:20px;right:50px;" class="dialogtext">
-        <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px">
-          <el-form-item style="margin-top:90px;font-weight: bold">
-            标题
-            <el-input
-              :disabled="true"
-              style="width:350px;margin-left: 40px"
-              type="textarea"
-              autosize
-              placeholder="请输入内容"
-              v-model="projectApplyForm.projectApplyTitle">
-            </el-input>
-            <div style="margin: 20px 0;"></div>
+      <div style="overflow: hidden">
+        <div style="float:left;height: 400px;width:200px;">
+          <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+            <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
+          </el-steps>
+        </div>
+        <div style="float:left;width:511px;top:20px;right:50px;" class="dialogtext">
+          <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px">
+            <el-form-item style="font-weight: bold">
+              标题
+              <el-input
+                :disabled="true"
+                style="width:350px;margin-left: 40px"
+                type="textarea"
+                autosize
+                placeholder="请输入内容"
+                v-model="projectApplyForm.projectApplyTitle">
+              </el-input>
+              <div style="margin: 20px 0;"></div>
 
-          </el-form-item>
-          <el-form-item style="font-weight: bold">
-            申请内容
-            <el-input
-              :disabled="true"
-              style="width:350px;margin-left: 10px;margin-right:40px;"
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              placeholder="请输入内容"
-              v-model="projectApplyForm.content">
-            </el-input>
-          </el-form-item>
-        </el-form>
+            </el-form-item>
+            <el-form-item style="font-weight: bold">
+              申请内容
+              <el-input
+                :disabled="true"
+                style="width:350px;margin-left: 10px;margin-right:40px;"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输入内容"
+                v-model="projectApplyForm.content">
+              </el-input>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
     </el-dialog>
 
@@ -157,53 +159,56 @@
       :title="projectApplyTitle"
       :visible.sync="projectApplyOpen"
       width="40%">
-      <div style="height: 400px;width:200px;">
-        <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
-          <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
-        </el-steps>
-      </div>
-      <div style="float:right;top:20px;right:50px;" class="dialogtext">
-        <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules" label-width="80px">
-          <el-form-item style="margin-top:90px;font-weight: bold">
-            标题
-            <el-input
-              :disabled="true"
-              style="width:350px;margin-left: 40px"
-              type="textarea"
-              autosize
-              placeholder="请输入内容"
-              v-model="projectApplyForm.projectApplyTitle">
-            </el-input>
-            <div style="margin: 20px 0;"></div>
+      <div style="overflow: hidden;clear: both">
+        <div style="float:left;height: 400px;width:200px;">
+          <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
+            <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
+          </el-steps>
+        </div>
+        <div style="float:left;width:511px;top:20px;right:50px;" class="dialogtext">
+          <el-form ref="projectApplyForm" :model="projectApplyForm" :rules="projectApplyFormRules" label-width="80px">
+            <el-form-item style="font-weight: bold">
+              标题
+              <el-input
+                :disabled="true"
+                style="width:350px;margin-left: 40px"
+                type="textarea"
+                autosize
+                placeholder="请输入内容"
+                v-model="projectApplyForm.projectApplyTitle">
+              </el-input>
+              <div style="margin: 20px 0;"></div>
 
-          </el-form-item>
-          <el-form-item style="font-weight: bold">
-            申请内容
-            <el-input
-              :disabled="true"
-              style="width:350px;margin-left: 10px;margin-right:40px;"
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              placeholder="请输入内容"
-              v-model="projectApplyForm.content">
-            </el-input>
-          </el-form-item>
-          <el-form-item style="font-weight: bold">
-            审批备注
-            <el-input
-              style="width:350px;margin-left: 10px;margin-right:40px;"
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              placeholder="请输入内容"
-              v-model="projectApplyForm.remark">
-            </el-input>
-          </el-form-item>
-          <div slot="footer">
-            <el-button @click="projectApplySubmitForm(0)">拒绝</el-button>
-            <el-button type="primary" @click="projectApplySubmitForm(1)">通过</el-button>
-          </div>
-        </el-form>
+            </el-form-item>
+            <el-form-item style="font-weight: bold">
+              申请内容
+              <el-input
+                :disabled="true"
+                style="width:350px;margin-left: 10px;margin-right:40px;"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输入内容"
+                v-model="projectApplyForm.content">
+              </el-input>
+            </el-form-item>
+            <el-form-item style="font-weight: bold">
+              审批备注
+              <el-input
+                style="width:350px;margin-left: 10px;margin-right:40px;"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输入内容"
+                v-model="projectApplyForm.remark">
+              </el-input>
+            </el-form-item>
+            <div slot="footer">
+              <el-button @click="projectApplySubmitForm(0)">拒绝</el-button>
+              <el-button type="primary" @click="projectApplySubmitForm(1)">通过</el-button>
+            </div>
+          </el-form>
+        </div>
       </div>
+
     </el-dialog>
 
   </div>
