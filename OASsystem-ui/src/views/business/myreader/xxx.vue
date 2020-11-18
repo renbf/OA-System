@@ -52,7 +52,7 @@
       class="tables"
       :data="tableData"
       @selection-change="handleSelectionChange"
-      @row-click="handleLookOpen"
+      @row-dblclick="handleLookOpen"
       style="width: 100%">
       <el-table-column
         type="selection"
@@ -125,7 +125,7 @@
           </el-steps>
         </div>
         <div style="float:left;width:511px;top:20px;right:50px;" class="dialogtext">
-          <el-form ref="projectApplyForm" :model="projectApplyForm" label-width="80px">
+          <el-form :model="projectApplyForm" label-width="80px">
             <el-form-item style="font-weight: bold">
               标题
               <el-input
@@ -191,7 +191,7 @@
                 v-model="projectApplyForm.content">
               </el-input>
             </el-form-item>
-            <el-form-item style="font-weight: bold">
+            <el-form-item style="font-weight: bold" prop="remark">
               审批备注
               <el-input
                 style="width:350px;margin-left: 10px;margin-right:40px;"
@@ -373,6 +373,7 @@
         let _this = this;
         _this.$refs.projectApplyForm.validate(valid => {
           if (valid) {
+            debugger
             let msg = '';
             let title = '';
             if (checkStatus == '1') {
@@ -387,9 +388,12 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              let form = _this.projectApplyForm;
-              form.status = checkStatus;
-              form.projectApplyIds = [item.projectApplyId];
+              let projectApplyForm = _this.projectApplyForm;
+              let form = {
+                status:checkStatus,
+                projectApplyIds : [projectApplyForm.projectApplyId],
+                remark:projectApplyForm.remark
+              };
               batchProjectApplyShenpi(form).then(response => {
                 if (response.code === 200) {
                   this.msgSuccess("审批成功");
@@ -399,7 +403,7 @@
                   this.msgError(response.msg);
                 }
               });
-            }).catch(() => {
+            }).catch((err) => {
               this.$message({
                 type: 'info',
                 message: '操作异常'

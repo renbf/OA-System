@@ -259,7 +259,7 @@
           <template slot-scope="scope">
             <!--  2是未报送按钮全部显示 -->
 
-            <div v-show="projectInfo.status == 1 && scope.row.taskStatus == 0 && scope.row.baosongNum == 0">
+            <div v-show="projectInfo.status == 1 && scope.row.taskStatus == 0 && scope.row.baosongNum == 0 && scope.row.isMember == 1">
               <el-button
                 size="mini"
                 type="text"
