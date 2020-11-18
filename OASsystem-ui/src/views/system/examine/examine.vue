@@ -66,6 +66,27 @@
     <!--    新建/编辑审批流程-->
     <el-dialog :title="title" :visible.sync="open"  width="600px">
       <el-form ref="addForm" :model="addForm" :rules="rules" label-width="80px">
+<!--        项目审批 启用禁用-->
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="项目审批"  prop="shenpiuser">
+              <el-switch v-model="addForm.shenpiuser" @change="addshenpi" active-text="启用" active-value="1" inactive-value="0"></el-switch>
+            </el-form-item>
+          </el-col>
+
+<!--          选择内容-->
+          <el-col :span="8" v-show="addForm.usercontent!=''">
+            <el-form-item>
+              <el-input v-model="addForm.usercontent" class="usercontent" disabled />
+            </el-form-item>
+          </el-col>
+
+<!--          操作设置按钮-->
+          <el-col  :span="4" v-show="addForm.shenpiuser==1">
+            <el-button icon="el-icon-setting" circle @click.stop="editshenpiuser"></el-button>
+          </el-col>
+        </el-row>
+
         <el-row>
           <el-col :span="24">
             <el-form-item label="审批名称" prop="workflowName">
@@ -259,7 +280,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="24">
             <el-form-item label="审核人" prop="workflowNodeUserIds">
@@ -282,6 +302,36 @@
       </div>
     </el-dialog>
 
+<!--    审批角色弹框-->
+
+    <el-dialog :title="shenpititle" :visible.sync="shenpiOpen"  width="600px">
+      <el-form ref="shenpiForm" :model="shenpiForm" :rules="shenpiFormRules" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="审批角色" prop="shenpirole">
+              <el-select
+                v-model="shenpiForm.shenpirole"
+                placeholder="请选择审批部门"
+                clearable
+                size="small"
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in shenpiOptions"
+                  :key="dict.projectId"
+                  :label="dict.projectName"
+                  :value="dict.projectId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitshenpiForm">保 存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -315,6 +365,9 @@
         addNodeOpen:false,
         addsteptitle:'',
         addNodeTitle:'',
+        // 审批角色
+        shenpiOpen:false,
+        shenpititle:'经理加班申请',
         editopen:false,
         // 停用部门失败弹框
         erroropen:false,
@@ -339,7 +392,9 @@
         addForm:{
           workflowName:'',
           workflowDesc:'',
-          status:'1'
+          status:'1',
+          shenpiuser:false,
+          usercontent:'项目经理'
         },
         addNodeForm:{
           workflowNodeId:undefined,
@@ -350,6 +405,16 @@
           workflowNodeUserIds:[],
           workflowNodeRoleIds:[],
         },
+        // 审批角色
+        shenpiForm:{
+          shenpirole:''
+        },
+        // 角色
+        shenpiOptions:[
+          { projectId: 1, projectName: "管理员" },
+          { projectId: 2, projectName: "硬件部管理员" },
+          { projectId: 3, projectName: "软件部管理员" }
+        ],
         // 弹框折叠面板
         activeNames:[],
         SysWorkflowStepList: [],
@@ -447,6 +512,11 @@
             {required: true, message: "状态不能为空", trigger: "blur"}
           ]
         },
+        shenpiFormRules:{
+          shenpirole: [
+            {required: true, message: "审批角色不能为空", trigger: "change"}
+          ]
+        },
         nodeFormRules:{
           workflowNodeName: [
             {required: true, message: "审核步骤名称不能为空", trigger: "blur"}
@@ -499,7 +569,9 @@
         this.addForm = {
           workflowName:'',
           workflowDesc:'',
-          status:'1'
+          status:'1',
+          shenpiuser:false,
+          usercontent:''
         };
         this.resetForm("addForm");
       },
@@ -565,6 +637,13 @@
           }
         });
       },
+      submitshenpiForm(){
+        this.$refs.shenpiForm.validate(valid => {
+          if(valid){
+            this.shenpiOpen=false;
+          }
+        })
+      },
       submitNodeForm(){
         this.$refs.addNodeForm.validate(valid => {
           if (valid) {
@@ -602,6 +681,18 @@
       // 新建保存取消
       closeEditopen(){
         this.editopen = false;
+      },
+      addshenpi(e){
+        // 开启
+        if(e==1){
+          this.shenpiOpen=true;
+        }else{
+          this.addForm.usercontent='';
+        }
+      },
+      // 修改审批人
+      editshenpiuser(){
+        this.shenpiOpen=true;
       },
       handleNodeClick(){},
       // 查看修改
@@ -714,6 +805,9 @@
 </script>
 
 <style>
+  .usercontent .el-input__inner{
+    background: transparent!important;
+  }
   .step .box-card{
     width: 316px;
     height:184px;
