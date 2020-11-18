@@ -11,8 +11,8 @@
     <!--按钮区-->
 
     <div class="btn">
-      <el-button type="success"> <span class="el-icon-check"></span>通过</el-button>
-      <el-button type="danger"> <span class="el-icon-close"></span>拒绝</el-button>
+      <el-button type="success" @click="handlebatchProjectApplyShenpi(1)"> <span class="el-icon-check"></span>通过</el-button>
+      <el-button type="danger" @click="handlebatchProjectApplyShenpi(0)"> <span class="el-icon-close"></span>拒绝</el-button>
       <el-button type="warning"><span class="el-icon-download"></span>导出</el-button>
 
     </div>
@@ -300,11 +300,11 @@
       //多选
       handleSelectionChange(val) {
         let _this = this;
-        let taskIds = [];
+        let projectApplyIds = [];
         val.forEach((item) => {
-          taskIds.push(item.taskId);
+          projectApplyIds.push(item.projectApplyId);
         });
-        _this.taskIds = taskIds;
+        _this.projectApplyIds = projectApplyIds;
       },
       //查看行
       handleLookOpen(row, column, event){
@@ -373,7 +373,6 @@
         let _this = this;
         _this.$refs.projectApplyForm.validate(valid => {
           if (valid) {
-            debugger
             let msg = '';
             let title = '';
             if (checkStatus == '1') {
@@ -412,6 +411,43 @@
           }
         });
 
+      },
+      //批量审核通过或拒绝
+      handlebatchProjectApplyShenpi(checkStatus) {
+        let _this = this;
+        let msg = '';
+        let title = '';
+        if (checkStatus == '1') {
+          msg = '确认通过审批?';
+          title = '通过审批';
+        }else{
+          msg = '确认拒绝审批?';
+          title = '拒绝审批';
+        }
+        this.$confirm(msg, title, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let projectApplyForm = _this.projectApplyForm;
+          let form = {
+            status:checkStatus,
+            projectApplyIds : _this.projectApplyIds,
+          };
+          batchProjectApplyShenpi(form).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess("审批成功");
+              this.getApplyList();
+            } else {
+              this.msgError(response.msg);
+            }
+          });
+        }).catch((err) => {
+          this.$message({
+            type: 'info',
+            message: '操作异常'
+          });
+        });
       }
     }
   }

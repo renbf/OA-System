@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhkj.project.business.mapper.BusiProjectLeaderWorkflowMapper">
+    
+    <resultMap type="com.xhkj.project.business.domain.BusiProjectLeaderWorkflow" id="BusiProjectLeaderWorkflowResult">
+        <result property="billId"    column="bill_id"    />
+        <result property="workflowId"    column="workflow_id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="leaderId"    column="leader_id"    />
+        <result property="leaderName"    column="leader_name"    />
+        <result property="workflowGroupName"    column="workflow_group_name"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="billStatus"    column="bill_status"    />
+        <result property="createNickName"    column="create_nick_name"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+	
+	<sql id="selectBusiProjectLeaderWorkflowbasicColums">
+        select plw.bill_id, plw.workflow_id, plw.project_id, plw.project_name, plw.leader_id, plw.leader_name, plw.workflow_group_name, plw.dept_name, plw.bill_status, plw.create_nick_name, plw.sort_order, plw.create_by, plw.create_time, plw.update_by, plw.update_time, plw.remark
+    </sql>
+	
+    <select id="selectBusiProjectLeaderWorkflowList" parameterType="com.xhkj.project.business.domain.BusiProjectLeaderWorkflow" resultMap="BusiProjectLeaderWorkflowResult">
+        <include refid="selectBusiProjectLeaderWorkflowbasicColums"/>
+        from busi_project_leader_workflow plw
+        <where>  
+            <if test="billId != null "> and plw.bill_id = #{billId}</if>
+             <if test="workflowId != null "> and plw.workflow_id = #{workflowId}</if>
+             <if test="projectId != null "> and plw.project_id = #{projectId}</if>
+             <if test="projectName != null  and projectName != '' "> and plw.project_name = #{projectName}</if>
+             <if test="leaderId != null "> and plw.leader_id = #{leaderId}</if>
+             <if test="leaderName != null  and leaderName != '' "> and plw.leader_name = #{leaderName}</if>
+             <if test="workflowGroupName != null  and workflowGroupName != '' "> and plw.workflow_group_name = #{workflowGroupName}</if>
+             <if test="deptName != null  and deptName != '' "> and plw.dept_name = #{deptName}</if>
+             <if test="billStatus != null  and billStatus != '' "> and plw.bill_status = #{billStatus}</if>
+             <if test="createNickName != null  and createNickName != '' "> and plw.create_nick_name = #{createNickName}</if>
+             <if test="sortOrder != null "> and plw.sort_order = #{sortOrder}</if>
+             <if test="createBy != null  and createBy != '' "> and plw.create_by = #{createBy}</if>
+             <if test="createTime != null "> and plw.create_time = #{createTime}</if>
+             <if test="updateBy != null  and updateBy != '' "> and plw.update_by = #{updateBy}</if>
+             <if test="updateTime != null "> and plw.update_time = #{updateTime}</if>
+             <if test="remark != null  and remark != '' "> and plw.remark = #{remark}</if>
+         </where>
+    </select>
+    
+    <select id="selectBusiProjectLeaderWorkflowById" parameterType="Long" resultMap="BusiProjectLeaderWorkflowResult">
+        <include refid="selectBusiProjectLeaderWorkflowbasicColums"/>
+        from busi_project_leader_workflow plw
+        where plw.bill_id = #{billId}
+    </select>
+        
+    <insert id="insertBusiProjectLeaderWorkflow" parameterType="com.xhkj.project.business.domain.BusiProjectLeaderWorkflow">
+        insert into busi_project_leader_workflow
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="billId != null  ">bill_id,</if>
+			<if test="workflowId != null  ">workflow_id,</if>
+			<if test="projectId != null  ">project_id,</if>
+			<if test="projectName != null  and projectName != ''  ">project_name,</if>
+			<if test="leaderId != null  ">leader_id,</if>
+			<if test="leaderName != null  and leaderName != ''  ">leader_name,</if>
+			<if test="workflowGroupName != null  and workflowGroupName != ''  ">workflow_group_name,</if>
+			<if test="deptName != null  and deptName != ''  ">dept_name,</if>
+			<if test="billStatus != null  and billStatus != ''  ">bill_status,</if>
+			<if test="createNickName != null  and createNickName != ''  ">create_nick_name,</if>
+			<if test="sortOrder != null  ">sort_order,</if>
+			<if test="createBy != null  and createBy != ''  ">create_by,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="billId != null  ">#{billId},</if>
+			<if test="workflowId != null  ">#{workflowId},</if>
+			<if test="projectId != null  ">#{projectId},</if>
+			<if test="projectName != null  and projectName != ''  ">#{projectName},</if>
+			<if test="leaderId != null  ">#{leaderId},</if>
+			<if test="leaderName != null  and leaderName != ''  ">#{leaderName},</if>
+			<if test="workflowGroupName != null  and workflowGroupName != ''  ">#{workflowGroupName},</if>
+			<if test="deptName != null  and deptName != ''  ">#{deptName},</if>
+			<if test="billStatus != null  and billStatus != ''  ">#{billStatus},</if>
+			<if test="createNickName != null  and createNickName != ''  ">#{createNickName},</if>
+			<if test="sortOrder != null  ">#{sortOrder},</if>
+			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateBusiProjectLeaderWorkflow" parameterType="com.xhkj.project.business.domain.BusiProjectLeaderWorkflow">
+        update busi_project_leader_workflow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workflowId != null  ">workflow_id = #{workflowId},</if>
+            <if test="projectId != null  ">project_id = #{projectId},</if>
+            <if test="projectName != null  and projectName != ''  ">project_name = #{projectName},</if>
+            <if test="leaderId != null  ">leader_id = #{leaderId},</if>
+            <if test="leaderName != null  and leaderName != ''  ">leader_name = #{leaderName},</if>
+            <if test="workflowGroupName != null  and workflowGroupName != ''  ">workflow_group_name = #{workflowGroupName},</if>
+            <if test="deptName != null  and deptName != ''  ">dept_name = #{deptName},</if>
+            <if test="billStatus != null  and billStatus != ''  ">bill_status = #{billStatus},</if>
+            <if test="createNickName != null  and createNickName != ''  ">create_nick_name = #{createNickName},</if>
+            <if test="sortOrder != null  ">sort_order = #{sortOrder},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where bill_id = #{billId}
+    </update>
+
+	<delete id="deleteBusiProjectLeaderWorkflowById" parameterType="Long">
+        delete from busi_project_leader_workflow where bill_id = #{billId}
+    </delete>
+	
+    <delete id="deleteBusiProjectLeaderWorkflowByIds" parameterType="String">
+        delete from busi_project_leader_workflow where bill_id in 
+        <foreach item="billId" collection="array" open="(" separator="," close=")">
+            #{billId}
+        </foreach>
+    </delete>
+
+    <insert id="insertBusiProjectLeaderWorkflowBatch" parameterType="java.util.List" >
+        insert into busi_project_leader_workflow ( bill_id, workflow_id, project_id, project_name, leader_id, leader_name, workflow_group_name, dept_name, bill_status, create_nick_name, sort_order, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" collection="list" separator=",">
+            ( #{item.billId}, #{item.workflowId}, #{item.projectId}, #{item.projectName}, #{item.leaderId}, #{item.leaderName}, #{item.workflowGroupName}, #{item.deptName}, #{item.billStatus}, #{item.createNickName}, #{item.sortOrder}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+    <!-- 以上是自动生成的代码尽量别动 -->
+    
+</mapper>
