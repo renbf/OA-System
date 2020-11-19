@@ -1,10 +1,7 @@
 <template>
   <div class="main">
-    <div id="map">
-    </div>
-    <div id="info" class="esri-widget">
-      <camera-info v-bind:camera="camera"></camera-info>
-    </div>
+    <div id="map"></div>
+    <span id="layerToggle" class="esri-widget"> <input type="checkbox" id="streetsLayer" checked /> Transportation </span>
   </div>
 
 </template>
@@ -36,10 +33,20 @@
     top: 70px;
     bottom: 0;
     width: 100%;
-
-    #map {
+  }
+  .main #map {
       width: 100%;
       height: 100%;
-    }
+  }
+
+  #layerToggle {
+    top: 20px;
+    right: 20px;
+    position: absolute;
+    z-index: 99;
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    opacity: 0.75;
   }
 </style>
