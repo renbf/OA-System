@@ -58,6 +58,26 @@ public class BusiTaskVo extends BaseEntity
 	private List<Date> taskDate;
 
 	private List<Long> userList;
+	/** 成员id */
+	private Long memberId;
+	/** 是否是成员 */
+	private Integer isMember;
+
+	public Integer getIsMember() {
+		return isMember;
+	}
+
+	public void setIsMember(Integer isMember) {
+		this.isMember = isMember;
+	}
+
+	public Long getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(Long memberId) {
+		this.memberId = memberId;
+	}
 
 	public Integer getBaosongNum() {
 		return baosongNum;

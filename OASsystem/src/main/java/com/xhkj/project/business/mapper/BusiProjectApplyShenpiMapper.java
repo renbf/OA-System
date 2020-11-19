@@ -81,4 +81,6 @@ public interface BusiProjectApplyShenpiMapper
 	 * @return
 	 */
 	public BusiProjectApplyShenpi selectNextNode(@Param("projectApplyId") Long projectApplyId,@Param("sortOrder") Integer sortOrder);
+
+	public List<BusiProjectApplyShenpi> selectBusiProjectApplyShenpis(Long projectApplyId);
 }

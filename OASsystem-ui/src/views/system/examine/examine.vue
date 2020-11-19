@@ -45,7 +45,7 @@
             </div>
             <div style="float: right">
               <el-button icon="el-icon-setting" circle @click="Toedit(item.workflowId)"></el-button>
-<!--              <el-button icon="el-icon-delete" circle></el-button>-->
+              <!--              <el-button icon="el-icon-delete" circle></el-button>-->
             </div>
           </div>
           <div class="text item" @click.stop="Todetail(item.workflowId)">
@@ -102,13 +102,13 @@
       <el-collapse v-model="activeNames" v-for="(item,index) in SysWorkflowStepList">
         <el-collapse-item :title="item.workflowStepName" :name="index">
           <template v-for="item1 in item.sysWorkflowNodes">
-          <p>{{item1.workflowNodeName}}</p>
-          <div>
-            <span>参与人员</span>
-            <span>
+            <p>{{item1.workflowNodeName}}</p>
+            <div>
+              <span>参与人员</span>
+              <span>
               <el-tag type="info" v-for="item2 in item1.sysWorkflowNodeCheckers">{{item2.workflowNodeUserName}}</el-tag>
             </span>
-          </div>
+            </div>
           </template>
         </el-collapse-item>
       </el-collapse>
@@ -117,7 +117,7 @@
       </div>
     </el-dialog>
 
-<!--    编辑-->
+    <!--    编辑-->
 
     <!--    删除流程失败-->
     <el-dialog title="操作失败" :visible.sync="deleteopen" width="600px">
@@ -157,7 +157,7 @@
     </el-dialog>
 
 
-<!--    编辑审批流程-->
+    <!--    编辑审批流程-->
     <el-dialog :title="edittitle" :visible.sync="editopen"  width="600px">
       <el-collapse v-model="activeNames" v-for="item in SysWorkflowStepList">
         <el-collapse-item :name="item.workflowStepId">
@@ -194,7 +194,7 @@
       </div>
     </el-dialog>
 
-<!--    新增、编辑流程节点-->
+    <!--    新增、编辑流程节点-->
     <el-dialog :title="addsteptitle" :visible.sync="addstepopen"  width="600px">
       <h3>选择审批部门</h3>
       <el-row>
@@ -475,7 +475,7 @@
         )
       });
       this.getList();
-      },
+    },
     methods:{
       getList(){
         //前端接口调用
@@ -505,13 +505,13 @@
       },
       resetAddNodeForm() {
         this.addNodeForm = {
-            workflowNodeId:undefined,
-            workflowStepNodeId:undefined,
-            workflowNodeName:'',
-            workflowNodeCheckerType:'',
-            sortOrder:undefined,
-            workflowNodeUserIds:[],
-            workflowNodeRoleIds:[]
+          workflowNodeId:undefined,
+          workflowStepNodeId:undefined,
+          workflowNodeName:'',
+          workflowNodeCheckerType:'',
+          sortOrder:undefined,
+          workflowNodeUserIds:[],
+          workflowNodeRoleIds:[]
         };
         this.resetForm("addNodeForm");
       },

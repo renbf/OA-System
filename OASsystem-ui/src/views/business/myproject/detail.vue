@@ -549,7 +549,7 @@
           <el-progress :percentage="taskLookForm.taskProgress"></el-progress>
         </el-form-item>
         <el-form-item >
-          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
+          <el-button icon="el-icon-edit-outline" circle v-if="taskLookForm.taskProgress < 100 && (userId == 1 || userId == projectInfo.leaderId)" @click="handleUpdateForm2(taskLookForm)" v-hasPermi="['api:busiProject:editTaskProgress']"></el-button>
         </el-form-item>
 
         <el-collapse v-model="activeNames" @change="handleChange">
@@ -634,6 +634,7 @@
     },
     data() {
       return {
+        userId:this.$store.state.user.userId,
         handleOpen:false,
         //当前页数
         currentPage4:1,
@@ -700,7 +701,7 @@
           taskNumber:undefined,
           taskDate: '',
           taskDesc:'',
-          status:'',
+          status:'1',
           userList: [],
         },
         taskrules: {
@@ -829,7 +830,7 @@
             taskNumber:undefined,
             taskDate: '',
             taskDesc:'',
-            status:'',
+            status:'1',
             userList: [],
         };
         this.resetForm("taskform");

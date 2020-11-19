@@ -177,6 +177,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="projectProgress != null  and projectProgress != '' ">
          and p.project_progress = #{projectProgress}
         </if>
+        <if test="leaderId != null">
+            and (case when p.status = '0' then p.leader_id = #{leaderId}
+            when p.status = '1' then 1=1 end)
+        </if>
     </select>
 
     <select id="selectBusiProject" parameterType="java.lang.Long" resultMap="BusiProjectResultVo">
@@ -192,7 +196,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="todolist" parameterType="com.xhkj.project.business.domain.vo.BusiProjectVo" resultMap="BusiProjectResultVo">
         <include refid="selectBusiProjectbasicColums"/>
         <if test="memberId != null">
-        ,(select count(1) from busi_project_apply pa join busi_project_apply_shenpi pas where pa.project_id = p.project_id and pa.project_apply_id = pas.project_apply_id and pas.shenpi_user_id = #{memberId} and pa.status = '1') todoNum
+        ,(select count(1) from busi_project_apply pa join busi_project_apply_shenpi pas where pa.project_id = p.project_id and pa.project_apply_id = pas.project_apply_id and pas.shenpi_user_id = #{memberId} and pa.status = '1' and pas.is_current = '1') todoNum
         </if>
         <if test="memberId == null">
             ,(select count(1) from busi_project_apply pa join busi_project_apply_shenpi pas where pa.project_id = p.project_id and pa.project_apply_id = pas.project_apply_id and pa.status = '1') todoNum

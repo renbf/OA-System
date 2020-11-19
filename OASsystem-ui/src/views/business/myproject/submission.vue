@@ -99,10 +99,6 @@
     >
       <div style="height: 400px;width:200px;">
         <el-steps direction="vertical" :active="projectApplyForm.activeNum" finish-status="success">
-          <!--<el-step title="丹尼尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-          <el-step title="迈克尔" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-          <el-step title="伊利斯" description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>
-          <el-step title="翠丝"  description="丹尼尔 软件部 2020-05-22 这里是审核内容 如未填写默认为 审核通过"></el-step>-->
           <el-step :title="item.shenpiUserName"  :description="item.description" v-for="item in projectApplyForm.shenpiUserList"></el-step>
 
         </el-steps>

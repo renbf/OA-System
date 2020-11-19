@@ -242,6 +242,9 @@ public class BusiProjectServiceImpl implements IBusiProjectService
             if (!SecurityUtils.isAdmin(userId)) {
                 busiProjectVo.setMemberId(userId);
             }
+			if (!SecurityUtils.isAdmin(userId)) {
+				busiProjectVo.setLeaderId(userId);
+			}
 			List<BusiProjectVo> list = busiProjectMapper.selectBusiProjects(busiProjectVo);
 			resultMap.put("code",200);
 			resultMap.put("data",list);
@@ -384,10 +387,12 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		try {
 			Date now = new Date();
 			String username = SecurityUtils.getUsername();
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
 			if (Objects.nonNull(busiTaskVo.getPage()) && Objects.nonNull(busiTaskVo.getLimit())) {
 				PageHelper.startPage(busiTaskVo.getPage(), busiTaskVo.getLimit());
 			}
 			busiTaskVo.setCreateBy(username);
+			busiTaskVo.setMemberId(userId);
 			List<BusiTaskVo> list = busiTaskMapper.selectBusiTasks(busiTaskVo);
 			PageInfo<BusiTaskVo> pageInfo = new PageInfo<BusiTaskVo>(list);
 			resultMap.put("code",200);
@@ -768,9 +773,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	public Map<String, Object> listProjectApplyShenpi(Long projectApplyId) {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
-			BusiProjectApplyShenpi busiProjectApplyShenpi = new BusiProjectApplyShenpi();
-			busiProjectApplyShenpi.setProjectApplyId(projectApplyId);
-			List<BusiProjectApplyShenpi> busiProjectApplyShenpis = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpiList(busiProjectApplyShenpi);
+			List<BusiProjectApplyShenpi> busiProjectApplyShenpis = busiProjectApplyShenpiMapper.selectBusiProjectApplyShenpis(projectApplyId);
 			resultMap.put("code",200);
 			resultMap.put("data",busiProjectApplyShenpis);
 		} catch (Exception e) {
@@ -819,9 +822,7 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		try {
 			Long userId = Long.valueOf(SecurityUtils.getUserId());
-			if (!SecurityUtils.isAdmin(userId)) {
-				busiProjectVo.setMemberId(userId);
-			}
+			busiProjectVo.setMemberId(userId);
 			List<BusiProjectVo> list = busiProjectMapper.todolist(busiProjectVo);
 			resultMap.put("code",200);
 			resultMap.put("data",list);
@@ -902,6 +903,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 								busiProjectApplyMapper.updateBusiProjectApply(busiProjectApply);
 							}
 							busiProjectApplyShenpiMapper.updateBusiProjectApplyShenpi(busiProjectApplyShenpiUp);
+						}else{
+							throw new CustomException("你不是当前审批人");
 						}
 					}
 				}
