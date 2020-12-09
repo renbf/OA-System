@@ -20,7 +20,7 @@
   import {approveList as approveListLittle} from "@/api/business/mywork/extrawork";
   import {approveList as approveListLeave} from "@/api/business/mywork/leave";
   import {approveList as approveListReimburse} from "@/api/business/mywork/reimburse";
-  import { todolistBusiProject } from "@/api/business/mywork/myproject";
+  import { todolistBusiProject,projectLeaderWorkflowCount } from "@/api/business/mywork/myproject";
 
   export default {
     name: "page-reader",
@@ -35,7 +35,8 @@
           {index:6,titles:"入职申请",ready:"待审批",number:"0"},
           {index:7,titles:"离职申请",ready:"待审批",number:"0"},
           {index:8,titles:"调岗申请",ready:"待审批",number:"0"},
-          {index:9,titles:"xxx项目组职申请",ready:"待审批",number:"0"},
+          {index:9,titles:"项目待办",ready:"待审批",number:"0"},
+          {index:10,titles:"xxx项目组职申请",ready:"待审批",number:"0"},
         ]
       }
     },
@@ -50,6 +51,8 @@
       this.getReimburseFeiNum();
       //待办项目审批列表
       this.gettodolistBusiProject();
+      //项目负责人审批待办数量
+      this.getProjectLeaderWorkflowCount();
     },
     methods:{
       getLittleNum(){
@@ -104,6 +107,9 @@
           this.$router.push({ path:'/myreader/down'})
         }
         else if (item.index===9) {
+          this.$router.push({ path:'/myreader/projectTodo'})
+        }
+        else if (item.index===10) {
           this.$router.push({ path:'/myreader/xxx',query:{projectId:item.projectId}})
         }
 
@@ -116,7 +122,7 @@
             let list = [];
             todolist.forEach((item)=>{
               let obj = {
-                index:9,
+                index:10,
                 titles:item.projectName,
                 ready:"待审批",
                 number:item.todoNum,
@@ -125,6 +131,16 @@
               list.push(obj);
             });
             _this.req =_this.req.concat(list);
+          }
+        });
+      },
+      //
+      getProjectLeaderWorkflowCount() {
+        let _this = this;
+        projectLeaderWorkflowCount().then(response => {
+          if(response.code == 200){
+            let number = response.data;
+            _this.req[8].number = number;
           }
         });
       },

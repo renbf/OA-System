@@ -1,11 +1,13 @@
 package com.xhkj.project.business.domain;
 
+import com.xhkj.framework.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 项目负责人审批表 busi_project_leader_workflow
@@ -13,7 +15,7 @@ import java.util.Date;
  * @author rbf
  * @date 2020-11-18
  */
-public class BusiProjectLeaderWorkflow implements Serializable
+public class BusiProjectLeaderWorkflow extends BaseEntity
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -33,24 +35,24 @@ public class BusiProjectLeaderWorkflow implements Serializable
 	private String workflowGroupName;
 	/** 部门名称 */
 	private String deptName;
-	/** 审核状态 （0待审核 1通过 99拒绝) */
+	/** 审核状态 （0待审核 1通过 2拒绝) */
 	private String billStatus;
 	/** 提交人昵称 */
 	private String createNickName;
 	/** 排序字段 */
 	private Integer sortOrder;
-	/** 创建者的用户ID */
-	private String createBy;
-	/** 创建时间 */
-	private Date createTime;
-	/** 修改者的用户ID */
-	private String updateBy;
-	/** 最后一次修改的时间 */
-	private Date updateTime;
-	/** 备注 */
-	private String remark;
 //以上自动生成的尽量别动
-	public void setBillId(Long billId) 
+	private List<Date> searchDate;
+
+	public List<Date> getSearchDate() {
+		return searchDate;
+	}
+
+	public void setSearchDate(List<Date> searchDate) {
+		this.searchDate = searchDate;
+	}
+
+	public void setBillId(Long billId)
 	{
 		this.billId = billId;
 	}
@@ -148,51 +150,6 @@ public class BusiProjectLeaderWorkflow implements Serializable
 	public Integer getSortOrder() 
 	{
 		return sortOrder;
-	}
-	public void setCreateBy(String createBy) 
-	{
-		this.createBy = createBy;
-	}
-
-	public String getCreateBy() 
-	{
-		return createBy;
-	}
-	public void setCreateTime(Date createTime) 
-	{
-		this.createTime = createTime;
-	}
-
-	public Date getCreateTime() 
-	{
-		return createTime;
-	}
-	public void setUpdateBy(String updateBy) 
-	{
-		this.updateBy = updateBy;
-	}
-
-	public String getUpdateBy() 
-	{
-		return updateBy;
-	}
-	public void setUpdateTime(Date updateTime) 
-	{
-		this.updateTime = updateTime;
-	}
-
-	public Date getUpdateTime() 
-	{
-		return updateTime;
-	}
-	public void setRemark(String remark) 
-	{
-		this.remark = remark;
-	}
-
-	public String getRemark() 
-	{
-		return remark;
 	}
 
     public String toString() {

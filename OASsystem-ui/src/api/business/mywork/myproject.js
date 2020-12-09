@@ -240,6 +240,34 @@ export function batchProjectApplyShenpi(data) {
     data: data
   })
 }
+
+// 项目负责人审批待办数量
+export function projectLeaderWorkflowCount(query) {
+  return request({
+    url: '/api/busiProject/projectLeaderWorkflowCount',
+    method: 'get',
+    params: query
+  })
+}
+// 项目负责人审批列表
+export function projectLeaderWorkflowList(data) {
+  return request({
+    url: '/api/busiProject/projectLeaderWorkflowList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 项目负责人审批
+export function projectLeaderWorkflowShenpi(data) {
+  return request({
+    url: '/api/busiProject/projectLeaderWorkflowShenpi',
+    method: 'post',
+    data: data
+  })
+}
+
+
 export function project_progress() {
   return {
     code: 200,

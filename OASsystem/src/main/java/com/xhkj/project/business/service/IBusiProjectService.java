@@ -1,9 +1,6 @@
 package com.xhkj.project.business.service;
 
-import com.xhkj.project.business.domain.BusiProject;
-import com.xhkj.project.business.domain.BusiProjectApply;
-import com.xhkj.project.business.domain.BusiTask;
-import com.xhkj.project.business.domain.BusiTaskLog;
+import com.xhkj.project.business.domain.*;
 import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
@@ -108,5 +105,11 @@ public interface IBusiProjectService
 	public Map<String, Object> todolistProjectApply(BusiProjectApplyVo busiProjectApplyVo);
 
 	public Map<String, Object> batchProjectApplyShenpi(BusiProjectApplyVo busiProjectApplyVo);
+
+	public Map<String, Object> projectLeaderWorkflowCount();
+
+	public Map<String, Object> projectLeaderWorkflowList(BusiProjectLeaderWorkflow busiProjectLeaderWorkflow);
+
+	public Map<String, Object> projectLeaderWorkflowShenpi(BusiProjectLeaderWorkflow busiProjectLeaderWorkflow);
 
 }

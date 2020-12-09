@@ -62,6 +62,8 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 	private BusiProjectApplyMapper busiProjectApplyMapper;
 	@Autowired
 	private BusiProjectApplyShenpiMapper busiProjectApplyShenpiMapper;
+	@Autowired
+	private BusiProjectLeaderWorkflowMapper busiProjectLeaderWorkflowMapper;
 
 	/**
      * 查询项目信息
@@ -909,6 +911,58 @@ public class BusiProjectServiceImpl implements IBusiProjectService
 					}
 				}
 			}
+			resultMap.put("code",200);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> projectLeaderWorkflowCount() {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			int i = busiProjectLeaderWorkflowMapper.projectLeaderWorkflowCount(userId);
+			resultMap.put("code",200);
+			resultMap.put("data",i);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> projectLeaderWorkflowList(BusiProjectLeaderWorkflow busiProjectLeaderWorkflow) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			if (Objects.nonNull(busiProjectLeaderWorkflow.getPage()) && Objects.nonNull(busiProjectLeaderWorkflow.getLimit())) {
+				PageHelper.startPage(busiProjectLeaderWorkflow.getPage(), busiProjectLeaderWorkflow.getLimit());
+			}
+			Long userId = Long.valueOf(SecurityUtils.getUserId());
+			List<BusiProjectLeaderWorkflow> busiProjectLeaderWorkflows = busiProjectLeaderWorkflowMapper.selectBusiProjectLeaderWorkflows(busiProjectLeaderWorkflow);
+			PageInfo<BusiProjectLeaderWorkflow> pageInfo = new PageInfo<BusiProjectLeaderWorkflow>(busiProjectLeaderWorkflows);
+			resultMap.put("code",200);
+			resultMap.put("data",busiProjectLeaderWorkflows);
+			resultMap.put("pageInfo",pageInfo);
+		} catch (Exception e) {
+			log.error("",e);
+			throw new RuntimeException();
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> projectLeaderWorkflowShenpi(BusiProjectLeaderWorkflow busiProjectLeaderWorkflow) {
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			Date now = new Date();
+			String username = SecurityUtils.getUsername();
+			busiProjectLeaderWorkflow.setUpdateBy(username);
+			busiProjectLeaderWorkflow.setUpdateTime(now);
+			busiProjectLeaderWorkflowMapper.updateBusiProjectLeaderWorkflow(busiProjectLeaderWorkflow);
 			resultMap.put("code",200);
 		} catch (Exception e) {
 			log.error("",e);

@@ -136,5 +136,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <!-- 以上是自动生成的代码尽量别动 -->
-    
+
+    <select id="projectLeaderWorkflowCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) from busi_project_leader_workflow
+        where project_id = #{leaderId}
+        and bill_status = '0'
+    </select>
+
+    <select id="selectBusiProjectLeaderWorkflows" parameterType="com.xhkj.project.business.domain.BusiProjectLeaderWorkflow" resultMap="BusiProjectLeaderWorkflowResult">
+        <include refid="selectBusiProjectLeaderWorkflowbasicColums"/>
+        from busi_project_leader_workflow plw
+        <where>
+            <if test="billStatus != null  and billStatus != '' "> and plw.bill_status = #{billStatus}</if>
+            <if test="createNickName != null  and createNickName != '' "> and plw.create_nick_name like concat('%',#{createNickName},'%') </if>
+            <if test="searchDate != null and searchDate.size > 0">
+                and plw.create_time >= #{searchDate[0]}
+                and plw.create_time <![CDATA[ <= ]]> #{searchDate[1]}
+            </if>
+        </where>
+    </select>
+
 </mapper>

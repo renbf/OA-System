@@ -1,8 +1,6 @@
 package com.xhkj.project.business.controller;
 
-import com.xhkj.project.business.domain.BusiProjectApply;
-import com.xhkj.project.business.domain.BusiTask;
-import com.xhkj.project.business.domain.BusiTaskLog;
+import com.xhkj.project.business.domain.*;
 import com.xhkj.project.business.domain.vo.BusiProjectApplyVo;
 import com.xhkj.project.business.domain.vo.BusiProjectVo;
 import com.xhkj.project.business.domain.vo.BusiTaskVo;
@@ -17,7 +15,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 
-import com.xhkj.project.business.domain.BusiProject;
 import com.xhkj.project.business.service.IBusiProjectService;
 
 
@@ -537,6 +534,60 @@ public class BusiProjectController
 			log.error("批量项目申请审批异常",e);
 			resultMap.put("code",-1);
 			resultMap.put("msg","批量项目申请审批异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 项目负责人审批待办数量
+	 */
+	@GetMapping("/projectLeaderWorkflowCount")
+	@ResponseBody
+	public Map<String,Object> projectLeaderWorkflowCount()
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.projectLeaderWorkflowCount();
+		} catch (Exception e) {
+			log.error("项目负责人审批待办数量异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","项目负责人审批待办数量异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 项目负责人审批列表
+	 */
+	@PostMapping("/projectLeaderWorkflowList")
+	@ResponseBody
+	public Map<String,Object> projectLeaderWorkflowList(@RequestBody BusiProjectLeaderWorkflow busiProjectLeaderWorkflow)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.projectLeaderWorkflowList(busiProjectLeaderWorkflow);
+		} catch (Exception e) {
+			log.error("项目负责人审批列表异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","项目负责人审批列表异常");
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 项目负责人审批
+	 */
+	@PostMapping("/projectLeaderWorkflowShenpi")
+	@ResponseBody
+	public Map<String,Object> projectLeaderWorkflowShenpi(@RequestBody BusiProjectLeaderWorkflow busiProjectLeaderWorkflow)
+	{
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		try {
+			resultMap = busiProjectService.projectLeaderWorkflowShenpi(busiProjectLeaderWorkflow);
+		} catch (Exception e) {
+			log.error("项目负责人审批异常",e);
+			resultMap.put("code",-1);
+			resultMap.put("msg","项目负责人审批异常");
 		}
 		return resultMap;
 	}

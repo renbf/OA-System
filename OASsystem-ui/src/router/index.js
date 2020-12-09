@@ -272,6 +272,11 @@ export const constantRoutes = [
         component: () => import("@/views/business/myreader/xxx"),
         meta: { title: "xxx项目组申请", icon: "" }
       },
+      {
+        path:"projectTodo",
+        component: () => import("@/views/business/myreader/projectTodo"),
+        meta: { title: "项目待办", icon: "" }
+      },
     ]
   },
   // 部门及角色

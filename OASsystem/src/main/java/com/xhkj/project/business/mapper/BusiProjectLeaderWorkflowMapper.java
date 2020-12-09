@@ -1,7 +1,9 @@
 package com.xhkj.project.business.mapper;
 
 import com.xhkj.project.business.domain.BusiProjectLeaderWorkflow;
-import java.util.List;	
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 /**
  * 项目负责人审批 数据层
  * 
@@ -66,4 +68,9 @@ public interface BusiProjectLeaderWorkflowMapper
 	 */
 	public int insertBusiProjectLeaderWorkflowBatch(List<BusiProjectLeaderWorkflow> list);
 	//以上自动生成的尽量别动
+
+	public int projectLeaderWorkflowCount(@Param("leaderId") Long leaderId);
+
+	public List<BusiProjectLeaderWorkflow> selectBusiProjectLeaderWorkflows(BusiProjectLeaderWorkflow busiProjectLeaderWorkflow);
+
 }
