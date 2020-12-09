@@ -18,12 +18,14 @@ class ArcGIS {
         "esri/Map",
         'esri/views/MapView',
         "esri/views/SceneView",
-        "esri/core/watchUtils"
+        "esri/core/watchUtils",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer"
       ],
       config.loadConfig
     )
       .then(
-        ([Map, MapView, SceneView,  watchUtils]) => {
+        ([Map, MapView, SceneView,  watchUtils, Graphic, GraphicsLayer]) => {
 
           var map = new Map({
              // basemap: "streets"
@@ -37,6 +39,42 @@ class ArcGIS {
             zoom: 6,
           });
 
+          var graphicsLayer = new GraphicsLayer();
+          var point = {
+            type: "point",
+            longitude: 114.48,
+            latitude: 38.03
+          };
+
+          var simpleMarkerSymbol = {
+            type: "simple-marker",
+            color: [226, 119, 40],  // orange
+            outline: {
+              color: [255, 255, 255], // white
+              width: 1
+            }
+          };
+
+          var attributes = {
+            Name: "My point",  // The name of the
+            Location: " Point Dume State Beach",  // The owner of the
+          };
+          // Create popup template
+          var popupTemplate = {
+            title: "{Name}",
+            content: "I am located at <b>{Location}</b>."
+          };
+
+          var pointGraphic = new evGraphic({
+            geometry: point,
+            symbol: simpleMarkerSymbol,
+            attributes: attributes,
+            popupTemplate: popupTemplate
+          });
+
+          graphicsLayer.add(pointGraphic);
+
+          map.add(graphicsLayer);
 
         }
       ) //end
